@@ -65,7 +65,7 @@ export async function planPlot(text: string, context: string, signal?: AbortSign
 
 function planFromRaw(raw: Record<string, unknown>): ToolPlan {
   const note = typeof raw.note === 'string' ? raw.note.trim() : ''
-  const exprs = (Array.isArray(raw.curves) ? raw.curves : [])
+  const exprs = (Array.isArray(raw.curves) ? raw.curves : typeof raw.expr === 'string' ? [raw.expr] : [])
     .map((c) => (typeof c === 'string' ? c : typeof c === 'object' && c && 'expr' in c ? String((c as { expr: unknown }).expr) : ''))
     .filter((e) => {
       try {
@@ -80,15 +80,47 @@ function planFromRaw(raw: Record<string, unknown>): ToolPlan {
   const named = parsePlotPoints(typeof raw.points === 'string' ? raw.points : undefined)
   const points = named.length ? named.map((p) => `${p.name}(${p.x}; ${p.y}) chiếu`).join('\n') : undefined
   const [x0, x1] = [optionalNum(raw.xMin), optionalNum(raw.xMax)]
-  const [xMin, xMax] = x0 !== undefined && x1 !== undefined && !(x0 < x1 && x1 - x0 <= 200)
+  let [xMin, xMax] = x0 !== undefined && x1 !== undefined && !(x0 < x1 && x1 - x0 <= 200)
     ? [-5, 5]
     : fitAutoBounds(x0, x1, [-5, 5], named.map((p) => p.x))
   const [y0, y1] = [optionalNum(raw.yMin), optionalNum(raw.yMax)]
   // khung dọc ghi sẵn (vd câu trong kho) thì theo đó, để không bị nhánh dốc kéo dãn
   const defaultY = () => autoYRange(exprs.map(parseExpr), xMin, xMax)
-  const [yMin, yMax] = y0 !== undefined && y1 !== undefined
+  let [yMin, yMax] = y0 !== undefined && y1 !== undefined
     ? y0 < y1 ? [y0, y1] : defaultY()
     : fitAutoBounds(y0, y1, defaultY(), named.map((p) => p.y))
+  // Mốc yêu cầu xuất hiện trên hình phải nằm trong khung AI đề xuất.
+  for (const p of named) {
+    xMin = Math.min(xMin, p.x)
+    xMax = Math.max(xMax, p.x)
+    yMin = Math.min(yMin, p.y)
+    yMax = Math.max(yMax, p.y)
+  }
+  // Giữ giao điểm gần khung AI đề xuất. Vị trí không được chấm hoặc ghi tên tự động.
+  if (exprs.length === 2 && xMax - xMin <= 200) {
+    const [f, g] = exprs.map(parseExpr)
+    const span = yMax - yMin
+    const sample = (i: number) => xMin + (xMax - xMin) * i / 256
+    const diff = (x: number) => f(x) - g(x)
+    for (let i = 1; i <= 256; i++) {
+      let a = sample(i - 1)
+      let b = sample(i)
+      const da = diff(a)
+      const db = diff(b)
+      if (!Number.isFinite(da) || !Number.isFinite(db) || da === 0 || da * db > 0) continue
+      for (let j = 0; j < 24; j++) {
+        const mid = (a + b) / 2
+        if (Math.sign(diff(mid)) === Math.sign(da)) a = mid
+        else b = mid
+      }
+      const x = (a + b) / 2
+      const y = f(x)
+      if (!Number.isFinite(y) || Math.abs(diff(x)) > span * 1e-6) continue
+      if (y > yMax && y <= yMax + span) yMax = y + span * 0.08
+      if (y < yMin && y >= yMin - span) yMin = y - span * 0.08
+    }
+  }
+  const shade = Array.isArray(raw.shade) && raw.shade.length === 2 ? raw.shade.map(optionalNum) : []
   return {
     note,
     doc: {
@@ -102,6 +134,9 @@ function planFromRaw(raw: Record<string, unknown>): ToolPlan {
         grid: raw.grid === true,
         labels: raw.labels === true || exprs.length > 1,
         points,
+        asymptotes: typeof raw.asymptotes === 'string' ? raw.asymptotes.slice(0, 300) : undefined,
+        shade: shade.length === 2 && shade[0] !== undefined && shade[1] !== undefined ? [shade[0], shade[1]] : undefined,
+        piAxis: raw.piAxis === true || undefined,
       },
     },
   }
@@ -159,7 +194,7 @@ export function toolFromRaw(raw: Record<string, unknown>): ToolDoc {
       doc = { kind: 'vartable', spec: { ...autoVarTable(need('expr', 'Không thấy hàm số để lập bảng biến thiên.')), fname: str('fname') || 'y' } }
       break
     case 'signtable':
-      doc = { kind: 'signtable', spec: autoSignTable(need('expr', 'Không thấy biểu thức để xét dấu.')) }
+      doc = { kind: 'signtable', spec: autoSignTable(need('expr', 'Không thấy biểu thức để xét dấu.'), str('fname').trim().slice(0, 30) || undefined) }
       break
     case 'oxy': {
       const items = need('items', 'AI không đưa ra được hình trên hệ trục.')
@@ -198,7 +233,7 @@ export function toolFromRaw(raw: Record<string, unknown>): ToolDoc {
       break
     }
     case 'geo3d': {
-      const shape3 = pick('shape', ['pyramid3', 'pyramid3-sa', 'pyramid3-regular', 'pyramid4', 'pyramid4-sa', 'pyramid4-regular', 'tetrahedron', 'prism3', 'box', 'cube', 'cone', 'cylinder', 'sphere'] as const, 'pyramid4')
+      const shape3 = pick('shape', GEO3D_SHAPES.map((s) => s.id), 'pyramid4')
       // AI hay chỉ gửi tên đáy (A,B,C,D) hoặc bỏ trống: bù tên mặc định của khối cho đủ đỉnh (A', B'…)
       const def3 = GEO3D_SHAPES.find((s) => s.id === shape3)?.names ?? []
       const given3 = names([])
@@ -209,7 +244,7 @@ export function toolFromRaw(raw: Record<string, unknown>): ToolDoc {
         spec: {
           shape: shape3,
           names: def3.map((d, i) => given3[i] || d).concat(given3.slice(def3.length)),
-          height: bool('height', true),
+          height: bool('height', false),
           diagonals: bool('diagonals', false),
           marks: bool('marks', true),
           tall: Math.min(1.6, Math.max(0.6, num(raw.tall, 1))),
@@ -222,7 +257,7 @@ export function toolFromRaw(raw: Record<string, unknown>): ToolDoc {
     case 'stats':
       doc = {
         kind: 'stats',
-        spec: { chart: pick('chart', ['bar', 'line', 'pie', 'hist', 'table'] as const, 'bar'), title: str('title'), xLabel: str('xLabel'), yLabel: str('yLabel'), values: true, data: need('data', 'Không thấy số liệu để vẽ biểu đồ.') },
+        spec: { chart: pick('chart', ['bar', 'line', 'pie', 'hist', 'table', 'pyramid'] as const, 'bar'), title: str('title'), xLabel: str('xLabel'), yLabel: str('yLabel'), values: true, data: need('data', 'Không thấy số liệu để vẽ biểu đồ.') },
       }
       break
     case 'trig':
@@ -507,6 +542,7 @@ export function toolFromRaw(raw: Record<string, unknown>): ToolDoc {
         spec: {
           text: need('text', 'Không thấy các dòng khai báo phả hệ.'),
           legend: bool('legend', true),
+          generationNumbers: bool('generationNumbers', false) || undefined,
           carrierStyle: pick('carrierStyle', ['half', 'dot'] as const, 'half'),
         },
       }
@@ -533,8 +569,8 @@ export function toolFromRaw(raw: Record<string, unknown>): ToolDoc {
           ...(traits.length ? { traits } : {}),
           showGametes: bool('showGametes', true),
           showGrid: bool('showGrid', true),
-          showGenotypeRatio: bool('showGenotypeRatio', true),
-          showPhenotypeRatio: bool('showPhenotypeRatio', true),
+          showGenotypeRatio: bool('showGenotypeRatio', false),
+          showPhenotypeRatio: bool('showPhenotypeRatio', false),
           blankGrid: bool('blankGrid', false),
           colorByPhenotype: bool('colorByPhenotype', true),
           fontSize: Math.min(18, Math.max(12, Math.round(num(raw.fontSize, 14)))),

@@ -185,6 +185,12 @@ export interface PlotSpec {
   labels: boolean
   /** điểm đặt tên, mỗi dòng "M(0; 0)" (thêm "chiếu" để kẻ nét đứt xuống trục) */
   points?: string
+  /** đường nét đứt: x = 1; y = 2; y = x - 1 */
+  asymptotes?: string
+  /** khoảng tô giữa hai đường đầu tiên (hoặc giữa đường đầu tiên và trục Ox) */
+  shade?: [number, number]
+  /** vạch ngang ghi theo bội π/2 hoặc π */
+  piAxis?: boolean
   /** độ lệch nhãn do người dùng kéo (khoá = id nhãn trên attr `data-lbl`) */
   labelPos?: Record<string, [number, number]>
 }
@@ -486,16 +492,25 @@ export function renderPlotSvg(spec: PlotSpec): { svg: string; width: number; hei
   const X0 = sx(ay)
   const Y0 = sy(ax)
   // miền x bị nới theo miền y → dùng luôn bước của trục y cho cả hai trục
-  const stepX = forced && sY ? sY : niceStep(xMax - xMin)
+  const stepX = spec.piAxis ? (xMax - xMin > 7 * Math.PI ? 2 * Math.PI : xMax - xMin > 4.1 * Math.PI ? Math.PI : Math.PI / 2)
+    : forced && sY ? sY : niceStep(xMax - xMin)
+  const fmtX = (v: number) => {
+    if (!spec.piAxis) return fmt(v)
+    const halves = Math.round(v * 2 / Math.PI)
+    if (Math.abs(v - halves * Math.PI / 2) > 1e-8) return fmt(v)
+    const n = Math.abs(halves % 2 ? halves : halves / 2)
+    return `${halves < 0 ? '−' : ''}${n === 1 ? '' : n}π${halves % 2 ? '/2' : ''}`
+  }
   // cùng đơn vị thì cùng bước chia (trừ khi đành co giãn)
-  const stepY = Math.abs((H - 2 * PAD) / (yMax - yMin) - unit) < 1e-6 ? stepX : sY || niceStep(yMax - yMin)
+  const stepY = !spec.piAxis && Math.abs((H - 2 * PAD) / (yMax - yMin) - unit) < 1e-6 ? stepX : sY || niceStep(yMax - yMin)
   const ticks = (lo: number, hi: number, step: number) => {
     const r: number[] = []
     for (let v = Math.ceil(lo / step - 1e-9) * step; v <= hi + 1e-9; v += step) r.push(Math.round(v / step) * step)
     return r
   }
   const plotPoints = parsePlotPoints(spec.points)
-    .filter((p) => p.x >= xMin && p.x <= xMax && p.y >= yMin && p.y <= yMax)
+    .filter((p) => p.x >= xMin && p.x <= xMax && p.y >= yMin && p.y <= yMax &&
+      !(p.name === 'O' && p.x === 0 && p.y === 0))
   // Giữ vạch ở mút miền khi đó cũng là toạ độ của một điểm đã đánh dấu.
   const matches = (a: number, b: number) => Math.abs(a - b) < 1e-9
   const specialX = [spec.xMin, spec.xMax].filter((v) => plotPoints.some((p) => matches(v, p.x)))
@@ -548,7 +563,7 @@ export function renderPlotSvg(spec: PlotSpec): { svg: string; width: number; hei
     if (Math.abs(v) < 1e-9) continue
     const x = sx(v)
     tickPath.push(`M${x.toFixed(1)} ${Y0 - 3}v6`)
-    out.push(`<text x="${x.toFixed(1)}" y="${Y0 + 17}" ${font} text-anchor="middle" data-lbl="x:${Math.round(v * 1000) / 1000}">${fmt(v)}</text>`)
+    out.push(`<text x="${x.toFixed(1)}" y="${Y0 + 17}" ${font} text-anchor="middle" data-lbl="x:${Math.round(v * 1000) / 1000}">${fmtX(v)}</text>`)
   }
   for (const v of ty) {
     if (Math.abs(v) < 1e-9) continue
@@ -560,6 +575,62 @@ export function renderPlotSvg(spec: PlotSpec): { svg: string; width: number; hei
 
   // đường cong: lấy mẫu dày, ngắt nét ở chỗ không xác định hoặc nhảy vọt (tiệm cận)
   out.push(`<clipPath id="plotclip"><rect x="${PAD - 2}" y="${PAD - 2}" width="${W - 2 * PAD + 4}" height="${H - 2 * PAD + 4}"/></clipPath>`)
+  const verticals: number[] = []
+  for (const line of (spec.asymptotes ?? '').split(/[;\n]/).slice(0, 12)) {
+    const match = /^\s*([xy])\s*=\s*(.+)$/i.exec(line)
+    if (!match) continue
+    try {
+      const f = parseExpr(match[2])
+      const x = f(0)
+      let d: string
+      if (match[1].toLowerCase() === 'x') {
+        if (!Number.isFinite(x) || x < xMin || x > xMax) continue
+        verticals.push(x)
+        d = `M${sx(x)} ${PAD}V${H - PAD}`
+      } else {
+        const y0 = f(xMin)
+        const y1 = f(xMax)
+        if (!Number.isFinite(y0) || !Number.isFinite(y1)) continue
+        d = `M${sx(xMin)} ${sy(y0)}L${sx(xMax)} ${sy(y1)}`
+      }
+      const guide = `<path data-asymptote="${esc(line.trim())}" d="${d}" stroke="#555" stroke-width="1.4" stroke-dasharray="6 4" clip-path="url(#plotclip)" fill="none"/>`
+      out.unshift(guide)
+    } catch { /* bỏ qua lệnh tiệm cận sai cú pháp */ }
+  }
+  if (spec.shade && spec.curves.length) {
+    const a = Math.max(xMin, Math.min(...spec.shade))
+    const b = Math.min(xMax, Math.max(...spec.shade))
+    if (a < b) {
+      try {
+        const [first, second] = spec.curves
+        const f = parseExpr(first.expr)
+        const g = second ? parseExpr(second.expr) : () => 0
+        const lobes: string[] = []
+        let top: string[] = []
+        let bottom: string[] = []
+        const flush = () => {
+          if (top.length > 1) lobes.push('M' + top.join('L') + 'L' + bottom.reverse().join('L') + 'Z')
+          top = []
+          bottom = []
+        }
+        let prev = a
+        for (let i = 0; i <= 360; i++) {
+          const x = a + (b - a) * i / 360
+          const y1 = f(x)
+          const y2 = g(x)
+          if (verticals.some((v) => prev < v && v <= x)) flush()
+          if ([y1, y2].every((y) => Number.isFinite(y) && Math.abs(y - yMin) < (yMax - yMin) * 20)) {
+            top.push(`${sx(x).toFixed(1)} ${sy(y1).toFixed(1)}`)
+            bottom.push(`${sx(x).toFixed(1)} ${sy(y2).toFixed(1)}`)
+          } else flush()
+          prev = x
+        }
+        flush()
+        out.unshift('<pattern id="plotshade" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 0V6" stroke="#777" stroke-width="1.3"/></pattern>',
+          `<path data-shade="true" d="${lobes.join('')}" fill="url(#plotshade)" clip-path="url(#plotclip)"/>`)
+      } catch { /* đường cong sai cú pháp sẽ được bỏ qua ở dưới */ }
+    }
+  }
   const N = 1200
   const span = yMax - yMin
   const domain = spec.xMax - spec.xMin
@@ -602,7 +673,8 @@ export function renderPlotSvg(spec: PlotSpec): { svg: string; width: number; hei
       const x = spec.xMin + (domain * k) / N
       const y = f(x)
       const ok = Number.isFinite(y) && Math.abs(y - yMin) < span * 20 && Math.abs(y - yMax) < span * 20
-      const jump = ok && Number.isFinite(prev) && Math.abs(y - prev) > span * 1.5
+      const jump = ok && Number.isFinite(prev) &&
+        (Math.abs(y - prev) > span * 1.5 || verticals.some((v) => x - domain / N < v && v <= x))
       const px = sx(x)
       const py = sy(y)
       const inView = ok && y >= yMin && y <= yMax

@@ -142,7 +142,10 @@ function assertThreeRaysMeetAtBPrime(spec: LensSpec, label: string) {
 
   // Chế độ ẩn ảnh
   const hideImg = renderTool({ kind: 'lens', spec: { ...LENS_DEFAULT, hideImage: true } })
-  assert.ok(!hideImg.svg.includes('data-ray='), 'Ẩn ảnh không vẽ tia ló tạo ảnh')
+  const hidden = computeLensGeometry({ ...LENS_DEFAULT, hideImage: true })
+  assert.equal(hidden.segments.length, 3, 'Ẩn ảnh vẫn vẽ các tia tới đã chọn')
+  assert.ok(hidden.segments.every((s) => s.kind === 'real' && s.from === hidden.B && s.to.x === hidden.xO))
+  assert.match(hideImg.svg, />Δ<\//)
   assert.ok(!hideImg.svg.includes('>A′<') && !hideImg.svg.includes('>B′<'), 'Ẩn ảnh không vẽ tên A′, B′')
 
   // Round-trip spec <-> ảnh (cả <desc> trong SVG và JSON attr `plot`)

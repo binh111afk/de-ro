@@ -152,7 +152,7 @@ export function Geo3dModal({ initial, submitLabel, onClose, onInsert }: Props<Ge
       <Names names={spec.names} onChange={(names) => set({ names })} />
       <section>
         <h3 className={sectionTitle}>Đường phụ</h3>
-        {spec.shape !== 'sphere' && spec.shape !== 'tetrahedron' && spec.shape !== 'box' && spec.shape !== 'cube' && spec.shape !== 'prism3' && !spec.shape.endsWith('-sa') && (
+        {spec.shape !== 'sphere' && spec.shape !== 'tetrahedron' && spec.shape !== 'box' && spec.shape !== 'cube' && !spec.shape.startsWith('prism3') && spec.shape !== 'frustum4' && !spec.shape.endsWith('-sa') && (
           <Check checked={spec.height} onChange={(height) => set({ height })}>
             {round ? 'Đường cao, bán kính đáy' : 'Đường cao (chân là tâm/hình chiếu)'}
           </Check>

@@ -177,7 +177,7 @@ const endMark = (g: Fn, x: number): StMark => {
   return !Number.isFinite(v) ? '||' : Math.abs(v) < 1e-9 ? '0' : ''
 }
 
-export function autoSignTable(expr: string): SignTableSpec {
+export function autoSignTable(expr: string, fname = 'f(x)'): SignTableSpec {
   const f = parseExpr(expr)
   const { lo, hi } = domainOf(f)
   const inside = (v: number) => v > lo + 1e-6 && v < hi - 1e-6
@@ -213,7 +213,7 @@ export function autoSignTable(expr: string): SignTableSpec {
   const rows: SignRow[] = parts.map((p, i) => row(prettyExpr(strip(p.src)), p.fn, per[i]))
   // hàng cuối: không xác định ở mọi nghiệm của nhân tử dưới mẫu
   const denZeros = parts.flatMap((p, i) => (p.den ? per[i].zeros : []))
-  rows.push(row('f(x)', f, { zeros: all.zeros.filter((z) => !near(denZeros, z)), poles: [...all.poles, ...denZeros] }))
+  rows.push(row(fname, f, { zeros: all.zeros.filter((z) => !near(denZeros, z)), poles: [...all.poles, ...denZeros] }))
   const end = (v: number, inf: string) => (Number.isFinite(v) ? niceNum(v) : inf)
   return { xs: [end(lo, '−∞'), ...pts.map(niceNum), end(hi, '+∞')], rows }
 }

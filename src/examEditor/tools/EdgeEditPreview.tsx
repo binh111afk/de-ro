@@ -78,7 +78,7 @@ export function EdgeEditPreview({ img, extras, onExtras }: { img: ToolImage; ext
   const handles = useMemo(() => pick.points.filter((p) => originSet.has(p.name)), [pick.points, originSet])
   const ptMap = useMemo(() => new Map(pick.points.map((p) => [p.name, p])), [pick.points])
   const xform2d = useMemo(() => (is3d ? null : fitCoordTransform(pick.points)), [is3d, pick.points])
-  const xform3d = useMemo(() => (is3d ? fitCoordTransform3d(pick.points) : null), [is3d, pick.points])
+  const xform3d = useMemo(() => (is3d ? fitCoordTransform3d(pick.points, pick.projection) : null), [is3d, pick.points, pick.projection])
 
   const k0 = box.current ? w / box.current.getBoundingClientRect().width : w / 500
 

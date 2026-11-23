@@ -16,6 +16,8 @@
 import { getSprite } from './figureSprites'
 import { resolveSpriteId, spriteDef } from './objects'
 import { OBJECTS } from './objectsCatalog'
+import { subscript } from './chem'
+import { richTextToSvg } from './table'
 
 const FAM = `font-family="'Times New Roman',serif"`
 /** vật rộng: đặt mặt (mép gần) lên đoạn thay vì đặt giữa */
@@ -31,7 +33,7 @@ export interface SceneSpec {
 }
 
 type P = [number, number]
-type ShapeKind = 'tròn' | 'elip' | 'hộp'
+type ShapeKind = 'tròn' | 'elip' | 'hộp' | 'thoi'
 type Cmd =
   | { t: 'seg'; a: string; b: string; dashed: boolean; arrow?: boolean }
   | { t: 'poly'; names: string[]; fill?: string }
@@ -47,7 +49,7 @@ type Cmd =
 
 const NUM = String.raw`(-?\d+(?:[.,]\d+)?)`
 const toNum = (s: string) => Number(s.replace(',', '.'))
-const FREE = /^(tròn|elip|hộp|cung|quạt|chữ|mũi\s+tên)(?=\s|$)/u
+const FREE = /^(tròn|elip|hộp|thoi|cung|quạt|chữ|mũi\s+tên)(?=\s|$)/u
 const QUOTED = /"([^"]*)"|“([^”]*)”/g
 const SIZE = new RegExp(`^${NUM}$`)
 const COLORS = new Map(Object.entries({
@@ -146,8 +148,9 @@ function parseFreeCmd(kind: string, rest: string, pts: Map<string, P>, line: num
     if (!Number.isFinite(n) || n <= 0) fail(`${name} phải là số lớn hơn 0`)
     return n
   }
-  const rx = kind === 'hộp' ? size('chiều rộng') / 2 : size('bán kính')
-  const ry = kind === 'elip' ? size('bán kính trục y') : kind === 'hộp' ? size('chiều cao') / 2 : rx
+  const box = kind === 'hộp' || kind === 'thoi'
+  const rx = box ? size('chiều rộng') / 2 : size('bán kính')
+  const ry = kind === 'elip' ? size('bán kính trục y') : box ? size('chiều cao') / 2 : rx
   let start = 0
   let sweep = 0
   if (arc) {
@@ -165,7 +168,7 @@ function parseFreeCmd(kind: string, rest: string, pts: Map<string, P>, line: num
     else sweep = wrapDegrees(Number.isFinite(delta) ? delta : wrapDegrees(to) - start) || 360
   }
   let text: string | undefined
-  let fill = arc ? 'none' : '#fff'
+  let fill = box ? '#fff' : 'none'
   let dashed = false
   let rounded = false
   for (let i = 0; i < args.length; i++) {
@@ -176,6 +179,8 @@ function parseFreeCmd(kind: string, rest: string, pts: Map<string, P>, line: num
     else if (opt === 'tô') fill = parseFill(args[++i], line)
     else fail(`tuỳ chọn ${kind} không hợp lệ "${opt}"`)
   }
+  // Nhãn tạo nút sơ đồ, hình tròn không nhãn dùng cho dựng hình.
+  if (fill === 'none' && text && !arc) fill = '#fff'
   if (arc) return { t: 'arc', kind, o, r: rx, start, sweep, text: text ?? '', dashed, fill }
   return { t: 'shape', kind: kind as ShapeKind, o, rx, ry, text: text ?? '', dashed, fill, rounded }
 }
@@ -183,7 +188,7 @@ function parseFreeCmd(kind: string, rest: string, pts: Map<string, P>, line: num
 export function parseScene(text: string): { pts: Map<string, P>; cmds: Cmd[] } {
   const pts = new Map<string, P>()
   const cmds: Cmd[] = []
-  const lines = text.split('\n')
+  const lines = text.normalize('NFC').split('\n')
   // lượt 1: điểm (để lệnh viết trước điểm vẫn đọc được)
   const pointRe = new RegExp(String.raw`([A-Z_][A-Za-z0-9_']*)\s*\(\s*${NUM}\s*;\s*${NUM}\s*\)`, 'g')
   const clean = (l: string) => l.trim().replace(/^[,;]+|[,;]+$/g, '').trim()
@@ -208,7 +213,7 @@ export function parseScene(text: string): { pts: Map<string, P>; cmds: Cmd[] } {
     const q = quoted ? (quoted[1] ?? quoted[2] ?? '') : ''
     const head = l.replace(/"[^"]*"|“[^”]*”/, '').trim()
     const m = head.match(/^(\S+(?:\s+(?:vuông|thước|đứt))?)\s+([A-Za-z0-9_'-]+)$/u)
-    const kw = (m?.[1] ?? '').toLowerCase()
+    const kw = (m?.[1] ?? '').toLowerCase().replace(/^nnhãn$/, 'nhãn')
     const two = (arg: string) => {
       const n = splitNames(arg, pts, line)
       if (n.length !== 2) throw new Error(`Dòng ${line}: cần đúng 2 điểm, vd. AB`)
@@ -238,9 +243,9 @@ export function parseScene(text: string): { pts: Map<string, P>; cmds: Cmd[] } {
     } else if (m && kw === 'nhãn') {
       const [a, b] = two(m[2])
       cmds.push({ t: 'label', a, b, text: q || '?' })
-    } else if (m && (kw === 'đứt' || kw === 'nét đứt')) {
+    } else if (m && (kw === 'đoạn' || kw === 'đứt' || kw === 'nét đứt')) {
       const [a, b] = two(m[2])
-      cmds.push({ t: 'seg', a, b, dashed: true })
+      cmds.push({ t: 'seg', a, b, dashed: kw !== 'đoạn' })
     } else if (m && (kw === 'đất' || kw === 'tường')) {
       const [a, b] = two(m[2])
       cmds.push({ t: 'ground', a, b, wall: kw === 'tường' })
@@ -270,6 +275,7 @@ const cornerRadius = (c: Shape) => c.rounded ? Math.min(c.rx, c.ry) * 0.35 : 0
 
 /** Khoảng cách từ tâm tới mép hình theo hướng (dx, dy). */
 function shapeEdge(c: Shape, dx: number, dy: number): number {
+  if (c.kind === 'thoi') return 1 / (Math.abs(dx) / c.rx + Math.abs(dy) / c.ry)
   if (c.kind !== 'hộp') return 1 / Math.hypot(dx / c.rx, dy / c.ry)
   const x = Math.abs(dx)
   const y = Math.abs(dy)
@@ -411,15 +417,38 @@ export function renderSceneSvg(spec: SceneSpec, desc: string): { svg: string; wi
       ys.push(y)
     }
   }
-  const labels = cmds.flatMap((c, i) => {
+  const getLabels = (k: number) => cmds.flatMap((c, i) => {
     if ((c.t !== 'shape' && c.t !== 'text' && c.t !== 'arc') || !c.text) return []
-    const size = c.t === 'text' && c.large ? 21 : 15
-    const lines = c.text.split('\\n')
+    let size = c.t === 'text' && c.large ? 21 : 15
+    let lines = c.text.split('\\n')
+    if (c.t === 'shape') {
+      const availableW = c.rx * k * (c.kind === 'hộp' ? 2 : c.kind === 'thoi' ? 1.1 : 1.6) - 12
+      const availableH = c.ry * k * (c.kind === 'hộp' ? 2 : c.kind === 'thoi' ? 1.1 : 1.4) - 5
+      for (; size >= 8; size--) {
+        const wrapped = lines.flatMap((line) => {
+          const rows: string[] = []
+          for (const word of line.split(/\s+/)) {
+            const last = rows.at(-1)
+            if (last && textWidthEm(last + ' ' + word) * size <= availableW) rows[rows.length - 1] += ' ' + word
+            else rows.push(word)
+          }
+          return rows
+        })
+        if (wrapped.length * size * 1.2 <= availableH && wrapped.every((line) => textWidthEm(line) * size <= availableW)) {
+          lines = wrapped
+          break
+        }
+      }
+      if (size < 8) {
+        size = Math.max(1, Math.min(8, availableH / (lines.length * 1.2),
+          availableW / Math.max(1, ...lines.map(textWidthEm))))
+      }
+    }
     const center = pts.get(c.o)!
     const mid = c.t === 'arc' ? c.start + c.sweep / 2 : 0
     const point = c.t === 'arc' ? arcPoint(center, c.r, mid) : center
     const [dx, dy] = c.t === 'arc' ? direction(mid) : [0, 0]
-    return [{ point, dx: 14 * dx, dy: -14 * dy, id: `free:${c.o}:${i}`, lines, size, step: size * 1.2, bold: c.t === 'text' && c.bold, insideShape: c.t !== 'text' }]
+    return [{ point, dx: 14 * dx, dy: -14 * dy, id: `free:${c.o}:${i}`, lines, size, step: size * 1.2, bold: c.t === 'text' && c.bold, solidLabel: c.t === 'shape' && c.fill !== 'none' }]
   })
   const minX = Math.min(...xs)
   const maxX = Math.max(...xs)
@@ -429,6 +458,7 @@ export function renderSceneSvg(spec: SceneSpec, desc: string): { svg: string; wi
   const spanX = maxX - minX || (freeLayout ? 0 : 1)
   const spanY = maxY - minY || (freeLayout ? 0 : 1)
   const k = spanX || spanY ? Math.min(300 / spanX, 230 / spanY) : 1
+  const labels = getLabels(k)
   const pad = 62
   const width = Math.round(spanX * k + pad * 2) - pad * 2
   const height = Math.round(spanY * k + pad * 2) - pad * 2
@@ -513,18 +543,22 @@ export function renderSceneSvg(spec: SceneSpec, desc: string): { svg: string; wi
       const d = c.names.map((n, i) => `${i ? 'L' : 'M'}${f1(at(n)[0])} ${f1(at(n)[1])}`).join('') + 'Z'
       b += `<path d="${d}" stroke="#111" fill="${c.fill ?? 'none'}" stroke-width="1.6" stroke-linejoin="round"/>`
     } else if (c.t === 'seg') {
-      const p = at(c.a)
+      let p = at(c.a)
       let q = at(c.b)
       const style = c.dashed ? 'stroke-width="1.2" stroke-dasharray="5 4"' : 'stroke-width="1.6"'
-      if (c.arrow) {
+      const from = shapes.filter((s) => s.o === c.a)
+      const to = shapes.filter((s) => s.o === c.b)
+      if (c.arrow || (from.length && to.length)) {
         const len = Math.hypot(q[0] - p[0], q[1] - p[1])
         if (!len) continue
         const dx = (q[0] - p[0]) / len
         const dy = (q[1] - p[1]) / len
         // Đầu mũi tên dừng ở mép khi B là tâm hình, để phần tô không che đầu nhọn.
-        const inset = Math.max(0, ...shapes.filter((s) => s.o === c.b).map((s) => shapeEdge(s, dx, dy) * k))
-        if (inset >= len) continue
-        q = [q[0] - dx * inset, q[1] - dy * inset]
+        const start = Math.max(0, ...from.map((s) => shapeEdge(s, dx, dy) * k))
+        const end = Math.max(0, ...to.map((s) => shapeEdge(s, dx, dy) * k))
+        if (start + end >= len) continue
+        p = [p[0] + dx * start, p[1] + dy * start]
+        q = [q[0] - dx * end, q[1] - dy * end]
       }
       b += line(p, q, style + (c.arrow ? ' marker-end="url(#scarr)"' : ''))
     } else if (c.t === 'right') {
@@ -610,6 +644,7 @@ export function renderSceneSvg(spec: SceneSpec, desc: string): { svg: string; wi
     const style = `fill="${c.fill}" stroke="#111" stroke-width="1.2"${c.dashed ? ' stroke-dasharray="5 4"' : ''}`
     if (c.kind === 'tròn') b += `<circle cx="${f1(x)}" cy="${f1(y)}" r="${rx}" ${style}/>`
     else if (c.kind === 'elip') b += `<ellipse cx="${f1(x)}" cy="${f1(y)}" rx="${rx}" ry="${ry}" ${style}/>`
+    else if (c.kind === 'thoi') b += `<path d="M${f1(x - rx)} ${f1(y)}L${f1(x)} ${f1(y - ry)}L${f1(x + rx)} ${f1(y)}L${f1(x)} ${f1(y + ry)}Z" ${style}/>`
     else b += `<rect x="${f1(x - rx)}" y="${f1(y - ry)}" width="${2 * rx}" height="${2 * ry}" rx="${cornerRadius(c) * k}" ${style}/>`
   }
   for (const c of labels) {
@@ -617,9 +652,10 @@ export function renderSceneSvg(spec: SceneSpec, desc: string): { svg: string; wi
     const x = px + c.dx
     const y = py + c.dy
     const start = y + c.size * 0.32 - (c.lines.length - 1) * c.step / 2
-    const body = c.lines.length === 1 ? esc(c.lines[0]) : c.lines.map((s, i) =>
-      `<tspan x="${f1(x)}" y="${f1(start + i * c.step)}">${esc(s)}</tspan>`).join('')
-    const style = c.insideShape ? ' stroke="none"' : c.bold ? ' font-weight="bold"' : ''
+    const textLine = (s: string) => richTextToSvg(/^(?:[A-Z][a-z]?\d*)+$/.test(s) ? subscript(s) : s)
+    const body = c.lines.length === 1 ? textLine(c.lines[0]) : c.lines.map((s, i) =>
+      `<tspan x="${f1(x)}" y="${f1(start + i * c.step)}">${textLine(s)}</tspan>`).join('')
+    const style = c.solidLabel ? ' stroke="none"' : c.bold ? ' font-weight="bold"' : ''
     b += `<text x="${f1(x)}" y="${f1(start)}" ${FAM} font-size="${c.size}"${style} data-lbl="${c.id}" text-anchor="middle">${body}</text>`
   }
 
@@ -782,6 +818,7 @@ export const SCENE_HELP = [
       { code: 'tròn O 0.6 "Nhãn"', what: 'Vòng tròn tâm O, bán kính 0.6; thêm đứt, tô <màu>' },
       { code: 'elip O 1 0.6 đứt', what: 'Elip tâm O, hai bán kính; thêm nhãn, tô <màu>' },
       { code: 'hộp O 2 1 "Nhãn" bo tô xanh', what: 'Hộp tâm O, rộng 2, cao 1; thêm bo, đứt, tô <màu> (tên hoặc #rrggbb)' },
+      { code: 'thoi O 3 1.5 "i ≤ n?"', what: 'Hình thoi tâm O, rộng 3, cao 1.5' },
       { code: 'cung O 4 0 60 "Nhãn"', what: 'Cung tâm O, bán kính 4, từ 0° đến 60° ngược chiều kim đồng hồ; thêm đứt, tô <màu>' },
       { code: 'quạt O 4 0 60 tô vàng', what: 'Hình quạt tâm O với hai bán kính; thêm đứt, tô <màu>' },
       { code: 'ABC tô đỏ', what: 'Đa giác tô màu (tên hoặc #rrggbb)' },

@@ -44,8 +44,10 @@ export type Geo3dShape =
   | 'pyramid4'
   | 'pyramid4-sa'
   | 'pyramid4-regular'
+  | 'frustum4'
   | 'tetrahedron'
   | 'prism3'
+  | 'prism3-oblique'
   | 'box'
   | 'cube'
   | 'cone'
@@ -91,6 +93,7 @@ export interface GeoPick {
   top?: string[]
   /** 3D: chân đường cao tự động tính theo đỉnh (vd chóp S.ABC có H là hình chiếu của S) */
   footOf?: { foot: string; apex: string }
+  projection?: { c: number; s: number }
 }
 let lastPick: GeoPick = { points: [], segs: [], tris: [] }
 const isHidden = (n: string | undefined) => !!n && n.startsWith('#')
@@ -127,8 +130,10 @@ export const GEO3D_SHAPES: Array<{ id: Geo3dShape; label: string; names: string[
   { id: 'pyramid4', label: 'Chóp S.ABCD đáy hình bình hành', names: ['S', 'A', 'B', 'C', 'D', 'O'] },
   { id: 'pyramid4-sa', label: 'Chóp S.ABCD, SA ⊥ (ABCD)', names: ['S', 'A', 'B', 'C', 'D', 'O'] },
   { id: 'pyramid4-regular', label: 'Chóp tứ giác đều S.ABCD', names: ['S', 'A', 'B', 'C', 'D', 'O'] },
+  { id: 'frustum4', label: 'Chóp cụt tứ giác đều', names: ['A', 'B', 'C', 'D', "A'", "B'", "C'", "D'"] },
   { id: 'tetrahedron', label: 'Tứ diện ABCD', names: ['A', 'B', 'C', 'D'] },
   { id: 'prism3', label: "Lăng trụ đứng ABC.A'B'C'", names: ['A', 'B', 'C', "A'", "B'", "C'"] },
+  { id: 'prism3-oblique', label: "Lăng trụ xiên ABC.A'B'C'", names: ['A', 'B', 'C', "A'", "B'", "C'"] },
   { id: 'box', label: "Hình hộp chữ nhật ABCD.A'B'C'D'", names: ['A', 'B', 'C', 'D', "A'", "B'", "C'", "D'"] },
   { id: 'cube', label: "Hình lập phương ABCD.A'B'C'D'", names: ['A', 'B', 'C', 'D', "A'", "B'", "C'", "D'"] },
   { id: 'cone', label: 'Hình nón', names: ['S', 'O', 'A'] },
@@ -336,15 +341,17 @@ export function renderGeo2dSvg(spec: Geo2dSpec, desc: string): GeoImage {
  * mà một đỉnh khác của tam giác đó vuông, đổi toạ độ hai đỉnh cho nhau để góc vuông về đúng đỉnh đề nói.
  */
 export function fixRightAngleCoords(spec: Geo2dSpec): Geo2dSpec {
-  if (!spec.extras) return spec
+  if (!spec.extras || spec.shape !== 'right-triangle') return spec
   const coords = extractCoords(spec.extras)
   if (coords.size < 3) return spec
+  const names = spec.names.slice(0, 3)
+  if (coords.size !== 3 || names.length !== 3 || names.some((n) => !coords.has(n))) return spec
   const claims: string[][] = []
   if (spec.shape === 'right-triangle' && spec.names.length >= 3) claims.push(spec.names.slice(0, 3))
   for (const line of spec.extras.split('\n')) {
     const m = line.trim().match(/^(?:góc vuông|vuông|⊥)\s+(.+)$/iu)
     const ns = m?.[1].match(/[A-Z][0-9]*'?/g)
-    if (ns?.length === 3) claims.push(ns)
+    if (ns?.length === 3 && m?.[1] !== ns.join('')) claims.push(ns)
   }
   const isRight = (at: string, u: string, v: string) => {
     const [o, p, q] = [coords.get(at)!, coords.get(u)!, coords.get(v)!]
@@ -377,7 +384,7 @@ const TEMPLATE_SCALE = 50
 
 function renderGeo2d(spec: Geo2dSpec, desc: string) {
   if (spec.shape === 'free') {
-    const c = construct(spec.extras ?? '', new Map())
+    const c = construct(spec.extras ?? '', new Map(), { freePolygons: true })
     if (!c.points.length) {
       const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 240" width="320" height="240">${desc}<rect x="0" y="0" width="320" height="240" fill="#fff"/></svg>`
       return { svg, width: 320, height: 240 }
@@ -584,6 +591,18 @@ function renderExtras2d(
     const pStart = e.mode === 'both' ? sub(pa, mul(dir, extDist)) : pa
     const pEnd = add(pb, mul(dir, extDist))
     parts.push(seg(pStart, pEnd, e.dashed === true, 1.4))
+    if (e.mode === 'end') {
+      const back = sub(pEnd, mul(dir, 9))
+      const n: P2 = [-dir[1], dir[0]]
+      const l = add(back, mul(n, 3.5))
+      const r = sub(back, mul(n, 3.5))
+      parts.push(`<path d="M${f1(pEnd[0])} ${f1(pEnd[1])}L${f1(l[0])} ${f1(l[1])}L${f1(r[0])} ${f1(r[1])}Z" fill="${STROKE}"/>`)
+      if (e.name) {
+        const [x, y] = add(pEnd, mul(dir, 13))
+        all.push([x - e.name.length * 5, y - 8], [x + e.name.length * 5, y + 8])
+        parts.push(`<text x="${f1(x)}" y="${f1(y + 5)}" ${LABEL_FONT} text-anchor="middle" font-style="italic" data-lbl="ray:${esc(e.a + e.b)}">${esc(e.name)}</text>`)
+      }
+    }
     all.push(pStart, pEnd)
     freeSegsPx.push([pStart, pEnd])
   }
@@ -623,6 +642,7 @@ function renderExtras2d(
     const ra = at(r.at)
     const ru = at(r.u)
     const rv = at(r.v)
+    if (!isNearRight(ra, ru, rv)) continue
     parts.push(rightMark(ra, ru, rv))
     const du = mul(unit(sub(ru, ra)), 11)
     const dv = mul(unit(sub(rv, ra)), 11)
@@ -714,16 +734,31 @@ function renderExtras2d(
  * Hình không gian
  * ------------------------------------------------------------------ */
 
-/** phép chiếu song song: trục sâu y xiên 45° lên phải, co 1/2; z hướng lên */
+/** phép chiếu song song: trục sâu y xiên 45° lên phải, rút ngắn; z hướng lên */
 const SCALE = 120
-const K = 0.5
+const K = 0.62
 const ANG = Math.PI / 4
-function proj(p: P3): P2 {
-  const [x, y, z] = p
-  return [(x + K * y * Math.cos(ANG)) * SCALE, -(z + K * y * Math.sin(ANG)) * SCALE]
+const DEPTH_X = K * Math.cos(ANG)
+const DEPTH_Y = K * Math.sin(ANG)
+function proj([x, y, z]: P3, c: number): P2 {
+  return [(x + c * y) * SCALE, -(z + DEPTH_Y * y) * SCALE]
 }
-/** phương chiếu (mắt nhìn ngược chiều này): mặt có pháp tuyến n hướng về mắt khi n·D < 0 */
-const D: P3 = [-K * Math.cos(ANG), 1, -K * Math.sin(ANG)]
+
+/** Đổi phía nhìn nếu các cạnh xuất phát từ đỉnh chóp gần như chồng lên nhau. */
+function pyramidDepthX(apex: P3, base: P3[]): number {
+  const separation = (c: number) => {
+    const rays = base.map((p) => sub(proj(p, c), proj(apex, c)))
+    let gap = Infinity
+    for (let i = 0; i < rays.length; i++) for (const b of rays.slice(i + 1)) {
+      const a = rays[i]
+      if (a[0] * b[0] + a[1] * b[1] <= 0) continue
+      gap = Math.min(gap, Math.abs(a[0] * b[1] - a[1] * b[0]) / (Math.max(len(a), len(b)) || 1))
+    }
+    return gap
+  }
+  const front = separation(DEPTH_X)
+  return front < 14 && separation(-DEPTH_X) > front + 8 ? -DEPTH_X : DEPTH_X
+}
 
 const sub3 = (a: P3, b: P3): P3 => [a[0] - b[0], a[1] - b[1], a[2] - b[2]]
 const cross = (a: P3, b: P3): P3 => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]]
@@ -758,7 +793,7 @@ function solid(spec: Geo3dSpec): Solid {
       let C: P3 = [1.9, 0.9, 0]
       if (spec.shape === 'pyramid3-regular') {
         const r = 1
-        const at = (deg: number): P3 => [1 + r * Math.cos((deg * Math.PI) / 180), 0.9 + r * Math.sin((deg * Math.PI) / 180) * 1.2, 0]
+        const at = (deg: number): P3 => [1 + r * Math.cos((deg * Math.PI) / 180), 0.9 + r * Math.sin((deg * Math.PI) / 180), 0]
         A = at(180)
         B = at(-60)
         C = at(60)
@@ -800,25 +835,29 @@ function solid(spec: Geo3dSpec): Solid {
       const Dt: P3 = [0.95, 0.55, h]
       return { pts: [A, B, C, Dt], faces: [[0, 1, 2], [3, 0, 1], [3, 1, 2], [3, 2, 0]], extra: [], right: [] }
     }
-    case 'prism3': {
+    case 'prism3':
+    case 'prism3-oblique': {
       const A: P3 = [0, 0.9, 0]
       const B: P3 = [0.75, 0, 0]
       const C: P3 = [1.9, 0.9, 0]
-      const up = (p: P3): P3 => [p[0], p[1], h]
+      const skew = spec.shape === 'prism3-oblique' ? 0.66 : 0
+      const up = (p: P3): P3 => [p[0] + skew, p[1], h]
       return {
         pts: [A, B, C, up(A), up(B), up(C)],
         faces: [[0, 1, 2], [3, 4, 5], [0, 1, 4, 3], [1, 2, 5, 4], [2, 0, 3, 5]],
         extra: [],
-        right: spec.marks ? [[0, 3, 1]] : [],
+        right: spec.shape === 'prism3' && spec.marks ? [[0, 3, 1]] : [],
       }
     }
+    case 'frustum4':
     case 'box':
     case 'cube': {
       const w = spec.shape === 'cube' ? 1.4 : 1.9
-      const dep = spec.shape === 'cube' ? 1.4 : 1.3
+      const dep = spec.shape === 'cube' ? 1.4 : spec.shape === 'frustum4' ? w : 1.3
       const hh = spec.shape === 'cube' ? 1.4 : 1.1 * spec.tall
       const base: P3[] = [[0, 0, 0], [w, 0, 0], [w, dep, 0], [0, dep, 0]]
-      const top = base.map((p) => [p[0], p[1], hh] as P3)
+      const ratio = spec.shape === 'frustum4' ? 0.55 : 1
+      const top = base.map((p) => [p[0] * ratio + w * (1 - ratio) / 2, p[1] * ratio + dep * (1 - ratio) / 2, hh] as P3)
       const extra: Array<[number, number]> = spec.diagonals ? [[0, 2], [1, 3]] : []
       return {
         pts: [...base, ...top],
@@ -901,6 +940,10 @@ function renderSolid(spec: Geo3dSpec, desc: string) {
   })
   // điểm phụ của mẫu (chân đường cao H, tâm đáy O) tính lại theo các đỉnh đã ghi đè nếu không bị đặt toạ độ riêng
   if (overridden) {
+    if (spec.shape.endsWith('-sa') && overriddenIdx.has(1) && !overriddenIdx.has(0)) {
+      const [x, y, z] = s.pts[1]
+      s.pts[0] = [x, y, z + 1.5 * spec.tall]
+    }
     if (spec.shape === 'pyramid3' && !overriddenIdx.has(4)) {
       s.pts[4] = footPlane3(s.pts[0], s.pts[1], s.pts[2], s.pts[3]) ?? [s.pts[0][0], s.pts[0][1], s.pts[1][2]]
     } else if (spec.shape === 'pyramid3-regular' && !overriddenIdx.has(4)) {
@@ -917,6 +960,17 @@ function renderSolid(spec: Geo3dSpec, desc: string) {
           ? footPlane3(s.pts[0], a, b, c) ?? center
           : center
       }
+    }
+  }
+  // Chân đường cao trùng đỉnh đáy thì dùng tên đỉnh đó, bỏ điểm phụ trùng vị trí.
+  if (overridden && spec.shape.startsWith('pyramid') && spec.height) {
+    const count = spec.shape.startsWith('pyramid4') ? 4 : 3
+    const foot = footPlane3(s.pts[0], s.pts[1], s.pts[2], s.pts[3])
+    const vertex = foot && s.pts.slice(1, count + 1).findIndex((p) => Math.hypot(...sub3(p, foot)) < 1e-8)
+    if (vertex !== null && vertex >= 0) {
+      const index = vertex + 1
+      s.extra = s.extra.filter(([a, b]) => a !== 0 || b !== count + 1)
+      s.right = [[index, 0, 1 + (vertex + 1) % count]]
     }
   }
   // dựng thêm: điểm mới nối vào cuối danh sách đỉnh, đoạn mới thành đoạn phụ
@@ -946,12 +1000,17 @@ function renderSolid(spec: Geo3dSpec, desc: string) {
     fills = c.fills
   }
   const center = avg3(s.pts.slice(0, Math.max(3, s.faces.flat().reduce((m, i) => Math.max(m, i), 0) + 1)))
+  const depthX = spec.shape.startsWith('pyramid')
+    ? pyramidDepthX(s.pts[0], s.pts.slice(1, spec.shape.startsWith('pyramid4') ? 5 : 4))
+    : DEPTH_X
+  const project = (p: P3) => proj(p, depthX)
+  const view: P3 = [-depthX, 1, -DEPTH_Y]
   // pháp tuyến hướng ra ngoài của từng mặt + mặt đó có nhìn thấy không
   const visible = s.faces.map((f) => {
     const [a, b, c] = f.map((i) => s.pts[i])
     let n = cross(sub3(b, a), sub3(c, a))
     if (dot3(n, sub3(a, center)) < 0) n = [-n[0], -n[1], -n[2]]
-    return dot3(n, D) < 0
+    return dot3(n, view) < 0
   })
   // cạnh: nét liền nếu thuộc ít nhất một mặt nhìn thấy
   const edges = new Map<string, { a: number; b: number; vis: boolean }>()
@@ -964,7 +1023,7 @@ function renderSolid(spec: Geo3dSpec, desc: string) {
       edges.set(key, e)
     })
   })
-  const P = s.pts.map(proj)
+  const P = s.pts.map(project)
   {
     const pts = new Map<string, P2>()
     s.pts.forEach((_, i) => names[i] && !pts.has(names[i]) && pts.set(names[i], P[i]))
@@ -978,7 +1037,7 @@ function renderSolid(spec: Geo3dSpec, desc: string) {
     if (spec.shape.startsWith('pyramid3')) base = [names[1], names[2], names[3]].filter(Boolean)
     else if (spec.shape.startsWith('pyramid4')) base = [names[1], names[2], names[3], names[4]].filter(Boolean)
     else if (spec.shape === 'tetrahedron') base = [names[0], names[1], names[2]].filter(Boolean)
-    else if (spec.shape === 'prism3') {
+    else if (spec.shape.startsWith('prism3')) {
       base = [names[0], names[1], names[2]].filter(Boolean)
       top = [names[3], names[4], names[5]].filter(Boolean)
     } else if (spec.shape === 'box' || spec.shape === 'cube') {
@@ -996,6 +1055,7 @@ function renderSolid(spec: Geo3dSpec, desc: string) {
       base,
       top,
       footOf,
+      projection: { c: depthX, s: DEPTH_Y },
     }
   }
   const parts: string[] = []
@@ -1006,7 +1066,7 @@ function renderSolid(spec: Geo3dSpec, desc: string) {
   }
   if (spec.circumsphere) {
     // đường viền cầu bao trọn các đỉnh (phép chiếu xiên không giữ tròn → lấy bán kính theo hình chiếu)
-    const c = proj(avg3(s.pts.slice(0, nBase)))
+    const c = project(avg3(s.pts.slice(0, nBase)))
     const r = Math.max(...P.slice(0, nBase).map((p) => len(sub(p, c)))) + 4
     parts.push(`<circle cx="${f1(c[0])}" cy="${f1(c[1])}" r="${f1(r)}" fill="none" stroke="${STROKE}" stroke-width="1.4"/>`, ellipse(c, r, r * 0.3, true))
     P.push([c[0] - r, c[1] - r], [c[0] + r, c[1] + r])
@@ -1017,7 +1077,7 @@ function renderSolid(spec: Geo3dSpec, desc: string) {
     parts.push(seg(P[a], P[b], forced.get(`${a}-${b}`) ?? !onVisible, 1.3))
   }
   s.right.forEach(([at, u, v], k) => {
-    if (k >= nRight || (spec.marks && (!overridden || isPerp3(s.pts[at], s.pts[u], s.pts[v])))) {
+    if ((k >= nRight || spec.marks) && isPerp3(s.pts[at], s.pts[u], s.pts[v])) {
       parts.push(rightMark(P[at], P[u], P[v], 9))
     }
   })

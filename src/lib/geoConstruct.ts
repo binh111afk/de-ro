@@ -18,7 +18,7 @@ export interface Construction {
   /** đoạn nối: tên hai đầu + ép nét (undefined = tự tính) */
   segs: Array<{ a: string; b: string; dashed?: boolean }>
   /** đoạn kéo dài (hình phẳng): 'both' = đường BC kéo dài, 'end' = tia BC */
-  extends: Array<{ a: string; b: string; mode: 'both' | 'end'; dashed?: boolean }>
+  extends: Array<{ a: string; b: string; mode: 'both' | 'end'; dashed?: boolean; name?: string }>
   /** vectơ (hình phẳng: mũi tên ở đầu cuối; hình không gian: đoạn thường); `name` = tên riêng như "u" */
   vecs: Array<{ a: string; b: string; name?: string }>
   /** nhãn ghi trên cạnh: nhãn AB "4 km" */
@@ -76,7 +76,7 @@ function parseCoordTuple(inner: string): number[] | null {
 const COORD_HEAD = /^[A-Z][0-9]*'*\s*(?:=\s*)?\(/
 const COORD_ONE = /([A-Z][0-9]*'*)\s*(?:=\s*)?\(([^()]*)\)/g
 const cleanConstructLine = (raw: string) =>
-  raw.replace(/[′’]/g, "'").replace(/\s*\/\/\s*kéo\s*$/i, '').replace(/\s+/g, ' ').trim()
+  raw.normalize('NFC').replace(/[′’]/g, "'").replace(/\s*\/\/\s*kéo\s*$/i, '').replace(/\s+/g, ' ').trim()
 
 function parseCoordLine(
   s: string,
@@ -193,6 +193,7 @@ function perpDir(p: Vec | null, B: Vec, C: Vec): Vec | null {
 export interface ConstructOptions {
   /** tam giác mặc định cho "trung tuyến AM", "đường cao AH"… khi không ghi "trong ABC" */
   triangle?: string[]
+  freePolygons?: boolean
 }
 
 /**
@@ -505,7 +506,9 @@ export function construct(text: string, known: Map<string, Vec>, opts: Construct
     const extRay = !extLine ? body.match(/^tia\s+(.+?)(?:\s+(?:kéo\s+dài|keo\s+dai))?(?:\s+(đứt|dut|liền|lien))?$/i) : null
     if (extLine || extRay) {
       if (dim !== 2) return err('kéo dài đường/tia chỉ dùng cho hình phẳng')
-      const arg = (extLine ? extLine[1] ?? extLine[2] ?? extLine[3] : extRay![1]).trim()
+      const rawArg = (extLine ? extLine[1] ?? extLine[2] ?? extLine[3] : extRay![1]).trim()
+      const rayName = extRay ? /[“"]([^"”]+)["”]$/.exec(rawArg) : null
+      const arg = rayName ? rawArg.slice(0, rayName.index).trim() : rawArg
       const styleWord = (extLine ? extLine[4] : extRay![2])?.toLowerCase()
       const dashed = styleWord === 'đứt' || styleWord === 'dut'
       const ns = names(arg)
@@ -515,7 +518,7 @@ export function construct(text: string, known: Map<string, Vec>, opts: Construct
       const ps = getAll(ns)
       if (!ps) return
       if (vlen(vsub(ps[1], ps[0])) < 1e-9) return err(`hai điểm ${ns[0]} và ${ns[1]} trùng nhau`)
-      out.extends.push({ a: ns[0], b: ns[1], mode: extRay ? 'end' : 'both', dashed })
+      out.extends.push({ a: ns[0], b: ns[1], mode: extRay ? 'end' : 'both', dashed, name: rayName?.[1] })
       return
     }
 
@@ -586,6 +589,8 @@ export function construct(text: string, known: Map<string, Vec>, opts: Construct
         return err('không hiểu cách dựng — bấm dấu ? cạnh "Dựng thêm" để xem các lệnh')
       }
       if (!p) return
+      const original = known.get(name)
+      if (original && vlen(vsub(p, original)) < 1e-8) return
       if (!fresh(name)) return
       addPoint(name, p)
       return
@@ -595,8 +600,11 @@ export function construct(text: string, known: Map<string, Vec>, opts: Construct
     if (/^(vuông|⊥|góc vuông)/.test(lower)) {
       const ns = names(s)
       if (ns.length !== 3) return err('ví dụ: vuông H S A (góc vuông tại H giữa HS, HA)')
-      if (!getAll(ns)) return
-      out.rights.push({ at: ns[0], u: ns[1], v: ns[2] })
+      const ps = getAll(ns)
+      if (!ps) return
+      const compact = /^(?:góc vuông|vuông|⊥)\s+(\S+)$/iu.exec(s)?.[1] === ns.join('')
+      const at = compact ? 1 : 0
+      out.rights.push({ at: ns[at], u: ns[1 - at], v: ns[2] })
       return
     }
 
@@ -634,8 +642,11 @@ export function construct(text: string, known: Map<string, Vec>, opts: Construct
       const ns = names(g)
       if (ns.join('') !== g || ns.length < 2) return err(`không hiểu "${g}" — bấm dấu ? cạnh "Dựng thêm" để xem các lệnh`)
       if (!getAll(ns)) return
-      // "SAB" = các đoạn SA, AB (đường gấp khúc)
       for (let i = 0; i + 1 < ns.length; i++) seg(ns[i], ns[i + 1], dashed)
+      // Tên đa giác đứng riêng trong hình tự do. Dùng "nối ABC" cho đường gấp khúc.
+      if (opts.freePolygons && s === g && ns.length >= 3 && ns[0] !== ns.at(-1)) {
+        seg(ns.at(-1)!, ns[0]!, dashed)
+      }
     }
   })
   return out

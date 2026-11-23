@@ -228,7 +228,7 @@ function layout(n: Node, values: boolean, bare = false): Box {
           line(cx + half, wy, x + w, wy) +
           symbol(n.kind, cx, wy, n.value) +
           // ampe kế / vôn kế tên trùng chữ trong vòng tròn thì khỏi ghi lại
-          (bare || n.name === n.kind ? '' : nameSvg(n.name, cx, wy - top - 5)) +
+          (bare || ((n.kind === 'A' || n.kind === 'V') && n.name === n.kind) ? '' : nameSvg(n.name, cx, wy - top - 5)) +
           (val ? `<text x="${cx}" y="${wy + 30}" ${FAM} font-size="13" text-anchor="middle">${esc(val)}</text>` : '')
         )
       },
@@ -363,7 +363,23 @@ export function renderCircuitSvg(spec: CircuitSpec, desc: string): { svg: string
     } else parts.push(t.replace(/^mạch\s*:\s*/i, ''))
   }
   if (!parts.length) throw new Error('Chưa có mạch — gõ vd. R1 - (R2 // R3)')
-  const root = parseExpr(parts.join(' - '))
+  const meterLinks = parts.flatMap((part, i) => {
+    const m = /^(V[\w']*)\s*\/\/\s*(R[\w']*)$/.exec(part)
+    return m && i > 0 ? [{ i, meter: m[1], target: m[2] }] : []
+  })
+  const linked = new Set<number>()
+  for (const link of meterLinks) {
+    const target = new RegExp(String.raw`(?<![\w'])${link.target}(?![\w'])\s*(?:=\s*[^;()\n]*?)?(?=\s*(?://|[)–-]|$))`, 'g')
+    const matches = parts.slice(0, link.i).flatMap((part, i) =>
+      [...part.matchAll(target)].map((match) => ({ i, match })))
+    if (!matches.length) continue
+    if (matches.length > 1) throw new Error(`Có nhiều linh kiện tên ${link.target}, hãy ghi rõ nhánh mắc vôn kế.`)
+    const { i, match } = matches[0]
+    const start = match.index!
+    parts[i] = parts[i].slice(0, start) + `(${match[0].trim()} // ${link.meter})` + parts[i].slice(start + match[0].length)
+    linked.add(link.i)
+  }
+  const root = parseExpr(parts.filter((_, i) => !linked.has(i)).join(' - '))
   const top = layout(root, spec.values)
 
   const m = 24

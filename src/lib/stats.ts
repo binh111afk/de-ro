@@ -8,7 +8,7 @@
  * Nhóm số liệu ghép nhóm ghi dạng [40; 50) [50; 60) … (tự nhận khoảng).
  */
 
-export type ChartKind = 'bar' | 'line' | 'pie' | 'hist' | 'table'
+export type ChartKind = 'bar' | 'line' | 'pie' | 'hist' | 'table' | 'pyramid'
 
 export interface StatsSpec {
   chart: ChartKind
@@ -44,6 +44,11 @@ export function parseStats(text: string): Parsed {
     .map((l) => l.trim())
     .filter(Boolean)
   if (!lines.length) throw new Error('Chưa có dữ liệu')
+  // Một số bảng có tên cột đặt ở đầu dòng nhãn, vd. "Lớp: 6A; 6B; 6C".
+  if (lines.length > 1 && /^[^:]+:\s*.+[;|]/.test(lines[0]) &&
+      /[\p{L}]/u.test(lines[0].slice(lines[0].indexOf(':') + 1))) {
+    lines[0] = lines[0].slice(lines[0].indexOf(':') + 1).trim()
+  }
   let cats: string[] = []
   const series: Parsed['series'] = []
   for (const l of lines) {
@@ -154,22 +159,25 @@ export function renderStatsSvg(spec: StatsSpec, desc: string): { svg: string; wi
     // Mỗi dãy có thể mô tả một tổng thể riêng. Tự cộng sẽ đổi ý nghĩa tỉ lệ.
     if (series.length !== 1) throw new Error('Biểu đồ tròn cần đúng một dãy số liệu.')
     const vals = series[0].vals
-    const sum = vals.reduce((a, b) => a + b, 0) || 1
+    const sum = vals.reduce((a, b) => a + b, 0)
+    if (vals.some((v) => v < 0) || !(sum > 0)) throw new Error('Biểu đồ tròn cần số liệu không âm và tổng lớn hơn 0.')
     const R = 110
-    const cx = 150
+    const cx = R + (spec.values ? 72 : 26)
+    const legendX = cx + R + (spec.values ? 80 : 36)
     const cy = top + R + 26
     const shades = ['#4d4d4d', 'url(#sthatch)', '#c8c8c8', 'url(#stdots)', '#ffffff', '#888888', '#e8e8e8']
     let b = ''
     let a0 = -Math.PI / 2
     const lab: string[] = []
     vals.forEach((v, i) => {
+      if (v === 0) return
       const a1 = a0 + (v / sum) * 2 * Math.PI
       const p0 = [cx + R * Math.cos(a0), cy + R * Math.sin(a0)]
       const p1 = [cx + R * Math.cos(a1), cy + R * Math.sin(a1)]
       const large = a1 - a0 > Math.PI ? 1 : 0
       b +=
-        vals.length === 1
-          ? `<circle cx="${cx}" cy="${cy}" r="${R}" fill="${shades[0]}" stroke="#222" stroke-width="1.2"/>`
+        v === sum
+          ? `<circle cx="${cx}" cy="${cy}" r="${R}" fill="${shades[i % shades.length]}" stroke="#222" stroke-width="1.2"/>`
           : `<path d="M${cx} ${cy}L${f1(p0[0])} ${f1(p0[1])}A${R} ${R} 0 ${large} 1 ${f1(p1[0])} ${f1(p1[1])}Z" fill="${shades[i % shades.length]}" stroke="#222" stroke-width="1.2"/>`
       if (spec.values) {
         const am = (a0 + a1) / 2
@@ -184,17 +192,37 @@ export function renderStatsSvg(spec: StatsSpec, desc: string): { svg: string; wi
     let leg = ''
     cats.forEach((c, i) => {
       const y = top + 20 + i * 24
-      leg += `<rect x="310" y="${y - 11}" width="16" height="12" fill="${shades[i % shades.length]}" stroke="#222" stroke-width="1"/><text x="332" y="${y}" ${FONT}>${esc(c)}</text>`
+      leg += `<rect x="${legendX}" y="${y - 11}" width="16" height="12" fill="${shades[i % shades.length]}" stroke="#222" stroke-width="1"/><text x="${legendX + 22}" y="${y}" ${FONT}>${esc(c)}</text>`
     })
-    const W = Math.max(440, 340 + Math.max(...cats.map((c) => [...c].length * 7.5)))
+    const W = Math.max(440, spec.title.length * 9 + 20, legendX + 32 + Math.max(...cats.map((c) => [...c].length * 7.5)))
     const H = Math.max(cy + R + 30, top + 24 * cats.length + 20)
-    const t = spec.title ? `<text x="${cx}" y="22" ${FAM} font-size="16" font-weight="bold" text-anchor="middle">${esc(spec.title)}</text>` : ''
-    return wrap(W, H, desc, t + b + lab.join('') + leg)
+    return wrap(W, H, desc, title(W) + b + lab.join('') + leg)
+  }
+
+  if (spec.chart === 'pyramid') {
+    if (series.length !== 1 || series[0].vals.some((v) => v < 0)) throw new Error('Tháp cần một dãy số liệu không âm.')
+    const W = Math.max(360, (spec.title.length + 4) * 9, spec.yLabel.length * 8 + 24)
+    const cap = spec.yLabel ? 22 : 0
+    const row = 34
+    const vals = series[0].vals
+    const H = top + cap + row * cats.length + 16
+    let b = title(W)
+    if (spec.yLabel) b += `<text x="${W / 2}" y="${top + 12}" ${FONT} text-anchor="middle">${esc(spec.yLabel)}</text>`
+    cats.forEach((label, i) => {
+      const text = label + (spec.values ? ' · ' + fmt(vals[i]) : '')
+      const w = Math.max(W * (0.86 - 0.45 * (i / Math.max(1, cats.length - 1))), text.length * 8 + 20)
+      const y = top + cap + row * (cats.length - i - 1)
+      b += `<rect x="${(W - w) / 2}" y="${y}" width="${w}" height="${row - 3}" fill="#f1f1f1" stroke="#222"/><text x="${W / 2}" y="${y + 20}" ${FONT} text-anchor="middle">${esc(text)}</text>`
+    })
+    return wrap(W, H, desc, b)
   }
 
   /* ---------- cột / đường / ghép nhóm: hệ trục ---------- */
   const maxV = Math.max(...series.flatMap((s) => s.vals), 0)
-  const step = niceStep(maxV)
+  const minV = Math.min(...series.flatMap((s) => s.vals), 0)
+  if (spec.chart === 'hist' && minV < 0) throw new Error('Tần số phải không âm.')
+  const step = niceStep(maxV - minV)
+  const yBottom = minV < 0 ? Math.floor(minV / step) * step : 0
   // chừa chỗ trên đầu cột cao nhất cho số liệu
   const yTop = Math.ceil((maxV * 1.08) / step) * step || step
   const left = 52
@@ -205,19 +233,21 @@ export function renderStatsSvg(spec: StatsSpec, desc: string): { svg: string; wi
   // biểu đồ đoạn thẳng có trục ngang là số tăng dần, bắt đầu từ 0 (thời gian 0, 1, 2, 3 h…):
   // vẽ như đồ thị Lý — mốc 0 nằm ngay gốc, hai trục chung một số 0, điểm đặt theo đúng giá trị.
   const nums = cats.map((c) => Number(c.trim().replace(',', '.')))
-  const origin =
+  const numeric =
     spec.chart === 'line' &&
     nums.length > 1 &&
-    nums.every((v, i) => Number.isFinite(v) && cats[i].trim() !== '' && (i === 0 || v > nums[i - 1])) &&
-    nums[0] === 0
-  const cx = (i: number) => (origin ? left + (nums[i] / nums[nums.length - 1]) * (plotW - slot / 2) : left + i * slot + slot / 2)
+    nums.every((v, i) => Number.isFinite(v) && cats[i].trim() !== '' && (i === 0 || v > nums[i - 1]))
+  const origin = numeric && nums[0] === 0 && yBottom === 0
+  const cx = (i: number) => numeric
+    ? left + (origin ? 0 : slot / 2) + (nums[i] - nums[0]) / (nums.at(-1)! - nums[0]) * (plotW - slot)
+    : left + i * slot + slot / 2
   const plotH = 230
   // chú thích + chỗ cho mũi tên và tên trục đứng
   const legH = (ns > 1 ? 26 : 0) + 22
   const W = left + plotW + 46
   const H = top + legH + plotH + 54
   const y0 = top + legH + plotH
-  const Y = (v: number) => y0 - (v / yTop) * plotH
+  const Y = (v: number) => y0 - ((v - yBottom) / (yTop - yBottom)) * plotH
   let b = title(W)
   if (ns > 1) {
     const lg = legend(series, 0, top + 12, spec.chart === 'line' ? 'mark' : 'fill')
@@ -225,7 +255,8 @@ export function renderStatsSvg(spec: StatsSpec, desc: string): { svg: string; wi
   }
   // lưới ngang + số trục tung
   let grid = ''
-  for (let v = step; v <= yTop + 1e-9; v += step) {
+  for (let v = yBottom; v <= yTop + 1e-9; v += step) {
+    if (Math.abs(v) < step * 1e-8) continue
     grid += `M${left} ${f1(Y(v))}H${left + plotW}`
     b += `<text x="${left - 6}" y="${f1(Y(v) + 5)}" ${FAM} font-size="13" text-anchor="end" data-lbl="y:${Math.round(v * 1000) / 1000}">${fmt(v)}</text>`
   }
@@ -233,7 +264,7 @@ export function renderStatsSvg(spec: StatsSpec, desc: string): { svg: string; wi
   // gốc: một số 0 chung cho hai trục (ở góc dưới trái) khi trục ngang là số từ 0
   b += origin
     ? `<text x="${left - 6}" y="${y0 + 16}" ${FAM} font-size="13" text-anchor="end">0</text>`
-    : `<text x="${left - 6}" y="${y0 + 5}" ${FAM} font-size="13" text-anchor="end">0</text>`
+    : `<text x="${left - 6}" y="${f1(Y(0) + 5)}" ${FAM} font-size="13" text-anchor="end">0</text>`
 
   if (hist) {
     // cột liền nhau; mốc ở biên các khoảng
@@ -261,7 +292,7 @@ export function renderStatsSvg(spec: StatsSpec, desc: string): { svg: string; wi
         for (const p of col) {
           let ty = p.y - 9
           if (ty - prev < 14) ty = Math.max(p.y + 20, prev + 14)
-          b += `<text x="${f1(x)}" y="${f1(ty)}" ${FAM} font-size="13" text-anchor="middle" data-lbl="val:${p.si}:${i}">${fmt(p.v)}</text>`
+          b += `<text x="${f1(x + (origin && i === 0 ? 8 : 0))}" y="${f1(ty)}" ${FAM} font-size="13" text-anchor="${origin && i === 0 ? 'start' : 'middle'}" data-lbl="val:${p.si}:${i}">${fmt(p.v)}</text>`
           prev = ty
         }
       })
@@ -270,7 +301,7 @@ export function renderStatsSvg(spec: StatsSpec, desc: string): { svg: string; wi
     series.forEach((s, si) => {
       s.vals.forEach((v, i) => {
         const x = left + i * slot + (slot - bw * ns) / 2 + si * bw
-        b += `<rect x="${f1(x)}" y="${f1(Y(v))}" width="${f1(bw)}" height="${f1(y0 - Y(v))}" fill="${FILLS[si % FILLS.length]}" stroke="#222" stroke-width="1.1"/>`
+        b += `<rect x="${f1(x)}" y="${f1(Math.min(Y(v), Y(0)))}" width="${f1(bw)}" height="${f1(Math.abs(Y(0) - Y(v)))}" fill="${FILLS[si % FILLS.length]}" stroke="#222" stroke-width="1.1"/>`
         if (spec.values) b += `<text x="${f1(x + bw / 2)}" y="${f1(Y(v) - 5)}" ${FAM} font-size="13" text-anchor="middle" data-lbl="val:${si}:${i}">${fmt(v)}</text>`
       })
     })
@@ -278,9 +309,11 @@ export function renderStatsSvg(spec: StatsSpec, desc: string): { svg: string; wi
   if (!hist)
     cats.forEach((c, i) => {
       if (origin && i === 0) return // số 0 đã ghi chung ở gốc
-      if (origin) b += `<path d="M${f1(cx(i))} ${y0 - 3}v6" stroke="#222" stroke-width="1"/>`
+      if (numeric) b += `<path d="M${f1(cx(i))} ${y0 - 3}v6" stroke="#222" stroke-width="1"/>`
       b += `<text x="${f1(cx(i))}" y="${y0 + 18}" ${FAM} font-size="13" text-anchor="middle" data-lbl="x:${i}">${esc(c)}</text>`
     })
+  // Trục giá trị 0 dùng làm gốc chiều cao cột, kể cả khi có giá trị âm.
+  if (yBottom < 0) b += `<path d="M${left} ${f1(Y(0))}H${left + plotW}" stroke="#222" stroke-width="1.1"/>`
   // trục
   b += `<path d="M${left} ${y0}H${left + plotW + 22}" stroke="#222" stroke-width="1.2" marker-end="url(#starr)"/>`
   b += `<path d="M${left} ${y0}V${top + legH - 14}" stroke="#222" stroke-width="1.2" marker-end="url(#starr)"/>`

@@ -269,7 +269,7 @@ export function computeLensGeometry(spec: LensSpec): LensGeometry {
 
   const segments: RaySegment[] = []
 
-  if (!hideImage) {
+  if (rays.length) {
     // 1. Tia song song trục chính
     if (rays.includes('parallel')) {
       const I: Point2D = { x: xO, y: B.y }
@@ -430,7 +430,7 @@ export function computeLensGeometry(spec: LensSpec): LensGeometry {
     APrime,
     BPrime,
     drawnImage,
-    segments,
+    segments: hideImage ? segments.filter((s) => s.kind === 'real' && s.from === B) : segments,
   }
 }
 
@@ -506,6 +506,8 @@ export function renderLensSvg(spec: LensSpec, desc: string): { svg: string; widt
 
   // 1. Trục chính nằm ngang
   body += `<path d="M12 ${f1(y0)}H${W - 12}" stroke="#111" stroke-width="1.1"/>`
+
+  body += `<text x="${W - 14}" y="${f1(y0 - 7)}" ${FAM} font-size="14" text-anchor="end">Δ</text>`
 
   // 2. Thấu kính
   body += lensSymbolSvg(spec.type, xO, lensTopY, lensBotY)

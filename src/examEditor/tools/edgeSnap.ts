@@ -506,9 +506,9 @@ export interface Snap3dResult {
 const K3D = 0.5
 const ANG3D = Math.PI / 4
 
-export function fitCoordTransform3d(points: PickPt[]): CoordXform3d {
-  const c = K3D * Math.cos(ANG3D)
-  const s = K3D * Math.sin(ANG3D)
+export function fitCoordTransform3d(points: PickPt[], projection?: Pick<CoordXform3d, 'c' | 's'>): CoordXform3d {
+  const c = projection?.c ?? K3D * Math.cos(ANG3D)
+  const s = projection?.s ?? K3D * Math.sin(ANG3D)
   const projUnit = (v: number[]): [number, number] => [v[0] + c * v[1], -(v[2] ?? 0) - s * v[1]]
 
   let bestI = -1

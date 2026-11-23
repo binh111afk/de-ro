@@ -54,7 +54,7 @@ const starFrame = frame(starSvg, 3 * Math.sqrt(3) + 1.1, 7.1)
 const circles = tags(starSvg, 'circle')
 for (const circle of circles) {
   near(numAttr(circle, 'r'), 0.55 * starFrame.k)
-  assert.equal(attr(circle, 'fill'), '#fff')
+  assert.equal(attr(circle, 'fill'), 'none')
 }
 near(Math.min(...circles.map((c) => numAttr(c, 'cx') - numAttr(c, 'r'))), 62)
 near(Math.max(...circles.map((c) => numAttr(c, 'cx') + numAttr(c, 'r'))), starFrame.w - 62)
@@ -104,7 +104,7 @@ count(extraSvg, 'ellipse', 1)
 count(extraSvg, 'text', 1)
 frame(extraSvg, 4.2, 1.2)
 assert.match(tags(extraSvg, 'ellipse')[0], /fill="#ffcccc".*stroke-dasharray=/)
-assert.match(extraSvg, /A\(99; 99\) &amp; B &lt; C/)
+assert.match(extraSvg, /A\(99; 99\) &amp;(?: |<\/tspan><tspan[^>]*>)B &lt; C/)
 assert.match(extraSvg, /stroke-dasharray="5 4" marker-end=/)
 
 const longLine = 'M'.repeat(60)

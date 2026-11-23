@@ -97,8 +97,8 @@ assert.deepEqual(trapPt('M').v, [0, 0.5, 0])
 assert.equal(trapPt('A').y, trapPt('B').y)
 assert.equal(trapPt('C').y, trapPt('D').y)
 assert.ok(Math.abs(trapPt('D').x + trapPt('D').y) < 1e-9)
-assert.ok(Math.abs(Math.hypot(trapPt('D').x, trapPt('D').y) - 60) < 1e-9)
-assert.match(trapImg.svg, /d="M42\.4 -42\.4L0\.0 0\.0"[^>]*stroke-dasharray="6 4"/)
+assert.ok(Math.abs(Math.hypot(trapPt('D').x, trapPt('D').y) - 74.4) < 1e-9)
+assert.match(trapImg.svg, /d="M52\.6 -52\.6L0\.0 0\.0"[^>]*stroke-dasharray="6 4"/)
 assert.match(trapImg.svg, /d="M0\.0 0\.0L240\.0 0\.0" stroke="#222" stroke-width="1\.6" fill="none"/)
 const aboveM = renderTool({ ...trapezoid, spec: { ...trapezoid.spec, height: true, extras: trapezoid.spec.extras + '\nS(0; 0,5; 2)' } })
 assert.deepEqual(aboveM.pick!.points.find((p) => p.name === 'S')!.v, [0, 0.5, 2])
@@ -107,7 +107,7 @@ console.log('✓ Chóp đáy thang vuông chiếu 45°, đỉnh S và cạnh khu
 
 // 3. Suy ngược toạ độ màn hình -> (x, y) trên mặt phẳng ngang
 const pick4 = pyr4Img.pick!
-const xf4 = fitCoordTransform3d(pick4.points)
+const xf4 = fitCoordTransform3d(pick4.points, pick4.projection)
 for (const p of pick4.points) {
   const vb = xf4.toVb([p.v[0], p.v[1], p.v[2]])
   assert.ok(Math.hypot(vb.x - p.x, vb.y - p.y) < 0.2, `toVb khớp đỉnh ${p.name}`)
@@ -210,7 +210,7 @@ const prismImg = renderTool({
   spec: { shape: 'prism3', names: ['A', 'B', 'C', "A'", "B'", "C'"], height: true, diagonals: false, marks: true, tall: 1 },
 })
 const pPick = prismImg.pick!
-const xfP = fitCoordTransform3d(pPick.points)
+const xfP = fitCoordTransform3d(pPick.points, pPick.projection)
 const pVbM = /viewBox="([-\d.]+) ([-\d.]+) ([-\d.]+) ([-\d.]+)"/.exec(prismImg.svg)!
 const pBox = { minX: Number(pVbM[1]), minY: Number(pVbM[2]), w: Number(pVbM[3]), h: Number(pVbM[4]) }
 const pPt = (n: string) => pPick.points.find((p) => p.name === n)!

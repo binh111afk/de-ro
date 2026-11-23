@@ -49,6 +49,8 @@ export interface PedigreeSpec {
   text: string
   /** bật/tắt khung chú thích (mặc định: bật) */
   legend?: boolean
+  /** số thứ tự từ trái sang phải theo từng thế hệ, giữ nhãn do người dùng đặt riêng */
+  generationNumbers?: boolean
   /** kiểu mang gen: 'half' (tô nửa) | 'dot' (chấm giữa), mặc định: 'half' */
   carrierStyle?: 'half' | 'dot'
 }
@@ -739,6 +741,24 @@ export function renderPedigreeSvg(
     body += `<text x="24" y="${y + 5}" ${FAM} font-size="15" font-weight="bold" fill="#111" text-anchor="start">${roman}</text>`
   }
 
+  const numbers = new Map<string, number>()
+  if (spec.generationNumbers) {
+    for (let g = 0; g <= maxGen; g++) {
+      const row = [...positions].filter(([, p]) => p.gen === g).sort((a, b) => a[1].x - b[1].x)
+      row.forEach(([id], i) => numbers.set(id, i + 1))
+    }
+  }
+  const parents = new Map<string, string[]>()
+  for (const m of marriages) for (const child of m.children) {
+    for (const id of child.type === 'single' ? [child.id] : child.ids) parents.set(id, [m.parent1, m.parent2])
+  }
+  const family = (id: string) => {
+    const direct = parents.get(id) ?? []
+    return [id, ...direct, ...direct.flatMap((parent) => parents.get(parent) ?? [])]
+  }
+  const consanguineous = (m: PedigreeMarriage) =>
+    m.consanguineous || family(m.parent1).some((a) => family(m.parent2).includes(a))
+
   // 2. Vẽ đường hôn nhân và đường nối con cái
   for (const m of marriages) {
     const p1Pos = positions.get(m.parent1)
@@ -750,7 +770,7 @@ export function renderPedigreeSvg(
     const y = p1Pos.y // đã cùng hàng
 
     // Đường vợ chồng
-    if (m.consanguineous) {
+    if (consanguineous(m)) {
       body += `<line x1="${f1(leftX + 13)}" y1="${f1(y - 2.5)}" x2="${f1(rightX - 13)}" y2="${f1(y - 2.5)}" stroke="#111" stroke-width="1.6"/>`
       body += `<line x1="${f1(leftX + 13)}" y1="${f1(y + 2.5)}" x2="${f1(rightX - 13)}" y2="${f1(y + 2.5)}" stroke="#111" stroke-width="1.6"/>`
     } else {
@@ -829,7 +849,8 @@ export function renderPedigreeSvg(
     if (!pos) continue
 
     const { x, y } = pos
-    const { gender, status, deceased, isQuestion, label } = person
+    const { gender, status, deceased, isQuestion } = person
+    const label = person.label === id && numbers.has(id) ? String(numbers.get(id)) : person.label
 
     // Nam: Vuông 26x26
     if (gender === 'male') {
@@ -912,7 +933,7 @@ export function renderPedigreeSvg(
     const usedDeceased = Array.from(persons.values()).some((p) => p.deceased)
     const usedUnknown = Array.from(persons.values()).some((p) => p.gender === 'unknown')
     const usedQuestion = Array.from(persons.values()).some((p) => p.isQuestion)
-    const usedConsanguineous = marriages.some((m) => m.consanguineous)
+    const usedConsanguineous = marriages.some(consanguineous)
     const usedTwinsIdentical = marriages.some((m) => m.children.some((c) => c.type === 'identicalTwins'))
     const usedTwinsFraternal = marriages.some((m) => m.children.some((c) => c.type === 'fraternalTwins'))
 

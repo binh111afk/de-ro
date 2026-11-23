@@ -436,8 +436,26 @@ export function renderOxySvg(spec: OxySpec, desc: string): { svg: string; width:
     }
     if (it.name === 'O' && x === 0 && y === 0) continue
     draw.push(`<circle cx="${f1(X(x))}" cy="${f1(Y(y))}" r="2.6" fill="#222"/>`)
-    const dx = x >= 0 ? 7 : -7
-    draw.push(`<text x="${f1(X(x) + dx)}" y="${f1(Y(y) - 7)}" ${FONT} font-style="italic" text-anchor="${x >= 0 ? 'start' : 'end'}" data-lbl="pt:${esc(it.name)}">${esc(it.name)}</text>`)
+    const neighbors = items.flatMap((e) => {
+      if (e.t !== 'seg' && e.t !== 'vec') return []
+      if (e.a[0] === x && e.a[1] === y) return [e.b]
+      if (e.b[0] === x && e.b[1] === y) return [e.a]
+      return []
+    })
+    const side = x >= 0 ? 1 : -1
+    const candidates = [[side, -1], [-side, -1], [side, 1], [-side, 1]]
+    const score = ([dx, dy]: number[]) => {
+      const sx = X(x) + dx * 12
+      const sy = Y(y) + dy * 13
+      const outside = sx < 12 || sx > W - 12 || sy < 12 || sy > H - 12
+      return (outside ? 10 : 0) + neighbors.reduce((sum, p) => {
+        const vx = X(p[0]) - X(x)
+        const vy = Y(p[1]) - Y(y)
+        return sum + Math.max(0, (vx * dx + vy * dy) / (Math.hypot(vx, vy) || 1)) ** 3
+      }, 0)
+    }
+    const [dx, dy] = candidates.sort((a, b) => score(a) - score(b))[0]
+    labels.push(`<text x="${f1(X(x) + dx * 7)}" y="${f1(Y(y) + (dy < 0 ? -7 : 16))}" ${FONT} font-style="italic" text-anchor="${dx > 0 ? 'start' : 'end'}" data-lbl="pt:${esc(it.name)}">${esc(it.name)}</text>`)
   }
 
   const svg =

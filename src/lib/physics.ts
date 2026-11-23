@@ -161,7 +161,7 @@ export function renderInclineSvg(spec: InclineSpec, desc: string): { svg: string
     return (
       `<path d="M${f1(from[0])} ${f1(from[1])}L${f1(to[0])} ${f1(to[1])}" stroke="#111" stroke-width="1.8" marker-end="url(#pharr)"/>` +
       `<text x="${f1(lx)}" y="${f1(ly)}" ${FAM} font-size="16" font-style="italic" text-anchor="middle">${label}</text>` +
-      `<path d="M${f1(lx - 5)} ${f1(ly - 15)}h10" stroke="#111" stroke-width="0.9"/>`
+      `<path d="M${f1(lx - 5)} ${f1(ly - 15)}h10m-3 -2.5l3 2.5-3 2.5" stroke="#111" stroke-width="0.9"/>`
     )
   }
   if (spec.P) b += arrow(G, [0, 1], 70, 'P')

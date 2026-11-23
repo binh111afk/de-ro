@@ -86,8 +86,12 @@ export function GraphToolModal({
       yMax: hi,
       grid,
       labels,
+      points: initial?.points,
+      asymptotes: initial?.asymptotes,
+      shade: initial?.shade,
+      piAxis: initial?.piAxis,
     }
-  }, [parsed, exprs, x0, x1, autoY, yMin, yMax, grid, labels, rangeError])
+  }, [parsed, exprs, x0, x1, autoY, yMin, yMax, grid, labels, rangeError, initial])
 
   // spec có labelPos → nằm trong <desc> của SVG, chèn/nhấp đúp sửa vẫn giữ độ lệch
   const plot = useMemo(() => (spec ? withTextHalo(applyLabelPos(renderPlotSvg({ ...spec, labelPos }), labelPos)) : null), [spec, labelPos])

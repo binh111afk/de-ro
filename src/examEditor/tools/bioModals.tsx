@@ -90,6 +90,9 @@ export function PedigreeModal({ initial, submitLabel, onClose, onInsert }: Props
         <Check checked={spec.legend !== false} onChange={(legend) => set({ legend })}>
           Hiện khung chú thích kí hiệu
         </Check>
+        <Check checked={spec.generationNumbers === true} onChange={(generationNumbers) => set({ generationNumbers })}>
+          Đánh số theo từng thế hệ
+        </Check>
         <div className="flex items-center gap-2 pt-1 text-[12.5px] text-ink-2">
           <span>Kiểu mang gen:</span>
           {(
