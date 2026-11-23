@@ -3,7 +3,7 @@
  * Chạy: npm run test:pagination
  */
 import assert from 'node:assert/strict'
-import { computePagePlan } from '../src/examEditor/pagination.ts'
+import { computePagePlan, computeRichPagePlan } from '../src/examEditor/pagination.ts'
 
 let pass = 0
 let fail = 0
@@ -61,6 +61,105 @@ check('không có khối → 1 tờ', () => {
   const p = plan([])
   assert.equal(p.pages, 1)
   assert.equal(p.gaps.size, 0)
+})
+
+check('bảng nhiều dòng qua trang → đẩy cả dòng không vừa sang trang sau', () => {
+  const p = computeRichPagePlan(
+    [
+      { kind: 'block', pos: 0, naturalTop: 0, height: 800 },
+      {
+        kind: 'table',
+        pos: 10,
+        naturalTop: 810,
+        height: 300,
+        rows: [
+          { pos: 11, naturalTop: 810, height: 100, cells: [{ pos: 12, rowSpan: 1, children: [] }] },
+          {
+            pos: 30,
+            naturalTop: 910,
+            height: 100,
+            cells: [
+              { pos: 31, rowSpan: 1, children: [] },
+              { pos: 40, rowSpan: 1, children: [] },
+            ],
+          },
+          { pos: 50, naturalTop: 1010, height: 100, cells: [{ pos: 51, rowSpan: 1, children: [] }] },
+        ],
+      },
+    ],
+    CONTENT_H,
+    STRIDE,
+    MARGIN,
+  )
+  assert.equal(p.pages, 2)
+  assert.equal(p.widgets.length, 2)
+  assert.deepEqual(p.widgets[0], { pos: 32, height: STRIDE - 910, kind: 'row' })
+  assert.deepEqual(p.widgets[1], { pos: 41, height: STRIDE - 910, kind: 'row' })
+})
+
+check('bảng có ô cao nhiều đoạn (>240px) → ngắt giữa các đoạn trong ô, không đẩy cả dòng', () => {
+  const p = computeRichPagePlan(
+    [
+      {
+        kind: 'table',
+        pos: 0,
+        naturalTop: 0,
+        height: 1200,
+        rows: [
+          { pos: 1, naturalTop: 0, height: 800, cells: [{ pos: 2, rowSpan: 2, children: [] }] },
+          {
+            pos: 20,
+            naturalTop: 800,
+            height: 400,
+            cells: [
+              {
+                pos: 21,
+                rowSpan: 1,
+                children: [
+                  { kind: 'block', pos: 22, naturalTop: 804, height: 80 },
+                  { kind: 'block', pos: 40, naturalTop: 888, height: 60 },
+                  { kind: 'block', pos: 60, naturalTop: 952, height: 100 },
+                  { kind: 'block', pos: 80, naturalTop: 1056, height: 140 },
+                ],
+              },
+              {
+                pos: 100,
+                rowSpan: 1,
+                children: [{ kind: 'block', pos: 101, naturalTop: 804, height: 30 }],
+              },
+            ],
+          },
+        ],
+      },
+    ],
+    CONTENT_H,
+    STRIDE,
+    MARGIN,
+  )
+  assert.equal(p.pages, 2)
+  assert.deepEqual(p.widgets, [{ pos: 60, height: STRIDE - 952, kind: 'block' }])
+})
+
+check('khối container dài (>1 trang) → ngắt giữa các phần tử con', () => {
+  const p = computeRichPagePlan(
+    [
+      {
+        kind: 'container',
+        pos: 0,
+        naturalTop: 0,
+        height: 1200,
+        children: [
+          { kind: 'block', pos: 1, naturalTop: 0, height: 600 },
+          { kind: 'block', pos: 10, naturalTop: 600, height: 600 },
+        ],
+      },
+    ],
+    CONTENT_H,
+    STRIDE,
+    MARGIN,
+  )
+  assert.equal(p.pages, 2)
+  assert.deepEqual(p.widgets, [{ pos: 10, height: STRIDE - 600, kind: 'block' }])
 })
 
 console.log(`\n${pass}/${pass + fail} pass, ${fail} fail`)

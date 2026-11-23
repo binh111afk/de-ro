@@ -3022,6 +3022,32 @@
     outline: none;
   }
 
+  /* đẩy cả dòng bảng sang trang sau: che viền dọc phía trên và vẽ viền trên dòng mới */
+  .doc-content table td:has(> .doc-page-gap--row),
+  .doc-content table th:has(> .doc-page-gap--row) {
+    vertical-align: top;
+  }
+  .doc-page-gap--row {
+    position: relative;
+    pointer-events: none;
+  }
+  .doc-page-gap--row::before {
+    content: '';
+    position: absolute;
+    top: calc(-0.2rem - 0.5px);
+    left: calc(-0.35rem - 1px);
+    right: calc(-0.35rem - 1px);
+    bottom: 0;
+    background: var(--doc-paper-bg, #ffffff);
+    border-bottom: 1px solid #000;
+    z-index: 1;
+  }
+  .doc-content div[data-exam-node='examAnswerKey'] .doc-page-gap--row::before {
+    top: calc(-0.1rem - 0.5px);
+    left: calc(-0.3rem - 1px);
+    right: calc(-0.3rem - 1px);
+  }
+
   /* ------------------------------------------------------------------ *
    * Thanh trạng thái
    * ------------------------------------------------------------------ */

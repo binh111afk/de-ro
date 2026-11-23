@@ -32,10 +32,50 @@ import { BLOCK_TEMPLATE_MIME } from './templates'
 import { createSearchPlugin } from './find'
 import { ChoiceLayoutExtension, choiceColsKey, measureChoiceColumns } from './choiceLayout'
 import { LeadImageExtension } from './leadImage'
-import { PaginationExtension, pageGapsKey, computePagePlan } from './pagination'
+import {
+  PaginationExtension,
+  pageGapsKey,
+  computeRichPagePlan,
+  type LayoutItem,
+  type PageWidget,
+  type SimpleLayoutItem,
+  type TableCellLayout,
+  type TableRowLayout,
+  type TableSplitLine,
+} from './pagination'
 
-/** map rỗng dùng chung — tránh tạo Map mới mỗi lượt đo. */
-const EMPTY_GAPS = new Map<number, number>()
+/** mảng rỗng dùng chung — tránh tạo mảng mới mỗi lượt đo. */
+const EMPTY_WIDGETS: PageWidget[] = []
+const SPLITTABLE_CONTAINERS = new Set(['examAnswerKey', 'examRubric', 'examEssay', 'examBullets', 'examQuestion'])
+
+function precedingGapMap(parentEl: Element): { map: Map<Element, number>; total: number } {
+  const map = new Map<Element, number>()
+  let acc = 0
+  for (const child of Array.from(parentEl.children)) {
+    if (child.classList.contains('doc-page-gap')) {
+      acc += parseFloat((child as HTMLElement).style.height) || 0
+    } else {
+      map.set(child, acc)
+    }
+  }
+  return { map, total: acc }
+}
+
+function sameWidgets(a: PageWidget[], b: PageWidget[]): boolean {
+  if (a.length !== b.length) return false
+  for (let i = 0; i < a.length; i++) {
+    if (a[i].pos !== b[i].pos || a[i].height !== b[i].height || a[i].kind !== b[i].kind) return false
+  }
+  return true
+}
+
+function sameSplitLines(a: TableSplitLine[], b: TableSplitLine[]): boolean {
+  if (a.length !== b.length) return false
+  for (let i = 0; i < a.length; i++) {
+    if (a[i].top !== b[i].top || a[i].left !== b[i].left || a[i].width !== b[i].width) return false
+  }
+  return true
+}
 import { DeleteObjects } from './deleteActions'
 
 import { EditorContextMenu } from './EditorContextMenu'
@@ -58,6 +98,7 @@ export interface ExamEditorProps {
 export function ExamEditor({ content, onChange, onReady, pageSetup, readOnly, isReflow }: ExamEditorProps) {
   const flowRef = useRef<HTMLDivElement>(null)
   const [pageCount, setPageCount] = useState(1)
+  const [splitLines, setSplitLines] = useState<TableSplitLine[]>([])
   const geo = pageGeometry(pageSetup ?? { marginCm: 2, orientation: 'portrait' })
   const { PAGE_W, PAGE_H, MARGIN, MARGIN_TOP, MARGIN_RIGHT, MARGIN_BOTTOM, CONTENT_W, CONTENT_H } = geo
 
@@ -245,82 +286,227 @@ export function ExamEditor({ content, onChange, onReady, pageSetup, readOnly, is
   }, [editor])
 
   /**
-   * Một lượt bố cục: đo khối → tính spacer ngắt trang + số tờ giấy.
+   * Một lượt bố cục: đo khối (kể cả bảng, dòng bảng, ô nhiều đoạn, khối dài)
+   * → tính spacer ngắt trang + số tờ giấy + đường kẻ mép bảng bị cắt.
    *
    * Spacer do PM quản (widget decoration). Khi đo, trừ đi các spacer đã biết để
    * lấy vị trí tự nhiên → chèn spacer không làm lệch kết quả nên hội tụ, không
-   * dao động. Khối cao hơn cả trang thì để tràn (không cắt nội dung bên trong).
+   * dao động.
    */
   const layoutPass = useCallback(() => {
     if (isReflow) {
       setPageCount(1)
+      setSplitLines((prev) => (prev.length ? [] : prev))
       if (editor && !editor.isDestroyed) {
         const current = pageGapsKey.getState(editor.state)
-        if (current && current.size > 0) {
+        if (current && current.length > 0) {
           editor.view.dispatch(
-            editor.state.tr.setMeta(pageGapsKey, EMPTY_GAPS).setMeta('addToHistory', false),
+            editor.state.tr.setMeta(pageGapsKey, EMPTY_WIDGETS).setMeta('addToHistory', false),
           )
         }
       }
       return
     }
     const flow = flowRef.current
-    if (!flow) return
-    // TipTap v3 bọc `.doc-content` trong div của `EditorContent` → lấy trực tiếp
-    // phần tử rồi đọc con của nó, đừng dùng `:scope > .doc-content`.
+    if (!flow || !editor || editor.isDestroyed) return
     const contentEl = flow.querySelector<HTMLElement>('.doc-content')
     if (!contentEl) {
       setPageCount(1)
+      setSplitLines((prev) => (prev.length ? [] : prev))
       return
     }
-    // bỏ qua chính các widget spacer (PM render chúng thành con của .doc-content)
-    const els = (Array.from(contentEl.children) as HTMLElement[]).filter(
-      (el) => !el.classList.contains('doc-page-gap'),
-    )
-    if (els.length === 0) {
-      setPageCount(1)
-      return
-    }
-
-    const current = editor ? (pageGapsKey.getState(editor.state) ?? EMPTY_GAPS) : EMPTY_GAPS
-    // getBoundingClientRect trả kích thước đã nhân tỉ lệ phóng to (CSS zoom của
-    // sân), còn PAGE_H/CONTENT_H tính theo px gốc. Chia lại theo `k` để hai bên khớp.
+    const view = editor.view
     const contentRect = contentEl.getBoundingClientRect()
     const k = contentEl.offsetWidth ? contentRect.width / contentEl.offsetWidth : 1
+    // contentTop = đỉnh vùng nội dung trang 1 (sau padding-top của .doc-flow)
     const contentTop = contentRect.top
-    const heights: number[] = []
-    const spaces: number[] = []
-    let gapAcc = 0
-    let prevBottom = 0
-    els.forEach((el, i) => {
-      gapAcc += current.get(i) ?? 0
-      const rect = el.getBoundingClientRect()
-      const naturalTop = (rect.top - contentTop) / k - gapAcc
-      // giữ số thực để không dồn sai số làm tròn qua nhiều khối; chỉ spacer
-      // cuối cùng được làm tròn (trong computePagePlan) để ổn định vòng đo.
-      spaces.push(i === 0 ? naturalTop : naturalTop - prevBottom)
-      heights.push(rect.height / k)
-      prevBottom = naturalTop + rect.height / k
-    })
+    const doc = editor.state.doc
 
-    const plan = computePagePlan(heights, spaces, CONTENT_H, PAGE_H + PAGE_GAP, MARGIN_TOP)
-    setPageCount(plan.pages)
+    const measureTable = (
+      tableNode: typeof doc.firstChild & {},
+      tablePos: number,
+      tableEl: HTMLElement,
+      baseGapAcc: number,
+    ): { item: LayoutItem; totalGrowth: number } => {
+      const tableRect = tableEl.getBoundingClientRect()
+      const rows: TableRowLayout[] = []
+      let rowGapAcc = 0
 
-    // chỉ dispatch khi bản đồ spacer thực sự đổi
-    let changed = plan.gaps.size !== current.size
-    if (!changed) {
-      for (const [i, h] of plan.gaps) {
-        if (current.get(i) !== h) {
-          changed = true
-          break
+      tableNode.forEach((rowNode, rowRelPos) => {
+        const rowPos = tablePos + 1 + rowRelPos
+        const tr = view.nodeDOM(rowPos)
+        if (!(tr instanceof HTMLElement)) return
+        const trRect = tr.getBoundingClientRect()
+        const rowNaturalTop = (trRect.top - contentTop) / k - baseGapAcc - rowGapAcc
+        const cells: TableCellLayout[] = []
+        let rowPushGap = 0
+        const tdOwnHeights: number[] = []
+        let hasAnyGap = false
+
+        rowNode.forEach((cellNode, cellRelPos) => {
+          const cellPos = rowPos + 1 + cellRelPos
+          const td = view.nodeDOM(cellPos)
+          if (!(td instanceof HTMLElement)) return
+          const rowSpan = Number(cellNode.attrs.rowspan) || 1
+          const { map: tdGaps, total: tdGapTotal } = precedingGapMap(td)
+          if (tdGapTotal > 0) hasAnyGap = true
+          if (td.firstElementChild?.classList.contains('doc-page-gap--row')) {
+            rowPushGap = Math.max(rowPushGap, tdGapTotal)
+          }
+
+          const children: SimpleLayoutItem[] = []
+          let lastPRect: DOMRect | null = null
+          cellNode.forEach((_pNode, pRelPos) => {
+            const pPos = cellPos + 1 + pRelPos
+            const pEl = view.nodeDOM(pPos)
+            if (!(pEl instanceof HTMLElement)) return
+            const pRect = pEl.getBoundingClientRect()
+            lastPRect = pRect
+            const pGapBefore = tdGaps.get(pEl) ?? 0
+            children.push({
+              kind: 'block',
+              pos: pPos,
+              naturalTop: (pRect.top - contentTop) / k - baseGapAcc - rowGapAcc - pGapBefore,
+              height: pRect.height / k,
+            })
+          })
+
+          const cs = getComputedStyle(td)
+          const padBottom = (parseFloat(cs.paddingBottom) || 0) + (parseFloat(cs.borderBottomWidth) || 0)
+          if (rowSpan <= 1 && lastPRect) {
+            const tdRect = td.getBoundingClientRect()
+            tdOwnHeights.push(((lastPRect as DOMRect).bottom - tdRect.top) / k - tdGapTotal + padBottom)
+          }
+          cells.push({ pos: cellPos, rowSpan, padBottom, children })
+        })
+
+        let rowNaturalHeight = trRect.height / k
+        let rowGrowth = 0
+        if (hasAnyGap) {
+          if (rowPushGap > 0) {
+            rowGrowth = rowPushGap
+            rowNaturalHeight = Math.max(16, trRect.height / k - rowGrowth)
+          } else if (tdOwnHeights.length > 0) {
+            rowNaturalHeight = Math.max(16, ...tdOwnHeights)
+            rowGrowth = Math.max(0, trRect.height / k - rowNaturalHeight)
+          }
         }
+        rowGapAcc += rowGrowth
+
+        rows.push({
+          pos: rowPos,
+          naturalTop: rowNaturalTop,
+          height: rowNaturalHeight,
+          cells,
+        })
+      })
+
+      return {
+        item: {
+          kind: 'table',
+          pos: tablePos,
+          naturalTop: (tableRect.top - contentTop) / k - baseGapAcc,
+          height: Math.max(0, tableRect.height / k - rowGapAcc),
+          rows,
+        },
+        totalGrowth: rowGapAcc,
       }
     }
-    if (changed && editor && !editor.isDestroyed) {
-      editor.view.dispatch(
-        editor.state.tr.setMeta(pageGapsKey, plan.gaps).setMeta('addToHistory', false),
-      )
+
+    const { map: topGaps } = precedingGapMap(contentEl)
+    const items: LayoutItem[] = []
+    doc.forEach((node, offset) => {
+      const dom = view.nodeDOM(offset)
+      if (!(dom instanceof HTMLElement)) return
+      const gapAcc = topGaps.get(dom) ?? 0
+      const rect = dom.getBoundingClientRect()
+      const naturalTop = (rect.top - contentTop) / k - gapAcc
+
+      if (node.type.name === 'table') {
+        items.push(measureTable(node, offset, dom, gapAcc).item)
+        return
+      }
+
+      if (SPLITTABLE_CONTAINERS.has(node.type.name)) {
+        const { map: innerGaps, total: innerGapTotal } = precedingGapMap(dom)
+        let tableGrowth = 0
+        const children: LayoutItem[] = []
+        node.forEach((child, childRelPos) => {
+          const childPos = offset + 1 + childRelPos
+          const childEl = view.nodeDOM(childPos)
+          if (!(childEl instanceof HTMLElement)) return
+          const childGapAcc = gapAcc + (innerGaps.get(childEl) ?? 0) + tableGrowth
+          if (child.type.name === 'table') {
+            const res = measureTable(child, childPos, childEl, childGapAcc)
+            tableGrowth += res.totalGrowth
+            children.push(res.item)
+          } else {
+            const cRect = childEl.getBoundingClientRect()
+            children.push({
+              kind: 'block',
+              pos: childPos,
+              naturalTop: (cRect.top - contentTop) / k - childGapAcc,
+              height: cRect.height / k,
+            })
+          }
+        })
+        items.push({
+          kind: 'container',
+          pos: offset,
+          naturalTop,
+          height: Math.max(0, rect.height / k - innerGapTotal - tableGrowth),
+          children,
+        })
+        return
+      }
+
+      items.push({
+        kind: 'block',
+        pos: offset,
+        naturalTop,
+        height: rect.height / k,
+      })
+    })
+
+    if (items.length === 0) {
+      setPageCount(1)
+      setSplitLines((prev) => (prev.length ? [] : prev))
+      return
     }
+
+    const stride = PAGE_H + PAGE_GAP
+    const plan = computeRichPagePlan(items, CONTENT_H, stride, MARGIN_TOP)
+    setPageCount(plan.pages)
+
+    const current = pageGapsKey.getState(editor.state) ?? EMPTY_WIDGETS
+    if (!sameWidgets(plan.widgets, current)) {
+      view.dispatch(editor.state.tr.setMeta(pageGapsKey, plan.widgets).setMeta('addToHistory', false))
+      return
+    }
+
+    // DOM đã ổn định → tính đường kẻ ngang đóng/mở bảng ở ranh giới trang
+    const nextLines: TableSplitLine[] = []
+    if (plan.pages > 1) {
+      const stageRect = (flow.parentElement ?? flow).getBoundingClientRect()
+      const tds = contentEl.querySelectorAll<HTMLElement>('table td, table th')
+      tds.forEach((td) => {
+        if (td.firstElementChild?.classList.contains('doc-page-gap--row')) return
+        const tdRect = td.getBoundingClientRect()
+        const tdTop = (tdRect.top - contentTop) / k + MARGIN_TOP
+        const tdBottom = (tdRect.bottom - contentTop) / k + MARGIN_TOP
+        const tdLeft = Math.round((tdRect.left - stageRect.left) / k)
+        const tdWidth = Math.round(tdRect.width / k)
+        for (let b = 0; b < plan.pages - 1; b++) {
+          const cutY = MARGIN_TOP + b * stride + CONTENT_H
+          const resumeY = MARGIN_TOP + (b + 1) * stride
+          if (tdTop < cutY - 1 && tdBottom > resumeY + 1) {
+            nextLines.push({ top: cutY - 1, left: tdLeft, width: tdWidth })
+            nextLines.push({ top: resumeY, left: tdLeft, width: tdWidth })
+          }
+        }
+      })
+    }
+    setSplitLines((prev) => (sameSplitLines(prev, nextLines) ? prev : nextLines))
   }, [editor, CONTENT_H, PAGE_H, MARGIN_TOP, isReflow])
 
   // mục lục đọc bước trang và cách đánh số trang từ storage; báo nó vẽ lại khi đổi
@@ -366,6 +552,18 @@ export function ExamEditor({ content, onChange, onReady, pageSetup, readOnly, is
   const papers = Array.from({ length: pageCount }, (_, i) => i)
   const pageColor = pageSetup?.pageColor ?? '#ffffff'
   const pageBorder = pageSetup?.pageBorder ?? 0
+  let flowMask: string | undefined
+  if (!isReflow && pageCount > 1) {
+    const stride = PAGE_H + PAGE_GAP
+    const stops = ['#000 0px']
+    for (let p = 0; p < pageCount - 1; p++) {
+      const cut = MARGIN_TOP + p * stride + CONTENT_H
+      const resume = MARGIN_TOP + (p + 1) * stride
+      stops.push(`#000 ${cut}px`, `transparent ${cut}px`, `transparent ${resume}px`, `#000 ${resume}px`)
+    }
+    stops.push('#000 100%')
+    flowMask = `linear-gradient(to bottom, ${stops.join(', ')})`
+  }
 
   return (
     <div
@@ -418,6 +616,25 @@ export function ExamEditor({ content, onChange, onReady, pageSetup, readOnly, is
       </div>
       )}
 
+      {/* đường kẻ ngang đóng/mở bảng khi bảng bị cắt qua ranh giới trang */}
+      {!isReflow && splitLines.length > 0 && (
+        <div className="doc-split-lines" aria-hidden="true" style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 2 }}>
+          {splitLines.map((line, idx) => (
+            <div
+              key={idx}
+              style={{
+                position: 'absolute',
+                top: line.top,
+                left: line.left,
+                width: line.width,
+                height: 1,
+                background: '#000',
+              }}
+            />
+          ))}
+        </div>
+      )}
+
       {/* lớp nội dung — 1 editor duy nhất */}
       <div
         className="doc-flow"
@@ -429,10 +646,13 @@ export function ExamEditor({ content, onChange, onReady, pageSetup, readOnly, is
           maxWidth: isReflow ? '100%' : undefined,
           boxSizing: 'border-box',
           padding: isReflow ? '12px 12px 60px' : `${MARGIN_TOP}px ${MARGIN_RIGHT}px ${MARGIN_BOTTOM}px ${MARGIN}px`,
+          maskImage: flowMask,
+          WebkitMaskImage: flowMask,
           // ngữ cảnh hình học cho CSS khối đề (khoảng cách phương án, thụt lề…)
           '--doc-content-w': isReflow ? '100%' : `${CONTENT_W}px`,
           '--doc-margin': isReflow ? '12px' : `${MARGIN}px`,
           '--doc-orient': pageSetup?.orientation ?? 'portrait',
+          '--doc-paper-bg': pageColor,
         } as React.CSSProperties}
       >
         {!readOnly && !content.content?.length && (
