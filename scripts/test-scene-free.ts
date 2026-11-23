@@ -365,6 +365,27 @@ for (const [spec, hash] of [
 
   const unevenSvg = draw('_A(0; 0) _B(0.2; 0.8) _C(3.5; 1.2) _D(3.8; 0)\ncong _A-_B-_C-_D')
   assert.ok(!unevenSvg.includes('NaN'))
+
+  // 8. Gạch đứng/ngang + điểm 3D + mặt tự sắp chiều sâu + lưới 3D
+  const hatchDirSvg = draw('A(0; 0) B(2; 0) C(2; 2) D(0; 2)\nABC tô gạch đứng\nADC tô gạch ngang đỏ')
+  assert.match(hatchDirSvg, /<pattern id="schat-111111-0"[^>]*patternTransform="rotate\(0\)"/)
+  assert.match(hatchDirSvg, /<pattern id="schat-d62828-90"[^>]*patternTransform="rotate\(90\)"/)
+
+  const face3dSvg = draw([
+    'góc nhìn xiên -0.4 -0.35',
+    '_A(0; 0; 0) _B(0; 2; 0) _C(0; 2; 2) _D(0; 0; 2)',
+    '_E(-2; 0; 0) _F(-2; 2; 0) _G(-2; 2; 2) _H(-2; 0; 2)',
+    'mặt _A-_B-_C-_D tô đậm đỏ',
+    'mặt _E-_F-_G-_H tô đậm xanh',
+  ].join('\n'))
+  assert.ok(face3dSvg.indexOf('fill="#2563eb"') > 0 && face3dSvg.indexOf('fill="#d62828"') > 0)
+  // Mặt trước (#d62828) phải vẽ SAU mặt sau (#2563eb) do depth lớn hơn
+  assert.ok(face3dSvg.indexOf('fill="#2563eb"') < face3dSvg.indexOf('fill="#d62828"'))
+
+  const meshSvg = draw('_O(0; 0)\nlưới 3d tam giác _O 2 3 bước 40 góc -56 24')
+  const meshPaths = paths(meshSvg)
+  // steps kẹp tối đa 24, m = 6, 2 sườn => 24 * 6 * 2 = 288 ô tứ giác
+  assert.equal(meshPaths.length, 288)
 }
 
 if (process.argv.includes('--svg')) {

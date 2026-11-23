@@ -18,6 +18,10 @@ import { resolveSpriteId, spriteDef } from './objects'
 import { OBJECTS } from './objectsCatalog'
 import { subscript } from './chem'
 import { richTextToSvg } from './table'
+import {
+  DEFAULT_MESH_CAMERA, DEFAULT_OBLIQUE_CAMERA, generateMesh3d, project3d,
+  type Camera3D, type Mesh3dKind, type P3,
+} from './scene3d'
 
 const FAM = `font-family="'Times New Roman',serif"`
 /** vật rộng: đặt mặt (mép gần) lên đoạn thay vì đặt giữa */
@@ -68,10 +72,13 @@ type Cmd =
   | { t: 'dot'; o: string; fill: string; stroke?: string; r: number }
   | { t: 'text'; o: string; text: string; large: boolean; bold: boolean; italic?: boolean; rotate?: number }
   | { t: 'frame'; w: number; h: number }
+  | { t: 'view'; cam: Camera3D }
+  | { t: 'face'; names: string[]; fill: string; fillOpacity?: number; stroke?: string; weight?: Weight; dashed: boolean }
+  | { t: 'mesh3d'; meshKind: Mesh3dKind; o: string; r: number; h: number; steps: number; cam?: Camera3D; fill: string; fillOpacity?: number; stroke?: string; weight?: Weight; dashed: boolean }
 
 const NUM = String.raw`(-?\d+(?:[.,]\d+)?)`
 const toNum = (s: string) => Number(s.replace(',', '.'))
-const FREE = /^(khung|cung\s+elip|cong|vùng|chấm|mũi\s+tên\s+hai\s+đầu|hai\s+đầu|mũi\s+tên|tròn|elip|hộp|thoi|cung|quạt|chữ)(?=\s|$)/u
+const FREE = /^(khung|góc\s+nhìn|lưới\s+3d|mặt|cung\s+elip|cong|vùng|chấm|mũi\s+tên\s+hai\s+đầu|hai\s+đầu|mũi\s+tên|tròn|elip|hộp|thoi|cung|quạt|chữ)(?=\s|$)/u
 const QUOTED = /"([^"]*)"|“([^”]*)”/g
 const SIZE = new RegExp(`^${NUM}$`)
 const COLORS = new Map(Object.entries({
@@ -87,12 +94,12 @@ function parseHexColor(value: string | undefined, line: number, missingMsg: stri
   return hex
 }
 
-function parseFill(value: string | undefined, line: number, mode: 'pastel' | 'solid' | 'shade' | 'sphere' | 'hatch' = 'pastel'): string {
+function parseFill(value: string | undefined, line: number, mode: 'pastel' | 'solid' | 'shade' | 'sphere' | 'hatch' = 'pastel', hatchAngle = 45): string {
   const hex = parseHexColor(value, line, 'thiếu màu tô', 'màu tô không hợp lệ')
   if (mode === 'solid') return hex
   if (mode === 'shade') return `url(#scgr-${hex.slice(1)})`
   if (mode === 'sphere') return `url(#scrg-${hex.slice(1)})`
-  if (mode === 'hatch') return `url(#schat-${hex.slice(1)})`
+  if (mode === 'hatch') return `url(#schat-${hex.slice(1)}${hatchAngle === 45 ? '' : `-${hatchAngle}`})`
   // Pha với trắng để màu vẫn che kín đoạn nối và chữ đen dễ đọc.
   const channels = hex.slice(1).match(/../g)!
   return '#' + channels.map((s) => Math.round(255 * 0.8 + parseInt(s, 16) * 0.2).toString(16)).join('')
@@ -121,9 +128,9 @@ function sphereGradientDef(hex: string): string {
   return `<radialGradient id="${id}" cx="35%" cy="30%" r="68%" fx="32%" fy="28%"><stop offset="0%" stop-color="${c0}"/><stop offset="45%" stop-color="${c1}"/><stop offset="85%" stop-color="${c2}"/><stop offset="100%" stop-color="${c3}"/></radialGradient>`
 }
 
-function hatchPatternDef(hex: string): string {
-  const id = `schat-${hex.slice(1)}`
-  return `<pattern id="${id}" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" stroke="${hex}" stroke-width="1.2"/></pattern>`
+function hatchPatternDef(hex: string, angle = 45): string {
+  const id = `schat-${hex.slice(1)}${angle === 45 ? '' : `-${angle}`}`
+  return `<pattern id="${id}" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(${angle})"><line x1="0" y1="0" x2="0" y2="6" stroke="${hex}" stroke-width="1.2"/></pattern>`
 }
 
 function tokenizeArgs(rest: string, line: number): string[] {
@@ -174,10 +181,14 @@ function readStyleToken(args: string[], i: number, line: number, opts: StyleOpts
       return 3
     }
     if (next === 'gạch' || next === 'sọc') {
-      const cand = args[i + 2]
+      let idx = i + 2
+      let angle = 45
+      if (args[idx] === 'đứng') { angle = 0; idx++ }
+      else if (args[idx] === 'ngang') { angle = 90; idx++ }
+      const cand = args[idx]
       const isColor = Boolean(cand && (COLORS.has(cand.toLowerCase()) || /^#[\da-f]{6}$/i.test(cand)))
-      opts.fill = parseFill(isColor ? cand : '#111111', line, 'hatch')
-      return isColor ? 3 : 2
+      opts.fill = parseFill(isColor ? cand : '#111111', line, 'hatch', angle)
+      return isColor ? idx - i + 1 : idx - i
     }
     opts.fill = parseFill(next, line, 'pastel')
     return 2
@@ -347,6 +358,102 @@ function parseFreeCmd(rawKind: string, rest: string, pts: Map<string, P>, line: 
     const h = readNum('chiều cao khung', true)
     if (args.length) fail(`tuỳ chọn khung không hợp lệ "${args[0]}"`)
     return { t: 'frame', w: Math.max(120, Math.min(1000, w)), h: Math.max(100, Math.min(800, h)) }
+  }
+
+  if (kind === 'góc nhìn') {
+    const first = args.shift()
+    if (!first) return fail('góc nhìn cần "xiên [dx dy]" hoặc "<az> <el>"')
+    if (first === 'xiên') {
+      if (!args.length) return { t: 'view', cam: DEFAULT_OBLIQUE_CAMERA }
+      const dx = readNum('độ lệch x')
+      const dy = args.length ? readNum('độ lệch y') : DEFAULT_OBLIQUE_CAMERA.dy
+      if (args.length) fail(`tuỳ chọn góc nhìn không hợp lệ "${args[0]}"`)
+      return { t: 'view', cam: { mode: 'oblique', dx, dy } }
+    }
+    args.unshift(first)
+    const az = readNum('góc phương vị')
+    const el = readNum('góc ngẩng')
+    if (args.length) fail(`tuỳ chọn góc nhìn không hợp lệ "${args[0]}"`)
+    return { t: 'view', cam: { mode: 'ortho', az, el } }
+  }
+
+  if (kind === 'mặt') {
+    const arg = args.shift()
+    if (!arg) return fail('mặt cần danh sách điểm, vd. A-B-C-D')
+    const names = splitNames(arg, pts, line)
+    if (names.length < 3) return fail('mặt cần ít nhất 3 điểm')
+    const opts = parseStyleList(args, line, 'mặt', { fill: true, stroke: true, weight: true, dashed: true })
+    return {
+      t: 'face',
+      names,
+      fill: opts.fill ?? '#ffffff',
+      fillOpacity: opts.fillOpacity,
+      stroke: opts.stroke,
+      weight: opts.weight,
+      dashed: Boolean(opts.dashed),
+    }
+  }
+
+  if (kind === 'lưới 3d') {
+    let meshKind: Mesh3dKind | undefined
+    const k0 = args.shift()
+    if (k0 === 'tam' && args[0] === 'giác') { args.shift(); meshKind = 'tam giác' }
+    else if (k0 === 'nửa' && args[0] === 'tròn') { args.shift(); meshKind = 'nửa tròn' }
+    else if (k0 === 'vuông' || k0 === 'parabol') meshKind = k0
+    if (!meshKind) return fail('kiểu lưới 3d phải là tam giác, nửa tròn, vuông hoặc parabol')
+    const o = args.shift()
+    if (!o || SIZE.test(o)) return fail('thiếu điểm đặt lưới 3d')
+    if (!pts.has(o)) return fail(`chưa khai báo điểm "${o}"`)
+    const r = readNum('bán kính', true)
+    const h = readNum('chiều cao', true)
+    let steps = 16
+    let cam: Camera3D | undefined
+    const opts: StyleOpts = {}
+    for (let i = 0; i < args.length;) {
+      const opt = args[i]
+      if (opt === 'bước') {
+        const v = args[i + 1]
+        if (!v || !SIZE.test(v) || toNum(v) < 4) fail('số bước lưới 3d phải >= 4')
+        steps = toNum(v)
+        i += 2; continue
+      }
+      if (opt === 'góc') {
+        if (args[i + 1] === 'xiên') {
+          const v1 = args[i + 2]
+          const v2 = args[i + 3]
+          if (v1 && SIZE.test(v1) && v2 && SIZE.test(v2)) {
+            cam = { mode: 'oblique', dx: toNum(v1), dy: toNum(v2) }
+            i += 4
+          } else {
+            cam = DEFAULT_OBLIQUE_CAMERA
+            i += 2
+          }
+          continue
+        }
+        const v1 = args[i + 1]
+        const v2 = args[i + 2]
+        if (!v1 || !SIZE.test(v1) || !v2 || !SIZE.test(v2)) fail('góc lưới 3d cần 2 số <az> <el>')
+        cam = { mode: 'ortho', az: toNum(v1), el: toNum(v2) }
+        i += 3; continue
+      }
+      const used = readStyleToken(args, i, line, opts, { fill: true, stroke: true, weight: true, dashed: true })
+      if (!used) fail(`tuỳ chọn lưới 3d không hợp lệ "${opt}"`)
+      i += used
+    }
+    return {
+      t: 'mesh3d',
+      meshKind,
+      o,
+      r,
+      h,
+      steps,
+      cam,
+      fill: opts.fill ?? '#ffffff',
+      fillOpacity: opts.fillOpacity,
+      stroke: opts.stroke,
+      weight: opts.weight,
+      dashed: Boolean(opts.dashed),
+    }
   }
 
   if (kind === 'mũi tên' || kind === 'mũi tên hai đầu' || kind === 'hai đầu') {
@@ -521,21 +628,30 @@ function parseFreeCmd(rawKind: string, rest: string, pts: Map<string, P>, line: 
   }
 }
 
-export function parseScene(text: string): { pts: Map<string, P>; cmds: Cmd[] } {
+export function parseScene(text: string): { pts: Map<string, P>; cmds: Cmd[]; depths: Map<string, number>; cam?: Camera3D } {
   const pts = new Map<string, P>()
+  const pts3 = new Map<string, P3>()
+  const depths = new Map<string, number>()
   const cmds: Cmd[] = []
   const lines = text.normalize('NFC').split('\n')
-  // lượt 1: điểm (để lệnh viết trước điểm vẫn đọc được)
+  // lượt 1: điểm (3D đọc trước 2D; để lệnh viết trước điểm vẫn đọc được)
+  const point3Re = new RegExp(String.raw`([A-Z_][A-Za-z0-9_']*)\s*\(\s*${NUM}\s*;\s*${NUM}\s*;\s*${NUM}\s*\)`, 'g')
   const pointRe = new RegExp(String.raw`([A-Z_][A-Za-z0-9_']*)\s*\(\s*${NUM}\s*;\s*${NUM}\s*\)`, 'g')
+  const anyPointRe = new RegExp(`${point3Re.source}|${pointRe.source}`, 'g')
   const clean = (l: string) => l.trim().replace(/^[,;]+|[,;]+$/g, '').trim()
-  const quotedOrPoint = new RegExp(`${QUOTED.source}|${pointRe.source}`, 'g')
+  const quotedOrPoint = new RegExp(`${QUOTED.source}|${anyPointRe.source}`, 'g')
   const commands = lines.map((l) => clean(l.replace(quotedOrPoint, (m) => /^["“]/.test(m) ? m : '')))
   const free = commands.map((l) => FREE.exec(l)?.[0])
   lines.forEach((l, idx) => {
     const source = free[idx] ? l.replace(QUOTED, ' ') : l
-    for (const m of source.matchAll(pointRe)) pts.set(m[1], [toNum(m[2]), toNum(m[3])])
+    for (const m of source.matchAll(point3Re)) {
+      pts3.set(m[1], [toNum(m[2]), toNum(m[3]), toNum(m[4])])
+      if (!pts.has(m[1])) pts.set(m[1], [0, 0])
+    }
+    const rest2d = source.replace(point3Re, ' ')
+    for (const m of rest2d.matchAll(pointRe)) pts.set(m[1], [toNum(m[2]), toNum(m[3])])
   })
-  const hasRealFree = free.some((f) => Boolean(f) && f !== 'khung')
+  const hasRealFree = free.some((f) => Boolean(f) && f !== 'khung' && f !== 'góc nhìn')
   if (pts.size < 2 && !hasRealFree) throw new Error('Cần ít nhất 2 điểm, vd. A(0; 0) B(4; 0)')
 
   lines.forEach((raw, idx) => {
@@ -545,7 +661,7 @@ export function parseScene(text: string): { pts: Map<string, P>; cmds: Cmd[] } {
       cmds.push(parseFreeCmd(kind, commands[idx].slice(kind.length).trim(), pts, line))
       return
     }
-    const l = clean(raw.replace(pointRe, ''))
+    const l = clean(raw.replace(anyPointRe, ''))
     if (!l) return
     const quoted = l.match(/"([^"]*)"|“([^”]*)”/)
     const q = quoted ? (quoted[1] ?? quoted[2] ?? '') : ''
@@ -641,7 +757,17 @@ export function parseScene(text: string): { pts: Map<string, P>; cmds: Cmd[] } {
       }
     }
   })
-  return { pts, cmds }
+  const viewCmd = [...cmds].reverse().find((c): c is Extract<Cmd, { t: 'view' }> => c.t === 'view')
+  const cam = viewCmd?.cam
+  if (pts3.size > 0) {
+    const activeCam = cam ?? DEFAULT_OBLIQUE_CAMERA
+    for (const [name, p3] of pts3) {
+      const { p2, depth } = project3d(p3, activeCam)
+      pts.set(name, p2)
+      depths.set(name, depth)
+    }
+  }
+  return { pts, cmds, depths, cam }
 }
 
 type Shape = Extract<Cmd, { t: 'shape' }>
@@ -782,10 +908,10 @@ function collectUsedPointNames(cmds: Cmd[]): Set<string> {
   const used = new Set<string>()
   for (const c of cmds) {
     if (c.t === 'seg' || c.t === 'dim' || c.t === 'label' || c.t === 'ground') { used.add(c.a); used.add(c.b) }
-    else if (c.t === 'poly' || c.t === 'curve') c.names.forEach((n) => used.add(n))
+    else if (c.t === 'poly' || c.t === 'curve' || c.t === 'face') c.names.forEach((n) => used.add(n))
     else if (c.t === 'angle' || c.t === 'right') { used.add(c.a); used.add(c.o); used.add(c.b) }
     else if (c.t === 'sprite') { used.add(c.a); if (c.b) used.add(c.b) }
-    else if (c.t === 'shape' || c.t === 'arc' || c.t === 'text' || c.t === 'dot') used.add(c.o)
+    else if (c.t === 'shape' || c.t === 'arc' || c.t === 'text' || c.t === 'dot' || c.t === 'mesh3d') used.add(c.o)
     else if (c.t === 'region') {
       for (const p of c.parts) if (p.k !== 'arc') p.names.forEach((n) => used.add(n))
     }
@@ -794,7 +920,7 @@ function collectUsedPointNames(cmds: Cmd[]): Set<string> {
 }
 
 export function renderSceneSvg(spec: SceneSpec, desc: string): { svg: string; width: number; height: number } {
-  const { pts, cmds } = parseScene(spec.text)
+  const { pts, cmds, depths, cam } = parseScene(spec.text)
   const shapes = cmds.filter((c): c is Shape => c.t === 'shape')
   const solidShapes = shapes.filter((s) => !s.bg)
 
@@ -840,7 +966,7 @@ export function renderSceneSvg(spec: SceneSpec, desc: string): { svg: string; wi
   const drawn = (a: string, b: string) =>
     cmds.some((c) =>
       (c.t === 'seg' || c.t === 'ground') ? (c.a === a && c.b === b) || (c.a === b && c.b === a)
-      : c.t === 'poly' && c.names.some((n, i) => { const m = c.names[(i + 1) % c.names.length]; return (n === a && m === b) || (n === b && m === a) }))
+      : (c.t === 'poly' || c.t === 'face') && c.names.some((n, i) => { const m = c.names[(i + 1) % c.names.length]; return (n === a && m === b) || (n === b && m === a) }))
   for (const c of [...cmds]) {
     if (c.t !== 'angle' && c.t !== 'right') continue
     for (const x of [c.a, c.b]) if (!drawn(c.o, x)) cmds.push({ t: 'seg', a: c.o, b: x, dashed: false })
@@ -968,6 +1094,14 @@ export function renderSceneSvg(spec: SceneSpec, desc: string): { svg: string; wi
       }
     }
   }
+  const meshes = cmds
+    .filter((c): c is Extract<Cmd, { t: 'mesh3d' }> => c.t === 'mesh3d')
+    .map((c) => ({ c, mesh: generateMesh3d(c.meshKind, pts.get(c.o)!, c.r, c.h, c.steps, c.cam ?? cam ?? DEFAULT_MESH_CAMERA) }))
+  for (const m of meshes) {
+    for (const [x, y] of m.mesh.bounds) {
+      xs.push(x); ys.push(y)
+    }
+  }
 
   const getLabels = (k: number) => cmds.flatMap((c, i) => {
     if ((c.t !== 'shape' && c.t !== 'text' && c.t !== 'arc') || !c.text) return []
@@ -1016,7 +1150,7 @@ export function renderSceneSvg(spec: SceneSpec, desc: string): { svg: string; wi
   const minY = Math.min(...ys)
   const maxY = Math.max(...ys)
   const freeLayout = shapes.length > 0 || arcs.length > 0 || curves.length > 0 || regions.length > 0 ||
-    cmds.some((c) => c.t === 'text' || c.t === 'dot' || (c.t === 'seg' && c.arrow))
+    meshes.length > 0 || cmds.some((c) => c.t === 'text' || c.t === 'dot' || c.t === 'face' || (c.t === 'seg' && c.arrow))
   const spanX = maxX - minX || (freeLayout ? 0 : 1)
   const spanY = maxY - minY || (freeLayout ? 0 : 1)
   const k = spanX || spanY ? Math.min(frameW / spanX, frameH / spanY) : 1
@@ -1047,23 +1181,26 @@ export function renderSceneSvg(spec: SceneSpec, desc: string): { svg: string; wi
   const arrowColors = new Set<string>()
   const shadeColors = new Set<string>()
   const sphereColors = new Set<string>()
-  const hatchColors = new Set<string>()
+  const hatchSpecs = new Map<string, { hex: string; angle: number }>()
   const noteColor = (c: { fill?: string; stroke?: string; arrow?: boolean }) => {
     if (c.arrow && c.stroke && c.stroke !== '#111' && c.stroke !== 'none') arrowColors.add(c.stroke)
-    const m = c.fill ? /^url\(#(scgr|scrg|schat)-([\da-f]{6})\)$/.exec(c.fill) : null
+    const m = c.fill ? /^url\(#(scgr|scrg|schat)-([\da-f]{6})(?:-(\d+))?\)$/.exec(c.fill) : null
     if (m?.[1] === 'scgr') shadeColors.add('#' + m[2])
     else if (m?.[1] === 'scrg') sphereColors.add('#' + m[2])
-    else if (m?.[1] === 'schat') hatchColors.add('#' + m[2])
+    else if (m?.[1] === 'schat') {
+      const ang = m[3] ? Number(m[3]) : 45
+      hatchSpecs.set(`${m[2]}-${ang}`, { hex: '#' + m[2], angle: ang })
+    }
   }
   cmds.forEach((c) => {
-    if (c.t === 'seg' || c.t === 'poly' || c.t === 'shape' || c.t === 'arc' || c.t === 'curve' || c.t === 'region') noteColor(c)
+    if (c.t === 'seg' || c.t === 'poly' || c.t === 'shape' || c.t === 'arc' || c.t === 'curve' || c.t === 'region' || c.t === 'face' || c.t === 'mesh3d') noteColor(c)
   })
   const arrowId = (stroke?: string) => (stroke && stroke !== '#111' ? `scarr-${stroke.slice(1)}` : 'scarr')
   const extraMarkers = [...arrowColors].map((c) =>
     `<marker id="scarr-${c.slice(1)}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="${c}"/></marker>`).join('')
   const extraGrads = [...shadeColors].map(shadeGradientDef).join('') +
     [...sphereColors].map(sphereGradientDef).join('') +
-    [...hatchColors].map(hatchPatternDef).join('')
+    [...hatchSpecs.values()].map((h) => hatchPatternDef(h.hex, h.angle)).join('')
 
   let b = `<defs><marker id="scarr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#111"/></marker>${extraMarkers}${extraGrads}</defs>`
   const line = (p: P, q: P, extra = '', stroke = '#111') =>
@@ -1242,6 +1379,33 @@ export function renderSceneSvg(spec: SceneSpec, desc: string): { svg: string; wi
     else if (c.t === 'shape') b += renderShapeSvg(c)
   }
 
+  // 2b. Lớp 3D: lưới mặt cong 3D & các mặt đa giác 3D sắp xếp từ xa tới gần
+  for (const { c, mesh } of meshes) {
+    const sw = strokeWidthOnly(c.stroke, c.weight, 0.85)
+    const dash = c.dashed ? ' stroke-dasharray="5 4"' : ''
+    const fo = fillOpacityAttr(c.fill, c.fillOpacity)
+    for (const q of mesh.quads) {
+      const d = q.pts.map((p, i) => `${i ? 'L' : 'M'}${f1(S(p)[0])} ${f1(S(p)[1])}`).join('') + 'Z'
+      b += `<path d="${d}" stroke="${c.stroke ?? '#111'}" fill="${c.fill}"${fo}${sw} stroke-linejoin="round"${dash}/>`
+    }
+  }
+  const faces = cmds.filter((c): c is Extract<Cmd, { t: 'face' }> => c.t === 'face')
+  if (faces.length) {
+    const sortedFaces = faces
+      .map((c, idx) => ({
+        c, idx,
+        depth: c.names.reduce((s, n) => s + (depths.get(n) ?? 0), 0) / c.names.length,
+      }))
+      .sort((x, y) => x.depth - y.depth || x.idx - y.idx)
+    for (const { c } of sortedFaces) {
+      const d = c.names.map((n, i) => `${i ? 'L' : 'M'}${f1(at(n)[0])} ${f1(at(n)[1])}`).join('') + 'Z'
+      const sw = strokeWidthOnly(c.stroke, c.weight, 1.4)
+      const dash = c.dashed ? ' stroke-dasharray="5 4"' : ''
+      const fo = fillOpacityAttr(c.fill, c.fillOpacity)
+      b += `<path d="${d}" stroke="${c.stroke ?? '#111'}" fill="${c.fill}"${fo}${sw} stroke-linejoin="round"${dash}/>`
+    }
+  }
+
   // 3. Hình vật
   const usedSprites = new Set<string>()
   for (const s of sprites) {
@@ -1263,7 +1427,7 @@ export function renderSceneSvg(spec: SceneSpec, desc: string): { svg: string; wi
   b = b.replace('</defs>', [...usedSprites].map(spriteDef).join('') + '</defs>')
 
   // 4. Nét chính (giữ nguyên luật filledPolys cũ cho đa giác thường không có `nền`)
-  const mainCmds = cmds.filter((c) => !('bg' in c && c.bg))
+  const mainCmds = cmds.filter((c) => !('bg' in c && c.bg) && c.t !== 'face' && c.t !== 'mesh3d' && c.t !== 'view')
   const filledPolys = mainCmds.filter((c) => c.t === 'poly' && c.fill)
   const baseLine = (c: Cmd) => c.t === 'seg' || (c.t === 'poly' && !c.fill)
   const ordered = filledPolys.length ? [
@@ -1408,7 +1572,7 @@ export function renderSceneSvg(spec: SceneSpec, desc: string): { svg: string; wi
       const p3: P = [o[0] + db[0] * 10, o[1] + db[1] * 10]
       const p2: P = [p1[0] + db[0] * 10, p1[1] + db[1] * 10]
       segs.push([p1, p2], [p2, p3])
-    } else if (c.t === 'poly') {
+    } else if (c.t === 'poly' || c.t === 'face') {
       c.names.forEach((n, i) => segs.push([at(n), at(c.names[(i + 1) % c.names.length])]))
     } else if (c.t === 'curve') {
       const ptsCurve = sampleCurveWorld(c.names.map((n) => pts.get(n)!), c.closed).map(S)
@@ -1550,9 +1714,10 @@ export const SCENE_HELP = [
       { code: 'quạt O 4 0 60 tô vàng', what: 'Hình quạt tâm O với hai bán kính; thêm đứt, tô <màu>' },
       { code: 'cong A-B-C [kín] [mũi tên]', what: 'Đường cong mượt qua các điểm (3 điểm tạo parabol)' },
       { code: 'vùng mảnh1; mảnh2 tô đậm đen', what: 'Miền kín ghép từ cung / cung elip / cong / đoạn; hỗ trợ tô gạch, tô bóng, mờ' },
-      { code: 'ABC tô [đậm|gạch|cầu] đỏ [mờ 0.5] [nền]', what: 'Đa giác/hình tô nhạt, đậm, gạch chéo, khối cầu hoặc bán trong suốt' },
+      { code: 'ABC tô [đậm|gạch|cầu] đỏ [mờ 0.5] [nền]', what: 'Đa giác/hình tô nhạt, đậm, gạch (chéo/đứng/ngang), khối cầu hoặc bán trong suốt' },
       { code: 'chữ O "$y = f(x)$" [xoay 30]', what: 'Chữ căn giữa tại O; bọc $...$ để in nghiêng chữ toán học; thêm to, đậm, xoay' },
       { code: 'mũi tên AB / khung 520 240', what: 'Mũi tên màu/nét tuỳ chọn; khung W H chỉnh cỡ hình ngang rộng' },
+      { code: 'A(x; y; z) / mặt A-B-C-D / lưới 3d', what: 'Chiếu điểm 3D (góc nhìn xiên hoặc az el), xếp lớp mặt che khuất và lưới thiết diện 3D' },
     ],
   },
 ]
