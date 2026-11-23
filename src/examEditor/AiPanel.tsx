@@ -98,7 +98,6 @@ function SourceAttachmentIcon({ source }: { source: Pick<PickedSource, 'name' | 
   return <img src={ATTACH_ICONS[kind && kind !== 'image' ? kind : 'doc']} alt="" className="ai-attachment__icon" />
 }
 
-const PDF_SCAN_NOTICE = 'PDF có công thức, hình hoặc là bản scan sẽ được AI đọc bằng ảnh nên tốn thêm điểm.'
 
 const newId = (() => {
   let seq = 0
@@ -283,8 +282,8 @@ const spentSince = (start: number | null) => {
   return Math.max(1, pts) * TOKENS_PER_POINT
 }
 
-/** nút "Nguồn (n)" bấm mở danh sách nguồn + cảnh báo, thay cho dòng chữ lộ thiên dưới tin nhắn */
-function SourcesButton({ sources, web, note }: { sources?: string[]; web?: Array<{ url: string; title: string }>; note?: string }) {
+/** Nút mở danh sách nguồn đã dùng. */
+function SourcesButton({ sources, web }: { sources?: string[]; web?: Array<{ url: string; title: string }> }) {
   const n = (sources?.length ?? 0) + (web?.length ?? 0)
   const showSources = () => {
     void dialog.show(
@@ -307,7 +306,6 @@ function SourcesButton({ sources, web, note }: { sources?: string[]; web?: Array
             })}
           </ul>
         ) : null}
-        {note ? <p className="ai-msg-source-note">{note}</p> : null}
       </>,
       'Nguồn',
     )
@@ -316,7 +314,6 @@ function SourcesButton({ sources, web, note }: { sources?: string[]; web?: Array
     <div className="ai-sources">
       <button type="button" className="ai-sources__btn" aria-haspopup="dialog" onClick={showSources}>
         Nguồn ({n})
-        {note ? <span className="ai-sources__dot" aria-label="có cảnh báo" /> : null}
       </button>
     </div>
   )
@@ -897,7 +894,6 @@ function AiConversation({
       })
     }
     if (added.length) setFiles((current) => [...current, ...added])
-    if (added.some((file) => file.kind === 'pdf')) void dialog.alert(PDF_SCAN_NOTICE)
   }
 
   const removeFile = (id: string) => {
@@ -1004,7 +1000,9 @@ function AiConversation({
     try {
       const examDoc = intent === 'doc' && mode === 'exam'
       // Ngoài luồng soạn đề, DOCX, PDF và nguồn đã chọn vẫn được đọc khi gửi.
-      const sourceFiles = examDoc ? sentFiles : sentFiles.filter((f) => f.kind === 'pdf' || (f.kind === 'doc' && isDocx(f.name, f.file?.type)))
+      const sourceFiles = examDoc ? sentFiles : sentFiles.filter((f) =>
+        f.kind === 'pdf' || (mode === 'exam' && f.kind === 'image') || (f.kind === 'doc' && isDocx(f.name, f.file?.type)),
+      )
       let pack: SourcePack = (answeringAsk && previousTurn?.askSourcePack) || { tier: 0, items: [], warnings: [] }
       if (sourceFiles.length || sentPicked.length) {
         if (examSteps) logStart('Đọc nguồn')
@@ -1025,6 +1023,9 @@ function AiConversation({
         patchTurn(() => ({ sources: pack.items.map((s) => s.name), sourceNote }))
       }
       controller.signal.throwIfAborted()
+      if ((sourceFiles.length || sentPicked.length) && !pack.items.length) {
+        throw new Error('Không đọc được nội dung nguồn đã gửi.')
+      }
       // khung chương trình Toán: đoán lớp/chương từ yêu cầu; lượt nối tiếp ("thêm 2 câu") thì lấy từ các lượt trước và đầu đề
       let khungBlock = ''
       if (intent === 'doc' && mode === 'exam') {
@@ -1088,7 +1089,7 @@ function AiConversation({
         const quickAsk = parseAsk(quick.content)
         if (!quickAsk) logSet((l) => closeLog(l, 'done'))
         if (quickAsk) {
-          patchTurn(() => ({ text: quickAsk.intro || 'Mình cần biết thêm vài điều trước khi soạn.', ask: quickAsk, askState: 'open', pending: false, log: undefined, sources: undefined, sourceNote: undefined }))
+          patchTurn(() => ({ text: quickAsk.intro || 'Mình cần biết thêm vài điều trước khi soạn.', ask: quickAsk, askState: 'open', pending: false, log: undefined }))
           return
         }
       }
@@ -1160,8 +1161,8 @@ function AiConversation({
         : undefined
       // đề nguồn dài + "soạn lại / đổi số liệu": chia nhiều lượt nhỏ (một lượt cả đề thì model hết token)
       const split =
-        mode === 'exam' && intent === 'doc' && onApplyBlocks && pack.items.length && !revisingExam
-          ? planExamSplit(text, pack.items.map((s) => s.text).join('\n\n'))
+        mode === 'exam' && intent === 'doc' && onApplyBlocks && pack.items.length === 1 && !revisingExam
+          ? planExamSplit(originalRequest, pack.items[0].text)
           : null
       if (split) {
         const parts: ChunkJson[] = []
@@ -1179,7 +1180,7 @@ function AiConversation({
               if (phase !== 'write') onProgress!({ ...p, phase: 'write', text: '' })
               if (Date.now() - liveAt < 200) return
               liveAt = Date.now()
-              const n = (p.text.match(/"type"\s*:\s*"question"/g) ?? []).length
+              const n = (p.text.match(/"type"\s*:\s*"(?:question|essay)"/g) ?? []).length
               const stem = [...p.text.matchAll(/"text"\s*:\s*"((?:[^"\\]|\\.)*)/g)].at(-1)?.[1]
               const live = p.phase === 'think' ? tailLine(p.thinking, 140) : stem ? tailLine(stem.replace(/\\n/g, ' ').replace(/\\(.)/g, '$1'), 110) : ''
               logPatch({ note: `${Math.min(doneQ + n, total)}/${total} câu`, live: live || undefined })
@@ -1190,11 +1191,11 @@ function AiConversation({
           const msgs: LlmMessage[] = [...messages.slice(0, -1), { role: 'user', content: lastMsg.content + split[i].note }]
           const opts = { signal: controller.signal, reasoningEffort: AI_EFFORT.exam, task: splitTask, onProgress: chunkProgress }
           let r = await callLlm(msgs, opts)
-          let part = parseChunk(r.content)
+          let part = parseChunk(r.content, split[i])
           if (!part) {
             controller.signal.throwIfAborted()
             r = await callLlm(msgs, { ...opts, retryOf: r.receipt, strong: true })
-            part = parseChunk(r.content)
+            part = parseChunk(r.content, split[i])
           }
           if (part) {
             parts.push(part)
@@ -1207,10 +1208,10 @@ function AiConversation({
         logSet((l) => closeLog(l, 'done', `${doneQ - skipped.reduce((s, k) => s + split[k - 1].count, 0)} câu`))
         logStart('Đưa vào đề')
         await new Promise((r) => setTimeout(r, 350))
-        const result = onApplyBlocks!(mergeChunks(parts, figsOf), true)
+        const result = onApplyBlocks!(mergeChunks(parts, figsOf, !skipped.length), true)
         const ok = !!result && !result.failed
-        const missing = skipped.map((k) => { const a = split.slice(0, k - 1).reduce((s, c) => s + c.count, 0) + 1; const b = a + split[k - 1].count - 1; return a === b ? `${a}` : `${a}–${b}` })
-        const note = skipped.length ? `\n\nChưa soạn được câu ${missing.join(', ')}, bạn bảo AI soạn thêm các câu này nhé.` : ''
+        const missing = skipped.map((k) => split[k - 1].sourceRange)
+        const note = missing.length ? `\n\nCòn thiếu ${missing.join('; ')} trong đề mẫu.` : ''
         if (ok) rememberAiTurn({ mode, request: userTurn.text, reply: result.text, context: documentDigest })
         patchTurn((t) => ({
           text: (result?.text ?? '') + note,
@@ -1708,7 +1709,8 @@ function AiConversation({
                 }
                 onCancel={() => cancelPlan(turn.id)}
               />
-              {turn.sources?.length || turn.webSources?.length || turn.sourceNote ? <SourcesButton sources={turn.sources} web={turn.webSources} note={turn.sourceNote} /> : null}
+              {turn.sourceNote ? <p className="ai-msg-error">{turn.sourceNote}</p> : null}
+              {turn.sources?.length || turn.webSources?.length ? <SourcesButton sources={turn.sources} web={turn.webSources} /> : null}
               {turn.error ? (
                 <div className="ai-msg-error">
                   {turn.error}
@@ -1758,13 +1760,9 @@ function AiConversation({
           value={picked}
           onClose={() => setPickerOpen(false)}
           onDone={(next) => {
-            const addedPdf = next.some((p) =>
-              p.kind === 'library' && isPdf(p.name, p.mime) && !picked.some((previous) => pickedKey(previous) === pickedKey(p)),
-            )
             setPicked(next)
             setPickerOpen(false)
             taRef.current?.focus()
-            if (addedPdf) void dialog.alert(PDF_SCAN_NOTICE)
           }}
         />
       ) : null}

@@ -72,6 +72,9 @@ export function parseStats(text: string): Parsed {
   if (!series.length) throw new Error('Thêm ít nhất một dòng số liệu, vd. Số học sinh: 3; 5; 7')
   const n = Math.max(...series.map((s) => s.vals.length))
   if (!cats.length) cats = Array.from({ length: n }, (_, i) => String(i + 1))
+  // Một hàng có ô tiêu đề ở đầu, theo sau là các nhãn số.
+  if (cats.length === n + 1 && n > 0 && !Number.isFinite(Number(cats[0].replace(',', '.'))) &&
+      cats.slice(1).every((cat) => Number.isFinite(Number(cat.replace(',', '.'))))) cats = cats.slice(1)
   for (const s of series)
     if (s.vals.length !== cats.length) throw new Error(`Dòng "${s.name}" có ${s.vals.length} số, nhưng có ${cats.length} nhãn`)
   return { cats, series }

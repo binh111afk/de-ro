@@ -1,10 +1,11 @@
 import type { Editor } from '@tiptap/core'
-import type { Selection } from '@tiptap/pm/state'
+import type { Selection, Transaction } from '@tiptap/pm/state'
+import type { Node as ProseMirrorNode } from '@tiptap/pm/model'
 import type { ExamBlock, FormatAttrs, RichText, Span, TableCellData } from '@/data/docTypes'
 import { extractJson } from '@/lib/llm'
-import { keyIndex, rubricEntries, type AiApplyResult } from '@/lib/aiDocContext'
+import { keyIndex, rubricEntries, stripImages, type AiApplyResult } from '@/lib/aiDocContext'
 import { buildScoringTable } from '@/lib/scoringTable'
-import { blocksToTipTap, plainText, tipTapToBlocks } from './convert'
+import { blocksToTipTap, plainText, splitRichLines, tipTapToBlocks } from './convert'
 
 type DrawFigure = (raw: unknown) => Span['image']
 
@@ -68,9 +69,33 @@ function expandFigures(raw: unknown, missing: string[], draw: DrawFigure): unkno
   })
 }
 
-function sanitizeBlocks(raw: unknown, invalid: string[]): ExamBlock[] {
+/** Đầu đề AI đôi khi thiếu dấu xuống dòng trước nhãn hoặc dòng đóng khung. */
+function headerColumn(value: RichText): RichText {
+  const spans = typeof value === 'string' ? [{ text: value }] : value
+  const marked = spans.flatMap((span, i): Span[] => {
+    if (span.image) return [span]
+    const text = span.text.replace(/([^\s(])[ \t]*(?=(?:Thời gian làm bài|Môn\s*:|Năm học\s+|\(?Đề thi có\s+\d))/giu, '$1\n')
+    const startsLine = /^[ \t]*(?:Thời gian làm bài|Môn\s*:|Năm học\s+|\(?Đề thi có\s+\d)/iu.test(text) ||
+      (span.marks?.some((mark) => mark.type === 'boxed') && !spans[i - 1]?.marks?.some((mark) => mark.type === 'boxed'))
+    if (i > 0 && startsLine && !text.startsWith('\n') && !spans[i - 1].text.endsWith('\n')) {
+      return [{ text: '\n' }, { ...span, text }]
+    }
+    return [{ ...span, text }]
+  })
+  const lines = new Map<string, Span[]>()
+  for (const line of splitRichLines(marked)) {
+    const row = typeof line === 'string' ? [{ text: line }] : line
+    const key = plainText(line).trim().replace(/[()]/g, '').replace(/\s+/g, ' ').toLowerCase()
+    if (!lines.has(key) || row.some((span) => span.marks?.some((mark) => mark.type === 'boxed' || mark.type === 'italic')))
+      lines.set(key, row)
+  }
+  return [...lines.values()].flatMap((line, i) => i ? [{ text: '\n' }, ...line] : line)
+}
+
+function sanitizeBlocks(raw: unknown, invalid: string[], missing: string[], draw: DrawFigure, originals: NonNullable<Span['image']>[] = []): ExamBlock[] {
   if (!Array.isArray(raw)) return []
   // AI có lúc trả mảng trộn string + span; chuẩn hoá về Span[] để converter/export đọc được.
+  let label = 'đoạn văn'
   const rich = (v: unknown): RichText =>
     typeof v === 'string'
       ? v
@@ -80,6 +105,17 @@ function sanitizeBlocks(raw: unknown, invalid: string[]): ExamBlock[] {
             if (!s || typeof s !== 'object') return []
             const span = s as Span
             if (typeof span.text !== 'string') return []
+            if (span.image && !span.image.src) {
+              const { ref, figure } = span.image as typeof span.image & { ref?: number; figure?: unknown }
+              const original = typeof ref === 'number' && Number.isInteger(ref) ? originals[ref] :
+                originals.length === 1 ? originals[0] : undefined
+              let image = original
+              if (figure != null && (!original || figure !== original.plot)) {
+                try { image = draw(typeof figure === 'string' ? JSON.parse(figure) : figure) } catch { image = undefined }
+                if (!image) missing.push(label)
+              } else if (!image) missing.push(label)
+              return image || original ? [{ ...span, image: image || original }] : []
+            }
             return [{ ...span, marks: Array.isArray(span.marks) ? span.marks.filter((m) => m && typeof m.type === 'string') : undefined }]
           })
         : ''
@@ -91,12 +127,13 @@ function sanitizeBlocks(raw: unknown, invalid: string[]): ExamBlock[] {
     if (!item || typeof item !== 'object') continue
     const b = item as Record<string, unknown>
     const type = typeof b.type === 'string' ? b.type : ''
+    label = type === 'question' ? `Câu ${b.no ?? '?'}` : type === 'essay' ? `Bài ${b.no ?? '?'}` : 'đoạn văn'
     if (!AI_BLOCK_TYPES.has(type)) continue
     switch (type) {
       case 'header': {
         // dạng cũ {"type":"header","text":"…"} → đưa vào cột trái thay vì header rỗng
         const left = rich(b.left) || (typeof b.text === 'string' ? b.text : '')
-        out.push({ type: 'header', left, right: rich(b.right) })
+        out.push({ type: 'header', left: headerColumn(left), right: headerColumn(rich(b.right)) })
         break
       }
       case 'title':
@@ -277,8 +314,84 @@ interface ExamPatch {
   blocks: ExamBlock[]
 }
 
+type KeyItem = Extract<ExamBlock, { type: 'answerKey' }>['items'][number]
+
+/** Giữ đáp án cũ theo câu gốc khi chèn/xoá làm dịch số. Mục AI trả mới được ưu tiên. */
+function normalizePatchedQuestions(tr: Transaction, original: ProseMirrorNode) {
+  const questions: Array<{ node: ProseMirrorNode; pos: number }> = []
+  const tables: Array<{ node: ProseMirrorNode; pos: number; items: KeyItem[] }> = []
+  const headings: Array<{ node: ProseMirrorNode; pos: number; start: number; end: number }> = []
+  const oldQuestions: ProseMirrorNode[] = []
+  const oldTables = new Set<ProseMirrorNode>()
+  original.forEach((node) => {
+    if (node.type.name === 'examQuestion') oldQuestions.push(node)
+    if (node.type.name === 'examAnswerKey') oldTables.add(node)
+  })
+  let heading: typeof headings[number] | undefined
+  tr.doc.forEach((node, pos) => {
+    if (node.type.name === 'examQuestion') {
+      questions.push({ node, pos })
+      if (heading) heading.end = questions.length
+    }
+    if (node.type.name === 'examHeading' && /^phần\s/iu.test(node.textContent)) {
+      heading = { node, pos, start: questions.length + 1, end: 0 }
+      headings.push(heading)
+    }
+    if (node.type.name === 'examAnswerKey') {
+      const [key] = tipTapToBlocks({ type: 'doc', content: [node.toJSON()] })
+      if (key?.type === 'answerKey') tables.push({ node, pos, items: key.items })
+    }
+  })
+  const changed = oldQuestions.length !== questions.length ||
+    questions.some(({ node }, i) => node.attrs.no !== oldQuestions[i]?.attrs.no)
+  const newTables = tables.filter(({ node }) => !oldTables.has(node))
+  if (!changed && (!newTables.length || oldTables.size === 0 && tables.length === 1)) return
+
+  const fresh = newTables.flatMap(({ items }) => items)
+  const prior = new Map<number, RichText>()
+  const kept = new Set(tables.map(({ node }) => node))
+  for (const node of oldTables) {
+    if (!fresh.length && !kept.has(node)) continue
+    const [key] = tipTapToBlocks({ type: 'doc', content: [node.toJSON()] })
+    if (key?.type === 'answerKey') for (const item of key.items) prior.set(item.no, item.answer)
+  }
+  const incoming = new Map(fresh.map(({ no, answer }) => [no, answer]))
+  const fullKey = fresh.length === questions.length && questions.every((_, i) => incoming.has(i + 1))
+  const touched = new Set(questions.filter(({ node }) => !oldQuestions.includes(node)).map(({ node }) => Number(node.attrs.no)))
+  const items = questions.flatMap(({ node, pos }, i) => {
+    const oldNo = Number(node.attrs.no)
+    const no = changed ? i + 1 : oldNo
+    const isOld = oldQuestions.includes(node)
+    const fromPatch = fullKey && changed ? incoming.get(no) :
+      !isOld || !touched.has(oldNo) ? incoming.get(oldNo) : undefined
+    const answer = fromPatch ?? (isOld || !changed ? prior.get(oldNo) : undefined)
+    if (no !== oldNo) tr.setNodeMarkup(pos, undefined, { ...node.attrs, no })
+    return answer === undefined ? [] : [{ no, answer }]
+  })
+
+  // Chỉnh các số trong tiêu đề phần khi kiểu tiêu đề có ghi dải câu.
+  const replaceRange = /((?:từ\s+)?câu\s+)(\d+)(\s*(?:đến|tới|[-–—])\s*(?:câu\s+)?)(\d+)/iu
+  const edits: Array<{ pos: number; run: () => void }> = []
+  if (changed) for (const { node, pos, start, end } of headings) {
+    if (!end || node.childCount !== 1 || !node.firstChild?.isText) continue
+    const m = replaceRange.exec(node.textContent)
+    if (!m || (Number(m[2]) === start && Number(m[4]) === end)) continue
+    edits.push({ pos, run: () => tr.insertText(`${m[1]}${start}${m[3]}${end}`, pos + 1 + m.index, pos + 1 + m.index + m[0].length) })
+  }
+  tables.forEach(({ node, pos }, i) => {
+    edits.push({ pos, run: () => {
+      if (i || !items.length) tr.delete(pos, pos + node.nodeSize)
+      else {
+        const [key] = blocksToTipTap([{ type: 'answerKey', items }]).content!
+        tr.replaceWith(pos, pos + node.nodeSize, tr.doc.type.schema.nodeFromJSON(key))
+      }
+    } })
+  })
+  edits.sort((a, b) => b.pos - a.pos).forEach(({ run }) => run())
+}
+
 /** Các mục patch: {op, id, block|blocks}; thiếu op = thay khối (dạng cũ). Mục sai thì bỏ. */
-function sanitizePatches(raw: unknown, missing: string[], invalid: string[], draw: DrawFigure): ExamPatch[] {
+function sanitizePatches(raw: unknown, missing: string[], invalid: string[], draw: DrawFigure, current: ReturnType<Editor['getJSON']>): ExamPatch[] {
   if (!Array.isArray(raw)) return []
   const out: ExamPatch[] = []
   for (const item of raw) {
@@ -293,7 +406,10 @@ function sanitizePatches(raw: unknown, missing: string[], invalid: string[], dra
       continue
     }
     const list = Array.isArray(p.blocks) ? p.blocks : p.block ? [p.block] : []
-    const blocks = sanitizeBlocks(expandFigures(list, missing, draw), invalid)
+    const originals: NonNullable<Span['image']>[] = []
+    const node = current.content?.[index]
+    if (node) stripImages(tipTapToBlocks({ type: 'doc', content: [node] }), originals)
+    const blocks = sanitizeBlocks(expandFigures(list, missing, draw), invalid, missing, draw, originals)
     if (blocks.length) out.push({ op, index, blocks })
   }
   return out
@@ -342,8 +458,8 @@ export function applyExamReply(
   const say = clean(raw.say, 1200).replace(/(?:^|\n)[ \t]*Đã (?:sửa|thêm|xoá|xóa) \d+ khối[^\n]*/gi, '').trim()
   const missing: string[] = []
   const invalid: string[] = []
-  const blocks = sanitizeBlocks(expandFigures(raw.blocks, missing, draw), invalid)
-  const patches = sanitizePatches(raw.patch, missing, invalid, draw)
+  const blocks = sanitizeBlocks(expandFigures(raw.blocks, missing, draw), invalid, missing, draw)
+  const patches = sanitizePatches(raw.patch, missing, invalid, draw, editor.getJSON())
   if (invalid.length) return { text: `Chưa đưa vào đề. ${[...new Set(invalid)].join('. ')}.`, failed: true }
   if (raw.patch != null && (!Array.isArray(raw.patch) || raw.patch.length !== patches.length)) return fail
   if (raw.action && !['replace', 'append', 'patch'].includes(raw.action)) return fail
@@ -420,6 +536,7 @@ export function applyExamReply(
         tr.replaceWith(from, to, [...before, ...next, ...after])
       }
       const oldBlocks = tipTapToBlocks(state.doc.toJSON())
+      normalizePatchedQuestions(tr, state.doc)
       const newBlocks = tipTapToBlocks(tr.doc.toJSON())
       if (JSON.stringify(newBlocks) !== JSON.stringify(oldBlocks)) {
         for (const p of patches) {

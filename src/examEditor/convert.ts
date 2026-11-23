@@ -9,7 +9,7 @@
  * (`string` = plain text, `Span[]` = có marks). Chuyển đổi giữ nguyên marks
  * và `FormatAttrs` (align/lineHeight/indent/space/borders/shading).
  */
-import { isCodeSpan, splitExamCode } from '../lib/examCode'
+import { isCodeSpan, splitExamInline } from '../lib/examCode'
 import type { JSONContent } from '@tiptap/core'
 import type { ExamBlock, FormatAttrs, Mark, MarkType, RichText, Span, TableCellData } from '@/data/docTypes'
 import { TF_PARTS, groupAnswers, gridRows, tfParts } from '../lib/answerKey'
@@ -502,7 +502,7 @@ function splitMath(text: string, marks?: JSONContent['marks']): JSONContent[] {
 function richNodes(rt: RichText): JSONContent[] {
   const spans = typeof rt === 'string' ? [{ text: rt }] : rt
   const out: JSONContent[] = []
-  for (const s of spans.flatMap(splitExamCode)) {
+  for (const s of spans.flatMap(splitExamInline)) {
     if (s.image) {
       out.push({ type: 'image', attrs: { src: s.image.src, alt: s.image.alt ?? null, width: s.image.width ?? null, plot: s.image.plot ?? null } })
       continue

@@ -37,3 +37,21 @@ export function splitExamCode(span: Span): Span[] {
   )) return [code(span.text)]
   return [span]
 }
+
+/** Đọc dấu đậm trong dữ liệu AI và đề đã lưu, giữ nguyên công thức và đoạn mã. */
+export function splitExamInline(span: Span): Span[] {
+  return splitExamCode(span).flatMap((part) => {
+    if (isCodeSpan(part) || part.image || !part.text.includes('**')) return [part]
+    const spans: Span[] = []
+    const marks = part.marks?.some((mark) => mark.type === 'bold') ? part.marks : [...(part.marks ?? []), { type: 'bold' } as const]
+    let start = 0
+    for (const m of part.text.matchAll(new RegExp(`${MATH_PATTERN}|\\*\\*([^*\\s](?:[^\\r\\n]*?[^*\\s])?)\\*\\*`, 'g'))) {
+      if (!m[1]) continue
+      if (m.index > start) spans.push({ ...part, text: part.text.slice(start, m.index) })
+      spans.push({ ...part, text: m[1], marks })
+      start = m.index + m[0].length
+    }
+    if (start < part.text.length) spans.push({ ...part, text: part.text.slice(start) })
+    return spans
+  })
+}

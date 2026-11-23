@@ -20,12 +20,14 @@ function tierRule(tier: number): string {
       'NGUỒN ƯU TIÊN 1 — TỆP MẪU / TÀI LIỆU GIÁO VIÊN CHỌN. Bám sát cấu trúc, độ khó, dạng câu, cách trình bày và ' +
       'phạm vi kiến thức của tệp mẫu. Không thay bằng kiến thức ngoài tệp; nếu tệp thiếu ' +
       'dữ kiện để làm một câu, ghi rõ chỗ thiếu thay vì bịa. ' +
-      'Khi yêu cầu là làm đề TƯƠNG TỰ / Y CHANG / ĐỔI SỐ LIỆU: đi từng câu theo đúng thứ tự của tệp mẫu, giữ nguyên số câu, ' +
+      'Số câu, số bài và số lượng từng dạng giáo viên nêu luôn được ưu tiên. ' +
+      'Khi làm đề TƯƠNG TỰ / Y CHANG / ĐỔI SỐ LIỆU và giáo viên muốn giữ cấu trúc mẫu: đi từng câu theo đúng thứ tự của tệp mẫu, giữ nguyên số câu, ' +
       'số phần, dạng câu (nhiều phương án / đúng-sai / trả lời ngắn), số phương án và số ý a b c d, bối cảnh, ' +
       'dạng toán và cách hỏi của TỪNG câu; chỉ đổi số liệu, tên riêng và đối tượng cụ thể, rồi giải lại để đáp án đúng. ' +
       'Giữ nguyên các dữ kiện quyết định cấu trúc bài (số phần tử của tập, số ô / số vị trí, số mặt xúc xắc, số sản phẩm được chọn, số ý con), chỉ đổi các số dùng để tính; ' +
       'vd tập $X=\\{1;2;…;12\\}$ thì tập mới vẫn có 12 phần tử. ' +
       'Câu mẫu có câu hỏi nằm SAU hình (vd "Cho hàm số có bảng biến thiên như sau: [Hình] Hàm số nghịch biến trên khoảng nào?") thì "text" phải có đủ cả lời dẫn lẫn câu hỏi, không bỏ câu hỏi. ' +
+      'Câu có các nhận định (a)–(d) nhưng chọn đáp án A–D thì giữ dạng nhiều lựa chọn, gồm danh sách nhận định trong lời dẫn và bốn phương án. ' +
       'Không thay câu này bằng câu khác dạng, không đổi loại hàm / loại bài, không thêm hay bớt câu, không đổi câu hỏi từ ' +
       'dạng này sang dạng khác. Câu mẫu có hình (đồ thị, bảng biến thiên, hình không gian, sơ đồ) thì ra câu mới CÓ hình ' +
       'cùng loại, vẽ lại cho khớp số liệu mới và khớp từng chữ trong đề (tên điểm, vị trí điểm theo tỉ lệ đề cho; đề ghi hàm xét trên đoạn $[a;b]$ thì đồ thị có xMin = a, xMax = b); câu mẫu ' +
@@ -56,7 +58,7 @@ export function liftAskAboveFigure(text: string): string {
   for (let i = 0; i < lines.length; i++) {
     if (!/^\s*\[Hình[:\]]/.test(lines[i]) || !/\]\s*$/.test(lines[i])) continue
     let j = i + 1
-    while (j < lines.length && lines[j].trim() && !/^\s*(?:[A-D][.)]|[a-d]\)|Câu\s+\d|PHẦN\s|\[Hình|Mệnh đề\b|Đáp án\b)/i.test(lines[j]) && !/\|/.test(lines[j])) j++
+    while (j < lines.length && lines[j].trim() && !/^\s*(?:[A-D][.)]|[a-d]\)|(?:Câu|Bài)\s+(?:\d|[IVX])|PHẦN\s|\[Hình|Mệnh đề\b|Đáp án\b)/i.test(lines[j]) && !/\|/.test(lines[j])) j++
     if (j === i + 1 || j - i > 3) continue
     const ask = lines.slice(i + 1, j)
     lines.splice(i, j - i, ...ask, lines[i])

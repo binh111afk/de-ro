@@ -194,6 +194,7 @@ interface Ctx {
   st: Styles
   zip: JSZip
   imagePlaceholders: boolean
+  sourcePreviews: boolean
   rels: Map<string, string>
   media: Map<string, Promise<string | null>>
   numFmt: Map<string, NumLevel>
@@ -209,6 +210,7 @@ async function imageOf(ctx: Ctx, rid: string): Promise<string | null> {
   const ext = path.split('.').pop()?.toLowerCase() ?? ''
   const type = ext === 'jpg' || ext === 'jpeg' ? 'image/jpeg' : ext === 'png' ? 'image/png' : ext === 'gif' ? 'image/gif' : ext === 'svg' ? 'image/svg+xml' : ext === 'webp' ? 'image/webp' : ''
   if (!f || !type) return null // EMF/WMF: trình duyệt không vẽ được
+  if (ctx.sourcePreviews && (type === 'image/svg+xml' || (!ctx.media.has(path) && ctx.media.size >= SOURCE_PREVIEW_LIMIT))) return null
   if (ctx.imagePlaceholders) return ''
   if (!ctx.media.has(path)) {
     ctx.media.set(path, (async () => {
@@ -269,7 +271,10 @@ async function runsOf(ctx: Ctx, el: Element, pr: RunProps, lines: Line[]) {
           if (val(t, 'type') === 'page') lines[lines.length - 1].pageBreakAfter = true
           lines.push({ spans: [] })
         } else if (tn === 'object') {
-          push({ text: UNREADABLE_FORMULA, ...mk })
+          const rid = t.getElementsByTagName('v:imagedata')[0]?.getAttribute('r:id')
+          const src = ctx.sourcePreviews && rid ? await imageOf(ctx, rid) : null
+          if (src) push({ text: '', image: { src, alt: UNREADABLE_FORMULA } })
+          else push({ text: UNREADABLE_FORMULA, ...mk })
         } else if (tn === 'drawing' || tn === 'pict') {
           const blip = t.getElementsByTagName('a:blip')[0] ?? t.getElementsByTagName('v:imagedata')[0]
           const rid = blip?.getAttribute('r:embed') || blip?.getAttribute('r:id')
@@ -484,11 +489,14 @@ function readPage(bodyEl: Element): DocxPage | undefined {
   }
 }
 
-export async function docxToBlocks(file: Blob, options?: { imagePlaceholders?: boolean }): Promise<ExamBlock[]> {
+const SOURCE_PREVIEW_LIMIT = 12
+type ImportOptions = { imagePlaceholders?: boolean; sourcePreviews?: boolean }
+
+export async function docxToBlocks(file: Blob, options?: ImportOptions): Promise<ExamBlock[]> {
   return (await docxImport(file, options)).blocks
 }
 
-export async function docxImport(file: Blob, { imagePlaceholders = false } = {}): Promise<{ blocks: ExamBlock[]; page?: DocxPage }> {
+export async function docxImport(file: Blob, { imagePlaceholders = false, sourcePreviews = false }: ImportOptions = {}): Promise<{ blocks: ExamBlock[]; page?: DocxPage }> {
   if (file.size > MAX_BYTES) throw new Error('Tệp quá lớn (tối đa 12 MB).')
   const zip = await JSZip.loadAsync(file)
   const parse = async (path: string) => {
@@ -507,6 +515,7 @@ export async function docxImport(file: Blob, { imagePlaceholders = false } = {})
     st: readStyles(await parse('word/styles.xml')),
     zip,
     imagePlaceholders,
+    sourcePreviews,
     rels,
     media: new Map(),
     numFmt: readNumbering(await parse('word/numbering.xml')),

@@ -5,9 +5,9 @@
  */
 import { apiFetch } from '@/lib/apiFetch'
 import { AiQuotaError, reportQuota } from '@/lib/llm'
-import { MAX_PDF_PAGES, renderPdfPages } from '@/lib/pdfPages'
+import { PAGE_SIDE, renderPdfPages } from '@/lib/pdfPages'
 import { sourcePrompt as promptOf, sourceRule as ruleOf } from '@/lib/prompts/sources'
-import type { ExamBlock, ExamDoc, RichText } from '@/data/docTypes'
+import type { ExamBlock, ExamDoc, RichText, Span } from '@/data/docTypes'
 import { useDocStore } from '@/store/docs'
 
 export interface SourceFile {
@@ -75,6 +75,24 @@ export function pdfTextNeedsVision(text: string): boolean {
 }
 
 type SourceReadOptions = { onProgress?: (message: string) => void; signal?: AbortSignal }
+const VISION_NOTICE = 'Đọc bằng ảnh sẽ tốn thêm điểm AI.'
+
+async function imagePage(blob: Blob): Promise<HTMLCanvasElement> {
+  const image = await createImageBitmap(blob).catch(() => { throw new Error('Không mở được ảnh này.') })
+  try {
+    const scale = Math.min(1, PAGE_SIDE / Math.max(image.width, image.height))
+    const canvas = document.createElement('canvas')
+    canvas.width = Math.max(1, Math.round(image.width * scale))
+    canvas.height = Math.max(1, Math.round(image.height * scale))
+    const ctx = canvas.getContext('2d')!
+    ctx.fillStyle = '#fff'
+    ctx.fillRect(0, 0, canvas.width, canvas.height)
+    ctx.drawImage(image, 0, 0, canvas.width, canvas.height)
+    return canvas
+  } finally {
+    image.close()
+  }
+}
 
 export async function readVisionPages(
   pages: HTMLCanvasElement[],
@@ -102,13 +120,13 @@ export async function readVisionPages(
       signal?.throwIfAborted()
       reportQuota(payload?.quota)
       if (response.status === 429 && payload?.code === 'quota') {
-        throw new AiQuotaError(payload.error || 'Bạn không đủ điểm AI để đọc PDF.')
+        throw new AiQuotaError(payload.error || 'Bạn không đủ điểm AI để đọc ảnh.')
       }
       if (!response.ok || typeof payload?.text !== 'string') {
         throw new Error(payload?.error || `Không đọc được ảnh (${response.status}).`)
       }
       const text = payload.text.trim()
-      if (!text) throw new Error('Không nhận được nội dung từ ảnh.')
+      if (!text || text === '[Không đọc được ảnh]') throw new Error('Không nhận được nội dung từ ảnh.')
       texts.push(text)
     } catch (err) {
       signal?.throwIfAborted()
@@ -118,7 +136,7 @@ export async function readVisionPages(
   }
 
   const warning = [
-    total > MAX_PDF_PAGES ? `Chỉ đọc ${MAX_PDF_PAGES}/${total} trang đầu.` : '',
+    total > pages.length ? `Chỉ đọc ${pages.length}/${total} trang đầu, bỏ ${total - pages.length} trang cuối.` : '',
     failed.length ? `Không đọc được trang ${failed.join(', ')}.` : '',
   ].filter(Boolean).join(' ')
   return { text: texts.join('\n\n'), warning: warning || undefined }
@@ -168,12 +186,38 @@ export async function extractAttachment(
 
 async function extractSourceFile(file: File, name: string, warnings: string[], options: SourceReadOptions) {
   options.signal?.throwIfAborted()
+  if (file.type.startsWith('image/') || /\.(?:png|jpe?g|webp|gif|bmp|heic|heif|avif|tiff?)$/i.test(file.name)) {
+    const page = await imagePage(file)
+    options.onProgress?.(`Đang đọc ảnh ${name}. ${VISION_NOTICE}`)
+    return readVisionPages([page], 1, { signal: options.signal, requireAll: true })
+  }
   if (isDocx(file.name, file.type)) {
     try {
       const { docxToBlocks } = await import('@/lib/docxImport')
-      const blocks = await docxToBlocks(file, { imagePlaceholders: true })
+      const blocks = await docxToBlocks(file, { sourcePreviews: true })
       options.signal?.throwIfAborted()
-      const { text, imageCount } = docxBlocksToSourceText(blocks)
+      const previews = new Map<string, string>()
+      docxBlocksToSourceText(blocks, (image) => {
+        if (image.src) previews.set(image.src, '')
+        return ''
+      })
+      let index = 0
+      for (const src of previews.keys()) {
+        options.signal?.throwIfAborted()
+        try {
+          const page = await imagePage(await (await fetch(src)).blob())
+          options.onProgress?.(`Đang đọc hình ${++index}/${previews.size} trong ${name}. ${VISION_NOTICE}`)
+          const { text } = await readVisionPages([page], 1, { signal: options.signal, requireAll: true })
+          previews.set(src, text)
+        } catch (err) {
+          options.signal?.throwIfAborted()
+          if (err instanceof AiQuotaError) {
+            warnings.push(err.message)
+            break
+          }
+        }
+      }
+      const { text, imageCount } = docxBlocksToSourceText(blocks, (image) => previews.get(image.src) || '')
       warnUnreadable(name, imageCount, warnings)
       return { text }
     } catch {
@@ -185,11 +229,10 @@ async function extractSourceFile(file: File, name: string, warnings: string[], o
   options.signal?.throwIfAborted()
   const hasText = Boolean(extracted.text.trim())
   if (isPdf(file.name, file.type) && (!hasText || pdfTextNeedsVision(extracted.text))) {
-    options.onProgress?.(`Đang chuẩn bị đọc ${name} bằng ảnh…`)
     try {
-      const { text, warning } = await readPdfByVision(file, options.onProgress, options.signal, hasText)
+      const { text, warning } = await readPdfByVision(file, (note) =>
+        options.onProgress?.(`${note} ${VISION_NOTICE}`), options.signal)
       if (!text) throw new Error(warning || 'Không nhận được nội dung từ ảnh.')
-      warnings.push(`${name}: đọc bằng AI nhìn ảnh.`)
       if (warning) warnings.push(`${name}: ${warning}`)
       return { text, warning }
     } catch (err) {
@@ -260,11 +303,19 @@ function blockText(b: ExamBlock, rt = plainText, cellText = rt): string {
   }
 }
 
-export function docxBlocksToSourceText(blocks: ExamBlock[]): { text: string; imageCount: number } {
+export function docxBlocksToSourceText(
+  blocks: ExamBlock[],
+  readImage?: (image: NonNullable<Span['image']>) => string,
+): { text: string; imageCount: number } {
   const richText = (value: RichText, singleLine = false) => {
     const renderText = (text: string) => singleLine ? text.replace(/\r?\n/g, ' ') : text
     if (typeof value === 'string') return renderText(value)
-    return value.map((span) => span.image ? '\n[Hình]\n' : renderText(span.text)).join('')
+    return value.map((span) => {
+      if (!span.image) return renderText(span.text)
+      const read = readImage?.(span.image)
+      if (span.image.alt === '[Công thức ảnh chưa đọc được]') return read || span.image.alt
+      return `\n${read ? (/^\[Hình[:\]]/iu.test(read) ? read : `[Hình: ${read.replace(/\s+/g, ' ')}]`) : '[Hình]'}\n`
+    }).join('')
   }
   const text = blocks.map((b) => blockText(b, (v) => richText(v), (v) => richText(v, true)))
     .filter(Boolean).join('\n').replace(/[ \t]*\n[ \t]*/g, '\n').replace(/\n{2,}/g, '\n').trim()
@@ -334,10 +385,6 @@ export async function buildSourcePack(
   const attached: SourceItem[] = [...loaded.items]
 
   for (const f of files) {
-    if (f.kind === 'image') {
-      warnings.push(`${f.name}: ảnh chưa được OCR; hãy dùng tệp docx/pdf hoặc dán text.`)
-      continue
-    }
     if (!f.file) continue
     try {
       const extracted = await extractSourceFile(f.file, f.name, warnings, options)

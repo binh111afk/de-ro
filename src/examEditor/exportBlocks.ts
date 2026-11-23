@@ -4,7 +4,7 @@
  * Tách riêng khỏi `exportDocx.ts` vì file đó xuất từ mô hình `Exam` (dùng cho
  * đề cộng đồng), còn trình soạn dùng mô hình block `ExamDoc`.
  */
-import { isCodeSpan, splitExamCode } from '@/lib/examCode'
+import { isCodeSpan, splitExamInline } from '@/lib/examCode'
 import katex from 'katex'
 import type { BandSetup, PageNumberSetup } from './pageSetup'
 import 'katex/contrib/mhchem' // \ce{...}
@@ -50,7 +50,7 @@ function css(v: unknown): string {
 /** Rich text → HTML có mark (`<b>/<i>/<u>/<s>/<sub>/<sup>/<span style>`). */
 function richToHtml(rt: RichText): string {
   const spans = typeof rt === 'string' ? [{ text: rt }] : rt
-  return spans.flatMap(splitExamCode).map(spanToHtml).join('')
+  return spans.flatMap(splitExamInline).map(spanToHtml).join('')
 }
 
 /** Mỗi dòng của đầu đề thành một dòng trong ô bảng (Word không cần paragraph). */

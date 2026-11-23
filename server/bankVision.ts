@@ -30,8 +30,9 @@ export class VisionInputError extends Error {}
 /** Đọc chữ trang tài liệu làm nguồn cho khung chat AI: chép nguyên văn, không dựng JSON câu hỏi. */
 const TEXT_PROMPT = `Các ảnh sau là các trang liên tiếp của một tài liệu tiếng Việt (thường là đề thi hoặc bài học). Chép lại toàn bộ chữ nhìn thấy, đúng thứ tự từ trên xuống, không tóm tắt, không sửa, không giải bài.
 Công thức toán viết LaTeX trong $...$ (phân số, căn, vectơ, mũ, chỉ số, tích phân... đều chép đủ, không bỏ ký hiệu). Bảng số liệu viết dạng các dòng, ô cách nhau bằng " | ".
-Mỗi hình vẽ (đồ thị, bảng biến thiên, hình không gian, sơ đồ, biểu đồ) chép tại đúng vị trí trong bài thành một khối [Hình: ...] mô tả đủ để vẽ lại: loại hình, các điểm / đỉnh có tên và vị trí tương đối, các nhãn và số ghi trên hình, điểm cực trị và giao điểm với trục (đồ thị), toàn bộ hàng x, y', y cùng mũi tên lên xuống (bảng biến thiên), các đoạn nét đứt, góc vuông, điểm trung điểm / chia tỉ lệ (hình học). Không đoán điều không nhìn thấy.
-Bỏ đầu trang, chân trang, số trang lặp lại. Chỉ trả về phần chữ chép lại, không kèm lời dẫn.`
+Đặt mỗi hình tại đúng vị trí thành một dòng [Hình: ...]. Ghi đúng nhãn, số kèm đơn vị, vị trí điểm, hướng ngang/dọc, đoạn nét đứt, cực trị, giao với trục và tiệm cận. Với miền tô hoặc gạch chéo, ghi từng biên và phía được tô. Với bảng biến thiên, ghi đủ hàng x, y', y và mũi tên. Không thêm tia, nhãn hay số không thấy.
+Chép đủ vế hỏi nằm dưới hoặc bên cạnh hình/bảng và mọi phương án trước khi sang câu khác; giữ nguyên số câu và tên phần.
+Bỏ đầu trang, chân trang, số trang lặp lại. Chỉ trả về phần chữ chép lại, không kèm lời dẫn. Nếu không đọc được nội dung nào, trả đúng [Không đọc được ảnh].`
 
 export type VisionResult = { content: string; model: string; tokens: number }
 

@@ -4,7 +4,7 @@
  *
  * Công thức `$…$` / `$$…$$` thành equation Word (xem `lib/latexMath.ts`).
  */
-import { isCodeSpan, splitExamCode } from '@/lib/examCode'
+import { isCodeSpan, splitExamInline } from '@/lib/examCode'
 import {
   AlignmentType,
   BorderStyle,
@@ -253,7 +253,7 @@ function spanRuns(s: Span, base: Base): ParagraphChild[] {
 /** Rich text → các run; `string` và mảng trộn string + span đều nhận. */
 function runs(rt: RichText, base: Base = {}): ParagraphChild[] {
   const spans: Span[] = typeof rt === 'string' ? [{ text: rt }] : (rt as Array<Span | string>).map((s) => (typeof s === 'string' ? { text: s } : s))
-  return spans.flatMap(splitExamCode).flatMap((s) => spanRuns(s, base))
+  return spans.flatMap(splitExamInline).flatMap((s) => spanRuns(s, base))
 }
 
 const ALIGN = {

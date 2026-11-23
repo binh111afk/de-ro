@@ -44,6 +44,7 @@ export function examSystemPrompt(documentDigest?: string, request = '', fromSour
     '  {"op":"replace","id":"k5","blocks":[khối mới]} thay khối k5 · {"op":"insertAfter","id":"k5","blocks":[...]} chèn ngay sau k5 · ' +
     '{"op":"insertBefore","id":"k5","blocks":[...]} chèn ngay trước k5 · {"op":"delete","id":"k5"} xoá k5. ' +
     'id lấy đúng trong TÀI LIỆU HIỆN TẠI. Ví dụ "thêm lời giải câu 4" → một insertAfter ngay sau khối câu 4 (và sau hình của câu đó nếu có), KHÔNG trả lại cả đề.\n' +
+    '- id kN là vị trí khối, số câu lấy từ "no". Khi chỉ thêm lời giải, giữ nguyên đề bài, dữ kiện, phương án và đáp án; nếu thấy đáp án cũ sai, báo giáo viên. Giữ image.ref của hình cũ khi thay khối. Khi vẽ lại hình đó, sửa image.figure ngay tại chỗ.\n' +
     '- "append": thêm câu/ý/phần vào cuối đề → "blocks" chỉ gồm khối cần thêm.\n' +
     '- "replace": CHỈ khi giáo viên bảo soạn đề mới hoặc viết lại toàn bộ đề → "blocks" là toàn bộ đề.\n' +
     '- "name" (chỉ khi "replace"): tên ngắn để lưu đề, theo bài/chủ đề + môn lớp, ≤ 60 ký tự, vd. "Hệ thức lượng trong tam giác vuông – Toán 9".\n' +
@@ -73,7 +74,7 @@ export function examSystemPrompt(documentDigest?: string, request = '', fromSour
     'Mỗi field văn bản (text, items[], options[].text, sub[], answer, title) là chuỗi thuần, ' +
     'hoặc mảng span [{"text":"...","marks":[{"type":"bold"}]}] khi cần in đậm/nghiêng/gạch chân; ' +
     'mark type gồm: bold, italic, underline, strike, sub, super, highlight, boxed (khung viền quanh cụm chữ). ' +
-    'Block header có hai cột left/right; mỗi dòng trong cột là một phần tử cách nhau bằng \\n. ' +
+    'Block header có hai cột left/right; chèn \\n giữa các dòng kể cả khi dùng mảng span. Mỗi nội dung chỉ xuất hiện một lần; nếu đã dùng boxed thì không lặp lại dạng chữ thường. ' +
     'Cột trái: "SỞ GIÁO DỤC VÀ ĐÀO TẠO …\\nTRƯỜNG THPT …\\nĐề chính thức" — KHÔNG chèn \\n giữa "SỞ GIÁO DỤC VÀ ĐÀO TẠO" và tên tỉnh, để dòng tự xuống theo bề rộng cột. ' +
     'Block "grid" xếp nội dung ngắn thành nhiều cột: {"type":"grid","cols":2,"cells":["...","..."]} (cols 2 hoặc 3). ' +
     'Block có thể kèm "format":{"align":"left|center|right|justify","lineHeight":1.5,"indentLeft":0,"indentFirstLine":0,"spaceBefore":0,"spaceAfter":0}.\n\n' +
@@ -90,8 +91,10 @@ export function examSystemPrompt(documentDigest?: string, request = '', fromSour
     'PHẦN II đúng/sai (question kind "tf", mỗi câu 4 ý a) b) c) d), tối đa 1 điểm/câu: đúng 1 ý được 0,1; 2 ý 0,25; 3 ý 0,5; 4 ý 1 điểm); ' +
     'PHẦN III trả lời ngắn (question kind "short", đáp án là số tối đa 4 ký tự, 0,25 điểm/câu, riêng môn Toán 0,5). ' +
     'Ví dụ đề Toán: 12 câu nhiều lựa chọn, 4 câu đúng/sai, 6 câu trả lời ngắn. Chỉ dùng kind "tf"/"short" khi người dùng yêu cầu dạng đó hoặc đề theo định dạng này.\n' +
+    '- Câu đếm hoặc chọn tổ hợp nhận định vẫn là trắc nghiệm A–D: đặt các nhận định (a)–(d) trong text, bốn phương án A–D trong options của chính câu, bỏ kind và ghi đáp án là một chữ cái.\n' +
     '- Số câu "no" của các block question đánh liên tục 1, 2, 3… trong cả đề, bất kể dạng (không đánh lại từ 1 ở mỗi phần). Câu tự luận (essay) đánh số riêng.\n' +
     '- answerKey phải có đủ mọi câu question: nhiều lựa chọn = một chữ cái ("B"); đúng/sai = chuỗi Đ/S theo thứ tự ý a b c d, ví dụ "ĐSĐS"; trả lời ngắn = con số, dấu thập phân là dấu phẩy ("-1,5"). Đáp án tự luận để trong rubric.\n' +
+    '- Trước khi xuất, giải lại từ đề cuối và hình đã vẽ; đối chiếu từng phương án, từng ý Đ/S, đơn vị và làm tròn. Nếu có nhiều phương án cùng đúng (kể cả hai khoảng đồng biến), sửa phương án nhiễu trước khi chốt đáp án. Khi đổi chất, sự kiện hoặc số liệu, kiểm lại tính đúng của mọi nhận định.\n' +
     '- Kết thúc đề: answerKey và/hoặc rubric. Khi thay/xoá câu, cập nhật đáp án liên quan. Khi thay/xoá bài tự luận, patch mục của bài trong rubric hiện có, giữ các bài khác, không chèn thêm hướng dẫn chấm trùng.\n' +
     '- HƯỚNG DẪN CHẤM / ĐÁP ÁN TỰ LUẬN (môn Ngữ văn và các môn tự luận như Lịch sử, Địa lí, GDCD khi có hướng dẫn chấm): đặt sau {"type":"pageBreak"} và heading "HƯỚNG DẪN CHẤM" (hoặc "ĐÁP ÁN VÀ HƯỚNG DẪN CHẤM"), dùng block "rubric" dạng "parts" (KHÔNG viết bằng paragraph/bullets rời). Quy ước đúng mẫu Bộ GD&ĐT:\n' +
     '  • Bảng 4 cột Phần | Câu | Nội dung | Điểm, điểm dùng dấu phẩy thập phân (0,25; 0,5; 1,0; 2,0; 4,0; 6,0; 10,0); tổng điểm các câu khớp điểm phần, tổng điểm các phần khớp "total" (thường "10,0"; nếu đề gồm cả trắc nghiệm và tự luận thì phần trắc nghiệm dùng answerKey, phần tự luận dùng rubric dạng "parts" với "total" bằng điểm phần tự luận).\n' +
@@ -107,6 +110,7 @@ export function examSystemPrompt(documentDigest?: string, request = '', fromSour
     '- HÌNH VẼ: câu nào cần hình (đồ thị, bảng biến thiên, bảng xét dấu, hình học, biểu đồ số liệu, mạch điện, sơ đồ cây, …) ' +
     'thì thêm field "figure" vào block question/essay/paragraph đó; app tự vẽ bằng công cụ và đặt hình ngay dưới đề bài (trước phương án A–D).' +
     'Không mô tả hình bằng chữ kiểu "(hình vẽ bên)" mà không kèm figure. Hình chỉ ghi dữ kiện đã cho, khớp số liệu trong đề. Bỏ nhãn, tỉ lệ hoặc lực mà đề yêu cầu tìm. ' +
+    'Với đồ thị phân thức, khai báo asymptotes cho các đường tiệm cận cần nhìn thấy, kể cả khi đề yêu cầu đọc tiệm cận từ hình. ' +
     'Mỗi khối tối đa một figure. ' +
     (fromSource
       ? 'Lượt này soạn theo tệp mẫu: câu nào trong tệp mẫu có hình thì câu mới có hình cùng loại; câu mẫu không có hình thì KHÔNG thêm figure (bảng số liệu của câu mẫu vẫn giữ). Không tự thêm câu có hình. Các loại figure:\n'

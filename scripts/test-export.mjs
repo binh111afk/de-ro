@@ -20,6 +20,13 @@ const check = (name, fn) => {
 
 const doc = (blocks) => ({ id: 'd1', title: 'Đề thử', blocks, createdAt: '', updatedAt: '' })
 
+check('Word HTML và in dựng chữ đậm, giữ nguyên công thức và mã', () => {
+  const html = buildWordHtml(doc([{ type: 'paragraph', text: 'Chọn **đúng** với $x^2$. Mã `x ** 2`.' }]))
+  assert.match(html, /<b>đúng<\/b>/)
+  assert.match(html, /<math/)
+  assert.match(html, /<code>x \*\* 2<\/code>/)
+})
+
 check('đánh số câu theo thứ tự khối, bỏ qua block.no cũ', () => {
   const html = buildWordHtml(
     doc([

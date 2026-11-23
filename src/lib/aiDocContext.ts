@@ -6,7 +6,7 @@
  * Id khối gửi cho AI là vị trí khối cấp cao nhất: `k0`, `k1`… (id lưu trong node không dùng được:
  * sinh theo thứ tự lúc chuyển đổi nên trùng nhau sau khi chèn/sửa, đoạn thường thì không có id).
  */
-import type { ExamBlock } from '@/data/docTypes'
+import type { ExamBlock, Span } from '@/data/docTypes'
 import type { JSONContent } from '@tiptap/core'
 import { plainText, tipTapToBlocks } from '@/examEditor/convert'
 
@@ -87,18 +87,19 @@ export function referencedNos(text: string): FocusRefs {
 }
 
 /** Ẩn dữ liệu ảnh (data URL rất dài), cắt cấu hình đồ thị — phần còn lại giữ nguyên. */
-function stripImages(v: unknown): unknown {
-  if (Array.isArray(v)) return v.map(stripImages)
+export function stripImages(v: unknown, images: NonNullable<Span['image']>[] = []): unknown {
+  if (Array.isArray(v)) return v.map((item) => stripImages(item, images))
   if (!v || typeof v !== 'object') return v
   const out: Record<string, unknown> = {}
   for (const [k, val] of Object.entries(v as Record<string, unknown>)) {
     if (k === 'image' && val && typeof val === 'object') {
-      const img = val as { alt?: string; plot?: string }
+      const img = val as NonNullable<Span['image']>
       out.image = {
+        ref: images.push(img) - 1,
         alt: img.alt || 'ảnh',
-        ...(img.plot ? { figure: img.plot.length > MAX_PLOT ? `${img.plot.slice(0, MAX_PLOT)}…` : img.plot } : {}),
+        ...(img.plot && img.plot.length <= MAX_PLOT ? { figure: img.plot } : {}),
       }
-    } else out[k] = stripImages(val)
+    } else out[k] = stripImages(val, images)
   }
   return out
 }

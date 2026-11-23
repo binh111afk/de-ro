@@ -128,7 +128,7 @@ try {
 
   responses = Array.from({ length: 4 }, () => Response.json({ text: 'Trang' }))
   const capped = await readVisionPages([...pages, ...pages.slice(0, 5)], 17)
-  assert.equal(capped.warning, 'Chỉ đọc 12/17 trang đầu.')
+  assert.equal(capped.warning, 'Chỉ đọc 12/17 trang đầu, bỏ 5 trang cuối.')
   console.log('✅ cảnh báo khi chỉ đọc 12 trang đầu')
 
   batches.length = 0
@@ -189,4 +189,37 @@ try {
   globalThis.FileReader = originalFileReader
 }
 
-console.log('\n11/11 pass, 0 fail')
+const png = new File(['ảnh'], 'Đề.png', { type: 'image/png' })
+const imageProgress = []
+Object.assign(globalThis, {
+  createImageBitmap: async () => ({ width: 2000, height: 1000, close() {} }),
+  document: { createElement: () => ({
+    getContext: () => ({ fillRect() {}, drawImage() {} }),
+    toDataURL() {
+      assert.equal(this.width, 1600)
+      assert.equal(this.height, 800)
+      return 'data:image/jpeg;base64,AA=='
+    },
+  }) },
+  fetch: async (url, init) => {
+    assert.equal(url, '/api/extract?vision=1')
+    assert.equal(JSON.parse(init.body).images.length, 1)
+    return Response.json({ text: 'Bài 1. Tính diện tích.' })
+  },
+})
+try {
+  const files = [{ kind: 'image', name: png.name, file: png }]
+  const pack = await buildSourcePack(files, [], { onProgress: (message) => imageProgress.push(message) })
+  assert.equal(pack.items[0].text, 'Bài 1. Tính diện tích.')
+  assert.match(imageProgress[0], /tốn thêm điểm/)
+  globalThis.fetch = async () => Response.json({ error: 'Không đọc được ảnh.' }, { status: 502 })
+  const unreadable = await buildSourcePack(files)
+  assert.equal(unreadable.tier, 0)
+  assert.deepEqual(unreadable.warnings, ['Đề.png: Không đọc được ảnh.'])
+} finally {
+  globalThis.fetch = originalFetch
+  delete globalThis.document
+  delete globalThis.createImageBitmap
+}
+
+console.log('\nNguồn tệp và ảnh đều qua')

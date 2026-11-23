@@ -48,7 +48,8 @@ export const TOOL_DOC_IMAGE: Record<ToolKind, { width: number; alt: string }> = 
 export function figureDoc(raw: unknown): ToolDoc | null {
   if (!raw || typeof raw !== 'object') return null
   try {
-    return toolFromRaw(raw as Record<string, unknown>)
+    const { spec, ...fields } = raw as Record<string, unknown>
+    return toolFromRaw(spec && typeof spec === 'object' ? { ...spec, ...fields } : fields)
   } catch {
     return null
   }

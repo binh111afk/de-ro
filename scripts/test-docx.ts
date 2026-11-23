@@ -245,6 +245,38 @@ const attached = await buildSourcePack([{ name: file.name, kind: 'doc', file }])
 assert.equal(attached.items[0]?.text, `${formula}\n${image}\n[Hình]\n$x=2$`)
 assert.deepEqual(attached.warnings, [`${file.name}: có 3 công thức/hình AI không đọc được.`])
 
+const olePng = ole.replace('r:id="wmf"', 'r:id="png"')
+importZip.file('word/document.xml', (await importZip.file('word/document.xml')!.async('string')).replace(ole, olePng))
+const withPreview = new File([await importZip.generateAsync({ type: 'arraybuffer' })], 'MathType PNG.docx')
+const originalFetch = globalThis.fetch
+Object.assign(globalThis, {
+  createImageBitmap: async () => ({ width: 1, height: 1, close() {} }),
+  document: {
+    createElement: () => ({
+      getContext: () => ({ drawImage() {}, fillRect() {} }),
+      toDataURL: () => 'data:image/jpeg;base64,AA==',
+    }),
+  },
+  fetch: (url: string) => url === '/api/extract?vision=1'
+    ? Promise.resolve(Response.json({ text: '$x=3$' }))
+    : originalFetch(url),
+})
+try {
+  const read = await buildSourcePack([{ name: withPreview.name, kind: 'doc', file: withPreview }])
+  assert.match(read.items[0].text, /Tính \$x=3\$\./)
+  assert.match(read.items[0].text, /\[Hình: \$x=3\$\]/)
+  assert.deepEqual(read.warnings, [`${withPreview.name}: có 1 công thức/hình AI không đọc được.`])
+} finally {
+  globalThis.fetch = originalFetch
+  Reflect.deleteProperty(globalThis, 'createImageBitmap')
+  Reflect.deleteProperty(globalThis, 'document')
+}
+
+const boldBlob = await Packer.toBuffer(buildDocx({ ...doc, blocks: [{ type: 'paragraph', text: '**Không** đổi đáp án.' }] }))
+const boldXml = await (await JSZip.loadAsync(boldBlob)).file('word/document.xml')!.async('string')
+assert.match(boldXml, /<w:r><w:rPr>[^]*?<w:b\/>[^]*?<\/w:rPr><w:t[^>]*>Không<\/w:t>/)
+assert.doesNotMatch(boldXml, /\*\*Không/)
+
 useDocStore.setState({ myDocs: [{ ...doc, blocks }] })
 const picked = await buildSourcePack([], [{ kind: 'mine', id: doc.id, name: doc.title }])
 assert.equal(picked.items[0]?.text, `${formula}\n${image}[Hình]\n$x=2$`)

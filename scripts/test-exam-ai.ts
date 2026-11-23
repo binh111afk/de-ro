@@ -8,10 +8,11 @@ import { TableHeader } from '@tiptap/extension-table-header'
 import { TextStyle } from '@tiptap/extension-text-style'
 import { FontFamily } from '@tiptap/extension-text-style/font-family'
 import { EXAM_NODES, EXAM_MARKS, BaseParagraphNode } from '../src/examEditor/schema'
-import { blocksToTipTap, tipTapToBlocks } from '../src/examEditor/convert'
+import { blocksToTipTap, plainText, tipTapToBlocks } from '../src/examEditor/convert'
 import { applyExamReply } from '../src/examEditor/examAiResult'
 import { figureDoc, figureImageAttrs } from '../src/examEditor/toolImages'
 import { CONTINUE_EXAM_EDIT, examDigest, examIntent, focusNote, isExamMutationReply, rewritesWholeExam } from '../src/lib/aiDocContext'
+import { mergeChunks, parseChunk, planExamSplit, scanSourceQuestions } from '../src/lib/examSplit'
 
 const editor = new Editor({
   element: null,
@@ -117,5 +118,90 @@ assert.match(digest, /\[k\d+\] question Câu 7.*Dữ liệu hình:.*grouped.*12.
 assert.doesNotMatch(digest, /data:image/)
 const blocks = tipTapToBlocks(editor.getJSON())
 assert.ok(blocks.some((b) => b.type === 'question' && b.no === 7 && b.options.length === 4))
+
+const source = [
+  'I. TRẮC NGHIỆM',
+  ...Array.from({ length: 12 }, (_, i) => `Câu ${i + 1}. Đề bài`),
+  'II. PHẦN TỰ LUẬN (7 điểm)',
+  'Bài 1 (2 điểm) Tính', 'Bài 2. Tính', 'Bài 3. Vẽ [Hình: Tam giác]', 'Bài 4. Tính',
+  'ĐÁP ÁN', 'Câu 30. Lời giải',
+].join('\n')
+const plan = planExamSplit('Soạn y chang đề mẫu, đổi số liệu', source)!
+assert.deepEqual(plan.map(({ count, essay }) => [count, essay]), [[6, false], [6, false], [4, true]])
+assert.match(plan[2].note, /Bài 1 đến Bài 4/)
+assert.deepEqual(plan[2].figs, [false, false, true, false])
+assert.deepEqual(scanSourceQuestions('Phần II. Tự luận\nCâu I. Tính\nCâu II (2 điểm) Tính').map((q) => q.essay), [true, true])
+assert.equal(planExamSplit('Soạn đề tương tự 12 câu gồm 8 câu nhiều lựa chọn và 4 câu đúng sai', source), null)
+assert.equal(planExamSplit('Trích 16 câu từ đề tương tự', source), null)
+assert.equal(planExamSplit('Soạn y chang đề 2, đổi số liệu', `Đề 1\n${source}\nĐề 2\n${source}`), null)
+assert.equal(planExamSplit('Soạn đề tương tự 16 câu', `Mã đề 0123\nMã đề 0123\n${source}`)?.length, 3)
+assert.equal(parseChunk(JSON.stringify({ blocks: [essay] }), plan[2]), null)
+const key = (...items: Array<[number, string]>) => ({ type: 'answerKey' as const, items: items.map(([no, answer]) => ({ no, answer })) })
+const tfQuestion = (no: number) => ({ ...tf, no })
+const choice = { type: 'question', no: 1, text: 'Chọn **đúng**', options: ['một', 'hai', 'ba', 'bốn'] }
+const short = { type: 'question', no: 3, kind: 'short', text: 'Tính', options: [] }
+const merged = JSON.parse(mergeChunks([
+  { blocks: [{ ...choice, figure: grouped }, key([1, 'A'])] },
+  { blocks: [tfQuestion(1), key([1, 'ĐSĐS'])] },
+  { blocks: [{ ...essay, no: 1 }, { ...essay, no: 2 }, { ...essay, no: 3 }, { ...essay, no: 4 }] },
+], [[false], [false], plan[2].figs]))
+assert.equal(merged.blocks[0].figure.kind, 'grouped')
+assert.deepEqual(merged.blocks.filter((b: { type: string }) => b.type === 'essay').map((b: { no: number }) => b.no), [1, 2, 3, 4])
+assert.deepEqual(merged.blocks.at(-1), key([1, 'A'], [2, 'ĐSĐS']))
+assert.ok(draw({ kind: 'stats', chart: 'line', data: 'pH; 5; 6; 7; 8; 9\nt (giây): 180; 90; 50; 70; 150' }))
+
+// Chèn câu có số trùng một câu cũ và thêm bảng đáp án rời trong cùng patch.
+const heading = (text: string) => ({ type: 'heading', text })
+assert.equal(apply({ blocks: [
+  choice, heading('PHẦN II. Từ câu 2 đến câu 2'), tfQuestion(2),
+  heading('PHẦN III. Từ câu 3 đến câu 3'), short, key([1, 'A'], [2, 'ĐSĐS'], [3, '1,37']),
+] }, true).failed, undefined)
+assert.equal(apply({ action: 'patch', patch: [
+  { op: 'insertAfter', id: 'k2', blocks: [tfQuestion(3), tfQuestion(4)] },
+  { op: 'insertAfter', id: 'k5', block: key([3, 'ĐĐSS'], [4, 'SSĐĐ']) },
+] }).failed, undefined)
+const added = tipTapToBlocks(editor.getJSON())
+assert.deepEqual(added.flatMap((b) => b.type === 'question' ? [b.no] : []), [1, 2, 3, 4, 5])
+assert.deepEqual(added.filter((b) => b.type === 'answerKey'), [key([1, 'A'], [2, 'ĐSĐS'], [3, 'ĐĐSS'], [4, 'SSĐĐ'], [5, '1,37'])])
+assert.deepEqual(added.flatMap((b) => b.type === 'heading' ? [plainText(b.text)] : []),
+  ['PHẦN II. Từ câu 2 đến câu 4', 'PHẦN III. Từ câu 5 đến câu 5'])
+let boldInEditor = false
+editor.state.doc.descendants((node) => {
+  if (node.text === 'đúng') boldInEditor = node.marks.some((mark) => mark.type.name === 'bold')
+})
+assert.ok(boldInEditor)
+assert.equal(apply({ action: 'patch', patch: [
+  { op: 'replace', id: 'k7', block: key([4, 'ĐSĐS']) },
+] }).failed, undefined)
+assert.deepEqual(tipTapToBlocks(editor.getJSON()).filter((b) => b.type === 'answerKey'),
+  [key([1, 'A'], [2, 'ĐSĐS'], [3, 'ĐĐSS'], [4, 'ĐSĐS'], [5, '1,37'])])
+
+// Hình trong bản JSON gửi cho AI được vẽ lại hoặc phục hồi từ ref.
+const graph = draw({ kind: 'graph', curves: ['(x+1)/(x-2)'], asymptotes: 'x=2; y=1' })!
+assert.ok(graph.src && graph.plot)
+const header = {
+  type: 'header',
+  left: [{ text: 'ĐỀ THAM KHẢO' }, { text: 'Đề tham khảo', marks: [{ type: 'boxed' }] }],
+  right: [{ text: 'MÔN: TOÁN' }, { text: 'Thời gian làm bài: 90 phút', marks: [{ type: 'italic' }] }],
+}
+assert.equal(apply({ blocks: [header, { ...choice, text: [{ text: choice.text }, { text: '', image: graph }] }] }, true).failed, undefined)
+const [normalizedHeader] = tipTapToBlocks(editor.getJSON())
+assert.ok(normalizedHeader.type === 'header')
+assert.equal(plainText(normalizedHeader.left), 'Đề tham khảo')
+assert.equal(plainText(normalizedHeader.right), 'MÔN: TOÁN\nThời gian làm bài: 90 phút')
+const rawGraph = JSON.parse(graph.plot!)
+rawGraph.spec.curves = ['x^3-3x']
+rawGraph.spec.grid = true
+const patchFigure = (figure: unknown) => apply({ action: 'patch', patch: [
+  { id: 'k1', block: { ...choice, text: [{ text: choice.text }, { text: '', image: { ref: 0, figure } }] } },
+] })
+assert.equal(patchFigure(JSON.stringify(rawGraph)).failed, undefined)
+let redrawn = tipTapToBlocks(editor.getJSON()).find((b) => b.type === 'question')
+assert.ok(redrawn?.type === 'question' && Array.isArray(redrawn.text))
+assert.match(redrawn.text.at(-1)?.image?.src ?? '', /^data:image/)
+assert.match(redrawn.text.at(-1)?.image?.plot ?? '', /x\^3-3x/)
+assert.match(patchFigure('dữ liệu hỏng').text, /Chưa dựng được hình/)
+redrawn = tipTapToBlocks(editor.getJSON()).find((b) => b.type === 'question')
+assert.ok(redrawn?.type === 'question' && Array.isArray(redrawn.text) && redrawn.text.at(-1)?.image?.src)
 editor.destroy()
 console.log('test-exam-ai: OK')

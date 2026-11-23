@@ -79,4 +79,9 @@ assert.deepEqual(explicit.sections[0].questions.map((b) => b.points), [1, 2])
 assert.equal(explicit.sections[1].questions[0].points, 4)
 assert.equal(Math.round(explicit.sections[2].questions.reduce((n, b) => n + b.points, 0) * 100), 300)
 
+const bold = docToExam({ ...doc, online: undefined, blocks: [
+  { ...q(1), text: 'Cho **hàm số $f(x)$ liên tục**. Tính `x ** 2`.' },
+] }, 'bold')
+assert.equal(bold.sections[0].questions[0].prompt, 'Cho **hàm số** $f(x)$ **liên tục**. Tính `x ** 2`.')
+
 console.log('test-online-exam: OK')

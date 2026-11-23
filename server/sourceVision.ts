@@ -1,5 +1,5 @@
 /**
- * Đọc ảnh trang PDF scan thành chữ để làm nguồn cho khung chat AI (POST /api/extract?vision=1).
+ * Đọc ảnh đính kèm hoặc trang PDF thành chữ để làm nguồn cho khung chat AI.
  * Người dùng thường, tốn điểm AI: kiểm đăng nhập + số dư, giữ chỗ trước, chỉ trừ theo token thật của model.
  * Prompt cố định ở bankVision.ts nên đây không phải cổng gọi AI đọc ảnh tuỳ ý.
  */
@@ -36,7 +36,7 @@ export async function handleSourceVision(req: IncomingMessage, res: ServerRespon
   if (quota && quota.limit - quota.used < RESERVE_TOKENS) {
     const need = Math.ceil(RESERVE_TOKENS / TOKENS_PER_POINT).toLocaleString('vi-VN')
     const left = Math.max(0, Math.floor((quota.limit - quota.used) / TOKENS_PER_POINT)).toLocaleString('vi-VN')
-    return json(res, 429, { error: quota.limit - quota.used >= 1000 ? `Đọc ảnh PDF cần khoảng ${need} điểm AI mỗi lượt nhưng bạn chỉ còn ${left} điểm.` : quotaMessage(quota), quota, code: 'quota' })
+    return json(res, 429, { error: quota.limit - quota.used >= 1000 ? `Đọc ảnh cần khoảng ${need} điểm AI mỗi lượt nhưng bạn chỉ còn ${left} điểm.` : quotaMessage(quota), quota, code: 'quota' })
   }
   const release = quota ? await reserveQuota(userId, ip, quota, RESERVE_TOKENS) : async () => {}
   if (!release) return json(res, 429, { error: 'Đang có nhiều yêu cầu AI chạy cùng lúc, vui lòng thử lại sau ít giây.', quota })

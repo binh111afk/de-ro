@@ -1,4 +1,4 @@
-import { isCodeSpan, splitExamCode } from './examCode'
+import { isCodeSpan, splitExamInline } from './examCode'
 import type { EssayBlock, ExamDoc, QuestionBlock, RichText, TableBlock } from '@/data/docTypes'
 import type { Exam, Question, QuestionImage, Section, Subject } from '@/data/types'
 import { mathTableImageSrc, renderExamTableSvg } from './table'
@@ -12,7 +12,7 @@ import { formatTrueFalse, normalizeShort, parseTrueFalse } from './grading.js'
 function toRich(rt: RichText | undefined, skip?: unknown): string {
   if (!rt) return ''
   const spans = typeof rt === 'string' ? [{ text: rt }] : rt
-  return spans.flatMap(splitExamCode)
+  return spans.flatMap(splitExamInline)
     .map((s) => {
       if (s.image) {
         if (s.image === skip) return ''
@@ -23,13 +23,16 @@ function toRich(rt: RichText | undefined, skip?: unknown): string {
       }
       if (isCodeSpan(s)) return /[\n`]/.test(s.text) ? `\n\`\`\`\n${s.text}\n\`\`\`\n` : `\`${s.text}\``
       const has = (t: string) => s.marks?.some((m) => m.type === t)
-      const core = s.text.trim()
-      if (!core || s.text.includes('$') || !s.marks?.length) return s.text
-      let w = core
-      if (has('italic')) w = `*${w}*`
-      if (has('bold')) w = `**${w}**`
-      if (has('underline')) w = `__${w}__`
-      return s.text.replace(core, w)
+      if (!s.marks?.length) return s.text
+      return s.text.split(/(\$\$[\s\S]+?\$\$|\$[^$\n]+\$)/g).map((part, i) => {
+        const core = part.trim()
+        if (i % 2 || !core || part.includes('$')) return part
+        let w = core
+        if (has('italic')) w = `*${w}*`
+        if (has('bold')) w = `**${w}**`
+        if (has('underline')) w = `__${w}__`
+        return part.replace(core, w)
+      }).join('')
     })
     .join('')
 }
