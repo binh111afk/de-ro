@@ -191,7 +191,9 @@ export interface TableCellData {
   header?: boolean
   colSpan?: number
   rowSpan?: number
-  align?: 'left' | 'center' | 'right'
+  align?: 'left' | 'center' | 'right' | 'justify'
+  /** căn lề riêng từng dòng khi các dòng trong cùng ô căn khác nhau */
+  lineAligns?: Array<'left' | 'center' | 'right' | 'justify' | null>
   shading?: string
   format?: FormatAttrs
 }

@@ -30,21 +30,23 @@ const MARK_TYPES: MarkType[] = [
   'boxed',
 ]
 
-/** Đọc nội dung rich text từ một node TipTap (inline*), giữ nguyên marks. */
-export function richOf(node: JSONContent | undefined): RichText {
-  const spans: Span[] = []
-  walkInline(node, [], spans)
-  // gộp các span liền nhau cùng marks để dữ liệu gọn
+function mergeSpans(spans: Span[]): RichText {
   const merged: Span[] = []
   for (const s of spans) {
     const last = merged[merged.length - 1]
     if (last && !last.image && !s.image && sameMarks(last.marks, s.marks)) last.text += s.text
     else merged.push({ ...s })
   }
-  // nếu toàn bộ là plain text không marks → trả về string cho gọn + tương thích ngược
   if (merged.length === 0) return ''
   if (merged.length === 1 && !merged[0].marks?.length && !merged[0].image) return merged[0].text
   return merged
+}
+
+/** Đọc nội dung rich text từ một node TipTap (inline*), giữ nguyên marks. */
+export function richOf(node: JSONContent | undefined): RichText {
+  const spans: Span[] = []
+  walkInline(node, [], spans)
+  return mergeSpans(spans)
 }
 
 /** Tách RichText thành từng dòng (mỗi dòng thành một paragraph trong cột đầu đề). */
@@ -83,7 +85,7 @@ function columnToRich(column: JSONContent | undefined): RichText {
       spans.push(...line)
     }
   })
-  return spans.every((s) => !s.marks?.length) ? spans.map((s) => s.text).join('') : spans
+  return mergeSpans(spans)
 }
 
 function walkInline(node: JSONContent | undefined, inherited: Mark[], out: Span[]): void {  if (!node) return
@@ -352,28 +354,55 @@ export function tipTapToBlocks(doc: JSONContent): ExamBlock[] {
 
       case 'table': {
         flushHeader()
+        const occupied = new Set<string>()
+        const colWidths: number[] = []
+        let maxCols = 0
         const rows: TableCellData[][] = (node.content ?? [])
           .filter((r) => r.type === 'tableRow')
-          .map((r) =>
-            (r.content ?? [])
+          .map((r, rIdx) => {
+            let cIdx = 0
+            return (r.content ?? [])
               .filter((c) => c.type === 'tableCell' || c.type === 'tableHeader')
               .map((c) => {
+                while (occupied.has(`${rIdx},${cIdx}`)) cIdx++
                 const colSpan = Number(c.attrs?.colspan ?? 1)
                 const rowSpan = Number(c.attrs?.rowspan ?? 1)
-                const pAlign = c.content?.[0]?.attrs?.textAlign as TableCellData['align'] | undefined
-                const align = pAlign === 'left' || pAlign === 'center' || pAlign === 'right' ? pAlign : undefined
+                for (let dr = 0; dr < rowSpan; dr++) {
+                  for (let dc = 0; dc < colSpan; dc++) occupied.add(`${rIdx + dr},${cIdx + dc}`)
+                }
+                const cw = Array.isArray(c.attrs?.colwidth) ? (c.attrs.colwidth as unknown[]) : null
+                if (cw) {
+                  for (let k = 0; k < colSpan; k++) {
+                    const w = Number(cw[k])
+                    if (Number.isFinite(w) && w > 0 && !colWidths[cIdx + k]) colWidths[cIdx + k] = Math.round(w)
+                  }
+                }
+                cIdx += colSpan
+                if (cIdx > maxCols) maxCols = cIdx
+                const paras = (c.content ?? []).filter((p) => p.type === 'paragraph')
+                const aligns = paras.map((p) => {
+                  const a = p.attrs?.textAlign
+                  return a === 'left' || a === 'center' || a === 'right' || a === 'justify' ? a : null
+                })
+                const hasAlign = aligns.some(Boolean)
+                const allSame = hasAlign && aligns.every((a) => a === aligns[0])
+                const align = allSame && aligns[0] ? aligns[0] : undefined
+                const lineAligns = hasAlign && !allSame ? aligns : undefined
                 return {
                   text: columnToRich(c),
                   ...(c.type === 'tableHeader' ? { header: true } : {}),
                   ...(colSpan > 1 ? { colSpan } : {}),
                   ...(rowSpan > 1 ? { rowSpan } : {}),
                   ...(align ? { align } : {}),
+                  ...(lineAligns ? { lineAligns } : {}),
                 }
-              }),
-          )
+              })
+          })
+        const hasWidths = maxCols > 0 && colWidths.length === maxCols && colWidths.every((w) => w > 0)
         out.push({
           type: 'table',
           rows,
+          ...(hasWidths ? { colWidths } : {}),
           ...(formatFromAttrs(node.attrs) ? { format: formatFromAttrs(node.attrs) } : {}),
         })
         break
@@ -696,32 +725,50 @@ export function blocksToTipTap(blocks: ExamBlock[]): JSONContent {
         content.push({ type: 'examToc', attrs: { id: `toc${content.length}` } })
         break
 
-      case 'table':
+      case 'table': {
+        const occupied = new Set<string>()
+        const widths = b.colWidths?.length ? b.colWidths : null
         content.push({
           type: 'table',
-          content: b.rows.map((row) => ({
-            type: 'tableRow',
-            content: row.map((c) => {
-              const lines = splitRichLines(c.text)
-              return {
-                type: c.header ? 'tableHeader' : 'tableCell',
-                attrs: {
-                  colspan: c.colSpan && c.colSpan > 1 ? c.colSpan : 1,
-                  rowspan: c.rowSpan && c.rowSpan > 1 ? c.rowSpan : 1,
-                },
-                content: (lines.length ? lines : ['']).map((line) => {
-                  const inline = richNodes(line)
-                  return {
-                    type: 'paragraph',
-                    ...(c.align ? { attrs: { textAlign: c.align } } : {}),
-                    ...(inline.length ? { content: inline } : {}),
-                  }
-                }),
-              }
-            }),
-          })),
+          content: b.rows.map((row, rIdx) => {
+            let cIdx = 0
+            return {
+              type: 'tableRow',
+              content: row.map((c) => {
+                while (occupied.has(`${rIdx},${cIdx}`)) cIdx++
+                const cs = c.colSpan && c.colSpan > 1 ? c.colSpan : 1
+                const rs = c.rowSpan && c.rowSpan > 1 ? c.rowSpan : 1
+                for (let dr = 0; dr < rs; dr++) {
+                  for (let dc = 0; dc < cs; dc++) occupied.add(`${rIdx + dr},${cIdx + dc}`)
+                }
+                const cw = widths
+                  ? Array.from({ length: cs }, (_, k) => widths[cIdx + k] ?? null)
+                  : null
+                cIdx += cs
+                const lines = splitRichLines(c.text)
+                return {
+                  type: c.header ? 'tableHeader' : 'tableCell',
+                  attrs: {
+                    colspan: cs,
+                    rowspan: rs,
+                    ...(cw && cw.some((w) => w != null && w > 0) ? { colwidth: cw } : {}),
+                  },
+                  content: (lines.length ? lines : ['']).map((line, li) => {
+                    const inline = richNodes(line)
+                    const lineAlign = c.lineAligns ? c.lineAligns[li] ?? undefined : c.align
+                    return {
+                      type: 'paragraph',
+                      ...(lineAlign ? { attrs: { textAlign: lineAlign } } : {}),
+                      ...(inline.length ? { content: inline } : {}),
+                    }
+                  }),
+                }
+              }),
+            }
+          }),
         })
         break
+      }
 
       default:
         break

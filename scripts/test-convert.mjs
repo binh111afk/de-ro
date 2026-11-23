@@ -149,6 +149,52 @@ const cases = [
       },
     ],
   },
+  {
+    name: 'bảng hướng dẫn chấm Văn giữ colWidths, rowSpan, colSpan và lineAligns khi round-trip',
+    blocks: [
+      {
+        type: 'table',
+        colWidths: [50, 46, 486, 60],
+        rows: [
+          [
+            { text: [{ text: 'Phần', marks: [{ type: 'bold' }] }], header: true, align: 'center' },
+            { text: [{ text: 'Câu', marks: [{ type: 'bold' }] }], header: true, align: 'center' },
+            { text: [{ text: 'Nội dung', marks: [{ type: 'bold' }] }], header: true, align: 'center' },
+            { text: [{ text: 'Điểm', marks: [{ type: 'bold' }] }], header: true, align: 'center' },
+          ],
+          [
+            { text: [{ text: 'I', marks: [{ type: 'bold' }] }], rowSpan: 2, align: 'center' },
+            { text: '' },
+            {
+              text: [
+                { text: 'ĐỌC HIỂU', marks: [{ type: 'bold' }] },
+                { text: '\n- Yêu cầu chung' },
+              ],
+              lineAligns: ['center', 'left'],
+            },
+            { text: [{ text: '4,0', marks: [{ type: 'bold' }] }], align: 'center' },
+          ],
+          [
+            { text: [{ text: '1', marks: [{ type: 'bold' }] }], align: 'center' },
+            {
+              text: [
+                { text: '- Ý 1: ' },
+                { text: 'trích dẫn', marks: [{ type: 'italic' }] },
+                { text: ' ' },
+                { text: 'hoặc', marks: [{ type: 'bold' }] },
+                { text: ' cách khác' },
+              ],
+            },
+            { text: '0,5', align: 'center' },
+          ],
+          [
+            { text: [{ text: 'Tổng điểm', marks: [{ type: 'bold' }] }], colSpan: 3, align: 'center' },
+            { text: [{ text: '10,0', marks: [{ type: 'bold' }] }], align: 'center' },
+          ],
+        ],
+      },
+    ],
+  },
 ]
 
 let pass = 0

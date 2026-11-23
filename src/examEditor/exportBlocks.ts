@@ -285,25 +285,42 @@ function blockToHtml(b: ExamBlock, seq: BlockSeq): string {
       return '<hr class="hr">'
 
     case 'table': {
-      const rowsHtml = b.rows
-        .map(
-          (row) =>
-            '<tr>' +
-            row
-              .map((c) => {
-                const tag = c.header ? 'th' : 'td'
-                const attrs = [
-                  c.colSpan && c.colSpan > 1 ? ` colspan="${c.colSpan}"` : '',
-                  c.rowSpan && c.rowSpan > 1 ? ` rowspan="${c.rowSpan}"` : '',
-                  c.align ? ` style="text-align:${css(c.align)}"` : '',
-                ].join('')
-                return `<${tag}${attrs}>${richLines(c.text)}</${tag}>`
-              })
-              .join('') +
-            '</tr>',
-        )
-        .join('')
-      return `<table class="doc-table"${formatCss(b.format)}>${rowsHtml}</table>`
+      const wSum = b.colWidths?.reduce((a, x) => a + x, 0) || 0
+      const colgroup = wSum
+        ? `<colgroup>${b.colWidths!.map((w) => `<col style="width:${((w / wSum) * 100).toFixed(2)}%">`).join('')}</colgroup>`
+        : ''
+      const renderRow = (row: (typeof b.rows)[number]) =>
+        '<tr>' +
+        row
+          .map((c) => {
+            const tag = c.header ? 'th' : 'td'
+            const styles: string[] = []
+            if (c.align && !c.lineAligns?.length) styles.push(`text-align:${css(c.align)}`)
+            if (c.shading) styles.push(`background:${css(c.shading)}`)
+            const attrs = [
+              c.colSpan && c.colSpan > 1 ? ` colspan="${c.colSpan}"` : '',
+              c.rowSpan && c.rowSpan > 1 ? ` rowspan="${c.rowSpan}"` : '',
+              styles.length ? ` style="${styles.join(';')}"` : '',
+            ].join('')
+            const lines = splitRichLines(c.text)
+            const body =
+              lines.length <= 1 && !c.lineAligns?.length
+                ? richToHtml(lines[0] ?? '')
+                : lines
+                    .map((line, li) => {
+                      const la = c.lineAligns ? c.lineAligns[li] ?? undefined : c.align
+                      return `<p${la ? ` style="text-align:${css(la)}"` : ''}>${richToHtml(line) || '&nbsp;'}</p>`
+                    })
+                    .join('')
+            return `<${tag}${attrs}>${body}</${tag}>`
+          })
+          .join('') +
+        '</tr>'
+      const hasHead = b.rows.length > 0 && b.rows[0].length > 0 && b.rows[0].every((c) => c.header)
+      const inner = hasHead
+        ? `<thead>${renderRow(b.rows[0])}</thead><tbody>${b.rows.slice(1).map(renderRow).join('')}</tbody>`
+        : `<tbody>${b.rows.map(renderRow).join('')}</tbody>`
+      return `<table class="doc-table${wSum ? ' has-widths' : ''}"${formatCss(b.format)}>${colgroup}${inner}</table>`
     }
 
     default:
@@ -367,6 +384,12 @@ const EXPORT_CSS = `
   .ak { border-collapse: collapse; margin: 10px 0; font-size: 12pt; }
   .ak td, .ak th { border: 1px solid #000; padding: 2px 6px; text-align: center; }
   .ak th { background: #f2f2f2; }
+  .doc-table { width: 100%; border-collapse: collapse; margin: 8px 0 12px; font-size: 13pt; line-height: 1.3; }
+  .doc-table.has-widths { table-layout: fixed; }
+  .doc-table td, .doc-table th { border: 1px solid #000; padding: 3px 6px; text-align: left; vertical-align: top; }
+  .doc-table th { font-weight: bold; vertical-align: middle; }
+  .doc-table td p, .doc-table th p { margin: 0 0 2px; }
+  .doc-table td p:last-child, .doc-table th p:last-child { margin-bottom: 0; }
   .rub { margin: 0 0 8px 22px; }
   .hr { border: 0; border-top: 1px solid #999; margin: 10px 0; }
   @page omr { size: A4 portrait; margin: 0.4cm; }

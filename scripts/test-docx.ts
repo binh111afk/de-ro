@@ -10,6 +10,7 @@ import { Packer } from 'docx'
 import { deflateSync } from 'node:zlib'
 import { DOMParser as XmlDOMParser } from '@xmldom/xmldom'
 import { buildDocx } from '../src/examEditor/docxBlocks'
+import { buildScoringTable } from '../src/lib/scoringTable'
 import { docxImport } from '../src/lib/docxImport'
 import { examToDoc } from '../src/lib/exportDocx'
 import { buildSourcePack } from '../src/lib/sources'
@@ -248,6 +249,58 @@ useDocStore.setState({ myDocs: [{ ...doc, blocks }] })
 const picked = await buildSourcePack([], [{ kind: 'mine', id: doc.id, name: doc.title }])
 assert.equal(picked.items[0]?.text, `${formula}\n${image}[Hình]\n$x=2$`)
 assert.deepEqual(picked.warnings, [`${doc.title}: có 3 công thức/hình AI không đọc được.`])
+
+// bảng hướng dẫn chấm tự luận chuẩn Bộ 4 cột: gộp ô dọc Phần/Câu, nhiều dòng trong ô, điểm căn giữa, Tổng điểm
+const rubricTable = buildScoringTable({
+  type: 'rubric',
+  parts: [
+    {
+      part: 'I',
+      title: 'ĐỌC HIỂU',
+      score: '4,0',
+      note: '- Giám khảo đánh giá theo yêu cầu cần đạt.\n+ Nhận biết được vấn đề.',
+      questions: [
+        { no: '1', content: 'Trích dẫn *ngữ liệu* **hoặc** diễn đạt tương đương.', score: 0.5 },
+        { no: '2', content: '- Luận điểm 1\n+ Chi tiết\n++ Ví dụ', score: '1,0' },
+      ],
+    },
+    {
+      part: 'II',
+      title: 'VIẾT',
+      score: '6,0',
+      questions: [
+        {
+          no: '1',
+          title: 'Viết đoạn văn nghị luận (khoảng 200 chữ).',
+          score: '2,0',
+          criteria: [
+            { content: 'a. Đảm bảo hình thức đoạn văn.', score: '0,25' },
+            { content: 'b. Xác định đúng vấn đề nghị luận.', score: '0,25' },
+            { content: 'c. Triển khai vấn đề:\n- Ý chính 1\n+ Dẫn chứng', score: '1,0' },
+            { content: 'd. Chính tả, ngữ pháp.', score: '0,25' },
+            { content: 'đ. Sáng tạo.', score: '0,25' },
+          ],
+        },
+      ],
+    },
+  ],
+  total: '10,0',
+})
+assert.ok(rubricTable && rubricTable.type === 'table', 'buildScoringTable phải dựng ra TableBlock')
+assert.equal(rubricTable.rows[1][0].rowSpan, 3, 'Phần I gộp 3 hàng (tiêu đề phần + 2 câu)')
+assert.equal(rubricTable.rows[4][0].rowSpan, 7, 'Phần II gộp 7 hàng (tiêu đề phần + tiêu đề câu 1 + 5 ý)')
+assert.equal(rubricTable.rows[5][0].rowSpan, 6, 'Câu 1 phần Viết gộp 6 hàng (tiêu đề câu + 5 ý)')
+const rubricBuf = await Packer.toBuffer(buildDocx({ ...doc, blocks: [rubricTable] }))
+const rubricXml = await (await JSZip.loadAsync(rubricBuf)).file('word/document.xml')!.async('string')
+assert.ok(rubricXml.includes('<w:tblHeader/>'), 'hàng tiêu đề lặp lại khi qua trang')
+assert.ok(rubricXml.includes('w:vMerge w:val="restart"') && rubricXml.includes('w:vMerge w:val="continue"'), 'gộp ô dọc Phần/Câu trong Word')
+assert.ok(rubricXml.includes('w:gridSpan w:val="3"'), 'hàng Tổng điểm gộp 3 cột')
+assert.ok(rubricXml.includes('w:vAlign w:val="top"'), 'ô nội dung và số câu căn trên')
+assert.ok(!rubricXml.includes('w:fill="F2F2F2"'), 'hàng tiêu đề bảng hướng dẫn chấm nền trắng như mẫu Bộ')
+const rubricText = (await mammoth.extractRawText({ buffer: rubricBuf })).value
+for (const s of ['Phần', 'Câu', 'Nội dung', 'Điểm', 'ĐỌC HIỂU', '0,5', 'VIẾT', '2,0', '0,25', 'Tổng điểm', '10,0']) {
+  assert.ok(rubricText.includes(s), `bảng chấm thiếu "${s}"`)
+}
 
 if (process.env.KEEP_DOCX) {
   writeFileSync(process.env.KEEP_DOCX, buf)

@@ -629,16 +629,19 @@ function blockToDocx(b: ExamBlock, ctx: Ctx): Out[] {
       if (b.colWidths && b.colWidths.length === numCols) {
         const wSum = b.colWidths.reduce((a, x) => a + x, 0) || 1
         columnWidths = b.colWidths.map((w) => Math.floor((w / wSum) * totalW))
+        const used = columnWidths.reduce((a, x) => a + x, 0)
+        if (columnWidths.length > 0 && used < totalW) columnWidths[columnWidths.length - 1] += totalW - used
       } else {
         columnWidths = Array(numCols).fill(defaultColW)
       }
       occupied.clear()
       const tableRows = b.rows.map((row, r) => {
         let cIdx = 0
+        const isHeaderRow = r === 0 && row.length > 0 && row.every((c) => c.header)
         const cells = row.map((c) => {
           while (occupied.has(`${r},${cIdx}`)) cIdx++
           const cs = c.colSpan ?? 1
-          const rs = c.rowSpan ?? 1
+          const rs = Math.min(c.rowSpan ?? 1, b.rows.length - r)
           for (let dr = 0; dr < rs; dr++) {
             for (let dc = 0; dc < cs; dc++) occupied.add(`${r + dr},${cIdx + dc}`)
           }
@@ -646,24 +649,34 @@ function blockToDocx(b: ExamBlock, ctx: Ctx): Out[] {
           for (let s = 0; s < cs; s++) cellW += columnWidths[cIdx + s] ?? defaultColW
           cIdx += cs
           const lines = splitRichLines(c.text)
-          const fill = hex(c.shading) ?? (c.header ? 'F2F2F2' : undefined)
-          const paras = (lines.length ? lines : ['']).map((l) =>
-            para(runs(l, { bold: c.header, size: SIZE }), {
-              alignment: c.align === 'center' ? AlignmentType.CENTER : c.align === 'right' ? AlignmentType.RIGHT : AlignmentType.LEFT,
-              spacing: { before: 30, after: 30 },
-            }),
-          )
+          const fill = hex(c.shading)
+          const paras = (lines.length ? lines : ['']).map((l, li) => {
+            const la = c.lineAligns ? c.lineAligns[li] ?? undefined : c.align
+            const alignment =
+              la === 'center'
+                ? AlignmentType.CENTER
+                : la === 'right'
+                  ? AlignmentType.RIGHT
+                  : la === 'justify'
+                    ? AlignmentType.BOTH
+                    : AlignmentType.LEFT
+            return para(runs(l, { bold: c.header, size: SIZE }), {
+              alignment,
+              spacing: { before: 20, after: 20, line: 276 },
+            })
+          })
           return new TableCell({
             width: { size: cellW, type: WidthType.DXA },
             borders: BOX,
+            margins: { top: 60, bottom: 60, left: 100, right: 100 },
             shading: fill ? { type: ShadingType.CLEAR, color: 'auto', fill } : undefined,
-            verticalAlign: VerticalAlign.CENTER,
+            verticalAlign: c.header ? VerticalAlign.CENTER : VerticalAlign.TOP,
             columnSpan: cs > 1 ? cs : undefined,
             rowSpan: rs > 1 ? rs : undefined,
             children: paras,
           })
         })
-        return new TableRow({ children: cells })
+        return new TableRow({ children: cells, ...(isHeaderRow ? { tableHeader: true } : {}) })
       })
       return [
         new Table({

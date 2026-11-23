@@ -125,5 +125,45 @@ check('đầu đề 2 cột: xuống dòng + mark boxed khi xuất Word', () => 
   assert.match(html, /\.hdr td \{[^}]*text-align: center/)
 })
 
+check('bảng hướng dẫn chấm có viền, colgroup, thead, rowspan và căn lề từng dòng', () => {
+  const html = buildWordHtml(
+    doc([
+      {
+        type: 'table',
+        colWidths: [50, 46, 486, 60],
+        rows: [
+          [
+            { text: 'Phần', header: true, align: 'center' },
+            { text: 'Câu', header: true, align: 'center' },
+            { text: 'Nội dung', header: true, align: 'center' },
+            { text: 'Điểm', header: true, align: 'center' },
+          ],
+          [
+            { text: 'I', rowSpan: 2, align: 'center' },
+            { text: '' },
+            { text: 'ĐỌC HIỂU\n- Lưu ý chung', lineAligns: ['center', 'left'] },
+            { text: '4,0', align: 'center' },
+          ],
+          [
+            { text: '1', align: 'center' },
+            { text: '- Ý 1\n+ Ý nhỏ' },
+            { text: '0,5', align: 'center' },
+          ],
+          [
+            { text: 'Tổng điểm', colSpan: 3, align: 'center' },
+            { text: '10,0', align: 'center' },
+          ],
+        ],
+      },
+    ]),
+  )
+  assert.match(html, /\.doc-table td, \.doc-table th \{ border: 1px solid #000/)
+  assert.match(html, /<colgroup><col style="width:7\.79%">/)
+  assert.match(html, /<thead><tr><th/)
+  assert.match(html, /rowspan="2"/)
+  assert.match(html, /colspan="3"/)
+  assert.match(html, /<p style="text-align:center">ĐỌC HIỂU<\/p><p style="text-align:left">- Lưu ý chung<\/p>/)
+})
+
 console.log(`\n${pass}/${pass + fail} pass, ${fail} fail`)
 process.exit(fail ? 1 : 0)

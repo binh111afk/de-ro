@@ -794,24 +794,39 @@
   /* bảng: kẻ mảnh như đề mẫu, nội dung canh trái; riêng bảng đáp án canh giữa */
   .doc-content div[data-exam-node='examAnswerKey'] table,
   .doc-content table {
-    width: 100%;
+    width: 100% !important;
+    min-width: 0 !important;
     border-collapse: collapse;
-    margin: 0.15rem 0 0.3rem;
+    margin: 0.2rem 0 0.4rem;
     font-size: inherit;
+  }
+  .doc-content table:has(> colgroup > col[style^='width:']) {
+    table-layout: fixed;
   }
   .doc-content table td,
   .doc-content table th {
     border: 1px solid #000;
-    padding: 0.1rem 0.3rem;
+    padding: 0.2rem 0.35rem;
     text-align: left;
     vertical-align: top;
+    line-height: 1.4;
     position: relative;
   }
   .doc-content table th {
     font-weight: 700;
+    vertical-align: middle;
+  }
+  .doc-content table td p,
+  .doc-content table th p {
+    margin: 0 0 0.15rem;
+  }
+  .doc-content table td p:last-child,
+  .doc-content table th p:last-child {
+    margin-bottom: 0;
   }
   .doc-content div[data-exam-node='examAnswerKey'] table td,
   .doc-content div[data-exam-node='examAnswerKey'] table th {
+    padding: 0.1rem 0.3rem;
     text-align: center;
     vertical-align: middle;
     white-space: nowrap;

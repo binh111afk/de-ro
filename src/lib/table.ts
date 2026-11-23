@@ -324,7 +324,8 @@ function renderTableGrid(
   const toLines = (r: number, c: number) => {
     const cell = cells?.get(`${r},${c}`)
     const isHeader = cell?.header ?? isHeaderAt(r, c)
-    const align = cell?.align ?? spec.align ?? 'center'
+    const raw = cell?.align ?? spec.align ?? 'center'
+    const align: TableAlign = raw === 'justify' ? 'left' : raw
     const lines = (grid[r][c] ?? '').split('\n').flatMap((raw) =>
       splitOutsideMath(raw, LINE_TOKEN, '\\n').map((line) => cellLine(line.trim(), fontSize, isHeader)),
     )

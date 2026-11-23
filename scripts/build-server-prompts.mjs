@@ -23,6 +23,7 @@ export async function bundlePrompts() {
     format: 'esm',
     target: 'node20',
     tsconfig: fileURLToPath(new URL('tsconfig.app.json', ROOT)),
+    preserveSymlinks: true,
     write: false,
     legalComments: 'none',
     logLevel: 'warning',

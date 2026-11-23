@@ -3,6 +3,7 @@ import type { Selection } from '@tiptap/pm/state'
 import type { ExamBlock, FormatAttrs, RichText, Span, TableCellData } from '@/data/docTypes'
 import { extractJson } from '@/lib/llm'
 import { keyIndex, rubricEntries, type AiApplyResult } from '@/lib/aiDocContext'
+import { buildScoringTable } from '@/lib/scoringTable'
 import { blocksToTipTap, plainText, tipTapToBlocks } from './convert'
 
 type DrawFigure = (raw: unknown) => Span['image']
@@ -211,7 +212,13 @@ function sanitizeBlocks(raw: unknown, invalid: string[]): ExamBlock[] {
           ),
         })
         break
-      case 'rubric':
+      case 'rubric': {
+        // hướng dẫn chấm tự luận dạng bảng Phần | Câu | Nội dung | Điểm
+        const scoring = Array.isArray(b.parts) ? buildScoringTable(b) : null
+        if (scoring) {
+          out.push(scoring)
+          break
+        }
         out.push({
           type: 'rubric',
           title: b.title == null ? undefined : rich(b.title),
@@ -229,6 +236,7 @@ function sanitizeBlocks(raw: unknown, invalid: string[]): ExamBlock[] {
           ),
         })
         break
+      }
       case 'table': {
         const rows = list(b.rows).filter(Array.isArray).filter((row) => row.length).map((row) =>
           row.map((cell: unknown): TableCellData => {
