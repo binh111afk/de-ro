@@ -1380,7 +1380,9 @@ function AiConversation({
         // câu trả lời văn bản thường (không sửa tài liệu) giữ nguyên.
         const apply = (content: string) => onApplyBlocks?.(content, !revisingExam, originalRequest)
         const invalidChat = intent === 'chat' && isExamMutationReply(res.content)
-        let result = intent === 'doc' ? apply(res.content) : undefined
+        // lượt đoán là sửa đề nhưng AI trả lời bằng chữ (không phải JSON): hiện như câu trả lời chat, không báo lỗi
+        const plainAnswer = intent === 'doc' && !!res.content.trim() && !/^\s*(?:```(?:json)?\s*)?\{/i.test(res.content)
+        let result = intent === 'doc' && !plainAnswer ? apply(res.content) : undefined
         // đề trả JSON hỏng (thường bị cắt cụt): hoàn token lượt đó và soạn lại đúng một lần
         if (result?.failed && result.retryable !== false && onApplyBlocks) {
           // gọi lại bằng model mạnh hơn (lượt đầu model nhanh không làm được)

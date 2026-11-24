@@ -70,6 +70,10 @@ assert.ok(apply({ action: 'replace', blocks: [paragraph('Đề khác')] }).faile
 assert.deepEqual(editor.getJSON(), initial)
 assert.equal(examIntent('Giải thích cách làm câu 3 và vì sao thay x bằng 2.'), 'chat')
 assert.equal(examIntent('Chèn lời giải câu 3 vào đề'), 'doc')
+assert.equal(examIntent('ra đề cho tôi 1 câu tích phân ngay tại đây, kh cần ghi vào trong đề'), 'chat')
+assert.equal(examIntent('Soạn 3 câu trắc nghiệm hàm số, không cần đưa vào đề'), 'chat')
+assert.equal(examIntent('Viết thử một câu hình học trong khung chat'), 'chat')
+assert.equal(examIntent('Ra đề 10 câu tích phân'), 'doc')
 assert.equal(isExamMutationReply('{"action":"patch","patch":[]}'), true)
 
 // Từ chối câu Đ/S thiếu ý và yêu cầu cập nhật rubric có nhãn bài.

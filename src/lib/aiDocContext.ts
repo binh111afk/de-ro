@@ -17,6 +17,8 @@ export const CONTINUE_EXAM_EDIT = 'Tiếp tục yêu cầu sửa đề.'
 
 export function examIntent(text: string): 'doc' | 'chat' {
   const request = text.normalize('NFC').toLowerCase().trim()
+  // giáo viên nói rõ chỉ muốn xem trong khung chat
+  if (/(?<!\p{L})(?:(?:không|ko|k|kh|khỏi|chưa|đừng)\s+(?:cần\s+)?(?:ghi|đưa|chèn|thêm|viết|cho|đặt)\s+(?:nó\s+)?vào\s+(?:trong\s+)?(?:đề|tài liệu)|(?:ngay\s+)?(?:trong|tại|ở)\s+(?:khung\s+)?chat|ngay\s+(?:tại|ở)\s+đây)(?!\p{L})/u.test(request)) return 'chat'
   if (/^(?:(?:hãy|giúp (?:tôi|mình)|cho (?:tôi|mình)|bạn có thể)\s+)*(?:giải thích|tại sao|vì sao|cách (?:làm|giải)|giải câu|(?:viết|cho) lời giải)/u.test(request) &&
       !/(?<!\p{L})(?:chèn|đưa vào đề|thêm vào đề)(?!\p{L})/u.test(request)) return 'chat'
   if (/(?<!\p{L})(?:xoá|xóa|bỏ|xáo|trộn|cập nhật|thêm|thay|chèn)(?!\p{L})/u.test(request)) return 'doc'
