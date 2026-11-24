@@ -50,8 +50,16 @@ function makeQuad(corners: P3[], origin: P2, cam: Camera3D): Mesh3dQuad {
   return { pts, depth: depth / corners.length }
 }
 
+const collapsed = (col: P3[]) => col.every((p) => Math.hypot(p[0] - col[0][0], p[1] - col[0][1], p[2] - col[0][2]) < 1e-9)
+
 function addRibbonQuads(grid: P3[][], origin: P2, cam: Camera3D, out: Mesh3dQuad[]) {
   for (let i = 0; i < grid.length - 1; i++) {
+    // dải sát đầu nhọn (một cột co về một điểm): một mảnh duy nhất, không vẽ chùm tia về đỉnh
+    if (collapsed(grid[i]) || collapsed(grid[i + 1])) {
+      const [tip, ring] = collapsed(grid[i]) ? [grid[i][0], grid[i + 1]] : [grid[i + 1][0], grid[i]]
+      out.push(makeQuad([tip, ...ring], origin, cam))
+      continue
+    }
     for (let j = 0; j < grid[i].length - 1; j++) {
       out.push(makeQuad([grid[i][j], grid[i + 1][j], grid[i + 1][j + 1], grid[i][j + 1]], origin, cam))
     }
@@ -92,9 +100,9 @@ export function generateMesh3d(
     for (const sgn of [-1, 1] as const) {
       const grid: P3[][] = []
       for (let i = 0; i <= n; i++) {
-        const phi = (Math.PI * i) / n
-        const x = radius * Math.cos(phi)
-        const s = Math.sin(phi)
+        // thiết diện cách đều theo x (như hình SGK), không dồn ở hai đầu
+        const x = radius * (1 - (2 * i) / n)
+        const s = Math.sqrt(Math.max(0, 1 - (x / radius) ** 2))
         const w = radius * s
         const h = height * s
         const col: P3[] = []
@@ -110,9 +118,9 @@ export function generateMesh3d(
     const m = 8
     const grid: P3[][] = []
     for (let i = 0; i <= n; i++) {
-      const phi = (Math.PI * i) / n
-      const x = radius * Math.cos(phi)
-      const s = Math.sin(phi)
+      // thiết diện cách đều theo x (như hình SGK), không dồn ở hai đầu
+      const x = radius * (1 - (2 * i) / n)
+      const s = Math.sqrt(Math.max(0, 1 - (x / radius) ** 2))
       const w = radius * s
       const h = height * s
       const col: P3[] = []
@@ -130,9 +138,9 @@ export function generateMesh3d(
     const leftGrid: P3[][] = []
     const rightGrid: P3[][] = []
     for (let i = 0; i <= n; i++) {
-      const phi = (Math.PI * i) / n
-      const x = radius * Math.cos(phi)
-      const s = Math.sin(phi)
+      // thiết diện cách đều theo x (như hình SGK), không dồn ở hai đầu
+      const x = radius * (1 - (2 * i) / n)
+      const s = Math.sqrt(Math.max(0, 1 - (x / radius) ** 2))
       const w = radius * s
       const h = height * s
       const topCol: P3[] = []

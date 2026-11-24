@@ -384,8 +384,10 @@ for (const [spec, hash] of [
 
   const meshSvg = draw('_O(0; 0)\nlưới 3d tam giác _O 2 3 bước 40 góc -56 24')
   const meshPaths = paths(meshSvg)
-  // steps kẹp tối đa 24, m = 6, 2 sườn => 24 * 6 * 2 = 288 ô tứ giác
-  assert.equal(meshPaths.length, 288)
+  // steps kẹp tối đa 24, m = 6, 2 sườn => 24 * 6 * 2 = 288 ô; dải sát hai đầu nhọn gộp thành 1 mảnh: 288 - 2*2*6 + 2*2 = 268
+  assert.equal(meshPaths.length, 268)
+  assert.throws(() => parseScene('A(0; 0) B(1; 1; 1)\nAB'), /Dòng 2: "A" là điểm 2D, "B" là điểm 3D/)
+  assert.doesNotThrow(() => parseScene('_O(0; 0) A(0; 0; 0) B(1; 0; 0)\nAB\nlưới 3d vuông _O 1 1'))
 }
 
 if (process.argv.includes('--svg')) {
