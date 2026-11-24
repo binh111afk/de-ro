@@ -503,6 +503,46 @@ export const SCENE_EXAMPLES: SceneExample[] = [
       '_G-_M, _L-_R, _L-_A, _M-_B, _R-_C',
     ]),
   },
+  // Hình học tuyển sinh lớp 10: nhiều giao điểm. Mọi điểm đề gọi tên đều DỰNG bằng lệnh, không tự tính toạ độ.
+  {
+    id: 'tiep-tuyen-cat-tuyen',
+    tags: ['cát tuyến', 'hai tiếp tuyến', 'tiếp điểm'],
+    problem: 'Từ điểm M nằm ngoài đường tròn (O; R) kẻ hai tiếp tuyến MA, MB (A, B là tiếp điểm) và cát tuyến MCD (C nằm giữa M và D). Gọi H là giao điểm của OM và AB, K là trung điểm của CD.',
+    json: scene([
+      'O(0; 0) M(6; 0)', 'tròn O 3',
+      'tiếp tuyến từ M tới O 3 A B',
+      'D = tròn O 3 góc 125', 'C = MD cắt tròn O 3',
+      'H = OM cắt AB', 'K = trung điểm CD',
+      'MA, MB, AB, MD, OA, OB, OK, đứt OM',
+      'vuông OAM', 'vuông OBM', 'vuông OHA', 'vuông OKD',
+    ]),
+  },
+  {
+    id: 'tam-giac-ba-duong-cao',
+    tags: ['ba đường cao', 'các đường cao', 'nội tiếp đường tròn (O)', 'trực tâm'],
+    problem: 'Cho tam giác ABC nhọn nội tiếp đường tròn (O). Ba đường cao AD, BE, CF cắt nhau tại H. Tia AD cắt (O) tại N, M là trung điểm của BC.',
+    json: scene([
+      'O(0; 0)', 'A = tròn O 4 góc 105', 'B = tròn O 4 góc 205', 'C = tròn O 4 góc 335',
+      'tròn O 4', 'ABC',
+      'D = hình chiếu A lên BC', 'E = hình chiếu B lên AC', 'F = hình chiếu C lên AB',
+      'H = AD cắt BE', 'N = AD cắt tròn O 4', 'M = trung điểm BC',
+      'AN, BE, CF, EF, đứt OM',
+      'vuông ADC', 'vuông BEC', 'vuông CFB',
+    ]),
+  },
+  {
+    id: 'nua-tron-hai-tiep-tuyen',
+    tags: ['nửa đường tròn', 'tiếp tuyến ax', 'tiếp tuyến by', 'hai tiếp tuyến ax'],
+    problem: 'Cho nửa đường tròn (O) đường kính AB. Ax, By là hai tiếp tuyến tại A và B. Tiếp tuyến tại M thuộc nửa đường tròn cắt Ax, By lần lượt tại C, D. AD cắt BC tại N.',
+    json: scene([
+      'O(0; 0) A(-3; 0) B(3; 0) _X(-3; 6.5) _Y(3; 6.5)',
+      'cung O 3 0 180', 'AB',
+      'M = tròn O 3 góc 62', '_Q = quay O quanh M 90',
+      'C = M_Q cắt A_X', 'D = M_Q cắt B_Y', 'N = AD cắt BC',
+      'A-_X, B-_Y', 'CD, OC, OD, OM, AD, BC',
+      'vuông OMD', 'vuông BAC', 'vuông ABD',
+    ]),
+  },
 ]
 
 const fold = (s: string) => s.normalize('NFD').replace(/\p{Mark}/gu, '').replace(/đ/g, 'd').replace(/Đ/g, 'D').toLowerCase()

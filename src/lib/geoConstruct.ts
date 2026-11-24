@@ -383,6 +383,12 @@ export function construct(text: string, known: Map<string, Vec>, opts: Construct
         if (!ps) return
         c = vmul(vadd(ps[0], ps[1]), 0.5)
         r = vlen(vsub(ps[0], c))
+      } else if (ns.length === 1 && /^\s*\(?\s*[A-Z][0-9]*'*\s*[;,]\s*\d+(?:[.,]\d+)?\s*\)?\s*$/.test(circ[1])) {
+        // (O; 5) · (O, 2,5): tâm O, bán kính là số
+        const p = getAll(ns)
+        if (!p) return
+        c = p[0]
+        r = Number(circ[1].replace(/^[^;,]*[;,]\s*/, '').replace(/[)\s]/g, '').replace(',', '.'))
       } else if (ns.length >= 2) {
         // (O, OA) · tâm O qua A · (O, AB) = tâm O bán kính AB
         const ps = getAll(ns.slice(0, 3))

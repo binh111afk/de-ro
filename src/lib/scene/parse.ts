@@ -393,7 +393,8 @@ export function parseScene(text: string): { pts: Map<string, P>; cmds: Cmd[]; de
     for (const m of rest2d.matchAll(pointRe)) pts.set(m[1], [toNum(m[2]), toNum(m[3])])
   })
   const hasRealFree = free.some((f) => Boolean(f) && f !== 'khung' && f !== 'góc nhìn')
-  if (pts.size < 2 && !hasRealFree && !lines.some((l) => /^\s*(?:đều|lưới|trụ\s+lưới|tiếp\s+tuyến)\s/u.test(l))) {
+  // điểm dựng ("A = tròn O 4 góc 100") cũng tính: đề chỉ khai báo tâm O rồi dựng A, B, C trên đường tròn
+  if (pts.size < 2 && !hasRealFree && !lines.some((l) => /^\s*(?:đều|lưới|trụ\s+lưới|tiếp\s+tuyến)\s|^\s*_?[A-Za-z][A-Za-z0-9']*\s*=/u.test(l))) {
     throw new Error('Cần ít nhất 2 điểm, vd. A(0; 0) B(4; 0)')
   }
 

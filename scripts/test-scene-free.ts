@@ -508,6 +508,16 @@ if (process.argv.includes('--svg')) {
   assert.deepEqual(pickSceneExamples('Tính đạo hàm của hàm số y = x^2'), [])
   assert.ok(pickSceneExamples('đu quay có 12 cabin, tia nắng, thang, hai đường tròn tiếp xúc ngoài').length <= 3)
 }
+// 14. Hình tuyển sinh 10: đề chỉ khai báo tâm O rồi dựng A, B, C; oxy / geo2d nới cú pháp model hay viết
+{
+  const { pts } = parseScene('O(0; 0)\nA = tròn O 4 góc 100\nB = tròn O 4 góc 210\nC = tròn O 4 góc 330\nABC')
+  assert.ok(pts.has('A') && pts.has('C'))
+  const oxy = renderTool(toolFromRaw({ kind: 'oxy', xMin: -2, xMax: 2, yMin: -2, yMax: 2, items: 'A(-1; 0)\nC(1; 1)\nE(-0,5; 0,5)\nA C' })) as { errors?: unknown[] }
+  assert.deepEqual(oxy.errors ?? [], [])
+  const geo = renderTool(toolFromRaw({ kind: 'geo2d', shape: 'free', names: [], extras: 'O(0; 0)\nA(-2; 0)\nB(2; 0)\nđường tròn (O; 2)\nAB' })) as { svg: string; errors?: unknown[] }
+  assert.deepEqual(geo.errors ?? [], [])
+  assert.ok(/<circle[^>]*r="(?!0")/.test(geo.svg))
+}
 // 12. Nới cú pháp vòng 3 (lỗi các model GPT trên bộ đề kín 24/11)
 {
   const ok = (t: string) => assert.doesNotThrow(() => parseScene(t), t)

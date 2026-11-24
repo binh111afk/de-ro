@@ -80,6 +80,8 @@ export function parseOxy(text: string): { items: Item[]; errors: Array<{ line: n
   text.split('\n').forEach((raw, i) => {
     const line = i + 1
     const s = raw.replace(/[−–]/g, '-').replace(/[≤⩽]/g, '<=').replace(/[≥⩾]/g, '>=').trim()
+      // "E(-0,5; 1,2)": có dấu ; thì dấu phẩy trong ngoặc là dấu thập phân
+      .replace(/\(([^()]*;[^()]*)\)/g, (_m, inner: string) => `(${inner.replace(/(\d),(\d)/g, '$1.$2')})`)
     if (!s || s.startsWith('//')) return
     const err = (msg: string) => errors.push({ line, msg })
     const getPt = (n: string) => {
@@ -193,7 +195,9 @@ export function parseOxy(text: string): { items: Item[]; errors: Array<{ line: n
     }
     // đoạn: AB, BC, CA (thêm "đứt")
     const dashed = /(^|\s)đứt$/.test(lower)
-    const groups = s.replace(/\s*đứt$/i, '').split(/[\s,;]+/).filter(Boolean)
+    // "A C" (tên điểm cách nhau dấu cách, không có dấu phẩy) = đoạn AC
+    const segText = s.replace(/\s*đứt$/i, '')
+    const groups = (/^[A-Z][0-9]*'*(?:\s+[A-Z][0-9]*'*)+$/.test(segText) ? segText.replace(/\s+/g, '') : segText).split(/[\s,;]+/).filter(Boolean)
     for (const g of groups) {
       const ns = g.match(/[A-Z][0-9]*'*/g) ?? []
       if (ns.join('') !== g || ns.length < 2) return err(`không hiểu "${g}" — bấm dấu ? để xem các lệnh`)
