@@ -586,9 +586,10 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
       (!!prov.fostaApiKey && body.model === prov.fostaModel) ||
       (!!prov.anyrouterApiKey && body.model === prov.anyrouterModel) ||
       (!!prov.nightrouterApiKey && body.model === prov.nightrouterModel)
-    // ưu tiên 1: DeepSeek chính hãng (rẻ, có cache prompt); ưu tiên 2: opencode
+    // ưu tiên 1: DeepSeek chính hãng (rẻ, có cache prompt).
+    // opencode đã bỏ khỏi chuỗi (key hết hạn, 403 từ 24/11/2026); chỉ bật lại khi đặt OPENCODE_FALLBACK=1 (test dùng làm upstream giả).
     if (prov.deepseekApiKey) targets.push({ model: prov.deepseekModel, url: `${prov.deepseekBaseURL}/chat/completions`, key: prov.deepseekApiKey, opencode: false, effort: true })
-    if (prov.apiKey && !wantsBackup) {
+    if (process.env.OPENCODE_FALLBACK === '1' && prov.apiKey && !wantsBackup) {
       for (const m of [body.model ?? prov.model, prov.fallbackModel]) {
         if (m && !targets.some((t) => t.model === m)) targets.push({ model: m, url: prov.endpoint.toString(), key: prov.apiKey, opencode: true })
       }
@@ -663,7 +664,7 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
         ...(body.temperature !== undefined ? { temperature: body.temperature } : {}),
         ...(target.stream || (wantStream && !target.search) ? { stream: true, stream_options: { include_usage: true } } : {}),
       })
-      for (let attempt = 0; attempt < 2; attempt++) {
+      for (let attempt = 0; attempt < 3; attempt++) {
         if (attempt > 0 || modelIndex > 0) send({ type: 'retry' })
         let upstream: Response
         try {
@@ -782,9 +783,25 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
           log(target, t0, false, lastErr)
           break providers
         }
-        // hết trần token vì suy luận: gọi lại cùng model cùng trần vẫn hết trần (mất thêm vài chục giây + tiền) → sang model khác ngay.
-        // opencode có đường riêng: lần sau hạ mức suy luận xuống medium.
+        // DeepSeek suy luận lan man hết trần mà chưa viết chữ nào (hay ngẫu nhiên, nhất là đề "câu khó"):
+        // lần 2 gọi lại đúng mức suy luận, dặn nghĩ ngắn (giữ chất lượng); lần 3 mới tắt suy luận để chắc chắn có kết quả.
+        if (choice?.finish_reason === 'length' && target.effort && !target.search && attempt < 2) {
+          const retryBody = JSON.parse(attemptBody) as Record<string, unknown> & { messages: Array<{ role: string; content: unknown }> }
+          if (attempt === 0) {
+            const sys = retryBody.messages.find((m) => m.role === 'system')
+            const hint = '\n\nLượt trước suy nghĩ quá dài nên chưa kịp viết. Lần này nghĩ ngắn gọn rồi viết ngay kết quả.'
+            if (sys && typeof sys.content === 'string') sys.content += hint
+            else retryBody.messages.unshift({ role: 'system', content: hint.trim() })
+          } else {
+            delete retryBody.reasoning_effort
+            retryBody.thinking = { type: 'disabled' }
+          }
+          attemptBody = JSON.stringify(retryBody)
+          continue
+        }
+        // hết trần token vì suy luận ở model khác: gọi lại cùng trần vẫn hết → sang model khác ngay.
         if (choice?.finish_reason === 'length' && !target.opencode) break
+        if (attempt >= 1) break
         if (attempt === 0 && target.opencode) {
           const retryBody = JSON.parse(attemptBody) as Record<string, unknown>
           retryBody.reasoning_effort = 'medium'

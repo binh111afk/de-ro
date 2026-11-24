@@ -19,6 +19,7 @@ process.env.VITE_SUPABASE_PUBLISHABLE_KEY = 'pk'
 process.env.SUPABASE_SERVICE_ROLE_KEY = 'sk'
 process.env.AI_RECEIPT_SECRET = 'test-secret'
 process.env.LLM_API_KEY = 'dummy'
+process.env.OPENCODE_FALLBACK = '1'
 process.env.LLM_MODEL = 'app-model'
 process.env.AI_WELCOME_POINTS = '120'
 // các ca kiểm trừ điểm / lạm dụng dùng yêu cầu không task; việc bắt buộc task được kiểm ở test-ai-stream.ts

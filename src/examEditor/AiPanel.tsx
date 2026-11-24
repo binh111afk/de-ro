@@ -1173,9 +1173,9 @@ function AiConversation({
       }
       const onProgress = examSteps
         ? (p: LlmProgress) => {
+            // server chuyển sang nguồn AI khác: giáo viên không cần biết, bỏ bước đang chạy rồi làm lại từ đầu, không báo lỗi
             if (p.phase === 'retry') {
-              logSet((l) => closeLog(l, 'failed', 'lỗi kết nối'))
-              logStart('Thử lại với model dự phòng')
+              logSet((l) => l.filter((s) => s.state !== 'active'))
               phase = ''
               return
             }

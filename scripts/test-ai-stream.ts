@@ -25,6 +25,7 @@ process.env.VITE_SUPABASE_PUBLISHABLE_KEY = 'pk'
 process.env.SUPABASE_SERVICE_ROLE_KEY = 'sk'
 process.env.AI_RECEIPT_SECRET = 'test-secret'
 process.env.LLM_API_KEY = 'dummy'
+process.env.OPENCODE_FALLBACK = '1'
 process.env.LLM_MODEL = 'app-model'
 process.env.LLM_BASE_URL = 'https://opencode.ai/inference/go/openai/v1'
 process.env.DEEPSEEK_BASE_URL = 'https://api.deepseek.com'
@@ -344,20 +345,24 @@ check('không lộ tên model cho trình duyệt', !JSON.stringify(r.events).inc
     plan = ['ok']
     const n0 = calls.length
     const { r, spent } = await spentBy(() => hit({ messages: msgs('soạn đề hết trần token'), maxTokens: 8000, stream }))
-    const models = calls.slice(n0).map((call) => call.model)
+    const mine = calls.slice(n0)
+    const models = mine.map((call) => call.model)
     const label = stream ? 'SSE' : 'JSON'
-    check(`${label} length: gọi DeepSeek đúng một lần rồi gọi opencode`, models.join(',') === 'deepseek-flash,app-model', models)
+    // lần 1 bình thường, lần 2 cùng mức suy luận + dặn nghĩ ngắn, lần 3 tắt suy luận; vẫn hết trần thì mới sang nguồn khác
+    check(`${label} length: gọi DeepSeek 3 lần rồi mới sang nguồn khác`, models.join(',') === 'deepseek-flash,deepseek-flash,deepseek-flash,app-model', models)
+    check(`${label} length: lần 2 giữ mức suy luận, dặn nghĩ ngắn`, mine[1]?.reasoningEffort === mine[0]?.reasoningEffort && !mine[1]?.thinking && String(mine[1]?.messages[0]?.content).includes('nghĩ ngắn gọn') && !String(mine[0]?.messages[0]?.content).includes('nghĩ ngắn gọn'), mine.slice(0, 2).map((c) => [c.reasoningEffort, c.thinking]))
+    check(`${label} length: lần 3 tắt suy luận`, mine[2]?.thinking?.type === 'disabled' && mine[2]?.reasoningEffort === undefined, [mine[2]?.reasoningEffort, mine[2]?.thinking])
     const done = r.events.at(-1)
     check(`${label} length: trả 200 với nội dung dự phòng`, r.status === 200 && (stream
       ? r.type.includes('event-stream') && r.events.some((e) => e.type === 'retry') && done?.type === 'done' && String(done.content).includes('"2+2"')
       : r.json?.content === 'nội dung'), r)
     check(`${label} length: lượt hết trần (rỗng) không tính điểm, chỉ tính lượt dự phòng (5.000 token)`, spent === 5_000, spent)
   }
-  // đủ trần miễn điểm 3 lượt rỗng / ngày → lượt hết trần bị tính như cũ (9.000 + 5.000)
+  // đủ trần miễn điểm 3 lượt rỗng / ngày → mỗi lần DeepSeek hết trần bị tính như cũ (3 × 9.000 + 5.000 lượt dự phòng)
   emptyToday = 3
   plan = ['ok']
   const over = await spentBy(() => hit({ messages: msgs('soạn đề hết trần token'), maxTokens: 8000 }))
-  check('đủ trần miễn điểm: lượt hết trần tính điểm (14.000 token)', over.spent === 14_000, over.spent)
+  check('đủ trần miễn điểm: các lượt hết trần tính điểm (32.000 token)', over.spent === 32_000, over.spent)
   emptyToday = 0
   deepseekHitsTokenLimit = false
 }
