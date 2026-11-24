@@ -1907,6 +1907,9 @@ function AiConversation({
               ))}
             </div>
           )}
+          {files.length > 0 && (
+            <p className="ai-attach-cost">Có tệp đính kèm, lượt này có thể tốn nhiều điểm hơn.</p>
+          )}
           <textarea
             ref={taRef}
             placeholder={
