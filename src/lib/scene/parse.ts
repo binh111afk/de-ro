@@ -17,6 +17,29 @@ export function parseRegionPart(raw: string, pts: Map<string, P>, line: number):
     if (!Number.isFinite(n) || (positive && n <= 0)) fail(`${name} phải là số${positive ? ' lớn hơn 0' : ''}`)
     return n
   }
+  if (tokens[0] === 'nửa' && tokens[1] === 'tròn') {
+    const arg = tokens[2]
+    if (!arg) fail('thiếu đường kính nửa tròn trong vùng, vd. nửa tròn AB trái')
+    const ab = splitNames(arg, pts, line)
+    if (ab.length !== 2) fail('nửa tròn trong vùng cần đúng 2 điểm đường kính')
+    const hasSide = tokens[3] === 'trái' || tokens[3] === 'phải'
+    const side = hasSide ? tokens[3] : 'trái'
+    const extraIdx = hasSide ? 4 : 3
+    if (extraIdx < tokens.length) fail(`tuỳ chọn nửa tròn trong vùng không hợp lệ "${tokens[extraIdx]}"`)
+    const pA = pts.get(ab[0])!
+    const pB = pts.get(ab[1])!
+    const mx = (pA[0] + pB[0]) / 2
+    const my = (pA[1] + pB[1]) / 2
+    const r = Math.hypot(pB[0] - pA[0], pB[1] - pA[1]) / 2
+    if (!r) fail('hai điểm đường kính nửa tròn trùng nhau')
+    const angA = (Math.atan2(pA[1] - my, pA[0] - mx) * 180) / Math.PI
+    const to = side === 'phải' ? angA + 180 : angA - 180
+    let idx = 0
+    let mName: string
+    do mName = `_nr${++idx}`; while (pts.has(mName))
+    pts.set(mName, [mx, my])
+    return { k: 'arc', o: mName, rx: r, ry: r, from: angA, to, rotate: 0 }
+  }
   if (tokens[0] === 'cung') {
     let i = 1
     const isEll = tokens[i] === 'elip'
@@ -63,17 +86,20 @@ export function parseFreeCmd(rawKind: string, rest: string, pts: Map<string, P>,
   }
 
   if (kind === 'khung') {
-    const w = readNum('chiều rộng khung', true)
-    const h = readNum('chiều cao khung', true)
+    const rawW = readNum('chiều rộng khung', true)
+    const rawH = readNum('chiều cao khung', true)
     if (args.length) fail(`tuỳ chọn khung không hợp lệ "${args[0]}"`)
+    // Nếu model ghi nhầm theo đơn vị toạ độ (< 60), quy đổi sang px thay vì bóp khung về 120x100
+    const w = rawW < 60 ? rawW * 35 : rawW
+    const h = rawH < 60 ? rawH * 35 : rawH
     return { t: 'frame', w: Math.max(120, Math.min(1000, w)), h: Math.max(100, Math.min(800, h)) }
   }
 
   if (kind === 'góc nhìn') {
     const first = args.shift()
-    if (!first) return fail('góc nhìn cần "xiên [dx dy]" hoặc "<az> <el>"')
-    if (first === 'xiên') {
-      if (!args.length) return { t: 'view', cam: DEFAULT_OBLIQUE_CAMERA }
+    if (!first) return fail('góc nhìn cần "xiên" hoặc "<az> <el>"')
+    if (first === 'xiên' || /^xiên\|/i.test(first)) {
+      if (!args.length || /^xiên\|/i.test(first) || args[0]?.startsWith('|')) return { t: 'view', cam: DEFAULT_OBLIQUE_CAMERA }
       const dx = readNum('độ lệch x')
       const dy = args.length ? readNum('độ lệch y') : DEFAULT_OBLIQUE_CAMERA.dy
       if (args.length) fail(`tuỳ chọn góc nhìn không hợp lệ "${args[0]}"`)
@@ -269,12 +295,14 @@ export function parseFreeCmd(rawKind: string, rest: string, pts: Map<string, P>,
     const content = args[0]
     if (!content || !label(content)) fail('chữ cần văn bản trong dấu ngoặc kép')
     let large = false
+    let small = false
     let bold = false
     let italic = false
     let rotate: number | undefined
     for (let i = 1; i < args.length;) {
       const opt = args[i]
       if (opt === 'to') { large = true; i++; continue }
+      if (opt === 'nhỏ') { small = true; i++; continue }
       if (opt === 'đậm') { bold = true; i++; continue }
       if (opt === 'nghiêng') { italic = true; i++; continue }
       if (opt === 'xoay') {
@@ -287,10 +315,11 @@ export function parseFreeCmd(rawKind: string, rest: string, pts: Map<string, P>,
     }
     return {
       t: 'text', o, text: unquote(content),
-      large, bold, italic, rotate,
+      large, small, bold, italic, rotate,
     }
   }
 
+  const isNode = kind === 'nút'
   const box = kind === 'hộp' || kind === 'thoi'
   const rx = box ? readNum('chiều rộng', true) / 2 : readNum(kind === 'cung elip' ? 'bán kính trục x' : 'bán kính', true)
   const ry = (kind === 'elip' || kind === 'cung elip')
@@ -311,6 +340,7 @@ export function parseFreeCmd(rawKind: string, rest: string, pts: Map<string, P>,
   const caps: StyleCaps = {
     fill: true, stroke: true, dashed: true, weight: true, bg: true,
     italic: true, rotate: kind === 'elip' || kind === 'cung elip' || kind === 'hộp',
+    rail: kind === 'cung',
   }
   for (let i = 0; i < args.length;) {
     const opt = args[i]
@@ -320,20 +350,20 @@ export function parseFreeCmd(rawKind: string, rest: string, pts: Map<string, P>,
     if (!used) fail(`tuỳ chọn ${kind} không hợp lệ "${opt}"`)
     i += used
   }
-  let fill = opts.fill ?? (box ? '#fff' : 'none')
+  let fill = opts.fill ?? (box ? '#fff' : isNode ? '#e5e7eb' : 'none')
   // Nhãn tạo nút sơ đồ, hình tròn không nhãn dùng cho dựng hình.
   if (fill === 'none' && text && !arc) fill = '#fff'
   if (arc) {
     return {
       t: 'arc', kind, o, rx, ry, start, sweep, text: text ?? '',
-      dashed: Boolean(opts.dashed), fill, fillOpacity: opts.fillOpacity, stroke: opts.stroke, weight: opts.weight,
+      dashed: Boolean(opts.dashed), rail: opts.rail, fill, fillOpacity: opts.fillOpacity, stroke: opts.stroke, weight: opts.weight,
       bg: opts.bg, rotate: opts.rotate, italic: opts.italic,
     }
   }
   return {
-    t: 'shape', kind: kind as ShapeKind, o, rx, ry, text: text ?? '',
+    t: 'shape', kind: isNode ? 'tròn' : (kind as ShapeKind), o, rx, ry, text: text ?? '',
     dashed: Boolean(opts.dashed), fill, fillOpacity: opts.fillOpacity, rounded, stroke: opts.stroke, weight: opts.weight,
-    bg: opts.bg, rotate: opts.rotate, italic: opts.italic,
+    bg: opts.bg, rotate: opts.rotate, italic: opts.italic, node: isNode || undefined, centerDot: isNode && !text ? true : undefined,
   }
 }
 
@@ -344,8 +374,8 @@ export function parseScene(text: string): { pts: Map<string, P>; cmds: Cmd[]; de
   const cmds: Cmd[] = []
   const lines = text.normalize('NFC').split('\n')
   // lượt 1: điểm (3D đọc trước 2D; để lệnh viết trước điểm vẫn đọc được)
-  const point3Re = new RegExp(String.raw`([A-Z_][A-Za-z0-9_']*)\s*\(\s*${NUM}\s*;\s*${NUM}\s*;\s*${NUM}\s*\)`, 'g')
-  const pointRe = new RegExp(String.raw`([A-Z_][A-Za-z0-9_']*)\s*\(\s*${NUM}\s*;\s*${NUM}\s*\)`, 'g')
+  const point3Re = new RegExp(String.raw`([A-Za-z_][A-Za-z0-9_']*)\s*\(\s*${NUM}\s*;\s*${NUM}\s*;\s*${NUM}\s*\)`, 'g')
+  const pointRe = new RegExp(String.raw`([A-Za-z_][A-Za-z0-9_']*)\s*\(\s*${NUM}\s*;\s*${NUM}\s*\)`, 'g')
   const anyPointRe = new RegExp(`${point3Re.source}|${pointRe.source}`, 'g')
   const clean = (l: string) => l.trim().replace(/^[,;]+|[,;]+$/g, '').trim()
   const quotedOrPoint = new RegExp(`${QUOTED.source}|${anyPointRe.source}`, 'g')
@@ -439,10 +469,10 @@ export function parseScene(text: string): { pts: Map<string, P>; cmds: Cmd[]; de
         throw new Error(`Dòng ${line}: tuỳ chọn nhãn không hợp lệ "${tok}"`)
       }
       cmds.push({ t: 'label', a, b, text: q || '?', italic: italic || undefined, rotate, along: along || undefined })
-    } else if (m && (kw === 'đoạn' || kw === 'đứt' || kw === 'nét đứt')) {
+    } else if (m && (kw === 'đoạn' || kw === 'tia' || kw === 'đứt' || kw === 'nét đứt')) {
       const [a, b] = two(m[2])
-      const opts = parseStyleList(extraTokens, line, kw, { stroke: true, weight: true, dashed: true })
-      cmds.push({ t: 'seg', a, b, dashed: kw !== 'đoạn' || Boolean(opts.dashed), stroke: opts.stroke, weight: opts.weight })
+      const opts = parseStyleList(extraTokens, line, kw, { stroke: true, weight: true, dashed: true, rail: true })
+      cmds.push({ t: 'seg', a, b, dashed: (kw !== 'đoạn' && kw !== 'tia') || Boolean(opts.dashed), rail: opts.rail, stroke: opts.stroke, weight: opts.weight })
     } else if (m && (kw === 'đất' || kw === 'tường') && !extraTokens.length) {
       const [a, b] = two(m[2])
       cmds.push({ t: 'ground', a, b, wall: kw === 'tường' })
@@ -459,17 +489,17 @@ export function parseScene(text: string): { pts: Map<string, P>; cmds: Cmd[]; de
       }
       // danh sách đoạn / đa giác: "AB, BC" hoặc "ABCD", tuỳ chọn kiểu nét ở cuối dòng (vd "S-A, A-B màu lam dày")
       const tokens = head.split(/[,;]\s*|\s+/).filter(Boolean)
-      const styleIdx = tokens.findIndex((t) => /^(màu|dày|mảnh|đứt)$/u.test(t))
+      const styleIdx = tokens.findIndex((t) => /^(màu|dày|mảnh|đứt|ray)$/u.test(t))
       let segOpts: StyleOpts = {}
       let geomTokens = tokens
       if (styleIdx > 0) {
-        segOpts = parseStyleList(tokens.slice(styleIdx), line, 'đoạn', { stroke: true, weight: true, dashed: true })
+        segOpts = parseStyleList(tokens.slice(styleIdx), line, 'đoạn', { stroke: true, weight: true, dashed: true, rail: true })
         geomTokens = tokens.slice(0, styleIdx)
       }
       for (const part of geomTokens) {
         const dashed = part.endsWith('*') || Boolean(segOpts.dashed)
         const n = splitNames(part.replace(/\*$/, ''), pts, line)
-        if (n.length === 2) cmds.push({ t: 'seg', a: n[0], b: n[1], dashed, stroke: segOpts.stroke, weight: segOpts.weight })
+        if (n.length === 2) cmds.push({ t: 'seg', a: n[0], b: n[1], dashed, rail: segOpts.rail, stroke: segOpts.stroke, weight: segOpts.weight })
         else if (n.length >= 3 && !segOpts.stroke && !segOpts.weight && !segOpts.dashed) cmds.push({ t: 'poly', names: n })
         else if (n.length >= 3) cmds.push({ t: 'poly', names: n, stroke: segOpts.stroke, weight: segOpts.weight, dashed: segOpts.dashed })
         else throw new Error(`Dòng ${line}: không hiểu "${part}"`)

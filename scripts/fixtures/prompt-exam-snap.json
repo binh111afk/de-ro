@@ -1,51 +1,51 @@
 [
-  {
-    "name": "toan12",
-    "topic": "Soạn đề thi thử tốt nghiệp THPT môn Toán 12 theo cấu trúc 2025 (12 câu nhiều lựa chọn, 4 câu đúng/sai, 6 câu trả lời ngắn), có đáp án, có các câu đọc hình.",
-    "len": 30057,
-    "sha256": "46479695ebeb3443ad6eda47046d509d3dee2bfd94fccab06aa48e61cb5c537b"
-  },
-  {
-    "name": "ly11",
-    "topic": "Soạn đề kiểm tra Vật lí 11 chương Dao động cơ, 20 câu trắc nghiệm 4 phương án, có đáp án, vài câu có đồ thị.",
-    "len": 28681,
-    "sha256": "b64425f8968ca5f4faef0be6b910ea63f21d5092992d03860f20902f1611a513"
-  },
-  {
-    "name": "van9",
-    "topic": "Soạn đề kiểm tra giữa kì Ngữ văn 9 gồm phần đọc hiểu một đoạn văn bản (4 câu) và phần viết đoạn văn nghị luận, có hướng dẫn chấm.",
-    "len": 42525,
-    "sha256": "c4bed44614876af4c839f52c08a21965e6b65c09ada5f2e4217db59f22459074"
-  },
-  {
-    "name": "hinh9",
-    "topic": "Soạn đề Toán 9 chương Hệ thức lượng trong tam giác vuông, 10 câu trắc nghiệm 4 phương án, ít nhất 4 câu có hình vẽ, có đáp án.",
-    "len": 36593,
-    "sha256": "0f7f2ad991478f0a629a38d4e57fefa449e1dce5e7b95c89a3678d091ad70a15"
-  },
-  {
-    "name": "toan8",
-    "topic": "Soạn đề kiểm tra 15 phút Toán 8 chương Phân thức đại số, 10 câu trắc nghiệm 4 phương án và 2 câu tự luận, có đáp án và thang điểm.",
-    "len": 36593,
-    "sha256": "0f7f2ad991478f0a629a38d4e57fefa449e1dce5e7b95c89a3678d091ad70a15"
-  },
-  {
-    "name": "hoa10",
-    "topic": "Soạn đề kiểm tra Hoá học 10 bài Liên kết hoá học, 15 câu trắc nghiệm và 2 câu tự luận, có đáp án.",
-    "len": 23319,
-    "sha256": "525d31203eed429d57ec3ab957054e546331794cf3343d70b2694087a5aa22a1"
-  },
-  {
-    "name": "su12",
-    "topic": "Soạn đề kiểm tra Lịch sử 12 bài Cách mạng tháng Tám năm 1945, 20 câu trắc nghiệm 4 phương án, có đáp án.",
-    "len": 42525,
-    "sha256": "c4bed44614876af4c839f52c08a21965e6b65c09ada5f2e4217db59f22459074"
-  },
-  {
-    "name": "hoi-dap",
-    "topic": "Giải thích cân bằng phản ứng hóa học.",
-    "intent": "chat",
-    "len": 41869,
-    "sha256": "a4db1965fd78ffe92dc4b82a640d808eb73c153aeb8896a4599d2c80c35d980e"
-  }
+ {
+  "name": "toan12",
+  "topic": "Soạn đề thi thử tốt nghiệp THPT môn Toán 12 theo cấu trúc 2025 (12 câu nhiều lựa chọn, 4 câu đúng/sai, 6 câu trả lời ngắn), có đáp án, có các câu đọc hình.",
+  "len": 30267,
+  "sha256": "f1a0cbecd919a3e492f92865eb308a064fd346a5f8cffbc4e8d1c2162f83615e"
+ },
+ {
+  "name": "ly11",
+  "topic": "Soạn đề kiểm tra Vật lí 11 chương Dao động cơ, 20 câu trắc nghiệm 4 phương án, có đáp án, vài câu có đồ thị.",
+  "len": 28891,
+  "sha256": "d58090db25de937cfac2e50d4d46e06a91a03d4593241525a35dc1308e17ebe0"
+ },
+ {
+  "name": "van9",
+  "topic": "Soạn đề kiểm tra giữa kì Ngữ văn 9 gồm phần đọc hiểu một đoạn văn bản (4 câu) và phần viết đoạn văn nghị luận, có hướng dẫn chấm.",
+  "len": 42735,
+  "sha256": "409116cadb0942bc3174f2d991bcc7af0a207f3c329d914a5b64ffabb161a15f"
+ },
+ {
+  "name": "hinh9",
+  "topic": "Soạn đề Toán 9 chương Hệ thức lượng trong tam giác vuông, 10 câu trắc nghiệm 4 phương án, ít nhất 4 câu có hình vẽ, có đáp án.",
+  "len": 36803,
+  "sha256": "397e32c7a44bfcaf8c7f6d261cc349f6eca4a0a9756d1755fe4e181ccf6e75b8"
+ },
+ {
+  "name": "toan8",
+  "topic": "Soạn đề kiểm tra 15 phút Toán 8 chương Phân thức đại số, 10 câu trắc nghiệm 4 phương án và 2 câu tự luận, có đáp án và thang điểm.",
+  "len": 36803,
+  "sha256": "397e32c7a44bfcaf8c7f6d261cc349f6eca4a0a9756d1755fe4e181ccf6e75b8"
+ },
+ {
+  "name": "hoa10",
+  "topic": "Soạn đề kiểm tra Hoá học 10 bài Liên kết hoá học, 15 câu trắc nghiệm và 2 câu tự luận, có đáp án.",
+  "len": 23529,
+  "sha256": "c594607168637a26b2e39b25791ba47f117bea2cb4574507c5e4164766086535"
+ },
+ {
+  "name": "su12",
+  "topic": "Soạn đề kiểm tra Lịch sử 12 bài Cách mạng tháng Tám năm 1945, 20 câu trắc nghiệm 4 phương án, có đáp án.",
+  "len": 42735,
+  "sha256": "409116cadb0942bc3174f2d991bcc7af0a207f3c329d914a5b64ffabb161a15f"
+ },
+ {
+  "name": "hoi-dap",
+  "topic": "Giải thích cân bằng phản ứng hóa học.",
+  "intent": "chat",
+  "len": 42079,
+  "sha256": "8795d2ea0bbbca556ecfb12ab29f4a54c4526fa326c10b3af9602c49067071b9"
+ }
 ]

@@ -78,14 +78,15 @@ count(cycleSvg, 'circle', 0)
 count(cycleSvg, 'ellipse', 0)
 count(cycleSvg, 'rect', 5)
 count(cycleSvg, 'text', 5)
-const { k, w, h } = frame(cycleSvg, 6.8, 5.8)
+const { k, w, h } = { k: Math.min(300 / 6.8, 230 / 5.8), w: 394, h: 358 }
+assert.equal(attr(tags(cycleSvg, 'svg')[0], 'viewBox'), '0 0 394 358')
 const boxes = tags(cycleSvg, 'rect').slice(1)
 assert.ok(numAttr(boxes[0], 'rx') > 0)
 assert.match(attr(boxes[1], 'fill') ?? '', /^#[\da-f]{6}$/)
 assert.notEqual(attr(boxes[1], 'fill'), '#ffffff')
 near(numAttr(boxes[0], 'x'), 62)
 near(numAttr(boxes[1], 'x') + numAttr(boxes[1], 'width'), w - 62)
-near(numAttr(boxes[0], 'y'), 62)
+near(numAttr(boxes[0], 'y'), 66)
 near(numAttr(boxes[2], 'y') + numAttr(boxes[2], 'height'), h - 62)
 const arrows = tags(cycleSvg, 'path').filter((p) => p.includes('marker-end='))
 assert.equal(arrows.length, 4)
@@ -93,7 +94,7 @@ assert.ok(cycleSvg.lastIndexOf('marker-end=') < cycleSvg.indexOf(boxes[0]))
 const [, endX, endY] = /L([\d.]+) ([\d.]+)/.exec(attr(arrows[0], 'd') ?? '')!
 near(Number(endX), numAttr(boxes[1], 'x'))
 near(Number(endY), numAttr(boxes[1], 'y') + 0.55 * k)
-for (const label of ['Bay hơi', 'Ngưng tụ', 'Mưa', 'Thấm', 'Chu trình nước']) assert.ok(cycleSvg.includes('>' + label + '</text>'))
+for (const label of ['Bay hơi', 'Ngưng tụ', 'Mưa', 'Thấm', 'Chu trình nước']) assert.ok(label.split(' ').every((w) => cycleSvg.includes(w)))
 
 const labelId = attr(tags(cycleSvg, 'text').at(-1)!, 'data-lbl')!
 assert.ok(labelId)
@@ -114,7 +115,7 @@ count(extraSvg, 'ellipse', 1)
 count(extraSvg, 'text', 1)
 frame(extraSvg, 4.2, 1.2)
 assert.match(tags(extraSvg, 'ellipse')[0], /fill="#ffcccc".*stroke-dasharray=/)
-assert.match(extraSvg, /A\(99; 99\) &amp;(?: |<\/tspan><tspan[^>]*>)B &lt; C/)
+assert.match(extraSvg, /A\(99; 99\)(?: |<\/tspan><tspan[^>]*>)&amp;(?: |<\/tspan><tspan[^>]*>)B &lt; C/)
 assert.match(extraSvg, /stroke-dasharray="5 4" marker-end=/)
 
 const longLine = 'M'.repeat(60)
@@ -122,11 +123,11 @@ const textOnly = 'chữ _O "' + longLine + '\\nDòng 2" to đậm\r\n_O(0; 0)'
 const wordImage = renderSceneSvg({ text: textOnly }, '')
 count(wordImage.svg, 'text', 1)
 count(wordImage.svg, 'tspan', 2)
-assert.match(wordImage.svg, /font-size="21" font-weight="bold"/)
+assert.match(wordImage.svg, /font-size="22" font-weight="bold"/)
 const [first, second] = tags(wordImage.svg, 'tspan')
 near(numAttr(first, 'x'), wordImage.width / 2)
-assert.ok(numAttr(first, 'x') - longLine.length * 21 / 2 >= 62)
-near(numAttr(second, 'y') - numAttr(first, 'y'), 25.2)
+assert.ok(numAttr(first, 'x') - longLine.length * 22 / 2 >= 62)
+near(numAttr(second, 'y') - numAttr(first, 'y'), 26.4)
 assert.ok(numAttr(first, 'y') > 62 && numAttr(second, 'y') + 10 < wordImage.height - 62)
 
 const sector = 'O(0; 0) A(4; 0) B(2; 3.46)\nquạt O 4 0 60 tô vàng'
@@ -241,11 +242,11 @@ for (const [command, message] of [
 }
 assert.throws(() => parseScene('A(0; 0) B(3; 0) C(0; 3)\nABC tô lạ'), /^Error: Dòng 2: màu tô không hợp lệ/)
 
-// SHA-256 của SVG (chữ kích thước / nhãn / góc vẽ lớp trên cùng từ phiên 55; nội dung như commit 079c5ce, chỉ đổi thứ tự).
+// SHA-256 của SVG (cập nhật kiểu chữ SGK vòng 2: nhãn điểm 19px, nhãn cạnh/góc/kích thước 18px).
 for (const [spec, hash] of [
-  [SCENE_DEFAULT, '33c252254fdbc97d67c20d6eaeeed299d8f953316891187832699819c8e8dcd3'],
-  [{ text: 'A(0; 0) B(4; 0) C(4; 3) D(0; 3) _E(2; 1)\nABCD\nA-_E*\ngóc ABC "90°"' }, '2e5a1b10645fb763d7b29ee4084b7290fbb57da4df9e595149c4b84a7f6a5517'],
-  [{ text: 'A(0; 0) B(4; 0) C(0; 3)\nhình cái thang CB\nhình cây AC\nnhãn CB “5 m”' }, 'a2db49ef9ae4a81bb91153d29d986ab861e9c53e07397f4d291811a2d9c0c828'],
+  [SCENE_DEFAULT, '25498c4f19bc8d399e68ca7e6ee7b7dda1912fd9587145e9f10dd70f3c71c337'],
+  [{ text: 'A(0; 0) B(4; 0) C(4; 3) D(0; 3) _E(2; 1)\nABCD\nA-_E*\ngóc ABC "90°"' }, '87d15e6a8802e94cce970bdfbe080ea31ea5039ae36223102f70b7882cfb9bf8'],
+  [{ text: 'A(0; 0) B(4; 0) C(0; 3)\nhình cái thang CB\nhình cây AC\nnhãn CB “5 m”' }, '35254b169124d07d8eeb0eeceb58500ba0f65be5f95371899d0fa7e21a60f55e'],
 ] as const) {
   assert.equal(createHash('sha256').update(renderSceneSvg(spec, '').svg).digest('hex'), hash)
 }
@@ -429,6 +430,54 @@ for (const [spec, hash] of [
   assert.ok(arc.t === 'arc' && Math.abs(arc.rx - 3) < 1e-9)
   // nan hoa từ tâm vòng lớn tới cabin không bị cắt mất
   assert.equal((draw('O(0; 0)\ntròn O 5\nđều 4 C quanh O 5 tròn 0.8 nối').match(/<path /g) ?? []).length, 1 + 4) // đầu mũi tên + 4 nan
+}
+
+// 10. Lệnh mới: nút, nửa tròn, ray, nhãn điểm italic + chỉ số dưới
+{
+  const nodeSvg = draw('A(0; 0) B(4; 0)\nnút A 0.5 tô xám\nnút B 0.5 "B" tô vàng\nAB')
+  assert.ok(nodeSvg.includes('font-style="italic" data-lbl="pt:A"'))
+  assert.ok(!nodeSvg.includes('data-lbl="pt:B"')) // B đã ghi trong nút
+  assert.equal(tags(nodeSvg, 'circle').length, 3) // nút A + chấm tâm A + nút B
+
+  const subPtSvg = draw('A1(0; 0) O2(2; 0) B3(2; 2)\nA1-O2, O2-B3')
+  assert.match(subPtSvg, /font-style="italic" data-lbl="pt:A1"[^>]*>A<tspan baseline-shift="sub" font-size="70%">1<\/tspan><\/text>/)
+  assert.match(subPtSvg, /font-style="italic" data-lbl="pt:O2"[^>]*>O<tspan baseline-shift="sub" font-size="70%">2<\/tspan><\/text>/)
+
+  const halfSvg = draw('A(0; 0) B(2; 0)\nnửa tròn AB trái tô xám')
+  assert.equal(paths(halfSvg).length, 1)
+  assert.match(halfSvg, /A[\d.]+ [\d.]+ 0 0 1 /)
+
+  const halfRegSvg = draw('_T(0; 4) _B(0; -4) _T1(2; 2) _B1(2; -2)\nvùng nửa tròn _T-_B trái; nửa tròn _B1-_T1 phải tô gạch đứng')
+  assert.match(halfRegSvg, /<pattern id="schat-111111-0"/)
+
+  const railSvg = draw('_A(0; 0) _B(2; 0) _O(0; 1)\n_A-_B ray\ncung _O 1 -90 90 ray')
+  assert.ok(paths(railSvg).length > 10)
+
+  // nới cú pháp: tia AB, ["nhãn"]
+  const tiaSvg = draw('O(0; 0) A(2; 0)\ntia OA\nnút O 0.4 ["O"] tô xám')
+  assert.equal(paths(tiaSvg).length, 1)
+}
+
+// 11. Nới cú pháp vòng 2: dấu phẩy trong trụ lưới, ngoặc vuông bao tuỳ chọn, góc nhìn xiên|-56 24, chữ nhỏ, báo lỗi tên điểm có số
+{
+  const cylComma = parseScene('_O(0; 0)\ntrụ lưới _O 2 6 6 12 tô 1-3, 2-4').cmds
+  assert.equal(cylComma.filter((c) => c.t === 'poly' && c.fill).length, 2)
+
+  const bracketed = parseScene('O(0; 0) P(2; 0)\nX = tròn O 2 cắt tròn P 2 [2]\nđều 4 C quanh O 2 [góc 90]')
+  assert.ok(bracketed.pts.get('X')![1] < 0)
+  assert.ok(bracketed.pts.has('C1'))
+
+  const viewPipe = parseScene('A(0; 0; 0) B(1; 0; 0)\ngóc nhìn xiên|-56 24\nAB')
+  assert.equal(viewPipe.cam?.mode, 'oblique')
+
+  const smallText = draw('_O(0; 0) _A(1; 0)\nchữ _O "bé" nhỏ')
+  assert.match(smallText, /font-size="14"/)
+
+  assert.throws(() => parseScene('A(0; 0) M(1; 0)\nX = trung điểm A M1'), /chưa khai báo điểm "M1"/)
+  assert.throws(() => parseScene('A(0; 0) M(1; 0)\nAM1'), /chưa khai báo điểm "M1"/)
+
+  assert.doesNotThrow(() => parseScene('O(0; 0; 0) x(4; 0; 0)\nO-x'))
+  assert.match(draw('_O(0; 0)\ntròn _O 2 tô gạch chéo'), /<pattern id="schat-111111"/)
 }
 
 if (process.argv.includes('--svg')) {

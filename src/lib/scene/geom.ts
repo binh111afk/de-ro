@@ -49,6 +49,11 @@ export function splitNames(s: string, pts: Map<string, P>, line: number): string
     let hit = ''
     for (const n of [...pts.keys(), ...alias.keys()]) if (s.startsWith(n, i) && n.length > hit.length) hit = n
     if (!hit) throw new Error(`Dòng ${line}: chưa khai báo điểm "${s.slice(i)}"`)
+    // Tránh cắt ngang tên có số/nháy dính đuôi chưa khai báo (vd pts có M nhưng chuỗi là M1)
+    if (!/[\d']$/.test(hit) && /^[\d']/.test(s.slice(i + hit.length))) {
+      const bad = s.slice(i).match(/^_?[A-Z][A-Za-z0-9']*/)?.[0] ?? s.slice(i)
+      throw new Error(`Dòng ${line}: chưa khai báo điểm "${bad}"`)
+    }
     out.push(real(hit) as string)
     i += hit.length
   }

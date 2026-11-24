@@ -38,7 +38,7 @@ export const SCENE_HELP = [
     items: [
       { code: 'A(0; 0) B(4; 0)', what: 'Khai báo điểm (trục y hướng lên)' },
       { code: '_M(1; 2)', what: 'Điểm không ghi tên; nối bằng gạch: _M-_N' },
-      { code: 'AB, BC [màu lam dày]', what: 'Đoạn thẳng; thêm màu, dày, mảnh' },
+      { code: 'AB, BC [màu lam dày | ray]', what: 'Đoạn thẳng; thêm màu, dày, mảnh, hoặc ray (đường ray)' },
       { code: 'ABCD', what: 'Đa giác khép kín' },
       { code: 'đứt MN [màu lục]', what: 'Đoạn nét đứt (nếp gấp, tia nhìn, trục)' },
       { code: 'mũi tên hai đầu đứt AB', what: 'Mũi tên hai đầu đặt trực tiếp giữa A và B' },
@@ -78,11 +78,13 @@ export const SCENE_HELP = [
   {
     group: 'Hình tự do & đường cong',
     items: [
+      { code: 'nút A 0.5 "A" tô xám', what: 'Nút tròn sơ đồ mạng (chấm tâm nếu không nhãn), đoạn nối tự dừng ở mép' },
+      { code: 'nửa tròn AB [trái|phải] [tô …]', what: 'Nửa đường tròn đường kính AB về một phía (dùng riêng hoặc trong vùng)' },
       { code: 'tròn O 0.6 "Nhãn"', what: 'Vòng tròn tâm O, bán kính 0.6; thêm đứt, tô [đậm|bóng] <màu>, nền' },
       { code: 'elip O 1 0.6 đứt [xoay 30]', what: 'Elip tâm O, hai bán kính; có thể xoay, tô, đặt nền' },
       { code: 'hộp O 2 1 "Nhãn" bo tô xanh', what: 'Hộp tâm O, rộng 2, cao 1; thêm bo, xoay, đứt, tô, nền' },
       { code: 'thoi O 3 1.5 "i ≤ n?"', what: 'Hình thoi tâm O, rộng 3, cao 1.5' },
-      { code: 'cung O 4 0 60 "Nhãn"', what: 'Cung tròn tâm O; cung elip O rx ry 180 360 vẽ nửa elip trước/sau' },
+      { code: 'cung O 4 0 60 "Nhãn" [ray]', what: 'Cung tròn tâm O; thêm ray vẽ đường ray; cung elip vẽ nửa elip' },
       { code: 'quạt O 4 0 60 tô vàng', what: 'Hình quạt tâm O với hai bán kính; thêm đứt, tô <màu>' },
       { code: 'cong A-B-C [kín] [mũi tên]', what: 'Đường cong mượt qua các điểm (3 điểm tạo parabol)' },
       { code: 'vùng mảnh1; mảnh2 tô đậm đen', what: 'Miền kín ghép từ cung / cung elip / cong / đoạn; hỗ trợ tô gạch, tô bóng, mờ' },

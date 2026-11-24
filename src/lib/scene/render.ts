@@ -9,7 +9,7 @@ import { FAM, EDGE_ANCHOR, esc, f1, shadeGradientDef, sphereGradientDef, hatchPa
 import { wrapDegrees, direction, rotateVec, ellipseArcPoint } from './geom'
 import { parseScene } from './parse'
 
-const MIN_SHAPE_TEXT = 11
+const MIN_SHAPE_TEXT = 16
 
 export const cornerRadius = (c: Shape) => c.rounded ? Math.min(c.rx, c.ry) * 0.35 : 0
 
@@ -340,16 +340,23 @@ export function renderSceneSvg(spec: SceneSpec, desc: string): { svg: string; wi
     }
   }
 
+  const frameCmd = [...cmds].reverse().find((c): c is Extract<Cmd, { t: 'frame' }> => c.t === 'frame')
+  const frameW = frameCmd?.w ?? 300
+  const frameH = frameCmd?.h ?? 230
+  const uiScale = frameCmd ? Math.max(1, Math.min(frameW / 320, frameH / 240)) : 1
+
   const getLabels = (k: number) => cmds.flatMap((c, i) => {
     if ((c.t !== 'shape' && c.t !== 'text' && c.t !== 'arc') || !c.text) return []
-    let size = c.t === 'text' && c.large ? 21 : 15
+    const baseSize = c.t === 'text' && c.large ? 22 : c.t === 'text' && c.small ? 14 : 18
+    let size = Math.round(baseSize * uiScale * 10) / 10
+    const minShapeSize = Math.round(MIN_SHAPE_TEXT * uiScale * 10) / 10
     let lines = c.text.split('\\n')
     if (c.t === 'shape') {
       const fW = c.kind === 'hộp' ? 2 : c.kind === 'thoi' ? 1.1 : 1.6
       const fH = c.kind === 'hộp' ? 2 : c.kind === 'thoi' ? 1.1 : 1.4
       const availableW = c.rx * k * fW - 12
       const availableH = c.ry * k * fH - 5
-      for (; size >= MIN_SHAPE_TEXT; size--) {
+      for (; size >= minShapeSize; size--) {
         const wrapped = lines.flatMap((line) => {
           const rows: string[] = []
           for (const word of line.split(/\s+/)) {
@@ -364,9 +371,9 @@ export function renderSceneSvg(spec: SceneSpec, desc: string): { svg: string; wi
           break
         }
       }
-      if (size < MIN_SHAPE_TEXT) {
+      if (size < minShapeSize) {
         // chữ không vừa ở cỡ đọc được: nới hình cho vừa chữ thay vì thu chữ
-        size = MIN_SHAPE_TEXT
+        size = minShapeSize
         lines = lines.flatMap((line) => {
           const words = line.split(/\s+/)
           return words.length > 2 ? [words.slice(0, Math.ceil(words.length / 2)).join(' '), words.slice(Math.ceil(words.length / 2)).join(' ')] : [line]
@@ -386,10 +393,6 @@ export function renderSceneSvg(spec: SceneSpec, desc: string): { svg: string; wi
       solidLabel: c.t === 'shape' && c.fill !== 'none',
     }]
   })
-
-  const frameCmd = [...cmds].reverse().find((c): c is Extract<Cmd, { t: 'frame' }> => c.t === 'frame')
-  const frameW = frameCmd?.w ?? 300
-  const frameH = frameCmd?.h ?? 230
   const minX = Math.min(...xs)
   const maxX = Math.max(...xs)
   const minY = Math.min(...ys)
@@ -450,10 +453,14 @@ export function renderSceneSvg(spec: SceneSpec, desc: string): { svg: string; wi
   let b = `<defs><marker id="scarr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#111"/></marker>${extraMarkers}${extraGrads}</defs>`
   const line = (p: P, q: P, extra = '', stroke = '#111') =>
     `<path d="M${f1(p[0])} ${f1(p[1])}L${f1(q[0])} ${f1(q[1])}" stroke="${stroke}" fill="none" ${extra}/>`
-  const text = (x: number, y: number, s: string, anchor = 'middle', size = 15, lbl?: string, italic = false, rotateSvgDeg = 0) => {
+  const text = (x: number, y: number, s: string, anchor = 'middle', size = 16, lbl?: string, italic = false, rotateSvgDeg = 0, isPoint = false) => {
+    const fsize = Math.round(size * uiScale * 10) / 10
     const tr = rotateSvgDeg ? ` transform="rotate(${f1(rotateSvgDeg)} ${f1(x)} ${f1(y - 5)})"` : ''
-    const content = s.includes('$') ? sceneRichText(s) : s.includes('_') ? richTextToSvg(s) : esc(s)
-    return `<text x="${f1(x)}" y="${f1(y)}" ${FAM} font-size="${size}"${italic ? ' font-style="italic"' : ''}${lbl ? ` data-lbl="${lbl}"` : ''}${tr} text-anchor="${anchor}">${content}</text>`
+    const content = s.includes('$') ? sceneRichText(s)
+      : s.includes('_') ? richTextToSvg(s)
+      : isPoint && /^[A-Z][A-Za-z']*\d+$/.test(s) ? richTextToSvg(s.replace(/(\d+)$/, '_$1'))
+      : esc(s)
+    return `<text x="${f1(x)}" y="${f1(y)}" ${FAM} font-size="${fsize}"${italic ? ' font-style="italic"' : ''}${lbl ? ` data-lbl="${lbl}"` : ''}${tr} text-anchor="${anchor}">${content}</text>`
   }
 
   const outward = (p: P, q: P): P => {
@@ -550,7 +557,7 @@ export function renderSceneSvg(spec: SceneSpec, desc: string): { svg: string; wi
     const rx = c.rx * k
     const ry = c.ry * k
     const rot = c.rotate ? ` transform="rotate(${f1(-c.rotate)} ${f1(x)} ${f1(y)})"` : ''
-    const sw = strokeWidthOnly(c.stroke, c.weight, 1.2)
+    const sw = strokeWidthOnly(c.stroke, c.weight, 1.8)
     const dash = c.dashed ? ' stroke-dasharray="5 4"' : ''
     const fo = fillOpacityAttr(c.fill, c.fillOpacity)
     const style = `fill="${c.fill}"${fo} stroke="${c.stroke ?? '#111'}"${sw}${dash}`
@@ -560,7 +567,37 @@ export function renderSceneSvg(spec: SceneSpec, desc: string): { svg: string; wi
     return `<rect x="${f1(x - rx)}" y="${f1(y - ry)}" width="${2 * rx}" height="${2 * ry}" rx="${cornerRadius(c) * k}" ${style}${rot}/>`
   }
 
+  const renderRailArc = (c: ArcCmd) => {
+    const center = pts.get(c.o)!
+    const [cx0, cy0] = S(center)
+    const r = c.rx * k
+    const st = c.stroke ?? '#111'
+    const arcPath = (rad: number) => {
+      if (rad <= 0) return ''
+      const ptAt = (deg: number) => {
+        const a = (deg * Math.PI) / 180
+        return `${f1(cx0 + rad * Math.cos(a))} ${f1(cy0 - rad * Math.sin(a))}`
+      }
+      const start = ptAt(c.start)
+      const full = c.sweep === 360
+      const turn = (end: string, large: number) => `A${f1(rad)} ${f1(rad)} 0 ${large} 0 ${end}`
+      const curve = full ? turn(ptAt(c.start + 180), 0) + turn(start, 0) : turn(ptAt(c.start + c.sweep), Number(c.sweep > 180))
+      return `<path d="M${start}${curve}${full ? 'Z' : ''}" stroke="${st}" fill="none" stroke-width="1.4"/>`
+    }
+    const arcLen = r * ((c.sweep * Math.PI) / 180)
+    const steps = Math.max(2, Math.round(arcLen / 7))
+    let sleepers = ''
+    for (let i = 0; i < steps; i++) {
+      const a = ((c.start + (c.sweep * (i + 0.5)) / steps) * Math.PI) / 180
+      const ux = Math.cos(a)
+      const uy = -Math.sin(a)
+      sleepers += line([cx0 + (r - 5.5) * ux, cy0 + (r - 5.5) * uy], [cx0 + (r + 5.5) * ux, cy0 + (r + 5.5) * uy], 'stroke-width="1.1"', st)
+    }
+    return arcPath(r - 3) + arcPath(r + 3) + sleepers
+  }
+
   const renderArcSvg = (c: ArcCmd) => {
+    if (c.rail) return renderRailArc(c)
     const center = pts.get(c.o)!
     const rot = c.rotate ?? 0
     const point = (angle: number) => S(ellipseArcPoint(center, c.rx, c.ry, angle, rot)).join(' ')
@@ -573,7 +610,7 @@ export function renderSceneSvg(spec: SceneSpec, desc: string): { svg: string; wi
     const full = c.sweep === 360
     const curve = full ? turn(point(c.start + 180), 0) + turn(start, 0) : turn(point(c.start + c.sweep), Number(c.sweep > 180))
     const d = c.kind === 'quạt' && !full ? `M${S(center).join(' ')}L${start}${curve}Z` : `M${start}${curve}${full ? 'Z' : ''}`
-    const sw = strokeWidthOnly(c.stroke, c.weight, 1.6)
+    const sw = strokeWidthOnly(c.stroke, c.weight, 1.9)
     const dash = c.dashed ? ' stroke-dasharray="5 4"' : ''
     const fo = fillOpacityAttr(c.fill, c.fillOpacity)
     return `<path d="${d}" stroke="${c.stroke ?? '#111'}" fill="${c.fill}"${fo}${sw} stroke-linejoin="round"${dash}/>`
@@ -583,17 +620,17 @@ export function renderSceneSvg(spec: SceneSpec, desc: string): { svg: string; wi
     const aid = arrowId(c.stroke)
     const arr = c.arrow ? ` marker-end="url(#${aid})"` : ''
     const fo = fillOpacityAttr(c.fill, c.fillOpacity)
-    return `<path d="${curvePathD(c)}" ${strokeAttrs(c.stroke, c.weight, 1.6, c.dashed)} fill="${c.fill}"${fo} stroke-linecap="round" stroke-linejoin="round"${arr}/>`
+    return `<path d="${curvePathD(c)}" ${strokeAttrs(c.stroke, c.weight, 1.9, c.dashed)} fill="${c.fill}"${fo} stroke-linecap="round" stroke-linejoin="round"${arr}/>`
   }
 
   const renderRegionSvg = (c: RegionCmd) => {
     const fo = fillOpacityAttr(c.fill, c.fillOpacity)
-    return `<path d="${regionPathD(c)}" ${strokeAttrs(c.stroke, c.weight, 1.6, c.dashed)} fill="${c.fill}"${fo} stroke-linejoin="round"/>`
+    return `<path d="${regionPathD(c)}" ${strokeAttrs(c.stroke, c.weight, 1.9, c.dashed)} fill="${c.fill}"${fo} stroke-linejoin="round"/>`
   }
 
   const renderPolySvg = (c: Extract<Cmd, { t: 'poly' }>) => {
     const d = c.names.map((n, i) => `${i ? 'L' : 'M'}${f1(at(n)[0])} ${f1(at(n)[1])}`).join('') + 'Z'
-    const sw = strokeWidthOnly(c.stroke, c.weight, 1.6)
+    const sw = strokeWidthOnly(c.stroke, c.weight, 1.9)
     const dash = c.dashed ? ' stroke-dasharray="5 4"' : ''
     const fo = fillOpacityAttr(c.fill, c.fillOpacity)
     return `<path d="${d}" stroke="${c.stroke ?? '#111'}" fill="${c.fill ?? 'none'}"${fo}${sw} stroke-linejoin="round"${dash}/>`
@@ -690,11 +727,11 @@ export function renderSceneSvg(spec: SceneSpec, desc: string): { svg: string; wi
     } else if (c.t === 'seg') {
       let p = at(c.a)
       let q = at(c.b)
-      const sw = strokeWidthAttr(c.weight, c.dashed ? 1.2 : 1.6)
+      const sw = strokeWidthAttr(c.weight, c.dashed ? 1.4 : 1.9)
       const style = `stroke-width="${sw}"` + (c.dashed ? ' stroke-dasharray="5 4"' : '')
       const from = solidShapes.filter((s) => s.o === c.a)
       const to = solidShapes.filter((s) => s.o === c.b)
-      if (c.arrow || (from.length && to.length)) {
+      if (c.arrow || (from.length && to.length) || from.some((s) => s.node) || to.some((s) => s.node)) {
         const len = Math.hypot(q[0] - p[0], q[1] - p[1])
         if (!len) continue
         const dx = (q[0] - p[0]) / len
@@ -706,6 +743,25 @@ export function renderSceneSvg(spec: SceneSpec, desc: string): { svg: string; wi
         if (start + end >= len) continue
         p = [p[0] + dx * start, p[1] + dy * start]
         q = [q[0] - dx * end, q[1] - dy * end]
+      }
+      if (c.rail) {
+        const len = Math.hypot(q[0] - p[0], q[1] - p[1])
+        if (!len) continue
+        const ux = (q[0] - p[0]) / len
+        const uy = (q[1] - p[1]) / len
+        const nx = -uy
+        const ny = ux
+        const st = c.stroke ?? '#111'
+        b += line([p[0] + nx * 3, p[1] + ny * 3], [q[0] + nx * 3, q[1] + ny * 3], 'stroke-width="1.4"', st)
+        b += line([p[0] - nx * 3, p[1] - ny * 3], [q[0] - nx * 3, q[1] - ny * 3], 'stroke-width="1.4"', st)
+        const steps = Math.max(2, Math.round(len / 7))
+        for (let i = 0; i < steps; i++) {
+          const s = (len * (i + 0.5)) / steps
+          const cx0 = p[0] + ux * s
+          const cy0 = p[1] + uy * s
+          b += line([cx0 - nx * 5.5, cy0 - ny * 5.5], [cx0 + nx * 5.5, cy0 + ny * 5.5], 'stroke-width="1.1"', st)
+        }
+        continue
       }
       const aid = arrowId(c.stroke)
       const marks = (c.arrowStart ? ` marker-start="url(#${aid})"` : '') + (c.arrow ? ` marker-end="url(#${aid})"` : '')
@@ -720,7 +776,7 @@ export function renderSceneSvg(spec: SceneSpec, desc: string): { svg: string; wi
       const p1: P = [o[0] + da[0] * s, o[1] + da[1] * s]
       const p2: P = [p1[0] + db[0] * s, p1[1] + db[1] * s]
       const p3: P = [o[0] + db[0] * s, o[1] + db[1] * s]
-      b += `<path d="M${f1(p1[0])} ${f1(p1[1])}L${f1(p2[0])} ${f1(p2[1])}L${f1(p3[0])} ${f1(p3[1])}" stroke="#111" fill="none" stroke-width="1"/>`
+      b += `<path d="M${f1(p1[0])} ${f1(p1[1])}L${f1(p2[0])} ${f1(p2[1])}L${f1(p3[0])} ${f1(p3[1])}" stroke="#111" fill="none" stroke-width="1.3"/>`
     } else if (c.t === 'angle') {
       const o = at(c.o)
       const a1 = Math.atan2(at(c.a)[1] - o[1], at(c.a)[0] - o[0])
@@ -732,11 +788,11 @@ export function renderSceneSvg(spec: SceneSpec, desc: string): { svg: string; wi
       const i = ring.get(c) ?? 0
       const r = c.radius !== undefined ? c.radius * k : 22 + i * 16
       const sweep = d > 0 ? 1 : 0
-      b += `<path d="M${f1(o[0] + r * Math.cos(a1))} ${f1(o[1] + r * Math.sin(a1))}A${f1(r)} ${f1(r)} 0 0 ${sweep} ${f1(o[0] + r * Math.cos(a2))} ${f1(o[1] + r * Math.sin(a2))}" stroke="#111" fill="none" stroke-width="1"/>`
+      b += `<path d="M${f1(o[0] + r * Math.cos(a1))} ${f1(o[1] + r * Math.sin(a1))}A${f1(r)} ${f1(r)} 0 0 ${sweep} ${f1(o[0] + r * Math.cos(a2))} ${f1(o[1] + r * Math.sin(a2))}" stroke="#111" fill="none" stroke-width="1.3"/>`
       if (c.text) {
         const mid = a1 + d / 2
         const rl = r + 14
-        topText += text(o[0] + rl * Math.cos(mid), o[1] + rl * Math.sin(mid) + 5, c.text, 'middle', 14, `ang:${c.a}${c.o}${c.b}`, Boolean(c.italic))
+        topText += text(o[0] + rl * Math.cos(mid), o[1] + rl * Math.sin(mid) + 5, c.text, 'middle', 18, `ang:${c.a}${c.o}${c.b}`, Boolean(c.italic))
       }
     } else if (c.t === 'dim') {
       const p = at(c.a)
@@ -745,13 +801,13 @@ export function renderSceneSvg(spec: SceneSpec, desc: string): { svg: string; wi
       // chữ kích thước không chồng chữ kích thước trước: đẩy xa thêm từng bậc
       let off = 18
       const anchor = Math.abs(n[0]) > 0.7 ? (n[0] > 0 ? 'start' : 'end') : 'middle'
-      const tw = c.text ? textWidthEm(c.text) * 14 : 0
+      const tw = c.text ? textWidthEm(c.text) * 16 : 0
       for (let lv = 0; lv < 4; lv++) {
         off = 18 + lv * 18
         const mx = (p[0] + q[0]) / 2 + n[0] * (off + 12)
         const my = (p[1] + q[1]) / 2 + n[1] * (off + 12)
         const x0 = anchor === 'start' ? mx : anchor === 'end' ? mx - tw : mx - tw / 2
-        const box = { x0, x1: x0 + tw, y0: my - 9, y1: my + 9 }
+        const box = { x0, x1: x0 + tw, y0: my - 10, y1: my + 10 }
         if (!dimBoxes.some((o) => box.x0 < o.x1 && o.x0 < box.x1 && box.y0 < o.y1 && o.y0 < box.y1) || lv === 3) {
           if (c.text) dimBoxes.push(box)
           break
@@ -759,17 +815,31 @@ export function renderSceneSvg(spec: SceneSpec, desc: string): { svg: string; wi
       }
       const p2: P = [p[0] + n[0] * off, p[1] + n[1] * off]
       const q2: P = [q[0] + n[0] * off, q[1] + n[1] * off]
-      b += line([p[0] + n[0] * 4, p[1] + n[1] * 4], [p[0] + n[0] * (off + 5), p[1] + n[1] * (off + 5)], 'stroke-width="0.8"')
-      b += line([q[0] + n[0] * 4, q[1] + n[1] * 4], [q[0] + n[0] * (off + 5), q[1] + n[1] * (off + 5)], 'stroke-width="0.8"')
-      b += line(p2, q2, 'stroke-width="1" marker-start="url(#scarr)" marker-end="url(#scarr)"')
+      b += line([p[0] + n[0] * 4, p[1] + n[1] * 4], [p[0] + n[0] * (off + 5), p[1] + n[1] * (off + 5)], 'stroke-width="0.9"')
+      b += line([q[0] + n[0] * 4, q[1] + n[1] * 4], [q[0] + n[0] * (off + 5), q[1] + n[1] * (off + 5)], 'stroke-width="0.9"')
+      b += line(p2, q2, 'stroke-width="1.2" marker-start="url(#scarr)" marker-end="url(#scarr)"')
       if (c.text) {
         const mx = (p2[0] + q2[0]) / 2 + n[0] * 12
         const my = (p2[1] + q2[1]) / 2 + n[1] * 12 + 5
-        topText += text(mx, my, c.text, Math.abs(n[0]) > 0.7 ? (n[0] > 0 ? 'start' : 'end') : 'middle', 14, `dim:${c.a}${c.b}`)
+        topText += text(mx, my, c.text, Math.abs(n[0]) > 0.7 ? (n[0] > 0 ? 'start' : 'end') : 'middle', 18, `dim:${c.a}${c.b}`)
       }
     } else if (c.t === 'label') {
-      const p = at(c.a)
-      const q = at(c.b)
+      let p = at(c.a)
+      let q = at(c.b)
+      const len = Math.hypot(q[0] - p[0], q[1] - p[1])
+      if (len > 0) {
+        const dx = (q[0] - p[0]) / len
+        const dy = (q[1] - p[1]) / len
+        const from = solidShapes.filter((s) => s.o === c.a)
+        const to = solidShapes.filter((s) => s.o === c.b)
+        const edge = (ss: Shape[]) => Math.max(0, ...ss.map((s) => shapeEdge(s, dx, dy) * k).filter((e) => e < len * 0.98))
+        const start = edge(from)
+        const end = edge(to)
+        if (start + end < len) {
+          p = [p[0] + dx * start, p[1] + dy * start]
+          q = [q[0] - dx * end, q[1] - dy * end]
+        }
+      }
       let n = outward(p, q)
       const alongSeg = (s: (typeof sprites)[number]) =>
         s.c.b !== undefined && ((s.c.a === c.a && s.c.b === c.b) || (s.c.a === c.b && s.c.b === c.a))
@@ -784,8 +854,38 @@ export function renderSceneSvg(spec: SceneSpec, desc: string): { svg: string; wi
         if (deg <= -90) deg += 180
         rotSvg = deg
       }
+      const baseMidX = (p[0] + q[0]) / 2
+      const baseMidY = (p[1] + q[1]) / 2
+      const hitsShape = (lx: number, ly: number) => solidShapes.some((s) => {
+        const [sx, sy] = at(s.o)
+        const d = Math.hypot(lx - sx, ly - sy)
+        if (!d) return true
+        return d < shapeEdge(s, (lx - sx) / d, (ly - sy) / d) * k + 10
+      })
+      if (hitsShape(baseMidX + n[0] * off, baseMidY + n[1] * off)) {
+        if (!hitsShape(baseMidX - n[0] * off, baseMidY - n[1] * off)) n = [-n[0], -n[1]]
+        else off += 12
+      }
+      const tw = textWidthEm(c.text) * 18
+      const boxAt = (lx: number, ly: number) => ({ x0: lx - tw / 2 - 4, x1: lx + tw / 2 + 4, y0: ly - 11, y1: ly + 11 })
+      const overlapDim = (lx: number, ly: number) => {
+        const box = boxAt(lx, ly)
+        return dimBoxes.some((o) => box.x0 < o.x1 && o.x0 < box.x1 && box.y0 < o.y1 && o.y0 < box.y1)
+      }
+      let lx = baseMidX + n[0] * off
+      let ly = baseMidY + n[1] * off
+      if (overlapDim(lx, ly)) {
+        outer: for (const side of [1, -1]) {
+          for (const t of [0.35, 0.65, 0.25, 0.75, 0.5]) {
+            const cx0 = p[0] + (q[0] - p[0]) * t + n[0] * off * side
+            const cy0 = p[1] + (q[1] - p[1]) * t + n[1] * off * side
+            if (!hitsShape(cx0, cy0) && !overlapDim(cx0, cy0)) { lx = cx0; ly = cy0; break outer }
+          }
+        }
+      }
+      dimBoxes.push(boxAt(lx, ly))
       const anchor = rotSvg ? 'middle' : (Math.abs(n[0]) > 0.7 ? (n[0] > 0 ? 'start' : 'end') : 'middle')
-      topText += text((p[0] + q[0]) / 2 + n[0] * off, (p[1] + q[1]) / 2 + n[1] * off + 5, c.text, anchor, 15, `lbl:${c.a}${c.b}`, Boolean(c.italic), rotSvg)
+      topText += text(lx, ly + 5, c.text, anchor, 18, `lbl:${c.a}${c.b}`, Boolean(c.italic), rotSvg)
     }
   }
 
@@ -793,7 +893,12 @@ export function renderSceneSvg(spec: SceneSpec, desc: string): { svg: string; wi
   for (const c of arcs) if (!c.bg) b += renderArcSvg(c)
   for (const c of shapes) if (!c.bg) b += renderShapeSvg(c)
 
-  // 6. Chấm điểm
+  // 6. Chấm điểm & chấm tâm nút
+  for (const c of shapes) {
+    if (!c.centerDot) continue
+    const [x, y] = at(c.o)
+    b += `<circle cx="${f1(x)}" cy="${f1(y)}" r="3.4" fill="#111111" stroke="none"/>`
+  }
   for (const c of cmds) {
     if (c.t !== 'dot') continue
     const [x, y] = at(c.o)
@@ -862,6 +967,7 @@ export function renderSceneSvg(spec: SceneSpec, desc: string): { svg: string; wi
   // nhãn điểm: thử 8 hướng quanh điểm, chọn chỗ không đè nét / nhãn khác, ưu tiên phía ngoài tâm hình
   for (const [name, p] of pts) {
     if (name.startsWith('_')) continue
+    if (shapes.some((s) => s.o === name && s.text && (s.node || s.text.trim() === name))) continue
     const [x, y] = S(p)
     let dx = x - cx
     let dy = y - cy
@@ -894,14 +1000,14 @@ export function renderSceneSvg(spec: SceneSpec, desc: string): { svg: string; wi
       const a = ((k % 8) * Math.PI) / 4
       const ux = Math.cos(a)
       const uy = Math.sin(a)
-      const rad = k < 8 ? 14 : k < 16 ? 22 : 30
+      const rad = k < 8 ? 15 : k < 16 ? 23 : 31
       const lx = x + ux * rad
       const ly = y + uy * rad
       let score = -(ux * dx + uy * dy) * 2 + (k < 8 ? 0 : k < 16 ? 4 : 8)
       for (const n of hatch) if (ux * n[0] + uy * n[1] > 0.2) score += 40
       for (const sg of segs) {
         const d = distSeg(lx, ly, sg)
-        if (d < 10) score += (10 - d) * 3
+        if (d < 12) score += (12 - d) * 3
       }
       for (const [px0, py0] of placed) {
         const d = Math.hypot(lx - px0, ly - py0)
@@ -914,7 +1020,7 @@ export function renderSceneSvg(spec: SceneSpec, desc: string): { svg: string; wi
       }
     }
     placed.push(best)
-    b += text(best[0], best[1] + 5, name, 'middle', 15, `pt:${name}`)
+    b += text(best[0], best[1] + 5, name, 'middle', 19, `pt:${name}`, true, 0, true)
   }
   b += topText
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">${desc}<rect width="100%" height="100%" fill="#fff"/>${b}</svg>`

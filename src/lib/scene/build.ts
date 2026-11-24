@@ -45,8 +45,9 @@ export function expandScene(lines: string[], pts: Map<string, P>, pts3: Map<stri
   lines.forEach((raw, idx) => {
     const line = idx + 1
     const fail = (msg: string): never => { throw new Error(`Dòng ${line}: ${msg}`) }
-    // 1-2. sửa tên điểm, nối tên điểm viết cách nhau
-    const text = outsideQuotes(raw, (part) => {
+    // 1-2. tước ngoặc vuông bao tuỳ chọn ngoài ngoặc kép ([2] -> 2, ["A"] -> "A"), sửa tên điểm, nối tên điểm viết cách nhau
+    const unbracketed = outsideQuotes(raw, (part) => part.replace(/[\[\]]/g, ' '))
+    const text = outsideQuotes(unbracketed, (part) => {
       const toks = part.split(/(\s+|[-,;])/)
       const fixed = toks.map((t) => (/^\s+$|^[-,;]$/.test(t) ? t : fixName(t)))
       const words = fixed.join('').split(/(\s+)/)
@@ -54,7 +55,7 @@ export function expandScene(lines: string[], pts: Map<string, P>, pts3: Map<stri
       for (let i = 0; i < words.length; i++) {
         const w = words[i]
         const prevIdx = res.length - 2
-        if (isPt(w) && /^ +$/.test(res[res.length - 1] ?? '') && prevIdx >= 0 && /^(_?[A-Z][A-Za-z0-9']*)(-_?[A-Z][A-Za-z0-9']*)*$/.test(res[prevIdx]) && res[prevIdx].split('-').every(isPt)) {
+        if (isPt(w) && /^ +$/.test(res[res.length - 1] ?? '') && prevIdx >= 0 && /^(_?[A-Za-z][A-Za-z0-9']*)(-_?[A-Za-z][A-Za-z0-9']*)*$/.test(res[prevIdx]) && res[prevIdx].split('-').every(isPt)) {
           res.pop()
           res[prevIdx] += '-' + w
         } else res.push(w)
@@ -109,8 +110,26 @@ export function expandScene(lines: string[], pts: Map<string, P>, pts3: Map<stri
       out.push(...cylinderGrid(toks.slice(2)).map((t) => ({ text: t, line })))
       return
     }
+    if (toks[0] === 'nửa' && toks[1] === 'tròn') {
+      const ab = names(toks[2] ?? fail('thiếu đường kính, vd. nửa tròn AB trái'))
+      if (ab.length !== 2) fail('nửa tròn cần đúng 2 điểm đường kính, vd. nửa tròn AB')
+      no3d(ab)
+      const hasSide = toks[3] === 'trái' || toks[3] === 'phải'
+      const side = hasSide ? toks[3] : 'trái'
+      const [pA, pB] = ab.map(pt)
+      const mx = (pA[0] + pB[0]) / 2
+      const my = (pA[1] + pB[1]) / 2
+      const r = Math.hypot(pB[0] - pA[0], pB[1] - pA[1]) / 2
+      if (!r) fail('hai điểm đường kính nửa tròn trùng nhau')
+      const angA = (Math.atan2(pA[1] - my, pA[0] - mx) * 180) / Math.PI
+      const to = side === 'phải' ? angA + 180 : angA - 180
+      const m = hidden([mx, my])
+      const tail = toks.slice(hasSide ? 4 : 3).join(' ')
+      out.push({ text: `vùng cung ${m} ${+r.toFixed(4)} ${+angA.toFixed(4)} ${+to.toFixed(4)}; đoạn ${ab[1]}-${ab[0]}${tail ? ' ' + tail : ''}`, line })
+      return
+    }
     // bán kính viết bằng tên đoạn ("cung O OB1 0 40", "tròn O OA") đổi thành số
-    if (/^(tròn|cung|quạt)$/u.test(toks[0]) && toks[2] && !SIZE.test(toks[2]) && /^[A-Z_][A-Za-z0-9_'-]*$/.test(toks[2])) {
+    if (/^(tròn|nút|cung|quạt)$/u.test(toks[0]) && toks[2] && !SIZE.test(toks[2]) && /^[A-Z_][A-Za-z0-9_'-]*$/.test(toks[2])) {
       let ok = false
       try { ok = names(toks[2]).length === 2 } catch { /* không phải tên đoạn */ }
       if (ok) {
@@ -188,6 +207,8 @@ export function expandScene(lines: string[], pts: Map<string, P>, pts3: Map<stri
         const ab = names(m[1]); if (ab.length !== 2) fail('chia đoạn cần 2 điểm, vd. N = AB 1/3'); no3d(ab)
         const t = ratio(m[2]); const [p, q] = ab.map(pt); return [p[0] + t * (q[0] - p[0]), p[1] + t * (q[1] - p[1])]
       }
+      const missing = e.find((t) => /^_?[A-Z][A-Za-z0-9']*$/.test(t) && !pts.has(t) && !(t.startsWith('_') && pts.has(t.slice(1))) && !pts.has('_' + t))
+      if (missing) return fail(`chưa khai báo điểm "${missing}"`)
       return fail(`không hiểu phép dựng "${w}"`)
     }
 
@@ -307,9 +328,18 @@ export function expandScene(lines: string[], pts: Map<string, P>, pts3: Map<stri
       const cells: Array<[number, number]> = []
       let color = 'đen'
       for (let i = 5; i < a.length; i++) {
+        if (a[i] === ',') continue
         if (a[i] !== 'tô') fail(`tuỳ chọn "${a[i]}" không hợp lệ, vd. tô 1-3 2-4`)
-        while (a[i + 1] && /^\d+-\d+$/.test(a[i + 1])) { const [rr, cc] = a[++i].split('-').map(Number); cells.push([rr, cc]) }
-        if (a[i + 1] && !/^\d/.test(a[i + 1])) color = a[++i]
+        while (a[i + 1] && (a[i + 1] === ',' || /^\d+-\d+(?:,\s*\d+-\d+)*,?$/.test(a[i + 1]))) {
+          const rawTok = a[++i]
+          if (rawTok === ',') continue
+          for (const cell of rawTok.replace(/,+$/, '').split(',')) {
+            if (!cell) continue
+            const [rr, cc] = cell.split('-').map(Number)
+            cells.push([rr, cc])
+          }
+        }
+        if (a[i + 1] && !/^\d/.test(a[i + 1]) && a[i + 1] !== ',') color = a[++i]
       }
       const c = pt(o); const ry = r * 0.3
       const ang = (k: number) => Math.PI + (k * Math.PI) / cols

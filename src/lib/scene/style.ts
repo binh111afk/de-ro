@@ -8,7 +8,7 @@ export const f1 = (n: number) => Math.round(n * 10) / 10
 
 export const NUM = String.raw`(-?\d+(?:[.,]\d+)?)`
 export const toNum = (s: string) => Number(s.replace(',', '.'))
-export const FREE = /^(khung|góc\s+nhìn|lưới\s+3d|mặt|cung\s+elip|cong|vùng|chấm|mũi\s+tên\s+hai\s+đầu|hai\s+đầu|mũi\s+tên|tròn|elip|hộp|thoi|cung|quạt|chữ)(?=\s|$)/u
+export const FREE = /^(khung|góc\s+nhìn|lưới\s+3d|mặt|cung\s+elip|nửa\s+tròn|cong|vùng|nút|chấm|mũi\s+tên\s+hai\s+đầu|hai\s+đầu|mũi\s+tên|tròn|elip|hộp|thoi|cung|quạt|chữ)(?=\s|$)/u
 export const QUOTED = /"([^"]*)"|“([^”]*)”/g
 export const SIZE = new RegExp(`^${NUM}$`)
 export const COLORS = new Map(Object.entries({
@@ -75,6 +75,7 @@ export function tokenizeArgs(rest: string, line: number): string[] {
 export function readStyleToken(args: string[], i: number, line: number, opts: StyleOpts, caps: StyleCaps): number {
   const opt = args[i]
   if (caps.dashed && opt === 'đứt') { opts.dashed = true; return 1 }
+  if (caps.rail && opt === 'ray') { opts.rail = true; return 1 }
   if (caps.weight && opt === 'mảnh') { opts.weight = 'thin'; return 1 }
   if (caps.weight && opt === 'dày') { opts.weight = 'thick'; return 1 }
   if (caps.bg && opt === 'nền') { opts.bg = true; return 1 }
@@ -105,6 +106,7 @@ export function readStyleToken(args: string[], i: number, line: number, opts: St
       let angle = 45
       if (args[idx] === 'đứng') { angle = 0; idx++ }
       else if (args[idx] === 'ngang') { angle = 90; idx++ }
+      else if (args[idx] === 'chéo') { angle = 45; idx++ }
       const cand = args[idx]
       const isColor = Boolean(cand && (COLORS.has(cand.toLowerCase()) || /^#[\da-f]{6}$/i.test(cand)))
       opts.fill = parseFill(isColor ? cand : '#111111', line, 'hatch', angle)
