@@ -1,172 +1,172 @@
 {
-  "plans": {
-    "toan": {
-      "title": "Hàm số bậc nhất",
-      "theme": "sang",
-      "stylePack": "editorial",
-      "decorKit": "toi-gian",
-      "subject": "toan",
-      "audience": "học sinh lớp 9",
-      "style": "rõ ràng, nhiều ví dụ",
-      "slides": [
-        {
-          "title": "Mở đầu",
-          "layout": "title",
-          "kicker": "Bài 1",
-          "brief": "Giới thiệu bài."
-        },
-        {
-          "title": "Khái niệm chính",
-          "layout": "bullets",
-          "brief": "Nêu 3 ý chính của khái niệm."
-        },
-        {
-          "title": "Ví dụ mẫu",
-          "layout": "example",
-          "brief": "Một ví dụ có lời giải."
-        },
-        {
-          "title": "Số liệu",
-          "layout": "stats",
-          "tone": "accent",
-          "brief": "Ba con số minh hoạ."
-        },
-        {
-          "title": "Kiểm tra nhanh",
-          "layout": "quiz",
-          "brief": "Một câu trắc nghiệm."
-        },
-        {
-          "title": "Tổng kết",
-          "layout": "closing",
-          "brief": "Chốt bài."
-        }
-      ]
+ "plans": {
+  "toan": {
+   "title": "Hàm số bậc nhất",
+   "theme": "sang",
+   "stylePack": "editorial",
+   "decorKit": "toi-gian",
+   "subject": "toan",
+   "audience": "học sinh lớp 9",
+   "style": "rõ ràng, nhiều ví dụ",
+   "slides": [
+    {
+     "title": "Mở đầu",
+     "layout": "title",
+     "kicker": "Bài 1",
+     "brief": "Giới thiệu bài."
     },
-    "sinh": {
-      "title": "Quang hợp ở thực vật",
-      "theme": "sang",
-      "stylePack": "editorial",
-      "decorKit": "toi-gian",
-      "subject": "sinh",
-      "audience": "học sinh lớp 9",
-      "style": "rõ ràng, nhiều ví dụ",
-      "slides": [
-        {
-          "title": "Mở đầu",
-          "layout": "title",
-          "kicker": "Bài 1",
-          "brief": "Giới thiệu bài."
-        },
-        {
-          "title": "Khái niệm chính",
-          "layout": "bullets",
-          "brief": "Nêu 3 ý chính của khái niệm."
-        },
-        {
-          "title": "Ví dụ mẫu",
-          "layout": "example",
-          "brief": "Một ví dụ có lời giải."
-        },
-        {
-          "title": "Số liệu",
-          "layout": "stats",
-          "tone": "accent",
-          "brief": "Ba con số minh hoạ."
-        },
-        {
-          "title": "Kiểm tra nhanh",
-          "layout": "quiz",
-          "brief": "Một câu trắc nghiệm."
-        },
-        {
-          "title": "Tổng kết",
-          "layout": "closing",
-          "brief": "Chốt bài."
-        }
-      ]
+    {
+     "title": "Khái niệm chính",
+     "layout": "bullets",
+     "brief": "Nêu 3 ý chính của khái niệm."
+    },
+    {
+     "title": "Ví dụ mẫu",
+     "layout": "example",
+     "brief": "Một ví dụ có lời giải."
+    },
+    {
+     "title": "Số liệu",
+     "layout": "stats",
+     "tone": "accent",
+     "brief": "Ba con số minh hoạ."
+    },
+    {
+     "title": "Kiểm tra nhanh",
+     "layout": "quiz",
+     "brief": "Một câu trắc nghiệm."
+    },
+    {
+     "title": "Tổng kết",
+     "layout": "closing",
+     "brief": "Chốt bài."
     }
+   ]
   },
-  "items": [
+  "sinh": {
+   "title": "Quang hợp ở thực vật",
+   "theme": "sang",
+   "stylePack": "editorial",
+   "decorKit": "toi-gian",
+   "subject": "sinh",
+   "audience": "học sinh lớp 9",
+   "style": "rõ ràng, nhiều ví dụ",
+   "slides": [
     {
-      "name": "BOARD_SYSTEM",
-      "len": 500,
-      "sha256": "c13ef77165270ec3d3afa03ca524a6301573ff914b164dd721c6ab8cc734da16"
+     "title": "Mở đầu",
+     "layout": "title",
+     "kicker": "Bài 1",
+     "brief": "Giới thiệu bài."
     },
     {
-      "name": "BOARD_OPS_GUIDE",
-      "len": 26457,
-      "sha256": "d01cb0551335043ce393bd77d00b49b738758667be754c90bfc1b0fa9e74cffc"
+     "title": "Khái niệm chính",
+     "layout": "bullets",
+     "brief": "Nêu 3 ý chính của khái niệm."
     },
     {
-      "name": "SLIDE_SYSTEM",
-      "len": 1921,
-      "sha256": "ae47998dba05abd62a4ca27839a9396d427ee3131221c0aa4e9e670fd9409bed"
+     "title": "Ví dụ mẫu",
+     "layout": "example",
+     "brief": "Một ví dụ có lời giải."
     },
     {
-      "name": "SLIDE_PLAN_SYSTEM",
-      "len": 23612,
-      "sha256": "7118e02296c8ed0e7e30103d75f2715e9402c002b22956ead1e7af140391ed09"
+     "title": "Số liệu",
+     "layout": "stats",
+     "tone": "accent",
+     "brief": "Ba con số minh hoạ."
     },
     {
-      "name": "WEB_SEARCH_SYSTEM",
-      "len": 319,
-      "sha256": "2490dc2fe01cb8957fd8ff51fc79badd96da4563b20596adf883742bf9f29903"
+     "title": "Kiểm tra nhanh",
+     "layout": "quiz",
+     "brief": "Một câu trắc nghiệm."
     },
     {
-      "name": "HTML_DECK_SYSTEM",
-      "len": 2425,
-      "sha256": "ab334f4074a238205a2ca7822fba365a0d6b7a57efd8fb77eafacfd3983e2176"
-    },
-    {
-      "name": "editSystemPrompt",
-      "len": 7690,
-      "sha256": "c5d08bbae2dfe6034521347754e0bfbc8c60490eb54ee65cb4972ddf1eba8828"
-    },
-    {
-      "name": "repairPrompt",
-      "len": 136,
-      "sha256": "feba02b425ce11daa49ae4dd6b11e6b67ef94f07b71e43115ef12d6f7faf0ffd"
-    },
-    {
-      "name": "pageSystemPrompt:toan:1",
-      "len": 7779,
-      "sha256": "4acf80b7496cca7a0d575346ec353a856e5d0c33775174c18b011ecac325ddd4"
-    },
-    {
-      "name": "pageSystemPrompt:toan:4",
-      "len": 3459,
-      "sha256": "348b17ac5e4ba7fa051a461825fd1805f78c0541ab403f0d9bdaba816486e2c0"
-    },
-    {
-      "name": "batchSystemPrompt:toan:0-4",
-      "len": 11422,
-      "sha256": "a7acdddd8e54a9e083415152e0b7f3d4c90984459ebda5920efb177e2cde580c"
-    },
-    {
-      "name": "batchSystemPrompt:toan:2-5",
-      "len": 10368,
-      "sha256": "881c7344cd87c0de666309b4e875fba2cb53027764b5ca017e4035c4897cf6a7"
-    },
-    {
-      "name": "pageSystemPrompt:sinh:1",
-      "len": 4787,
-      "sha256": "4fb79be81f29c2bb28c4859faf4027c8e2756d2da1e08dfd5ba424a98095808c"
-    },
-    {
-      "name": "pageSystemPrompt:sinh:4",
-      "len": 3102,
-      "sha256": "e6352d2bb8ef8d9ce84e3170fb8a43ecc4e53d24a9e9bb9dd4964b518b4cbb45"
-    },
-    {
-      "name": "batchSystemPrompt:sinh:0-4",
-      "len": 8497,
-      "sha256": "c15603159772ee618afcdd1e5d2131aafcd9ba5b42e1cf60a476e8b410d30b7a"
-    },
-    {
-      "name": "batchSystemPrompt:sinh:2-5",
-      "len": 7473,
-      "sha256": "84bdceb6b602189897ce8cd4e8493c82a87848d6815913eeca95ce138cd1273a"
+     "title": "Tổng kết",
+     "layout": "closing",
+     "brief": "Chốt bài."
     }
-  ]
+   ]
+  }
+ },
+ "items": [
+  {
+   "name": "BOARD_SYSTEM",
+   "len": 500,
+   "sha256": "c13ef77165270ec3d3afa03ca524a6301573ff914b164dd721c6ab8cc734da16"
+  },
+  {
+   "name": "BOARD_OPS_GUIDE",
+   "len": 27762,
+   "sha256": "f2b502ec13584f02b819083bfa998432af81a8d99d5adbc0af9b4a31ed247c64"
+  },
+  {
+   "name": "SLIDE_SYSTEM",
+   "len": 1921,
+   "sha256": "ae47998dba05abd62a4ca27839a9396d427ee3131221c0aa4e9e670fd9409bed"
+  },
+  {
+   "name": "SLIDE_PLAN_SYSTEM",
+   "len": 23612,
+   "sha256": "7118e02296c8ed0e7e30103d75f2715e9402c002b22956ead1e7af140391ed09"
+  },
+  {
+   "name": "WEB_SEARCH_SYSTEM",
+   "len": 319,
+   "sha256": "2490dc2fe01cb8957fd8ff51fc79badd96da4563b20596adf883742bf9f29903"
+  },
+  {
+   "name": "HTML_DECK_SYSTEM",
+   "len": 2425,
+   "sha256": "ab334f4074a238205a2ca7822fba365a0d6b7a57efd8fb77eafacfd3983e2176"
+  },
+  {
+   "name": "editSystemPrompt",
+   "len": 7690,
+   "sha256": "c5d08bbae2dfe6034521347754e0bfbc8c60490eb54ee65cb4972ddf1eba8828"
+  },
+  {
+   "name": "repairPrompt",
+   "len": 136,
+   "sha256": "feba02b425ce11daa49ae4dd6b11e6b67ef94f07b71e43115ef12d6f7faf0ffd"
+  },
+  {
+   "name": "pageSystemPrompt:toan:1",
+   "len": 7779,
+   "sha256": "4acf80b7496cca7a0d575346ec353a856e5d0c33775174c18b011ecac325ddd4"
+  },
+  {
+   "name": "pageSystemPrompt:toan:4",
+   "len": 3459,
+   "sha256": "348b17ac5e4ba7fa051a461825fd1805f78c0541ab403f0d9bdaba816486e2c0"
+  },
+  {
+   "name": "batchSystemPrompt:toan:0-4",
+   "len": 11422,
+   "sha256": "a7acdddd8e54a9e083415152e0b7f3d4c90984459ebda5920efb177e2cde580c"
+  },
+  {
+   "name": "batchSystemPrompt:toan:2-5",
+   "len": 10368,
+   "sha256": "881c7344cd87c0de666309b4e875fba2cb53027764b5ca017e4035c4897cf6a7"
+  },
+  {
+   "name": "pageSystemPrompt:sinh:1",
+   "len": 4787,
+   "sha256": "4fb79be81f29c2bb28c4859faf4027c8e2756d2da1e08dfd5ba424a98095808c"
+  },
+  {
+   "name": "pageSystemPrompt:sinh:4",
+   "len": 3102,
+   "sha256": "e6352d2bb8ef8d9ce84e3170fb8a43ecc4e53d24a9e9bb9dd4964b518b4cbb45"
+  },
+  {
+   "name": "batchSystemPrompt:sinh:0-4",
+   "len": 8497,
+   "sha256": "c15603159772ee618afcdd1e5d2131aafcd9ba5b42e1cf60a476e8b410d30b7a"
+  },
+  {
+   "name": "batchSystemPrompt:sinh:2-5",
+   "len": 7473,
+   "sha256": "84bdceb6b602189897ce8cd4e8493c82a87848d6815913eeca95ce138cd1273a"
+  }
+ ]
 }
