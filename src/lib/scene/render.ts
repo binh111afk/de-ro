@@ -453,6 +453,7 @@ export function renderSceneSvg(spec: SceneSpec, desc: string): { svg: string; wi
   let b = `<defs><marker id="scarr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#111"/></marker>${extraMarkers}${extraGrads}</defs>`
   const line = (p: P, q: P, extra = '', stroke = '#111') =>
     `<path d="M${f1(p[0])} ${f1(p[1])}L${f1(q[0])} ${f1(q[1])}" stroke="${stroke}" fill="none" ${extra}/>`
+  const ext = [0, 0, W, H] // khung chứa mọi chữ, để nới khung khi chữ tràn mép
   const text = (x: number, y: number, s: string, anchor = 'middle', size = 16, lbl?: string, italic = false, rotateSvgDeg = 0, isPoint = false) => {
     const fsize = Math.round(size * uiScale * 10) / 10
     const tr = rotateSvgDeg ? ` transform="rotate(${f1(rotateSvgDeg)} ${f1(x)} ${f1(y - 5)})"` : ''
@@ -460,6 +461,12 @@ export function renderSceneSvg(spec: SceneSpec, desc: string): { svg: string; wi
       : s.includes('_') ? richTextToSvg(s)
       : isPoint && /^[A-Z][A-Za-z']*\d+$/.test(s) ? richTextToSvg(s.replace(/(\d+)$/, '_$1'))
       : esc(s)
+    if (!rotateSvgDeg) {
+      const w = textWidthEm(s.replace(/[_{}]/g, '')) * fsize * 0.8
+      const x0 = anchor === 'middle' ? x - w / 2 : anchor === 'end' ? x - w : x
+      ext[0] = Math.min(ext[0], x0); ext[1] = Math.min(ext[1], y - fsize * 0.8)
+      ext[2] = Math.max(ext[2], x0 + w); ext[3] = Math.max(ext[3], y + fsize * 0.25)
+    }
     return `<text x="${f1(x)}" y="${f1(y)}" ${FAM} font-size="${fsize}"${italic ? ' font-style="italic"' : ''}${lbl ? ` data-lbl="${lbl}"` : ''}${tr} text-anchor="${anchor}">${content}</text>`
   }
 
@@ -1023,6 +1030,8 @@ export function renderSceneSvg(spec: SceneSpec, desc: string): { svg: string; wi
     b += text(best[0], best[1] + 5, name, 'middle', 19, `pt:${name}`, true, 0, true)
   }
   b += topText
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">${desc}<rect width="100%" height="100%" fill="#fff"/>${b}</svg>`
-  return { svg, width: W, height: H }
+  const vx = ext[0] < 0 ? Math.floor(ext[0] - 4) : 0, vy = ext[1] < 0 ? Math.floor(ext[1] - 4) : 0
+  const vw = Math.ceil((ext[2] > W ? ext[2] + 4 : W) - vx), vh = Math.ceil((ext[3] > H ? ext[3] + 4 : H) - vy)
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${vw}" height="${vh}" viewBox="${vx} ${vy} ${vw} ${vh}">${desc}<rect${vx || vy ? ` x="${vx}" y="${vy}"` : ''} width="100%" height="100%" fill="#fff"/>${b}</svg>`
+  return { svg, width: vw, height: vh }
 }

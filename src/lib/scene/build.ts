@@ -7,7 +7,7 @@
  */
 import type { P } from './types'
 import type { P3 } from '../scene3d'
-import { QUOTED, SIZE, toNum } from './style'
+import { COLORS, QUOTED, SIZE, toNum } from './style'
 import { splitNames } from './geom'
 
 export interface SceneLine { text: string; line: number }
@@ -45,8 +45,27 @@ export function expandScene(lines: string[], pts: Map<string, P>, pts3: Map<stri
   lines.forEach((raw, idx) => {
     const line = idx + 1
     const fail = (msg: string): never => { throw new Error(`Dòng ${line}: ${msg}`) }
+    // 0. lỗi model hay mắc: quên đóng ngoặc kép; "tô xanh nhạt" / "tô đỏ đậm" / "tô đậm" thiếu màu; chữ đặt thẳng tại (x; y)
+    let rawFixed = (raw.match(/"/g)?.length ?? 0) % 2 ? raw + '"' : raw
+    rawFixed = outsideQuotes(rawFixed, (part) => part
+      .replace(/(^|\s)nhạt(?=\s|$)/g, '$1')
+      .replace(/(^|\s)tô\s+(\S+)\s+đậm(?=\s|$)/g, (m0, s, c) => COLORS.has(c.toLowerCase()) || /^#[\da-f]{6}$/i.test(c) ? `${s}tô đậm ${c}` : m0)
+      .replace(/(^|\s)tô\s+đậm(?=\s|$)(?!\s+(#[\da-fA-F]{6}|\S+))/g, '$1tô đậm đen')
+      .replace(/(^|\s)tô\s+đậm\s+(\S+)/g, (m0, s, c) => COLORS.has(c.toLowerCase()) || /^#[\da-f]{6}$/i.test(c) ? m0 : `${s}tô đậm đen ${c}`)
+      .replace(/(^|\s)\(\s*(-?\d+(?:\.\d+)?)\s*;\s*(-?\d+(?:\.\d+)?)\s*\)/g, (_, s, x, y) => `${s}${hidden([Number(x), Number(y)])}`))
+    // góc / vuông: "góc QR P" → "góc QRP" (tên điểm viết dính một phần, cách một phần)
+    rawFixed = rawFixed.replace(/^(\s*(?:góc|vuông)\s+)((?:_?[A-Z][A-Za-z0-9']*\s+)+_?[A-Z][A-Za-z0-9']*)(?=\s|$|")/u, (_, kw, ns) => kw + ns.trim().split(/\s+/).join(''))
+    // "đường PQ [kéo dài]": đoạn PQ kéo thêm mỗi đầu 15%
+    rawFixed = rawFixed.replace(/^\s*đường\s+(\S+)(?:\s+kéo\s+dài)?(?=\s|$)/u, (m0, arg) => {
+      let n: string[]
+      try { n = splitNames(arg, pts, line) } catch { return m0 }
+      if (n.length !== 2 || !pts.has(n[0]) || !pts.has(n[1])) return m0
+      const [a, b] = [pts.get(n[0])!, pts.get(n[1])!]
+      const d: P = [(b[0] - a[0]) * 0.15, (b[1] - a[1]) * 0.15]
+      return `đoạn ${hidden([a[0] - d[0], a[1] - d[1]])}-${hidden([b[0] + d[0], b[1] + d[1]])}`
+    })
     // 1-2. tước ngoặc vuông bao tuỳ chọn ngoài ngoặc kép ([2] -> 2, ["A"] -> "A"), sửa tên điểm, nối tên điểm viết cách nhau
-    const unbracketed = outsideQuotes(raw, (part) => part.replace(/[\[\]]/g, ' '))
+    const unbracketed = outsideQuotes(rawFixed, (part) => part.replace(/[\[\]]/g, ' '))
     const text = outsideQuotes(unbracketed, (part) => {
       const toks = part.split(/(\s+|[-,;])/)
       const fixed = toks.map((t) => (/^\s+$|^[-,;]$/.test(t) ? t : fixName(t)))
@@ -259,6 +278,8 @@ export function expandScene(lines: string[], pts: Map<string, P>, pts3: Map<stri
       // đều n C quanh O r [góc g] [tròn s] [nối] [đa giác]
       const n = Math.round(toNum(a[0]))
       if (n < 2 || n > 36) fail('số điểm đều phải từ 2 đến 36')
+      // "đều 12 O 3" (thiếu tên điểm + "quanh"): tự đặt tên ẩn
+      if (a[2] !== 'quanh' && a[1] && isPt(a[1]) && SIZE.test(a[2] ?? '')) a = [a[0], '_Rg', 'quanh', ...a.slice(1)]
       const base = a[1] ?? fail('thiếu tên điểm, vd. đều 8 C quanh O 5')
       if (!/^_?[A-Z][A-Za-z']*$/.test(base)) fail(`tên điểm "${base}" không hợp lệ`)
       if (a[2] !== 'quanh') fail('viết "đều 8 C quanh O 5"')

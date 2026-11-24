@@ -725,6 +725,8 @@ export function renderVennSvg(spec: VennSpec, desc: string) {
     if (!m) throw new Error(`Dòng "${t}" cần dạng Miền: số, vd. AB: 3`)
     let k = m[1].replace(/\s+|∩/g, '')
     if (/^(ngoài|ngoai|U)$/i.test(k)) k = 'ngoài'
+    // miền ghi theo thứ tự tập A/B/C thay vì tên tập
+    else if (/^[ABC]+$/.test(k) && !names.some((n) => k.includes(n))) k = names.filter((_, i) => k.includes('ABC'[i])).join('')
     else k = names.filter((n) => k.includes(n)).join('')
     const s = sum.get(k)
     if (!s) throw new Error(`Không có miền "${m[1].trim()}"`)

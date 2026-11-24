@@ -223,7 +223,6 @@ for (const [command, message] of [
   ['hộp O 2 1 tô lạ', /màu tô không hợp lệ/],
   ['hộp O 2 1 tô', /thiếu màu tô/],
   ['tròn O 1 bo', /tuỳ chọn/],
-  ['chữ O "chưa đóng', /ngoặc kép/],
   ['chữ A "chữ"', /chưa khai báo điểm/],
   ['mũi tên O', /cần đúng 2 điểm/],
   ['cung', /thiếu điểm tâm/],
@@ -334,7 +333,6 @@ for (const [spec, hash] of [
     ['vùng', /ít nhất 1 mảnh/],
     ['chấm O tim', /màu chấm không hợp lệ/],
     ['tròn O 1 màu', /thiếu màu nét/],
-    ['tròn O 1 tô đậm', /thiếu màu tô/],
     ['tròn O 1 mờ 1.5', /độ mờ/],
     ['chữ O "A" xoay x', /góc xoay/],
   ] as const) {
@@ -489,5 +487,23 @@ if (process.argv.includes('--svg')) {
   writeFileSync(join(dir, 'san-van-dong.svg'), stadiumSvg)
   writeFileSync(join(dir, 'ngoi-nha.svg'), houseSvg)
   console.log(dir)
+}
+{
+  // Chữ kích thước sát mép trái: khung phải nới ra, không cắt mất chữ
+  const svg = draw('khung 600 400\nA(5; 0) B(55; 0) C(55; 36.6) E(5; 1.6)\nđất AB\nđứt EC\nkích thước AE "1,6 m"\nkích thước AB "50 m"')
+  assert.ok(Number(svg.match(/viewBox="(-?[\d.]+)/)![1]) < 0, 'khung không nới cho chữ tràn mép')
+}
+// 12. Nới cú pháp vòng 3 (lỗi các model GPT trên bộ đề kín 24/11)
+{
+  const ok = (t: string) => assert.doesNotThrow(() => parseScene(t), t)
+  ok('O(0; 0) A(1; 0) B(-1; 0)\nvùng cung O 1 180 360; đoạn A-B tô xanh nhạt')
+  ok('A(0; 0)\nquạt A 2 0 60 tô đỏ nhạt')
+  assert.match(draw('O(0; 0)\ntròn O 1 tô đậm'), /fill="#111111"/)
+  assert.match(draw('O(0; 0)\ntròn O 1 tô đỏ đậm'), /fill="#d62828"/)
+  assert.equal(parseScene('Q(0; 0) R(1; 0) P(1; 1)\ngóc QR P "30°').cmds[0].t, 'angle')
+  assert.equal(parseScene('O1(0; 0)\nđều 12 O1 3 nối').cmds.filter((c) => c.t === 'seg').length, 12)
+  assert.match(draw('_O(0; 0)\nchữ (-2.2; 1.2) "8"'), />8<\/text>/)
+  assert.equal(parseScene('P(0; 3) Q(4; 3)\nđường PQ kéo dài').cmds[0].t, 'seg')
+  assert.match(renderTool({ kind: 'venn', spec: { sets: 'Toán, Văn, Anh', counts: 'A: 8\nAB: 3\nABC: 12', shade: '', universe: true } } as ToolDoc).svg, />12<\/text>/)
 }
 console.log('test-scene-free: ok')
