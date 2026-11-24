@@ -42,8 +42,14 @@ export function expandScene(lines: string[], pts: Map<string, P>, pts3: Map<stri
   const isPt = (t: string) => pts.has(t)
 
   const out: SceneLine[] = []
-  lines.forEach((raw, idx) => {
-    const line = idx + 1
+  // "AC, BC, đứt CH": danh sách đoạn trộn nét liền / nét đứt → tách mỗi mục một lệnh (cùng số dòng)
+  const items = lines.flatMap((raw, idx) => {
+    const parts = !/["“]/.test(raw) && raw.includes(',') ? raw.split(',').map((p) => p.trim()).filter(Boolean) : []
+    return parts.length > 1 && parts.slice(1).some((p) => /^đứt\s/u.test(p))
+      ? parts.map((p) => ({ raw: p, line: idx + 1 }))
+      : [{ raw, line: idx + 1 }]
+  })
+  items.forEach(({ raw, line }) => {
     const fail = (msg: string): never => { throw new Error(`Dòng ${line}: ${msg}`) }
     // 0. lỗi model hay mắc: quên đóng ngoặc kép; "tô xanh nhạt" / "tô đỏ đậm" / "tô đậm" thiếu màu; chữ đặt thẳng tại (x; y)
     let rawFixed = (raw.match(/"/g)?.length ?? 0) % 2 ? raw + '"' : raw

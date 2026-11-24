@@ -6,6 +6,8 @@ import { join } from 'node:path'
 import { figureImageAttrs } from '../src/examEditor/toolImages'
 import { parseScene, renderSceneSvg, SCENE_DEFAULT } from '../src/lib/scene'
 import { parseToolJson, readToolDoc, renderTool, type ToolDoc } from '../src/lib/toolSpec'
+import { SCENE_EXAMPLES, pickSceneExamples } from '../src/lib/prompts/sceneExamples'
+import { toolFromRaw } from '../src/lib/docRewrite'
 
 const star = [
   '_O(0; 0) _A(0; 3) _B(2.598076211; 1.5) _C(2.598076211; -1.5)',
@@ -493,6 +495,19 @@ if (process.argv.includes('--svg')) {
   const svg = draw('khung 600 400\nA(5; 0) B(55; 0) C(55; 36.6) E(5; 1.6)\nđất AB\nđứt EC\nkích thước AE "1,6 m"\nkích thước AB "50 m"')
   assert.ok(Number(svg.match(/viewBox="(-?[\d.]+)/)![1]) < 0, 'khung không nới cho chữ tràn mép')
 }
+// 13. Kho hình mẫu: mẫu nào cũng vẽ được, không trùng id, chọn đúng theo từ khoá
+{
+  const ids = new Set<string>()
+  for (const e of SCENE_EXAMPLES) {
+    assert.ok(!ids.has(e.id), `trùng id mẫu ${e.id}`); ids.add(e.id)
+    assert.ok(e.tags.length && e.problem && e.json, `mẫu ${e.id} thiếu trường`)
+    const raw = JSON.parse(e.json)
+    assert.doesNotThrow(() => renderTool(toolFromRaw(raw)), `mẫu ${e.id} vẽ lỗi`)
+  }
+  assert.equal(pickSceneExamples('Chiếc thang dài 4 m dựa vào bức tường')[0]?.id, 'thang-tuong')
+  assert.deepEqual(pickSceneExamples('Tính đạo hàm của hàm số y = x^2'), [])
+  assert.ok(pickSceneExamples('đu quay có 12 cabin, tia nắng, thang, hai đường tròn tiếp xúc ngoài').length <= 3)
+}
 // 12. Nới cú pháp vòng 3 (lỗi các model GPT trên bộ đề kín 24/11)
 {
   const ok = (t: string) => assert.doesNotThrow(() => parseScene(t), t)
@@ -504,6 +519,9 @@ if (process.argv.includes('--svg')) {
   assert.equal(parseScene('O1(0; 0)\nđều 12 O1 3 nối').cmds.filter((c) => c.t === 'seg').length, 12)
   assert.match(draw('_O(0; 0)\nchữ (-2.2; 1.2) "8"'), />8<\/text>/)
   assert.equal(parseScene('P(0; 3) Q(4; 3)\nđường PQ kéo dài').cmds[0].t, 'seg')
+  assert.doesNotThrow(() => parseScene('_R(1; 1)\nchữ _R "Sông" nghiêng màu lam'))
+  const mixed = parseScene('A(0; 0) B(4; 0) C(2; 3) H(2; 0)\nAC, BC, đứt CH').cmds
+  assert.deepEqual(mixed.map((c) => c.t === 'seg' && c.dashed), [false, false, true])
   assert.match(renderTool({ kind: 'venn', spec: { sets: 'Toán, Văn, Anh', counts: 'A: 8\nAB: 3\nABC: 12', shade: '', universe: true } } as ToolDoc).svg, />12<\/text>/)
 }
 console.log('test-scene-free: ok')

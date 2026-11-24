@@ -305,6 +305,8 @@ export function parseFreeCmd(rawKind: string, rest: string, pts: Map<string, P>,
       if (opt === 'nhỏ') { small = true; i++; continue }
       if (opt === 'đậm') { bold = true; i++; continue }
       if (opt === 'nghiêng') { italic = true; i++; continue }
+      // "màu lam": chữ luôn đen cho dễ đọc khi in; bỏ qua thay vì báo lỗi cả hình
+      if (opt === 'màu' && args[i + 1]) { i += 2; continue }
       if (opt === 'xoay') {
         const v = args[i + 1]
         if (!v || !SIZE.test(v) || !Number.isFinite(toNum(v))) fail('góc xoay phải là số')

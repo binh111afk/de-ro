@@ -193,7 +193,7 @@ const TASKS: Record<string, (input: unknown) => string | null> = {
   'de-online': deOnline,
   'sua-cau': buildSuaCauSystem,
   've-do-thi': buildVeDoThiSystem,
-  'chon-hinh': buildChonHinhSystem,
+  'chon-hinh': (input) => buildChonHinhSystem(typeof (input as { text?: unknown } | null)?.text === 'string' ? (input as { text: string }).text.slice(0, 4000) : ''),
   'ngan-hang': buildNganHangSystem,
   'ma-tran': maTran,
   'sua-slide': buildSuaSlideSystem,

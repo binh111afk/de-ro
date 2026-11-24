@@ -160,7 +160,7 @@ const optionalNum = (v: unknown) => v == null || (typeof v === 'string' && !v.tr
 export async function planTool(text: string, context: string, signal?: AbortSignal): Promise<ToolPlan> {
   const res = await callLlm(
     [{ role: 'user', content: `${context ? `Ngữ cảnh: ${context}\n` : ''}Đề bài:\n${text}` }],
-    { signal, reasoningEffort: 'low', task: { name: 'chon-hinh' } },
+    { signal, reasoningEffort: 'low', task: { name: 'chon-hinh', input: { text } } },
   )
   let raw: Record<string, unknown>
   try {
