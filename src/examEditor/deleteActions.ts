@@ -1,6 +1,7 @@
 /** GenOffice-style deletion for tables, inline images, and exam blocks. */
 import { Extension } from '@tiptap/core'
-import { NodeSelection } from '@tiptap/pm/state'
+import { NodeSelection, Selection, TextSelection } from '@tiptap/pm/state'
+import type { Node as PmNode } from '@tiptap/pm/model'
 import { CellSelection } from '@tiptap/pm/tables'
 import type { Editor } from '@tiptap/core'
 import { getTopBlock } from './formatState'
@@ -90,13 +91,64 @@ function deleteSelectedObject(editor: Editor): boolean {
   return false
 }
 
-/** Keyboard deletion only handles selected objects; normal text keeps PM behavior. */
+/** khối cấp cao nhất không còn chữ, hình hay nút nào (vd. câu hỏi đã xoá hết chữ, chỉ còn nhãn "Câu 1.") */
+function isEmptyShell(node: PmNode): boolean {
+  if (node.isTextblock || node.textContent.trim()) return false
+  let leaf = false
+  node.descendants((n) => { if (n.isLeaf && !n.isText) leaf = true; return !leaf })
+  return !leaf
+}
+
+/** xoá cả khối cấp cao nhất, đặt con trỏ ở cuối khối trước (không có thì đầu khối sau) */
+function removeTopBlock(editor: Editor, index: number): boolean {
+  const { state, view } = editor
+  const doc = state.doc
+  let from = 0
+  for (let i = 0; i < index; i++) from += doc.child(i).nodeSize
+  const node = doc.child(index)
+  const tr = doc.childCount === 1
+    ? state.tr.replaceWith(0, doc.content.size, state.schema.nodes.paragraph.create())
+    : state.tr.delete(from, from + node.nodeSize)
+  const at = Math.min(from, tr.doc.content.size)
+  const sel = (index > 0 ? Selection.findFrom(tr.doc.resolve(at), -1, true) : null) ?? Selection.findFrom(tr.doc.resolve(at), 1, true) ?? Selection.atStart(tr.doc)
+  view.dispatch(tr.setSelection(sel).scrollIntoView())
+  return true
+}
+
+/**
+ * Backspace ở đầu / Delete ở cuối một dòng trong khối mẫu (câu hỏi, đầu đề hai cột, lưới…):
+ * - khối đã rỗng → xoá luôn cả khối (không để lại "Câu 1." trơ trọi, kể cả khi khối đứng đầu đề);
+ * - không nối được dòng → đưa con trỏ sang dòng kề bên, KHÔNG chọn nguyên khối bên cạnh
+ *   (mặc định của ProseMirror chọn cả đoạn kề, bấm thêm lần nữa là mất đoạn đó: con trỏ "nhảy" và xoá nhầm).
+ */
+function deleteAtEdge(editor: Editor, dir: -1 | 1): boolean {
+  const { state, view } = editor
+  const sel = state.selection
+  if (!(sel instanceof TextSelection) || !sel.empty) return false
+  const $pos = sel.$from
+  if (!$pos.parent.isTextblock) return false
+  const atEdge = dir < 0 ? $pos.parentOffset === 0 : $pos.parentOffset === $pos.parent.content.size
+  if (!atEdge) return false
+  const topIndex = $pos.index(0)
+  const top = state.doc.child(topIndex)
+  if ($pos.depth >= 2 && isEmptyShell(top)) return removeTopBlock(editor, topIndex)
+  // ô hình / nút đứng kề: giữ cách mặc định (chọn rồi xoá)
+  const side = dir < 0 ? state.doc.resolve($pos.before()).nodeBefore : state.doc.resolve($pos.after()).nodeAfter
+  if (side?.isAtom) return false
+  if (dir < 0 ? editor.commands.joinBackward() : editor.commands.joinForward()) return true
+  const edge = dir < 0 ? $pos.before() : $pos.after()
+  const next = Selection.findFrom(state.doc.resolve(edge), dir, true)
+  if (next) view.dispatch(state.tr.setSelection(next).scrollIntoView())
+  return true
+}
+
+/** Keyboard deletion: selected objects, then edges of exam blocks; normal text keeps PM behavior. */
 export const DeleteObjects = Extension.create({
   name: 'deleteObjects',
   addKeyboardShortcuts() {
     return {
-      Backspace: () => deleteSelectedObject(this.editor),
-      Delete: () => deleteSelectedObject(this.editor),
+      Backspace: () => deleteSelectedObject(this.editor) || deleteAtEdge(this.editor, -1),
+      Delete: () => deleteSelectedObject(this.editor) || deleteAtEdge(this.editor, 1),
     }
   },
 })
