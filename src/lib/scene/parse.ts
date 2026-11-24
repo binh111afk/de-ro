@@ -1,3 +1,4 @@
+import { expandScene } from './build'
 import { resolveSpriteId } from '../objects'
 import { DEFAULT_OBLIQUE_CAMERA, project3d, type Camera3D, type Mesh3dKind, type P3 } from '../scene3d'
 import type { P, ShapeKind, StyleOpts, RegionPart, Cmd, StyleCaps } from './types'
@@ -360,15 +361,20 @@ export function parseScene(text: string): { pts: Map<string, P>; cmds: Cmd[]; de
     for (const m of rest2d.matchAll(pointRe)) pts.set(m[1], [toNum(m[2]), toNum(m[3])])
   })
   const hasRealFree = free.some((f) => Boolean(f) && f !== 'khung' && f !== 'góc nhìn')
-  if (pts.size < 2 && !hasRealFree) throw new Error('Cần ít nhất 2 điểm, vd. A(0; 0) B(4; 0)')
+  if (pts.size < 2 && !hasRealFree && !lines.some((l) => /^\s*(?:đều|lưới|trụ\s+lưới|tiếp\s+tuyến)\s/u.test(l))) {
+    throw new Error('Cần ít nhất 2 điểm, vd. A(0; 0) B(4; 0)')
+  }
 
+  // dựng điểm, lệnh bậc cao, nới cú pháp tên điểm
+  const built = expandScene(lines, pts, pts3)
+  const bCommands = built.map((e) => clean(e.text.replace(quotedOrPoint, (m) => /^["“]/.test(m) ? m : '')))
+  const bFree = bCommands.map((l) => FREE.exec(l)?.[0])
   const cmdLines: number[] = [] // dòng nguồn của từng lệnh, để báo lỗi trộn điểm 2D/3D
-  lines.forEach((raw, idx) => {
-    const line = idx + 1
-    while (cmdLines.length < cmds.length) cmdLines.push(idx)
-    const kind = free[idx]
+  built.forEach(({ text: raw, line }, idx) => {
+    while (cmdLines.length < cmds.length) cmdLines.push(built[idx - 1]?.line ?? line)
+    const kind = bFree[idx]
     if (kind) {
-      cmds.push(parseFreeCmd(kind, commands[idx].slice(kind.length).trim(), pts, line))
+      cmds.push(parseFreeCmd(kind, bCommands[idx].slice(kind.length).trim(), pts, line))
       return
     }
     const l = clean(raw.replace(anyPointRe, ''))
@@ -412,6 +418,9 @@ export function parseScene(text: string): { pts: Map<string, P>; cmds: Cmd[]; de
         else throw new Error(`Dòng ${line}: tuỳ chọn góc không hợp lệ "${tok}"`)
       }
       cmds.push({ t: 'angle', a, o, b, text: q, radius, italic: italic || undefined })
+    } else if (m && kw === 'nhãn' && splitNames(m[2], pts, line).length === 1) {
+      // nhãn một điểm: chữ đặt tại điểm đó
+      cmds.push({ t: 'text', o: splitNames(m[2], pts, line)[0], text: q || '?', large: false, bold: false })
     } else if (m && kw === 'nhãn') {
       const [a, b] = two(m[2])
       let italic = false
@@ -467,7 +476,7 @@ export function parseScene(text: string): { pts: Map<string, P>; cmds: Cmd[]; de
       }
     }
   })
-  while (cmdLines.length < cmds.length) cmdLines.push(lines.length)
+  while (cmdLines.length < cmds.length) cmdLines.push(built.at(-1)?.line ?? lines.length)
   if (pts3.size > 0) {
     cmds.forEach((c, i) => {
       const names = c.t === 'seg' || c.t === 'dim' || c.t === 'label' || c.t === 'ground' ? [c.a, c.b]

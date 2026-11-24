@@ -9,6 +9,8 @@ import { FAM, EDGE_ANCHOR, esc, f1, shadeGradientDef, sphereGradientDef, hatchPa
 import { wrapDegrees, direction, rotateVec, ellipseArcPoint } from './geom'
 import { parseScene } from './parse'
 
+const MIN_SHAPE_TEXT = 11
+
 export const cornerRadius = (c: Shape) => c.rounded ? Math.min(c.rx, c.ry) * 0.35 : 0
 
 /** Khoảng cách từ tâm tới mép hình theo hướng (dx, dy). */
@@ -343,9 +345,11 @@ export function renderSceneSvg(spec: SceneSpec, desc: string): { svg: string; wi
     let size = c.t === 'text' && c.large ? 21 : 15
     let lines = c.text.split('\\n')
     if (c.t === 'shape') {
-      const availableW = c.rx * k * (c.kind === 'hộp' ? 2 : c.kind === 'thoi' ? 1.1 : 1.6) - 12
-      const availableH = c.ry * k * (c.kind === 'hộp' ? 2 : c.kind === 'thoi' ? 1.1 : 1.4) - 5
-      for (; size >= 8; size--) {
+      const fW = c.kind === 'hộp' ? 2 : c.kind === 'thoi' ? 1.1 : 1.6
+      const fH = c.kind === 'hộp' ? 2 : c.kind === 'thoi' ? 1.1 : 1.4
+      const availableW = c.rx * k * fW - 12
+      const availableH = c.ry * k * fH - 5
+      for (; size >= MIN_SHAPE_TEXT; size--) {
         const wrapped = lines.flatMap((line) => {
           const rows: string[] = []
           for (const word of line.split(/\s+/)) {
@@ -360,9 +364,15 @@ export function renderSceneSvg(spec: SceneSpec, desc: string): { svg: string; wi
           break
         }
       }
-      if (size < 8) {
-        size = Math.max(1, Math.min(8, availableH / (lines.length * 1.2),
-          availableW / Math.max(1, ...lines.map(textWidthEm))))
+      if (size < MIN_SHAPE_TEXT) {
+        // chữ không vừa ở cỡ đọc được: nới hình cho vừa chữ thay vì thu chữ
+        size = MIN_SHAPE_TEXT
+        lines = lines.flatMap((line) => {
+          const words = line.split(/\s+/)
+          return words.length > 2 ? [words.slice(0, Math.ceil(words.length / 2)).join(' '), words.slice(Math.ceil(words.length / 2)).join(' ')] : [line]
+        })
+        c.rx = Math.max(c.rx, (Math.max(...lines.map(textWidthEm)) * size + 12) / (k * fW))
+        c.ry = Math.max(c.ry, (lines.length * size * 1.2 + 5) / (k * fH))
       }
     }
     const center = pts.get(c.o)!
@@ -668,6 +678,8 @@ export function renderSceneSvg(spec: SceneSpec, desc: string): { svg: string; wi
   const ordered = filledPolys.length ? [
     ...mainCmds.filter(baseLine), ...filledPolys, ...mainCmds.filter((c) => !baseLine(c) && c.t !== 'poly'),
   ] : mainCmds
+  let topText = '' // chữ kích thước, nhãn, góc: vẽ trên cùng để hình tô không che
+  const dimBoxes: Array<{ x0: number; x1: number; y0: number; y1: number }> = []
   for (const c of ordered) {
     if (c.t === 'poly') {
       b += renderPolySvg(c)
@@ -687,8 +699,10 @@ export function renderSceneSvg(spec: SceneSpec, desc: string): { svg: string; wi
         if (!len) continue
         const dx = (q[0] - p[0]) / len
         const dy = (q[1] - p[1]) / len
-        const start = Math.max(0, ...from.map((s) => shapeEdge(s, dx, dy) * k))
-        const end = Math.max(0, ...to.map((s) => shapeEdge(s, dx, dy) * k))
+        // hình chứa cả đầu kia (vành lớn quanh tâm, nan hoa tới cabin) không phải nút: không cắt phía đó
+        const edge = (ss: Shape[]) => Math.max(0, ...ss.map((s) => shapeEdge(s, dx, dy) * k).filter((e) => e < len * 0.98))
+        const start = edge(from)
+        const end = edge(to)
         if (start + end >= len) continue
         p = [p[0] + dx * start, p[1] + dy * start]
         q = [q[0] - dx * end, q[1] - dy * end]
@@ -722,13 +736,27 @@ export function renderSceneSvg(spec: SceneSpec, desc: string): { svg: string; wi
       if (c.text) {
         const mid = a1 + d / 2
         const rl = r + 14
-        b += text(o[0] + rl * Math.cos(mid), o[1] + rl * Math.sin(mid) + 5, c.text, 'middle', 14, `ang:${c.a}${c.o}${c.b}`, Boolean(c.italic))
+        topText += text(o[0] + rl * Math.cos(mid), o[1] + rl * Math.sin(mid) + 5, c.text, 'middle', 14, `ang:${c.a}${c.o}${c.b}`, Boolean(c.italic))
       }
     } else if (c.t === 'dim') {
       const p = at(c.a)
       const q = at(c.b)
       const n = outward(p, q)
-      const off = 18
+      // chữ kích thước không chồng chữ kích thước trước: đẩy xa thêm từng bậc
+      let off = 18
+      const anchor = Math.abs(n[0]) > 0.7 ? (n[0] > 0 ? 'start' : 'end') : 'middle'
+      const tw = c.text ? textWidthEm(c.text) * 14 : 0
+      for (let lv = 0; lv < 4; lv++) {
+        off = 18 + lv * 18
+        const mx = (p[0] + q[0]) / 2 + n[0] * (off + 12)
+        const my = (p[1] + q[1]) / 2 + n[1] * (off + 12)
+        const x0 = anchor === 'start' ? mx : anchor === 'end' ? mx - tw : mx - tw / 2
+        const box = { x0, x1: x0 + tw, y0: my - 9, y1: my + 9 }
+        if (!dimBoxes.some((o) => box.x0 < o.x1 && o.x0 < box.x1 && box.y0 < o.y1 && o.y0 < box.y1) || lv === 3) {
+          if (c.text) dimBoxes.push(box)
+          break
+        }
+      }
       const p2: P = [p[0] + n[0] * off, p[1] + n[1] * off]
       const q2: P = [q[0] + n[0] * off, q[1] + n[1] * off]
       b += line([p[0] + n[0] * 4, p[1] + n[1] * 4], [p[0] + n[0] * (off + 5), p[1] + n[1] * (off + 5)], 'stroke-width="0.8"')
@@ -737,7 +765,7 @@ export function renderSceneSvg(spec: SceneSpec, desc: string): { svg: string; wi
       if (c.text) {
         const mx = (p2[0] + q2[0]) / 2 + n[0] * 12
         const my = (p2[1] + q2[1]) / 2 + n[1] * 12 + 5
-        b += text(mx, my, c.text, Math.abs(n[0]) > 0.7 ? (n[0] > 0 ? 'start' : 'end') : 'middle', 14, `dim:${c.a}${c.b}`)
+        topText += text(mx, my, c.text, Math.abs(n[0]) > 0.7 ? (n[0] > 0 ? 'start' : 'end') : 'middle', 14, `dim:${c.a}${c.b}`)
       }
     } else if (c.t === 'label') {
       const p = at(c.a)
@@ -757,7 +785,7 @@ export function renderSceneSvg(spec: SceneSpec, desc: string): { svg: string; wi
         rotSvg = deg
       }
       const anchor = rotSvg ? 'middle' : (Math.abs(n[0]) > 0.7 ? (n[0] > 0 ? 'start' : 'end') : 'middle')
-      b += text((p[0] + q[0]) / 2 + n[0] * off, (p[1] + q[1]) / 2 + n[1] * off + 5, c.text, anchor, 15, `lbl:${c.a}${c.b}`, Boolean(c.italic), rotSvg)
+      topText += text((p[0] + q[0]) / 2 + n[0] * off, (p[1] + q[1]) / 2 + n[1] * off + 5, c.text, anchor, 15, `lbl:${c.a}${c.b}`, Boolean(c.italic), rotSvg)
     }
   }
 
@@ -888,6 +916,7 @@ export function renderSceneSvg(spec: SceneSpec, desc: string): { svg: string; wi
     placed.push(best)
     b += text(best[0], best[1] + 5, name, 'middle', 15, `pt:${name}`)
   }
+  b += topText
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">${desc}<rect width="100%" height="100%" fill="#fff"/>${b}</svg>`
   return { svg, width: W, height: H }
 }

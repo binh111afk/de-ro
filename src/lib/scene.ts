@@ -45,6 +45,17 @@ export const SCENE_HELP = [
     ],
   },
   {
+    group: 'Dựng điểm, lệnh nhanh',
+    items: [
+      { code: 'M = trung điểm AB', what: 'Cũng có: N = AB 1/3, I = AC cắt BD, H = hình chiếu A lên BC, D = đối xứng A qua BC' },
+      { code: 'P = tròn O 5 góc 30', what: 'Điểm trên đường tròn; Q = quay A quanh O 90; X = OA cắt tròn O 3; X = tròn O 2 cắt tròn P 2' },
+      { code: 'tiếp tuyến trong O1 3 O2 1 T1 T2 T3 T4', what: 'Hai tiếp tuyến chung (trong / ngoài); tiếp tuyến từ A tới O 2 M N' },
+      { code: 'đều 8 C quanh O 5 tròn 0.8 nối', what: 'C1…C8 cách đều trên đường tròn; thêm góc 90, tròn r, nối, đa giác' },
+      { code: 'lưới tam giác A B C 3', what: 'Chia tam giác thành 9 tam giác nhỏ; lưới ABCD 6 4 chia tứ giác' },
+      { code: 'trụ lưới O 2 6 6 12 tô 1-3 2-4', what: 'Trụ tâm đáy O, bán kính 2, cao 6, 6 cột × 12 hàng; tô ô hàng-cột' },
+    ],
+  },
+  {
     group: 'Kí hiệu',
     items: [
       { code: 'kích thước AB "15 cm"', what: 'Mũi tên hai đầu, ghi chữ, đặt phía ngoài hình' },

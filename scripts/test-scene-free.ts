@@ -241,11 +241,11 @@ for (const [command, message] of [
 }
 assert.throws(() => parseScene('A(0; 0) B(3; 0) C(0; 3)\nABC tô lạ'), /^Error: Dòng 2: màu tô không hợp lệ/)
 
-// SHA-256 của SVG từ git show HEAD:src/lib/scene.ts, commit 079c5ce.
+// SHA-256 của SVG (chữ kích thước / nhãn / góc vẽ lớp trên cùng từ phiên 55; nội dung như commit 079c5ce, chỉ đổi thứ tự).
 for (const [spec, hash] of [
-  [SCENE_DEFAULT, 'b9e3e7521500f703ea83f2e8a43213acead0502a0c82f29ed002071507e50bd3'],
-  [{ text: 'A(0; 0) B(4; 0) C(4; 3) D(0; 3) _E(2; 1)\nABCD\nA-_E*\ngóc ABC "90°"' }, '4c1a0fb58be40d3e5eaafb63af675b4af6151d0ccd99a4a2e052057d8201f270'],
-  [{ text: 'A(0; 0) B(4; 0) C(0; 3)\nhình cái thang CB\nhình cây AC\nnhãn CB “5 m”' }, '0134e936c228859575e98ee9d5fe3f22b2772e9152046b22a02d05b252186f80'],
+  [SCENE_DEFAULT, '33c252254fdbc97d67c20d6eaeeed299d8f953316891187832699819c8e8dcd3'],
+  [{ text: 'A(0; 0) B(4; 0) C(4; 3) D(0; 3) _E(2; 1)\nABCD\nA-_E*\ngóc ABC "90°"' }, '2e5a1b10645fb763d7b29ee4084b7290fbb57da4df9e595149c4b84a7f6a5517'],
+  [{ text: 'A(0; 0) B(4; 0) C(0; 3)\nhình cái thang CB\nhình cây AC\nnhãn CB “5 m”' }, 'a2db49ef9ae4a81bb91153d29d986ab861e9c53e07397f4d291811a2d9c0c828'],
 ] as const) {
   assert.equal(createHash('sha256').update(renderSceneSvg(spec, '').svg).digest('hex'), hash)
 }
@@ -388,6 +388,47 @@ for (const [spec, hash] of [
   assert.equal(meshPaths.length, 268)
   assert.throws(() => parseScene('A(0; 0) B(1; 1; 1)\nAB'), /Dòng 2: "A" là điểm 2D, "B" là điểm 3D/)
   assert.doesNotThrow(() => parseScene('_O(0; 0) A(0; 0; 0) B(1; 0; 0)\nAB\nlưới 3d vuông _O 1 1'))
+}
+
+// 9. Nới cú pháp + dựng điểm + lệnh nhanh (thử model 24/11: mọi ca hỏng đều do các lỗi này)
+{
+  const near = (p: [number, number] | undefined, x: number, y: number) =>
+    assert.ok(p && Math.abs(p[0] - x) < 1e-6 && Math.abs(p[1] - y) < 1e-6, `${JSON.stringify(p)} ≠ (${x}; ${y})`)
+  // tên điểm cách nhau bằng dấu cách, _O / O lẫn nhau, nhãn một điểm
+  const loose = parseScene('O(0; 0) _S1(-1; -1) _S2(1; -1) A(2; 0) B(0; 2)\nvuông A O B\ngóc A O B "θ"\nO _S1 _S2 tô đen\ncung _O 1 0 90\nnhãn A "Cốc"')
+  assert.deepEqual(loose.cmds.map((c) => c.t), ['right', 'angle', 'poly', 'arc', 'text'])
+  // dựng điểm
+  const { pts } = parseScene([
+    'A(0; 0) B(4; 0) C(4; 4) D(0; 4) O(0; 0)',
+    'M = trung điểm AB', 'N = AB 1/4', 'I = AC cắt BD', 'H = hình chiếu C lên AB',
+    'P = tròn O 2 góc 90', 'Q = quay B quanh A 90', 'E = đối xứng C qua AB',
+    'X = AC cắt tròn O 2', 'Y = tròn A 4 cắt tròn B 4', 'AB',
+  ].join('\n'))
+  near(pts.get('M'), 2, 0); near(pts.get('N'), 1, 0); near(pts.get('I'), 2, 2); near(pts.get('H'), 4, 0)
+  near(pts.get('P'), 0, 2); near(pts.get('Q'), 0, 4); near(pts.get('E'), 4, -4)
+  near(pts.get('X'), Math.SQRT2, Math.SQRT2); near(pts.get('Y'), 2, Math.sqrt(12))
+  // tiếp tuyến: tiếp điểm nằm trên đường tròn, bán kính vuông góc tiếp tuyến
+  const tg = parseScene('O1(0; 0) O2(10; 0) A(5; 0)\ntiếp tuyến trong O1 3 O2 1 T1 T2 T3 T4\ntiếp tuyến từ A tới O1 3 M N').pts
+  const d = (p: [number, number], q: [number, number]) => Math.hypot(p[0] - q[0], p[1] - q[1])
+  const dot = (o: [number, number], t: [number, number], u: [number, number]) => (t[0] - o[0]) * (u[0] - t[0]) + (t[1] - o[1]) * (u[1] - t[1])
+  for (const [o, r, t, u] of [['O1', 3, 'T1', 'T2'], ['O2', 1, 'T2', 'T1'], ['O1', 3, 'M', 'A']] as const) {
+    assert.ok(Math.abs(d(tg.get(o)!, tg.get(t)!) - r) < 1e-9)
+    assert.ok(Math.abs(dot(tg.get(o)!, tg.get(t)!, tg.get(u)!)) < 1e-9)
+  }
+  // đều n điểm, lưới, trụ lưới
+  const reg = parseScene('O(0; 0)\ntròn O 5\nđều 8 C quanh O 5 góc 0 tròn 0.8 nối')
+  near(reg.pts.get('C1'), 5, 0); near(reg.pts.get('C3'), 0, 5)
+  assert.equal(reg.cmds.filter((c) => c.t === 'shape').length, 9)
+  assert.equal(reg.cmds.filter((c) => c.t === 'seg').length, 8)
+  assert.equal(parseScene('A(0; 5) B(-3; 0) C(3; 0)\nlưới tam giác A B C 3').cmds.length, 1 + 6)
+  const cyl = parseScene('_O(0; 0)\ntrụ lưới _O 2 6 6 12 tô 1-3 2-4').cmds
+  assert.equal(cyl.filter((c) => c.t === 'poly' && c.fill).length, 2)
+  assert.throws(() => parseScene('_O(0; 0)\ntrụ lưới _O 2 6 6 12 tô 13-1'), /Dòng 2: ô 13-1 ngoài lưới/)
+  // bán kính viết bằng tên đoạn
+  const arc = parseScene('O(0; 0) B(3; 0)\ncung O OB 0 90').cmds[0]
+  assert.ok(arc.t === 'arc' && Math.abs(arc.rx - 3) < 1e-9)
+  // nan hoa từ tâm vòng lớn tới cabin không bị cắt mất
+  assert.equal((draw('O(0; 0)\ntròn O 5\nđều 4 C quanh O 5 tròn 0.8 nối').match(/<path /g) ?? []).length, 1 + 4) // đầu mũi tên + 4 nan
 }
 
 if (process.argv.includes('--svg')) {
