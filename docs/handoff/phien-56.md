@@ -16,16 +16,17 @@ Người dùng muốn bắt đầu phiên sau bằng việc **test với AI th�
 ### GLM chính hãng — ưu tiên 2 (trên `main`)
 
 - Chuỗi: DeepSeek `deepseek-flash` → **GLM `glm-5.3-flash`** → FOSTA → AnyRouter → NightRouter → Claude. Code ở `server/llmProxy.ts`.
-- Biến: `GLM_API_KEY` (bắt buộc), `GLM_BASE_URL` (mặc định `https://api.z.ai/api/paas/v4`), `GLM_MODEL` (mặc định `glm-5.3-flash`). `.env` máy dev đã có dòng trống; **người dùng tự điền key và thêm vào Vercel**, rồi redeploy.
+- Biến: `GLM_API_KEY` (bắt buộc), `GLM_BASE_URL` (mặc định `https://api.z.ai/api/paas/v4`), `GLM_MODEL` (mặc định `glm-5.3-flash`). Người dùng đã điền key vào `.env` máy dev và thêm vào Vercel.
 - Theo tài liệu Z.ai (đọc 25/11): model này **bắt buộc suy luận** (không gửi `thinking: disabled`), `reasoning_effort` chỉ `low / high / max`, `temperature` 0–1, giá 0,15 / 0,03 (cache) / 0,5 USD mỗi triệu token. Proxy đổi `medium` → `high`, chỗ nào trước đây tắt suy luận thì gửi `low`.
-- Test giả: `npm run test:ai-stream` (2 ca GLM). **Chưa gọi GLM thật lần nào.**
+- Test giả: `npm run test:ai-stream` (2 ca GLM).
 
-Khi có key, kiểm:
-1. Trang admin AI & Server → "Kiểm tra" provider `glm`.
-2. Trên máy dev ép dùng GLM: gửi `model: "glm-5.3-flash"` (trang đo: `EVAL_MODEL=glm-5.3-flash npm run eval:exam` / `eval:slides`).
-3. Lượt stream có trả `usage` không (proxy gửi `stream_options.include_usage`, tài liệu Z.ai không nhắc tham số này). Thiếu usage thì người dùng bị tính **mức trần**; bị 400 thì chuỗi lặng lẽ rơi xuống FOSTA.
-4. URL `api.z.ai/api/paas/v4` là API trả theo lượng dùng hay không: tài liệu không ghi rõ (có "Coding Plan endpoint" riêng). Key mua gói Coding thì có thể phải đổi `GLM_BASE_URL`.
-5. Chữ suy luận có ra tiếng Việt không, thời gian và chất lượng đề / slide.
+**Đã thử thật (25/11, máy dev):**
+- Gọi thẳng Z.ai bằng key trong `.env`: 2 giây. `api.z.ai/api/paas/v4` dùng được với key này.
+- Qua `/api/llm` (`model: "glm-5.3-flash"`, stream, soạn 2 câu Toán 9): JSON đề đọc được, suy luận tiếng Việt, 36 giây lượt đầu, 7 giây lượt hai (chữ đầu ~1 giây, 10.816 token đầu vào trúng cache).
+- Stream có trả `usage` (kèm `cached_tokens`, `reasoning_tokens`) → không bị tính mức trần.
+- Vercel: ba biến `GLM_*` đã có ở Production, deploy sau khi thêm đã Ready.
+
+**Chưa thử:** GLM trên bản thật (chỉ được gọi khi DeepSeek lỗi; admin bấm "Kiểm tra" provider `glm` ở AI & Server); đáp án và chất lượng đề; slide; nhánh `refactor/ai` với GLM. Trang đo ép dùng GLM: `EVAL_MODEL=glm-5.3-flash npm run eval:exam` / `eval:slides`.
 
 GLM chưa nằm trong chuỗi đọc ảnh (`server/sourceVision.ts`, `bankVision.ts`) dù model nhận ảnh.
 
