@@ -171,7 +171,10 @@ const HARDER_RULE =
   'nhiều đường cắt nhau (cát tuyến, đường cao, trung điểm, giao điểm mới), lời giải qua ít nhất 3 bước nối tiếp (vd tứ giác nội tiếp → đồng dạng → hệ thức → kết quả). ' +
   'Cách làm: lấy một cấu hình nhiều giao điểm (kiểu hình mẫu nếu có bên dưới) rồi DỰNG THÊM ít nhất 2 yếu tố mới lên đó ' +
   '(đường vuông góc, đường song song, đường kính, trung điểm, giao điểm của hai đường đã có), và hỏi về yếu tố dựng thêm ở bước cuối. ' +
-  'Hỏi thứ đọc ra ngay từ một định lí quen thuộc của cấu hình gốc là chưa đạt. Hình vẽ đủ mọi điểm, mọi đoạn đề nêu.'
+  'Lời giải phải từ 5 bước nối tiếp và bước cuối dùng kết quả của các bước trước; hỏi thứ đọc ra ngay từ một định lí quen thuộc, ' +
+  'hay giải xong bằng một hai hệ thức, là chưa đạt. Câu trắc nghiệm nên hỏi "khẳng định nào sai" (hoặc đúng), mỗi phương án là một tính chất phải chứng minh ' +
+  'ở độ sâu khác nhau (tứ giác nội tiếp, đồng dạng, song song, thẳng hàng, hệ thức tích). Chọn dựng cấu hình quen mà chắc đúng, không nghĩ quá dài. ' +
+  'Hình vẽ đủ mọi điểm, mọi đoạn đề nêu.'
 const WANTS_HARDER = /khó hơn|khó lên|khó và|phức tạp|nâng (?:độ khó|mức)|nâng cao hơn/iu
 
 /** Đòi khó hơn: ghép luật, thêm hình mẫu nhiều giao điểm khi câu đang sửa là bài hình. */
@@ -182,7 +185,7 @@ function harderSection(i: ExamTaskInput): string {
   const no = /câu\s+(\d+)/iu.exec(text)?.[1]
   const line = no ? i.digest?.split('\n').find((l) => new RegExp(` Câu ${no}(?!\\d)`).test(l)) : undefined
   const topic = `${text}\n${line?.split(' | ')[0] ?? ''}`
-  return HARDER_RULE + sceneExamplesBlock(/đường tròn/iu.test(topic) ? 'hai tiếp tuyến, cát tuyến, ba đường cao, trực tâm, nửa đường tròn, tiếp tuyến Ax' : topic)
+  return HARDER_RULE + sceneExamplesBlock(/đường tròn/iu.test(topic) ? 'hai tiếp tuyến, cát tuyến, song song với BD' : topic)
 }
 
 export function buildExamSystem(i: ExamTaskInput): string {
