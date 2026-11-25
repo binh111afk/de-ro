@@ -80,7 +80,8 @@
     "test:funnel": "tsx scripts/test-funnel.ts",
     "test:pricing": "tsx scripts/test-pricing.mjs",
     "test:welcome-gift": "tsx --tsconfig tsconfig.app.json scripts/test-welcome-gift.mjs",
-    "test:formulas": "tsx --tsconfig tsconfig.app.json scripts/test-formulas.ts"
+    "test:formulas": "tsx --tsconfig tsconfig.app.json scripts/test-formulas.ts",
+    "test:exam-code": "tsx --tsconfig tsconfig.app.json scripts/test-exam-code.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^1.6.0",

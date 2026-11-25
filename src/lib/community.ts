@@ -28,12 +28,14 @@ export interface CommunityRow {
   total_points: number
   preview: string
   listed: boolean
+  /** mã link ngắn /d/<mã>, DB tự sinh (migration 20261224) */
+  code?: string | null
   /** số câu chưa có đáp án (null / thiếu = chưa tính) */
   missing_keys?: number | null
 }
 
 const BASE_COLUMNS =
-  'id,owner_id,title,subject,grade,school,created_at,question_count,duration_minutes,total_points,preview,listed'
+  'id,owner_id,title,subject,grade,school,created_at,question_count,duration_minutes,total_points,preview,listed,code'
 /** cột missing_keys có từ migration 20261118; DB chưa áp thì đọc / ghi như cũ */
 let hasMissingKeys = true
 const cols = () => (hasMissingKeys ? `${BASE_COLUMNS},missing_keys` : BASE_COLUMNS)
@@ -188,11 +190,11 @@ export async function unpublish(id: string): Promise<void> {
 }
 
 /** Đề cho học sinh mở bằng link: qua server, đề chỉ-link không kèm đáp án (xem server/exam.ts). */
-export async function getStudentDoc(id: string): Promise<ExamDoc> {
-  const res = await apiFetch('/api/exam', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id }) })
-  const data = (await res.json().catch(() => null)) as { doc?: ExamDoc; error?: string } | null
-  if (!res.ok || !data?.doc) throw new Error(data?.error ?? 'Đề này không còn được xuất bản.')
-  return data.doc
+export async function getStudentDoc(by: { id: string } | { code: string }): Promise<{ id: string; doc: ExamDoc }> {
+  const res = await apiFetch('/api/exam', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(by) })
+  const data = (await res.json().catch(() => null)) as { id?: string; doc?: ExamDoc; error?: string } | null
+  if (!res.ok || !data?.doc || !data.id) throw new Error(data?.error ?? 'Đề này không còn được xuất bản.')
+  return { id: data.id, doc: data.doc }
 }
 
 export interface ReportInput {

@@ -152,6 +152,7 @@ export default function App() {
           <Route path="/tao-de-online/ket-qua/:id" element={<OnlineResults />} />
           <Route path="/tao-de-online/:id" element={<OnlineBuilder />} />
           <Route path="/de-online/:id" element={<OnlineOpen />} />
+          <Route path="/d/:code" element={<OnlineOpen />} />
           <Route path="/de-cong-dong" element={<Community />} />
           <Route path="/de-cua-toi" element={<MyDocs />} />
           <Route path="/de-cua-toi/phan-tich" element={<MyExams />} />

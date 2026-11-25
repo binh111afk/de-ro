@@ -176,7 +176,7 @@ function ItemCard({ item, index, onDelete }: { item: OnlineItem; index: number; 
 
         <div className="mt-2 flex items-center gap-2">
           {published ? (
-            <CopyLink url={shareUrl(item.publishedId!)} className="min-w-0 flex-1" />
+            <CopyLink url={shareUrl(item.publishedId!, item.publishedCode)} className="min-w-0 flex-1" />
           ) : (
             <>
               <Button

@@ -28,6 +28,8 @@ export interface OnlineItem {
   updatedAt: string
   /** id đề đã xuất bản; không có = chưa xuất bản (chỉ nằm trong lịch sử của bạn) */
   publishedId?: string
+  /** mã link ngắn của đề đã xuất bản (đề xuất bản trước khi có mã thì trống tới lần cập nhật) */
+  publishedCode?: string
   /** đề đã xuất bản có hiện trong danh sách cộng đồng không (false = chỉ có link cho học sinh) */
   publishedListed?: boolean
   /** id tài liệu trong trình soạn nếu đề được chuyển từ đó (để chuyển lại không tạo trùng) */

@@ -94,7 +94,7 @@ export function PublishedPanel() {
       await unpublish(row.id)
       setRows((rs) => rs?.filter((r) => r.id !== row.id) ?? null)
       void load(page) // kéo đề của trang sau lên cho đủ trang
-      for (const it of items) if (it.publishedId === row.id) updateItem(it.id, { publishedId: undefined, publishedListed: undefined })
+      for (const it of items) if (it.publishedId === row.id) updateItem(it.id, { publishedId: undefined, publishedListed: undefined, publishedCode: undefined })
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Không gỡ được, thử lại sau.')
     } finally {
@@ -179,7 +179,7 @@ function PublishedCard({
   onEdit: (localId: string) => void
 }) {
   const [copied, setCopied] = useState(false)
-  const url = shareUrl(row.id)
+  const url = shareUrl(row.id, row.code)
   const copy = () =>
     void navigator.clipboard?.writeText(url).then(() => {
       setCopied(true)
@@ -420,7 +420,7 @@ export default function OnlineResults() {
               {row.subject} · {row.grade} · {row.question_count} câu · Kết quả học sinh, mỗi người tính điểm cao nhất
             </p>
           </div>
-          <CopyLink url={shareUrl(row.id)} className="w-full sm:w-[320px]" />
+          <CopyLink url={shareUrl(row.id, row.code)} className="w-full sm:w-[320px]" />
         </div>
 
         {students.length === 0 ? (

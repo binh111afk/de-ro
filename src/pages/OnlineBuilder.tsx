@@ -29,7 +29,6 @@ import { MathText } from '@/components/MathText'
 import { QuestionBody } from '@/components/QuestionBody'
 import { QuestionImageField } from '@/components/QuestionImageField'
 import { useOnline } from '@/store/online'
-import { useSession } from '@/lib/useSession'
 
 const STEPS = ['Soạn câu hỏi', 'Thông tin & cài đặt', 'Hoàn tất']
 const KEYS = ['A', 'B', 'C', 'D', 'E', 'F']
@@ -43,7 +42,6 @@ export default function OnlineBuilder() {
   const navigate = useNavigate()
   const item = useOnline((s) => s.items.find((it) => it.id === id))
   const update = useOnline((s) => s.update)
-  const loggedIn = Boolean(useSession())
 
   const [step, setStep] = useState(0)
   const [selectedId, setSelectedId] = useState<string | null>(null)
@@ -515,7 +513,6 @@ export default function OnlineBuilder() {
             “{item.meta.title.trim()}” · {questions.length} câu · {formatPoints(totalOf(questions))} điểm ·{' '}
             {item.settings.noTimeLimit ? 'không giới hạn thời gian' : `${item.meta.durationMinutes} phút`}
           </p>
-          <p className="mt-1 text-[13px] text-ink-3">{loggedIn ? 'Đề đã lưu vào tài khoản của bạn. Chưa đăng thì chỉ bạn thấy.' : 'Đề mới lưu trên máy này. Đăng nhập để lưu vào tài khoản. Chưa đăng thì chỉ bạn thấy.'}</p>
 
           <div className="mt-7 flex flex-wrap justify-center gap-2.5">
             <Button variant="clay" onClick={() => navigate(`/lam-de/${loadForQuiz(item)}`)}>
@@ -538,19 +535,10 @@ export default function OnlineBuilder() {
 
           {item.publishedId ? (
             <div className="mt-7 text-left">
-              <p className="mb-2 text-[13px] font-semibold text-ink">
-                {item.publishedListed === false ? 'Đã xuất bản cho học sinh.' : 'Đã đăng lên cộng đồng.'} Gửi link này cho học sinh:
-              </p>
-              <CopyLink url={shareUrl(item.publishedId)} />
-              <p className="mt-2 text-[12px] text-ink-3">
-                Bản đã xuất bản không tự cập nhật khi bạn sửa đề. Sửa xong thì bấm Cập nhật: link và kết quả của học sinh được giữ nguyên. Xem kết quả ở{' '}
-                <Link to="/tao-de-online" className="font-semibold underline underline-offset-2">
-                  Đề đã xuất bản
-                </Link>
-                .
-              </p>
+              <p className="mb-2 text-[13px] font-semibold text-ink">{item.publishedListed === false ? 'Link cho học sinh' : 'Đã đăng lên cộng đồng'}</p>
+              <CopyLink url={shareUrl(item.publishedId, item.publishedCode)} />
               <div className="mt-3 flex flex-wrap gap-2">
-                <Button variant="soft" size="sm" disabled={busy} onClick={() => void publish(item.publishedListed !== false)}>
+                <Button variant="soft" size="sm" disabled={busy} data-tip="Sửa đề xong thì bấm. Link và kết quả giữ nguyên" onClick={() => void publish(item.publishedListed !== false)}>
                   <Copy className="size-3.5" />
                   {busy ? 'Đang cập nhật…' : 'Cập nhật bản đã xuất bản'}
                 </Button>
@@ -578,6 +566,11 @@ export default function OnlineBuilder() {
             <button type="button" onClick={() => goStep(0)} className="text-ink-3 transition-colors hover:text-ink">
               Sửa đề
             </button>
+            {item.publishedId ? (
+              <Link to="/tao-de-online?tab=published" className="text-ink-3 transition-colors hover:text-ink">
+                Xem kết quả
+              </Link>
+            ) : null}
             <Link to="/tao-de-online" className="text-ink-3 transition-colors hover:text-ink">
               Về lịch sử
             </Link>

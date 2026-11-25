@@ -150,7 +150,7 @@ export default function Community() {
         missingKeys: d.missing_keys,
         date: d.created_at,
         likes: 0,
-        link: shareUrl(d.id),
+        link: shareUrl(d.id, d.code),
         onView: () => void openUserDoc(d, 'view'),
         onQuiz: () => void openUserDoc(d, 'quiz'),
       }

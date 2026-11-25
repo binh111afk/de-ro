@@ -1,5 +1,5 @@
 import { useEffect, useState, type FormEvent } from 'react'
-import { Link, useNavigate, useParams } from 'react-router-dom'
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { AlertCircle, ArrowRight, CheckCircle2, LogIn } from 'lucide-react'
 import { Button, EmptyState, Field, inputClass, Spinner } from '@/components/ui'
 import { SiteSelect } from '@/components/SiteSelect'
@@ -18,8 +18,11 @@ export const studentKey = (remoteId: string) => `dethinhbien-student-ok:${remote
  * Đề chỉ-link (cho học sinh): hỏi tên, lớp, số thứ tự trước; đề "chỉ làm một lần" mà máy này đã nộp thì chặn.
  */
 export default function OnlineOpen() {
-  const { id } = useParams<{ id: string }>()
+  // link ngắn /d/<mã> hoặc link cũ /de-online/<id>; id thật do server trả về
+  const params = useParams<{ id?: string; code?: string }>()
+  const [id, setId] = useState(params.id)
   const navigate = useNavigate()
+  const { pathname } = useLocation()
   const [error, setError] = useState<string | null>(null)
   const [exam, setExam] = useState<Exam | null>(null)
   const [done, setDone] = useState(false)
@@ -33,11 +36,14 @@ export default function OnlineOpen() {
   }
 
   useEffect(() => {
-    if (!id) return
+    const by = params.code ? { code: params.code } : params.id ? { id: params.id } : null
+    if (!by) return
     let alive = true
-    Promise.all([getStudentDoc(id), examGate(id), currentSession().catch(() => null)])
-      .then(([doc, gate, session]) => {
+    getStudentDoc(by)
+      .then(async ({ id, doc }) => {
+        const [gate, session] = await Promise.all([examGate(id), currentSession().catch(() => null)])
         if (!alive) return
+        setId(id)
         const e = docToExam(doc, id)
         if (e.settings?.oneAttempt && gate.attempted) return setDone(true)
         // đề một lần: server chỉ nhận bài của tài khoản đã đăng nhập — báo trước, đừng để làm xong mới biết
@@ -50,7 +56,7 @@ export default function OnlineOpen() {
       alive = false
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id])
+  }, [params.id, params.code])
 
   if (error || done)
     return (
@@ -76,7 +82,7 @@ export default function OnlineOpen() {
           title="Đăng nhập để làm bài"
           description="Đề này chỉ được làm một lần, nên em cần đăng nhập để thầy cô nhận đúng bài của em. Đăng nhập xong sẽ quay lại đề này."
           action={
-            <Link to="/dang-nhap" onClick={() => rememberReturnPath(`/de-online/${id}`)}>
+            <Link to="/dang-nhap" onClick={() => rememberReturnPath(pathname)}>
               <Button variant="primary">Đăng nhập</Button>
             </Link>
           }
