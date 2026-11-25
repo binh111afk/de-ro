@@ -1,6 +1,6 @@
 import { useRef, useState, type ReactNode } from 'react'
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom'
-import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, Check, Copy, Eye, MonitorPlay, Plus, Upload, X } from 'lucide-react'
+import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, Check, Copy, Eye, Link2, MonitorPlay, Plus, Upload, X } from 'lucide-react'
 import { TrashIcon } from '@/components/appIcons'
 import { Button, Checkbox, EmptyState, Field, inputClass } from '@/components/ui'
 import { CopyLink } from '@/components/CopyLink'
@@ -49,6 +49,8 @@ export default function OnlineBuilder() {
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
+  /** đang xuất bản chỉ-link (để đúng nút hiện "Đang…") */
+  const [linking, setLinking] = useState(false)
   const [notice, setNotice] = useState<string | null>(null)
   const [preview, setPreview] = useState(false)
   const fileRef = useRef<HTMLInputElement>(null)
@@ -134,6 +136,7 @@ export default function OnlineBuilder() {
   /** `listed` = hiện trong danh sách cộng đồng; false = chỉ học sinh có link làm được. Đề đã xuất bản thì cập nhật đúng bản đó. */
   const publish = async (listed: boolean) => {
     setBusy(true)
+    setLinking(!listed)
     setError(null)
     try {
       await publishItem(item, listed)
@@ -515,10 +518,16 @@ export default function OnlineBuilder() {
               Làm thử
             </Button>
             {item.publishedId ? null : (
-              <Button variant="outline" disabled={busy} onClick={() => void publish(true)} data-tip="Đăng lên đề cộng đồng">
-                <Upload className="size-4" />
-                {busy ? 'Đang đăng…' : 'Đăng'}
-              </Button>
+              <>
+                <Button variant="outline" disabled={busy} onClick={() => void publish(false)} data-tip="Chỉ ai có link mới làm được">
+                  <Link2 className="size-4" />
+                  {busy && linking ? 'Đang tạo link…' : 'Lấy link cho học sinh'}
+                </Button>
+                <Button variant="outline" disabled={busy} onClick={() => void publish(true)} data-tip="Đăng lên đề cộng đồng">
+                  <Upload className="size-4" />
+                  {busy && !linking ? 'Đang đăng…' : 'Đăng'}
+                </Button>
+              </>
             )}
           </div>
 

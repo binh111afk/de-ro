@@ -2,7 +2,7 @@ import { dialog } from '@/components/Dialog'
 import { Pager, usePaged } from '@/components/Pager'
 import { useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
-import { Clock, History, MonitorPlay, Plus, Send, Sparkles, TriangleAlert, Upload } from 'lucide-react'
+import { Clock, History, Link2, MonitorPlay, Plus, Send, Sparkles, TriangleAlert, Upload } from 'lucide-react'
 import { TrashIcon } from '@/components/appIcons'
 import { Badge, Button, EmptyState } from '@/components/ui'
 import { CopyLink } from '@/components/CopyLink'
@@ -178,17 +178,30 @@ function ItemCard({ item, index, onDelete }: { item: OnlineItem; index: number; 
           {published ? (
             <CopyLink url={shareUrl(item.publishedId!)} className="min-w-0 flex-1" />
           ) : (
-            <Button
-              variant="outline"
-              size="sm"
-              className="min-w-0 flex-1"
-              disabled={busy || item.status !== 'done' || !playable}
-              data-tip={item.status !== 'done' ? 'Bấm Tạo đề ở bước cuối trước khi đăng' : 'Đăng lên đề cộng đồng'}
-              onClick={() => void publish(true)}
-            >
-              <Upload className="size-3.5" />
-              {busy ? 'Đang đăng…' : 'Đăng'}
-            </Button>
+            <>
+              <Button
+                variant="outline"
+                size="sm"
+                className="min-w-0 flex-1"
+                disabled={busy || item.status !== 'done' || !playable}
+                data-tip={item.status !== 'done' ? 'Bấm Tạo đề ở bước cuối trước khi lấy link' : 'Chỉ ai có link mới làm được'}
+                onClick={() => void publish(false)}
+              >
+                <Link2 className="size-3.5" />
+                Lấy link
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                className="min-w-0 flex-1"
+                disabled={busy || item.status !== 'done' || !playable}
+                data-tip={item.status !== 'done' ? 'Bấm Tạo đề ở bước cuối trước khi đăng' : 'Đăng lên đề cộng đồng'}
+                onClick={() => void publish(true)}
+              >
+                <Upload className="size-3.5" />
+                Đăng
+              </Button>
+            </>
           )}
           <button
             type="button"
