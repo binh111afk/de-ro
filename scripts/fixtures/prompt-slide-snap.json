@@ -105,8 +105,8 @@
   },
   {
    "name": "SLIDE_PLAN_SYSTEM",
-   "len": 23612,
-   "sha256": "7118e02296c8ed0e7e30103d75f2715e9402c002b22956ead1e7af140391ed09"
+   "len": 23853,
+   "sha256": "cb6586a14e0d790cd7e4fd44859a453d11f7b721a4fa23944c3e1c521dda7c9c"
   },
   {
    "name": "WEB_SEARCH_SYSTEM",
@@ -120,8 +120,8 @@
   },
   {
    "name": "editSystemPrompt",
-   "len": 7690,
-   "sha256": "c5d08bbae2dfe6034521347754e0bfbc8c60490eb54ee65cb4972ddf1eba8828"
+   "len": 7949,
+   "sha256": "3c98a3b17acb536546ea49ed627a449f78b0a41781b2e43cc9e825d7090799d3"
   },
   {
    "name": "repairPrompt",

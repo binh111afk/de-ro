@@ -51,7 +51,10 @@ export function examSystemPrompt(documentDigest?: string, request = '', fromSour
     '- "name" (chỉ khi "replace"): tên ngắn để lưu đề, theo bài/chủ đề + môn lớp, ≤ 60 ký tự, vd. "Hệ thức lượng trong tam giác vuông – Toán 9".\n' +
     '- "say": dùng từ giáo viên quen dùng, không nhắc tên trường nội bộ như figure hay lặp nội dung trong warning. Nói ngắn đã làm gì, đã hiểu yêu cầu thế nào nếu yêu cầu có thể hiểu nhiều cách. Không lặp lại yêu cầu. ' +
     'Viết bằng Markdown cho dễ đọc: **đậm** cho con số / tên phần chính, từ 3 ý trở lên thì xuống dòng gạch đầu dòng "- " (mỗi ý một dòng), không viết dồn thành một đoạn dài. Không dùng tiêu đề #.\n' +
-    'Hỏi cách làm, lý do hoặc xin giải thích: chỉ trả lời trong chat. Chỉ chèn lời giải khi giáo viên yêu cầu đưa vào đề.\n\n' +
+    'TỰ XÁC ĐỊNH giáo viên đang muốn gì ở mỗi lượt: muốn đề thay đổi (kể cả nói lửng hay than phiền, vd "câu 3 dễ đoán quá") thì trả JSON; ' +
+    'hỏi, nhờ nhận xét hay kiểm tra, trò chuyện, hoặc bảo chỉ xem trong chat thì trả lời bằng chữ, không JSON. ' +
+    'Hỏi cách làm, lý do hoặc xin giải thích: chỉ trả lời trong chat. Chỉ chèn lời giải khi giáo viên yêu cầu đưa vào đề.' +
+    CHAT_MARKDOWN + '\n\n' +
     'CÁC LOẠI KHỐI: header, title, meta, student, heading, paragraph, bullets, grid, question, essay, answerKey, rubric, table, pageBreak, divider.\n' +
     'CẤU TRÚC TỪNG LOẠI KHỐI (đúng tên field, không thêm field lạ):\n' +
     '- {"type":"header","left":"SỞ GIÁO DỤC VÀ ĐÀO TẠO …\\nTRƯỜNG THPT …\\nĐề chính thức","right":"ĐỀ KHẢO SÁT CHẤT LƯỢNG ĐẦU NĂM\\nNăm học 2025 – 2026\\nMôn: Toán – Lớp 9\\nThời gian làm bài: 90 phút"}\n' +
@@ -148,6 +151,7 @@ export const ASK_ONLY_SYSTEM =
 export interface ExamTaskInput extends SourceInput {
   /** yêu cầu của người dùng ở lượt này */
   text: string
+  /** đoán theo từ khoá ở client, chỉ để gắn nhãn lượt gọi (`aiKind`); không đưa vào prompt */
   intent?: 'doc' | 'chat'
   revising?: boolean
   /** bản rút gọn tài liệu hiện tại, mỗi dòng "[id] loại: nội dung" */
@@ -192,7 +196,6 @@ export function buildExamSystem(i: ExamTaskInput): string {
   const ctx = i.contextSummary
   const system =
     examSystemPrompt(i.digest, `${i.text}\n${ctx ?? ''}`, i.sourceTier === 1 && !!i.sources?.length) +
-    (i.intent === 'chat' ? '\nLượt này có vẻ là hỏi đáp hoặc trò chuyện: trả lời bằng chữ trong chat. Nếu thật ra giáo viên đang muốn thay đổi đề thì trả JSON theo hợp đồng trên; giáo viên chỉ muốn xem trong chat thì không trả JSON.' + CHAT_MARKDOWN : i.intent === 'doc' ? '\nLượt này trả JSON theo hợp đồng trên.' : '') +
     (i.revising ? '\nGiữ đề hiện tại. Chỉ dùng patch hoặc append cho yêu cầu này.' : '') +
     harderSection(i) +
     (i.ask ? ASK_RULE : '') +

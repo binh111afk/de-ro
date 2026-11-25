@@ -68,6 +68,7 @@ export const SLIDE_CASES: SlideCase[] = [
   { id: 'sua-noi-lung-slide', text: 'slide 3 chữ nhiều quá', existing: 6, want: 'commands' },
   { id: 'them-slide', text: 'thêm 1 slide về ứng dụng thực tế', existing: 6, want: 'commands' },
   { id: 'hoi-ve-slide', text: 'bài này dạy trong 45 phút có dài quá không?', existing: 6, want: 'text' },
+  { id: 'bai-moi-khi-da-co', text: 'thôi bỏ bài này, soạn cho mình bài 8 slide về quang hợp lớp 6', existing: 6, want: 'plan' },
 ]
 
 export interface BoardCase {

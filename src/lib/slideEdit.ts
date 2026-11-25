@@ -112,7 +112,8 @@ export function editSystemPrompt(context: string): string {
   const designs = SLIDE_DESIGNS.map((d) => `${d.id}="${d.name}"`).join(', ')
   return (
     'Bạn điều khiển trình soạn slide. Sửa hoặc chèn đúng những slide người dùng yêu cầu trong bài hiện tại. ' +
-    'Chỉ trả về DUY NHẤT một JSON, không chữ ngoài JSON: {"action":"edit","commands":[...]}.\n' +
+    'TỰ XÁC ĐỊNH người dùng đang muốn gì: muốn bài thay đổi (kể cả nói lửng hay than phiền, vd "slide 3 chữ nhiều quá") thì chỉ trả về DUY NHẤT một JSON, không chữ ngoài JSON: {"action":"edit","commands":[...]}. ' +
+    'Chỉ hỏi, xin nhận xét hay trò chuyện thì trả lời ngắn bằng chữ, không JSON. Muốn làm một bài KHÁC từ đầu thì chỉ trả {"action":"new_deck"}.\n' +
     'Lệnh cho phép (slides = mảng số thứ tự bắt đầu từ 1; bỏ trống = tất cả):\n' +
     `- {"op":"apply_design","id":"<id>"} — áp dụng trọn gói một bộ thiết kế (theme + phong cách + trang trí) cho cả bài. Thiết kế có sẵn: ${designs}\n` +
     `- {"op":"set_theme","theme":"<id>"} — id: ${themes}\n` +

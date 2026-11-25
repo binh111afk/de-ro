@@ -23,7 +23,10 @@ export function chatOnly(text: string): boolean {
     !/(?<!\p{L})(?:chèn|đưa vào đề|thêm vào đề)(?!\p{L})/u.test(request)
 }
 
-/** Chỉ là đoán theo từ khoá (để hiện bước, hỏi lại, tính phí): AI trả khác loại đã đoán thì panel vẫn nhận. */
+/** Câu trả lời là JSON (lệnh sửa) chứ không phải chữ: model tự chọn, panel theo đó mà xử lý. */
+export const startsWithJson = (text: string) => /^\s*(?:```(?:json)?\s*)?\{/i.test(text)
+
+/** Chỉ là đoán theo từ khoá (hiện bước đang chạy, gắn nhãn lượt gọi): không quyết định AI được làm gì. */
 export function examIntent(text: string): 'doc' | 'chat' {
   const request = text.normalize('NFC').toLowerCase().trim()
   if (chatOnly(text)) return 'chat'

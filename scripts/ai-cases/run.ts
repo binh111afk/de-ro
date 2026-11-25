@@ -17,10 +17,10 @@ import { EXAM_NODES, EXAM_MARKS, BaseParagraphNode } from '../../src/examEditor/
 import { blocksToTipTap, tipTapToBlocks } from '../../src/examEditor/convert'
 import { applyExamReply } from '../../src/examEditor/examAiResult'
 import { figureDoc, figureImageAttrs } from '../../src/examEditor/toolImages'
-import { chatOnly, examDigest, examIntent, focusNote, isExamMutationReply, rewritesWholeExam } from '../../src/lib/aiDocContext'
+import { chatOnly, examDigest, examIntent, focusNote, isExamMutationReply, rewritesWholeExam, startsWithJson } from '../../src/lib/aiDocContext'
 import { parseAsk } from '../../src/examEditor/AiAskPanel'
 import { parseDeckPlan } from '../../src/lib/aiDeck'
-import { looksLikeEdit, parseEditCommands } from '../../src/lib/slideEdit'
+import { parseEditCommands } from '../../src/lib/slideEdit'
 import { extractJson } from '../../src/lib/llm'
 import { buildTaskSystem } from '../../server/aiTasks'
 import { BOARD_CASES, EXAM, EXAM_CASES, SLIDE_CASES, SLIDE_CONTEXT, type BoardCase, type ExamCase, type SlideCase } from './cases'
@@ -80,8 +80,8 @@ async function runExam(c: ExamCase): Promise<Result> {
   const editor = newEditor(!!c.empty)
   const digest = examDigest(editor.getJSON())
   const intent = examIntent(c.text)
-  const revising = intent === 'doc' && !!digest && !rewritesWholeExam(c.text)
-  const askRule = !(intent === 'chat' || revising)
+  const revising = !!digest && !rewritesWholeExam(c.text)
+  const askRule = !revising
   const task = `soan-de/${intent}`
   const done = (got: string, why: string | undefined, r?: Reply): Result => {
     editor.destroy()
@@ -91,13 +91,12 @@ async function runExam(c: ExamCase): Promise<Result> {
   const r = await ask('soan-de', { text: c.text, intent, digest, revising, ask: askRule, think: true }, c.text + focusNote(editor.getJSON(), c.text))
   const before = questions(editor)
   const beforeJson = JSON.stringify(editor.getJSON())
-  const guessedChat = intent === 'chat' && isExamMutationReply(r.content)
-  const asEdit = intent === 'doc' || (guessedChat && !chatOnly(c.text))
+  const only = chatOnly(c.text)
   let got: string
   let note = ''
   if (askRule && parseAsk(r.content)) got = 'ask'
-  else if (asEdit && /^\s*(?:```(?:json)?\s*)?\{/i.test(r.content)) {
-    const allowReplace = intent === 'doc' ? !revising : !digest || rewritesWholeExam(c.text)
+  else if (!only && startsWithJson(r.content)) {
+    const allowReplace = !revising
     // tuỳ chọn như handleAiResult (ComposeDoc.tsx)
     const res = applyExamReply(editor, r.content, allowReplace, draw, undefined, undefined, {
       allowImageRemoval: /(?:xoá|xóa|bỏ|gỡ)\s+(?:bớt\s+)?(?:hình|ảnh)/iu.test(c.text),
@@ -105,7 +104,7 @@ async function runExam(c: ExamCase): Promise<Result> {
     })
     got = res.failed ? 'failed' : 'edit'
     note = res.text
-  } else if (!asEdit && isExamMutationReply(r.content)) got = 'json-trong-chat'
+  } else if (only && isExamMutationReply(r.content)) got = 'json-trong-chat'
   else got = r.content.trim() ? 'text' : `rong (${r.finish})`
 
   const why: string[] = []
@@ -126,22 +125,24 @@ async function runExam(c: ExamCase): Promise<Result> {
 }
 
 async function runSlide(c: SlideCase): Promise<Result> {
-  const editing = c.existing > 0 && looksLikeEdit(c.text)
-  const hints = ['slide', 'bài giảng', 'dàn ý', 'tóm tắt', 'hình ảnh', 'thêm', 'sửa', 'đổi', 'soạn', 'sinh', 'viết'] // như detectIntent
-  const doc = editing || hints.some((h) => c.text.toLowerCase().includes(h))
-  const task = editing ? 'slide-sua' : `slide-chat/${doc ? 'plan' : 'chat'}`
+  const editing = c.existing > 0
+  const task = editing ? 'slide-sua' : 'slide-chat'
   const done = (got: string, why: string | undefined, r?: Reply): Result =>
     ({ id: c.id, mode: 'slide', pass: !why, got, why, task, tokens: r?.tokens ?? 0, seconds: r?.seconds ?? 0, reply: r?.content ?? '' })
   if (dry) return done('-', undefined)
   const context = c.existing ? SLIDE_CONTEXT : undefined
-  const r = editing
-    ? await ask('slide-sua', { context }, c.text)
-    : await ask('slide-chat', { variant: doc ? 'plan' : 'chat', ask: true, contextSummary: context, think: true }, c.text)
-  let got: string
-  if (editing) got = parseEditCommands(r.content).ops.length ? 'commands' : 'failed'
-  else if (doc) got = parseAsk(r.content) ? 'ask' : parseDeckPlan(r.content) ? 'plan' : /^\s*(?:```(?:json)?\s*)?[{[]/.test(r.content) ? 'failed' : 'text'
-  else got = /^\s*(?:```(?:json)?\s*)?[{[]/i.test(r.content) || /"(?:slides|commands)"\s*:/.test(r.content) ? 'json-trong-chat' : 'text'
-  // bài đã có slide mà web đi lập dàn ý mới là sai đường, không phải sửa
+  const plan = () => ask('slide-chat', { variant: 'plan', ask: true, contextSummary: context, think: true }, c.text)
+  let r = editing ? await ask('slide-sua', { context }, c.text) : await plan()
+  let got = ''
+  if (editing) {
+    if (!startsWithJson(r.content) && !/"commands"\s*:/.test(r.content)) got = 'text'
+    else if (/"action"\s*:\s*"new_deck"/.test(r.content)) {
+      const first = r
+      r = await plan()
+      r = { ...r, tokens: r.tokens + first.tokens, seconds: r.seconds + first.seconds }
+    } else got = parseEditCommands(r.content).ops.length ? 'commands' : 'failed'
+  }
+  if (!got) got = parseAsk(r.content) ? 'ask' : !startsWithJson(r.content) ? 'text' : parseDeckPlan(r.content) ? 'plan' : 'failed'
   return done(got, got === c.want ? undefined : `cần ${c.want}, được ${got}`, r)
 }
 

@@ -149,11 +149,14 @@ export interface SlideChatInput extends SourceInput {
   think?: boolean
 }
 
+const PLAN_OR_CHAT =
+  '\n\nNếu người dùng chỉ hỏi, xin tư vấn hay trò chuyện (không nhờ làm bài) thì KHÔNG lập dàn ý: trả lời bằng chữ, không kèm JSON.'
+
 export function buildSlideChatSystem(i: SlideChatInput): string {
   const head =
     i.variant === 'html'
       ? HTML_SYSTEM
-      : (i.variant === 'plan' ? slidePlanSystem(i.pro) : SLIDE_SYSTEM + CHAT_MARKDOWN) + (i.ask ? ASK_RULE : '')
+      : (i.variant === 'plan' ? slidePlanSystem(i.pro) + PLAN_OR_CHAT + CHAT_MARKDOWN : SLIDE_SYSTEM + CHAT_MARKDOWN) + (i.ask ? ASK_RULE : '')
   return head + (i.contextSummary ? `\nBài trình bày hiện tại: ${i.contextSummary}` : '') + sourceSection(i) + webSection(i.webFound) + (i.think ? THINK_VI : '')
 }
 

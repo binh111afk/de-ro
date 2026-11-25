@@ -66,6 +66,14 @@ Chưa đo được: hội thoại nhiều lượt, tệp đính kèm, tìm trên
 - Chú ý: thống kê và miễn điểm đang dựa vào `intent` (`aiKind` trong `server/ops.ts`) → phải gắn nhãn theo kết quả trả về.
 - Xong khi: không ca nào trong bộ thử bị vứt kết quả hay báo lỗi vì đoán sai.
 
+**Đã làm (25/11):** bộ thử 30 ca (thêm `bai-moi-khi-da-co`) đạt **30/30**, mỗi ca một lần. Chưa thử trên web.
+
+- Đề: prompt không còn đổi theo `intent`; model tự chọn JSON hay chữ; quyền thay cả đề chỉ phụ thuộc đề đang có nội dung và `rewritesWholeExam`.
+- Slide: đã có bài thì luôn vào `slide-sua`, model chọn lệnh sửa / chữ / `{"action":"new_deck"}`; bỏ `looksLikeEdit` khỏi luồng gửi (hàm còn trong `slideEdit.ts` cho test, xoá ở bước 2).
+- Đổi kèm theo: lượt hỏi đáp trong đề giờ cũng nhận khung chương trình Toán và đọc nguồn như lượt soạn. Câu hỏi về bài slide đang mở bị gắn nhãn `edit-slide` thay vì `question` trong thống kê admin (chưa sửa `aiKind`).
+- Còn từ khoá chi phối: `chatOnly` (giữ đề khi giáo viên bảo chỉ xem trong chat), `rewritesWholeExam`, `requirePatch` (`ComposeDoc.tsx`), `needsAskFirst`, `planExamSplit`, `allowLegacy` / `comparison` (lọc lệnh slide), `WANTS_HARDER`.
+- Slide HTML và `variant: 'chat'` giờ không còn client nào gọi (bước 2).
+
 ### Bước 2. Gọn prompt
 - Xoá phần slide HTML không còn dùng.
 - `ve-do-thi` dùng lại mục đồ thị của `figureGuide`.
