@@ -8,8 +8,16 @@
 - Đính kèm đề dài khi đề đang mở có nội dung → bảng hỏi "thay đề" hay "chỉ thêm vài câu".
 - Sửa slide, gồm "chữ nhiều quá"; xem điểm có được hoàn cho lượt gọi lại (máy dev bỏ qua điểm nên chưa kiểm).
 - Admin bấm "Kiểm tra" provider `glm` ở AI & Server.
+- Tạo đề online: "Lấy link cho học sinh" rồi mở link bằng cửa sổ ẩn danh (máy dev không đăng nhập nên chưa thử tạo link thật).
 
-## Đã làm
+## Đã làm (sau lần ghi đầu, đã push tới `335c83c`)
+
+- Thêm lại nút lấy link chỉ-link, không đăng cộng đồng (bị gỡ từ phiên 13): màn "Đề đã tạo xong" và thẻ Lịch sử tạo đề (`e6332ca`).
+- Trang Đề cộng đồng: nút sao chép link trên thẻ và dòng (`CopyLinkButton` trong `src/components/CopyLink.tsx`, `f727393`). Link `/de-online/<id>` đưa người mở vào làm bài ngay (hành vi cũ). Dạng danh sách chưa xem bằng mắt.
+- Sửa công thức mất dấu `\` trong đề mẫu, ngân hàng THCS / THPT, khung chương trình (`950b528`). Câu giáo viên đã chép vào đề của họ trước đó vẫn giữ công thức cũ.
+- agy sửa file nguồn (`scripts/bank/new/`, `scripts/khung/ban-goc/`) và thêm **`npm run test:formulas`**; gộp ở `335c83c`. Sửa / thêm dữ liệu câu hỏi hay khung thì chạy test này.
+
+## Đã làm trước đó
 
 - agy thử nhánh `refactor/ai` + `main` trên máy dev: `eval:ai` 30/30. Báo cáo: `eval-out/agy-ai-worktree/agy-bao-cao-ai-that.md` (chỉ có trên máy này).
 - AI viết lại cả đề khi không chắc người dùng muốn thay: không vứt kết quả, hỏi "Thay cả đề" / "Giữ đề cũ" (`needsConfirm` trong `examAiResult.ts`, nút ở `AiPanel.tsx`). `rewritesWholeExam` nhận thêm "thay / đổi cả đề".
@@ -38,3 +46,5 @@
 - Khung trình duyệt bị ẩn thì `requestAnimationFrame` đứng → báo giả "Đề đã thay đổi trong khi AI xử lý". Vá trong trang: `window.requestAnimationFrame = f => setTimeout(() => f(performance.now()), 16)` trước khi mở đề.
 - Worktree dùng junction `node_modules` thì đọc PDF bằng ảnh trên dev lỗi giả (`Invalid workerSrc type`).
 - Sửa prompt slide: `npm run build:prompts`, rồi cập nhật `len` + `sha256` trong `scripts/fixtures/prompt-slide-snap.json`.
+- Ghi LaTeX vào chuỗi JS / JSON phải viết `\\`: `"\frac"`, `"\text"`, `"\ne"` bị đọc thành ký tự điều khiển / xuống dòng. Heredoc của Bash cũng nuốt `\\` → viết script bằng công cụ ghi file.
+- Công cụ sửa file có lúc đổi file LF thành CRLF (`CopyLink.tsx`, `bankThpt2.ts`): luôn xem `git diff --stat` sau khi sửa.
