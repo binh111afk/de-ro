@@ -12,7 +12,8 @@ import { useApp } from '@/store/app'
 import { useDocStore } from '@/store/docs'
 import { GRADES, SUBJECTS, questionCount, totalPoints, type Exam } from '@/data/types'
 import { useOnline } from '@/store/online'
-import { publishItem } from '@/lib/onlinePublish'
+import { publishItem, shareUrl } from '@/lib/onlinePublish'
+import { CopyLinkButton } from '@/components/CopyLink'
 import { formatPoints } from '@/lib/math'
 import { COMMUNITY_EXAMS } from '@/data/community'
 import {
@@ -48,6 +49,8 @@ interface CardItem {
   likes: number
   /** số câu chưa có đáp án (chỉ đề giáo viên đăng; không biết thì để trống) */
   missingKeys?: number | null
+  /** link mở thẳng đề, để gửi người khác */
+  link: string
   onView: () => void
   onQuiz: () => void
 }
@@ -147,6 +150,7 @@ export default function Community() {
         missingKeys: d.missing_keys,
         date: d.created_at,
         likes: 0,
+        link: shareUrl(d.id),
         onView: () => void openUserDoc(d, 'view'),
         onQuiz: () => void openUserDoc(d, 'quiz'),
       }
@@ -167,6 +171,7 @@ export default function Community() {
       mine: false,
       views: e.views,
       likes: e.likes,
+      link: `${window.location.origin}/de/${e.id}`,
       onView: () => navigate(`/de/${e.id}`),
       onQuiz: () => handleInteractive(e),
     }))
@@ -510,7 +515,7 @@ function ExamCard({ item, index, busy }: { item: CardItem; index: number; busy: 
           </p>
         ) : null}
 
-        <div className="mt-auto grid grid-cols-2 gap-2 pt-5">
+        <div className="mt-auto grid grid-cols-[1fr_1fr_auto] gap-2 pt-5">
           <Button
             variant="soft"
             size="sm"
@@ -531,6 +536,7 @@ function ExamCard({ item, index, busy }: { item: CardItem; index: number; busy: 
             <MonitorPlay className="size-3.5 shrink-0" />
             {busy ? 'Đang mở…' : 'Làm đề'}
           </Button>
+          <CopyLinkButton url={item.link} />
         </div>
       </div>
     </article>
@@ -603,6 +609,7 @@ function ExamRow({ item, busy }: { item: CardItem; busy: boolean }) {
           )}
         </div>
         <div className="flex shrink-0 items-center gap-2">
+          <CopyLinkButton url={item.link} />
           <Button variant="ghost" size="sm" className="whitespace-nowrap" onClick={item.onView} disabled={busy}>
             Xem
           </Button>
