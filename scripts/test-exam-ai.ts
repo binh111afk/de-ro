@@ -16,7 +16,7 @@ import { emptyDoc, type ExamBlock } from '../src/data/docTypes'
 import { parseStats } from '../src/lib/stats'
 import { applyExamMaintenance, applyExamReply } from '../src/examEditor/examAiResult'
 import { figureDoc, figureImageAttrs } from '../src/examEditor/toolImages'
-import { CONTINUE_EXAM_EDIT, examDigest, examIntent, focusNote, isExamMutationReply, rewritesWholeExam } from '../src/lib/aiDocContext'
+import { CONTINUE_EXAM_EDIT, chatOnly, examDigest,examIntent, focusNote, isExamMutationReply, rewritesWholeExam } from '../src/lib/aiDocContext'
 import { mergeChunks, parseChunk, planExamSplit, scanSourceQuestions } from '../src/lib/examSplit'
 
 const editor = new Editor({
@@ -74,6 +74,9 @@ assert.equal(examIntent('ra đề cho tôi 1 câu tích phân ngay tại đây, 
 assert.equal(examIntent('Soạn 3 câu trắc nghiệm hàm số, không cần đưa vào đề'), 'chat')
 assert.equal(examIntent('Viết thử một câu hình học trong khung chat'), 'chat')
 assert.equal(examIntent('Ra đề 10 câu tích phân'), 'doc')
+assert.equal(examIntent('câu 5 không khó lắm, cho hình khó và phức tạp hơn'), 'doc')
+assert.equal(chatOnly('Giải thích vì sao câu 3 khó hơn câu 2'), true)
+assert.equal(chatOnly('câu 5 chưa ổn lắm'), false)
 assert.equal(isExamMutationReply('{"action":"patch","patch":[]}'), true)
 
 // Từ chối câu Đ/S thiếu ý và yêu cầu cập nhật rubric có nhãn bài.

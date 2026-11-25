@@ -32,7 +32,7 @@ import { looksLikeEdit, parseAddedSlide, parseEditCommands, type SlideEditOp } f
 import { buildSourcePack, isDocx, isPdf, pickedKey, type PickedSource, type SourcePack } from '@/lib/sources'
 import { BookOpen, Globe, RotateCcw, ThumbsDown, ThumbsUp } from 'lucide-react'
 import { SiteSelect } from '@/components/SiteSelect'
-import { CONTINUE_EXAM_EDIT, examIntent, isExamMutationReply, rewritesWholeExam, type AiApplyResult } from '@/lib/aiDocContext'
+import { CONTINUE_EXAM_EDIT, chatOnly, examIntent,isExamMutationReply, rewritesWholeExam, type AiApplyResult } from '@/lib/aiDocContext'
 import { looksLikeComplaint, nearlySame, rememberAiTurn, reportAi } from '@/lib/aiFeedback'
 import { dialog } from '@/components/Dialog'
 import { SourcePicker } from './SourcePicker'
@@ -1299,7 +1299,8 @@ function AiConversation({
         logSet((l) => closeLog(l, 'done', note))
         // lượt hỏi chuyện không kèm sửa đề thì không có bước này
         // slide: thẻ dàn ý hiện ngay bên dưới nên không cần bước này
-        const apply = mode === 'board' ? /"ops"\s*:/.test(res.content) : mode === 'exam' && intent === 'doc'
+        const apply = mode === 'board' ? /"ops"\s*:/.test(res.content)
+          : mode === 'exam' && (intent === 'doc' || (isExamMutationReply(res.content) && !chatOnly(originalRequest)))
         if (apply) logStart(mode === 'board' ? 'Vẽ lên bảng' : 'Đưa vào đề')
         // nhường một khung hình để bước kịp hiện trước khi áp (việc áp chạy đồng bộ)
         if (apply) await new Promise((r) => setTimeout(r, 350))
@@ -1378,11 +1379,24 @@ function AiConversation({
       } else {
         // JSON đề đã được áp vào tài liệu → hiện câu tóm tắt thay vì JSON thô;
         // câu trả lời văn bản thường (không sửa tài liệu) giữ nguyên.
-        const apply = (content: string) => onApplyBlocks?.(content, !revisingExam, originalRequest)
-        const invalidChat = intent === 'chat' && isExamMutationReply(res.content)
-        // lượt đoán là sửa đề nhưng AI trả lời bằng chữ (không phải JSON): hiện như câu trả lời chat, không báo lỗi
-        const plainAnswer = intent === 'doc' && !!res.content.trim() && !/^\s*(?:```(?:json)?\s*)?\{/i.test(res.content)
-        let result = intent === 'doc' && !plainAnswer ? apply(res.content) : undefined
+        // loại lượt chỉ là đoán theo từ khoá: AI trả khác loại đã đoán thì vẫn nhận, không báo lỗi
+        const guessedChat = intent === 'chat' && isExamMutationReply(res.content)
+        // đoán là hỏi đáp mà AI sửa đề → áp vào đề, nhưng không cho thay cả đề đang có
+        const asEdit = intent === 'doc' || (guessedChat && !chatOnly(originalRequest))
+        const allowReplace = intent === 'doc' ? !revisingExam : !documentDigest || rewritesWholeExam(originalRequest)
+        const apply = (content: string) => onApplyBlocks?.(content, allowReplace, originalRequest)
+        let reply = res.content
+        // giáo viên bảo chỉ xem trong chat mà AI vẫn trả JSON: xin lại bằng chữ một lần
+        if (guessedChat && !asEdit) {
+          const again = await callLlm([...messages, {
+            role: 'user', content: 'Trả lời bằng chữ ngay trong chat, không trả JSON, không sửa đề.',
+          }], { signal: controller.signal, reasoningEffort: AI_EFFORT.exam, retryOf: res.receipt, task: mainTask })
+          controller.signal.throwIfAborted()
+          reply = again.content
+        }
+        const invalidChat = !asEdit && isExamMutationReply(reply)
+        const plainAnswer = !!res.content.trim() && !/^\s*(?:```(?:json)?\s*)?\{/i.test(res.content)
+        let result = asEdit && !plainAnswer ? apply(res.content) : undefined
         // đề trả JSON hỏng (thường bị cắt cụt): hoàn token lượt đó và soạn lại đúng một lần
         if (result?.failed && result.retryable !== false && onApplyBlocks) {
           // gọi lại bằng model mạnh hơn (lượt đầu model nhanh không làm được)
@@ -1396,7 +1410,7 @@ function AiConversation({
         // không áp được: hiện trong chat (kèm phần AI viết nếu đọc được) + nút Thử lại
         const failed = !!result?.failed || invalidChat
         const summary = result && !failed ? result.text : undefined
-        const text = invalidChat ? 'AI chưa trả lời được câu hỏi này.' : result?.text ?? res.content
+        const text = invalidChat ? 'AI chưa trả lời được câu hỏi này.' : result?.text ?? reply
         if (failed && import.meta.env.DEV) console.warn('[AI] JSON không áp được:', res.content)
         if (summary) rememberAiTurn({ mode, request: userTurn.text, reply: summary, context: documentDigest })
         setTurns((t) =>

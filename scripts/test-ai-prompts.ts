@@ -29,7 +29,7 @@ for (const s of snaps) {
     const chat = buildExamSystem({ text: s.topic, intent: 'chat' })
     const doc = buildExamSystem({ text: s.topic })
     check(`${s.name}: prompt chat khớp bản chụp`, chat.length === s.len && sha(chat) === s.sha256)
-    check(`${s.name}: chỉ trả lời trong chat bằng Markdown`, chat === doc + '\nLượt này chỉ trả lời trong chat, không trả lệnh sửa đề.' + CHAT_MARKDOWN)
+    check(`${s.name}: lượt hỏi đáp trả lời bằng Markdown, vẫn cho sửa đề`, chat.startsWith(doc + '\nLượt này có vẻ là hỏi đáp') && chat.includes('trả JSON theo hợp đồng') && chat.endsWith(CHAT_MARKDOWN))
     continue
   }
   // đúng cách harness cũ ghép: examSystemPrompt(không tài liệu, yêu cầu) + luật hỏi lại

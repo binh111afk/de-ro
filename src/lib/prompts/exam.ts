@@ -164,7 +164,7 @@ export function buildExamSystem(i: ExamTaskInput): string {
   const ctx = i.contextSummary
   const system =
     examSystemPrompt(i.digest, `${i.text}\n${ctx ?? ''}`, i.sourceTier === 1 && !!i.sources?.length) +
-    (i.intent === 'chat' ? '\nLượt này chỉ trả lời trong chat, không trả lệnh sửa đề.' + CHAT_MARKDOWN : i.intent === 'doc' ? '\nLượt này trả JSON theo hợp đồng trên.' : '') +
+    (i.intent === 'chat' ? '\nLượt này có vẻ là hỏi đáp hoặc trò chuyện: trả lời bằng chữ trong chat. Nếu thật ra giáo viên đang muốn thay đổi đề thì trả JSON theo hợp đồng trên; giáo viên chỉ muốn xem trong chat thì không trả JSON.' + CHAT_MARKDOWN : i.intent === 'doc' ? '\nLượt này trả JSON theo hợp đồng trên.' : '') +
     (i.revising ? '\nGiữ đề hiện tại. Chỉ dùng patch hoặc append cho yêu cầu này.' : '') +
     (i.ask ? ASK_RULE : '') +
     (ctx ? `\nTài liệu hiện tại: ${ctx}` : '')
