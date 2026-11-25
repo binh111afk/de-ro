@@ -33,7 +33,7 @@ process.env.AI_WELCOME_POINTS = '120'
 // các ca 1–6 kiểm cơ chế stream / trừ điểm bằng yêu cầu không `task`; ca 7 bỏ biến này để kiểm đúng cách chạy thật
 process.env.AI_ALLOW_TASKLESS = '1'
 process.env.AI_MONTHLY_TOKENS = '0'
-for (const k of ['VERCEL', 'DEEPSEEK_API_KEY', 'FOSTA_API_KEY', 'ANYROUTER_API_KEY', 'NIGHTROUTER_API_KEY', 'ANTHROPIC_API_KEY', 'LLM_FALLBACK_MODEL']) delete process.env[k]
+for (const k of ['VERCEL', 'DEEPSEEK_API_KEY', 'GLM_API_KEY', 'GLM_BASE_URL', 'GLM_MODEL', 'FOSTA_API_KEY', 'ANYROUTER_API_KEY', 'NIGHTROUTER_API_KEY', 'ANTHROPIC_API_KEY', 'LLM_FALLBACK_MODEL']) delete process.env[k]
 
 const db = { credits: 120_000, used: 0 }
 /** cách upstream trả lời lượt kế tiếp, theo thứ tự gọi */
@@ -446,6 +446,24 @@ check('không lộ tên model cho trình duyệt', !JSON.stringify(r.events).inc
   db.credits = 3000
   const chat = await hit({ task: 'hoi-truoc', messages: msgs('Soạn đề đi'), maxTokens: 8000 })
   check('hỏi lại ngắn chạy được với ít hơn 4.000 token đầu ra', chat.status === 200 && calls.at(-1)!.maxTokens < 4000, chat.status)
+}
+
+// 11. GLM chính hãng: ưu tiên 2, không bao giờ gửi tắt suy luận.
+{
+  process.env.GLM_API_KEY = 'glm'
+  db.credits = 120_000
+  const body = { messages: msgs('soạn đề'), maxTokens: 8000, reasoningEffort: 'medium' }
+  plan = ['fail', 'ok']
+  let n = calls.length
+  const r = await hit(body)
+  const used = calls.slice(n)
+  check('DeepSeek lỗi: GLM đứng ngay sau, mức medium đổi thành high', r.status === 200 && used.map((c) => c.model).join(',') === 'deepseek-flash,glm-5.3-flash' && used[1].reasoningEffort === 'high' && used[1].thinking === undefined, used.map((c) => [c.model, c.reasoningEffort]))
+  plan = ['fail', 'empty-length', 'empty-length', 'ok']
+  n = calls.length
+  const again = await hit(body)
+  const glm = calls.slice(n).slice(1)
+  check('GLM cạn token: gọi lại 2 lần, lần cuối mức low chứ không tắt suy luận', again.status === 200 && glm.map((c) => c.reasoningEffort).join(',') === 'high,high,low' && glm.every((c) => c.thinking === undefined), glm.map((c) => [c.reasoningEffort, c.thinking]))
+  delete process.env.GLM_API_KEY
 }
 
 console.log(fail ? `\n${fail} lỗi` : '\nTất cả đều qua')

@@ -25,7 +25,7 @@ process.env.AI_WELCOME_POINTS = '120'
 // các ca kiểm trừ điểm / lạm dụng dùng yêu cầu không task; việc bắt buộc task được kiểm ở test-ai-stream.ts
 process.env.AI_ALLOW_TASKLESS = '1'
 process.env.AI_MONTHLY_TOKENS = '0'
-for (const k of ['VERCEL', 'DEEPSEEK_API_KEY', 'FOSTA_API_KEY', 'ANYROUTER_API_KEY', 'NIGHTROUTER_API_KEY', 'ANTHROPIC_API_KEY', 'LLM_FALLBACK_MODEL']) delete process.env[k]
+for (const k of ['VERCEL', 'DEEPSEEK_API_KEY', 'GLM_API_KEY', 'GLM_BASE_URL', 'GLM_MODEL', 'FOSTA_API_KEY', 'ANYROUTER_API_KEY', 'NIGHTROUTER_API_KEY', 'ANTHROPIC_API_KEY', 'LLM_FALLBACK_MODEL']) delete process.env[k]
 
 // DB giả: số dư điểm + token đã dùng tháng này + biên nhận đã hoàn
 const db = { credits: 120_000, used: 0, refunds: new Set<string>() }
