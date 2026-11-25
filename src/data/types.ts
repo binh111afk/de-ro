@@ -76,6 +76,8 @@ export interface ExamSettings {
   showScore?: boolean
   /** danh sách lớp, mỗi phần tử một tên theo số thứ tự; có thì học sinh chọn tên thay vì gõ */
   roster?: string[]
+  /** đề chỉ-link: trước khi làm chỉ hỏi họ tên, không hỏi lớp và số thứ tự */
+  nameOnly?: boolean
 }
 
 export interface Exam {

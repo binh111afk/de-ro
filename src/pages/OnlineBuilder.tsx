@@ -459,9 +459,14 @@ export default function OnlineBuilder() {
                   Đề đang ở cộng đồng nên phần này tạm tắt: ai cũng làm được, không hỏi lớp và số thứ tự. Rút đề khỏi cộng đồng (chỉ link) ở Đề đã xuất bản để bật lại.
                 </p>
               ) : (
-                <p className="px-3 text-[12.5px] leading-relaxed text-ink-3">Trước khi làm, học sinh nhập tên, lớp và số thứ tự. Máy nhớ thông tin này cho lần sau.</p>
+                <p className="px-3 text-[12.5px] leading-relaxed text-ink-3">Trước khi làm, học sinh nhập {item.settings.nameOnly ? 'họ tên' : 'tên, lớp và số thứ tự'}. Máy nhớ thông tin này cho lần sau.</p>
               )}
               <div className={cn(item.publishedListed && 'pointer-events-none opacity-40')}>
+                <Toggle
+                  label="Chỉ hỏi họ tên"
+                  checked={Boolean(item.settings.nameOnly)}
+                  onChange={(v) => setSettings({ nameOnly: v })}
+                />
                 <Toggle
                   label="Mỗi học sinh chỉ làm một lần"
                   hint="Học sinh phải đăng nhập để làm; mỗi tài khoản nộp được một lần."
@@ -645,7 +650,7 @@ function Toggle({
   onChange,
 }: {
   label: string
-  hint: string
+  hint?: string
   checked: boolean
   onChange: (v: boolean) => void
 }) {
@@ -659,7 +664,7 @@ function Toggle({
     >
       <span>
         <span className="block text-[14px] font-semibold text-ink">{label}</span>
-        <span className="mt-0.5 block text-[12.5px] leading-relaxed text-ink-3">{hint}</span>
+        {hint ? <span className="mt-0.5 block text-[12.5px] leading-relaxed text-ink-3">{hint}</span> : null}
       </span>
       <span className={cn('relative mt-0.5 h-6 w-11 shrink-0 rounded-full transition-colors duration-200', checked ? 'bg-clay' : 'bg-line-2')}>
         <span className={cn('absolute top-0.5 size-5 rounded-full bg-white shadow-soft transition-all duration-200', checked ? 'left-[22px]' : 'left-0.5')} />

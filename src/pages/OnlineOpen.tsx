@@ -110,6 +110,7 @@ export default function OnlineOpen() {
 
 function StudentForm({ exam, onStart }: { exam: Exam; onStart: (s: StudentInfo) => void }) {
   const roster = exam.settings?.roster ?? []
+  const nameOnly = Boolean(exam.settings?.nameOnly)
   const saved = loadStudent()
   const [name, setName] = useState(saved?.name ?? '')
   const [className, setClassName] = useState(saved?.className ?? '')
@@ -121,6 +122,7 @@ function StudentForm({ exam, onStart }: { exam: Exam; onStart: (s: StudentInfo) 
   const submit = (e: FormEvent) => {
     e.preventDefault()
     if (!name.trim()) return setErr('Em nhập họ tên nhé.')
+    if (nameOnly) return onStart({ name: name.trim(), className: '' })
     if (!className.trim()) return setErr('Em nhập lớp nhé.')
     const n = roster.length ? rosterIdx + 1 : Number(seat)
     if (seat && !roster.length && !(Number.isInteger(n) && n >= 1 && n <= 999)) return setErr('Số thứ tự là số từ 1 đến 999.')
@@ -132,7 +134,6 @@ function StudentForm({ exam, onStart }: { exam: Exam; onStart: (s: StudentInfo) 
       <form onSubmit={submit} className="rounded-[8px] bg-surface p-7 shadow-[0_1px_2px_rgba(60,48,32,0.03)]">
         <p className="eyebrow mb-2">Trước khi làm bài</p>
         <h1 className="font-display text-[24px] font-semibold leading-snug text-ink">{exam.title}</h1>
-        <p className="mt-1.5 text-[13.5px] text-ink-3">Thầy cô sẽ xem điểm theo thông tin này. Máy sẽ nhớ cho lần sau.</p>
         {exam.settings?.oneAttempt ? <p className="mt-3 rounded-[6px] bg-honey-soft px-3 py-2 text-[12.5px] text-honey">Đề này chỉ được làm một lần.</p> : null}
 
         <div className="mt-6 space-y-4">
@@ -149,18 +150,20 @@ function StudentForm({ exam, onStart }: { exam: Exam; onStart: (s: StudentInfo) 
               <input className={inputClass} value={name} onChange={(e) => setName(e.target.value)} maxLength={60} autoComplete="name" />
             )}
           </Field>
-          <div className="grid grid-cols-[1fr_120px] gap-3">
-            <Field label="Lớp">
-              <input className={inputClass} value={className} onChange={(e) => setClassName(e.target.value)} maxLength={30} placeholder="10A1" />
-            </Field>
-            <Field label="Số thứ tự">
-              {roster.length ? (
-                <input className={inputClass} value={rosterIdx >= 0 ? rosterIdx + 1 : ''} readOnly tabIndex={-1} />
-              ) : (
-                <input className={inputClass} value={seat} onChange={(e) => setSeat(e.target.value.replace(/\D/g, ''))} inputMode="numeric" placeholder="Nếu trùng tên" />
-              )}
-            </Field>
-          </div>
+          {nameOnly ? null : (
+            <div className="grid grid-cols-[1fr_120px] gap-3">
+              <Field label="Lớp">
+                <input className={inputClass} value={className} onChange={(e) => setClassName(e.target.value)} maxLength={30} placeholder="10A1" />
+              </Field>
+              <Field label="Số thứ tự">
+                {roster.length ? (
+                  <input className={inputClass} value={rosterIdx >= 0 ? rosterIdx + 1 : ''} readOnly tabIndex={-1} />
+                ) : (
+                  <input className={inputClass} value={seat} onChange={(e) => setSeat(e.target.value.replace(/\D/g, ''))} inputMode="numeric" placeholder="Nếu trùng tên" />
+                )}
+              </Field>
+            </div>
+          )}
         </div>
 
         {err ? <p role="alert" className="mt-4 text-[13px] font-medium text-clay-deep">{err}</p> : null}
