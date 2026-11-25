@@ -66,7 +66,15 @@ for (const request of ['Xoá câu 6', 'Xáo lại phương án', 'Trộn đáp �
   assert.equal(rewritesWholeExam(request), false)
 }
 assert.equal(rewritesWholeExam('Soạn một đề mới'), true)
-assert.ok(apply({ action: 'replace', blocks: [paragraph('Đề khác')] }).failed)
+for (const request of ['Thay cả đề bằng 4 câu trắc nghiệm Lịch sử 12', 'thay toàn bộ đề thành đề Hoá', 'Đổi cả đề sang Toán 9', 'Thay đổi toàn bộ tài liệu']) {
+  assert.equal(rewritesWholeExam(request), true, request)
+}
+for (const request of ['Thay cả đề bài câu 3', 'đổi toàn bộ đề bài của các câu', 'thay cả đề của câu 2', 'Đừng thay cả đề, chỉ sửa câu 1', 'không được đổi cả đề', 'Đổi đề bài câu 4', 'Đổi cả đề mục']) {
+  assert.equal(rewritesWholeExam(request), false, request)
+}
+const held = apply({ action: 'replace', blocks: [paragraph('Đề khác')] })
+// giữ đề, hỏi giáo viên; chữ trong chat đủ để họ quyết
+assert.ok(held.failed && held.needsConfirm && held.text.includes('Đề khác'))
 assert.deepEqual(editor.getJSON(), initial)
 assert.equal(examIntent('Giải thích cách làm câu 3 và vì sao thay x bằng 2.'), 'chat')
 assert.equal(examIntent('Chèn lời giải câu 3 vào đề'), 'doc')

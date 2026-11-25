@@ -15,6 +15,8 @@ export interface AiAskQuestion {
 export interface AiAsk {
   intro?: string
   questions: AiAskQuestion[]
+  /** câu hỏi của app, không phải của AI: không tự thêm câu hỏi hình */
+  noFigure?: true
 }
 
 const SUBJECT_RE =

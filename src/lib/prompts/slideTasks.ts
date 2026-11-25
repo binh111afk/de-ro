@@ -4,7 +4,6 @@
  */
 import { FIGURE_GUIDE } from '@/lib/prompts/figureGuide'
 import { slideCatalogText, slideProCatalogText } from '@/lib/aiDeck'
-import { HTML_DECK_SYSTEM } from '@/lib/htmlDeckPrompt'
 import { ASK_RULE, CHAT_MARKDOWN, THINK_VI } from '@/lib/prompts/common'
 import { sourceSection, webSection, type SourceInput } from '@/lib/prompts/sources'
 import { batchSystemPrompt, pageSystemPrompt } from '@/lib/slideAi'
@@ -31,32 +30,6 @@ const BOARD_OPS_GUIDE =
   '- {"op":"update","id":"<id>","stroke":"#...","fill":"#...","x":0,"y":0,"w":0,"h":0,"text":"..."} — sửa hình có sẵn (id trong danh sách hình trên bảng hoặc phần đang chọn).\n' +
   '- {"op":"delete","ids":["<id>",...]}\n' +
   'Cấu hình "figure" (giống công cụ của app):\n' + FIGURE_GUIDE
-
-/** system prompt khi đang soạn slide — yêu cầu JSON dạng deck */
-const SLIDE_SYSTEM =
-  'Bạn là trợ lý AI của trình soạn bài trình bày tiếng Việt. Trả lời ngắn gọn, đúng ngữ pháp. ' +
-  'Khi được yêu cầu sinh hoặc sửa nội dung slide, trả về JSON hợp lệ theo cấu trúc ' +
-  '{"title":"...","slides":[{"layout":"bullets","title":"...","bullets":["..."],"notes":["..."]}]} . ' +
-  'Mỗi slide chọn "layout" trong: title, section, statement, bullets, cards, two-column, ' +
-  'comparison, quote, closing, agenda, table, image-left, image-right, image-full, stats, ' +
-  'stat-image, timeline, cycle, quiz, example, hook, mindmap. ' +
-  'Field theo layout: title/section/closing dùng {title, kicker, subtitle}; statement dùng ' +
-  '{kicker, body (một câu lớn), author}; bullets dùng {title, kicker, bullets (1-6 ý ngắn)}; ' +
-  'cards dùng {title, items (2-6 thẻ)}; two-column dùng {title, left (2-3 ý), right (2-3 ý)}; ' +
-  'comparison dùng {title, leftTitle, left, rightTitle, right}; quote dùng {quote, author}; ' +
-  'agenda dùng {kicker, title, items (1-5 mục)}; table dùng {title, rows (2-8 hàng × 2-6 cột)}; ' +
-  'image-left/image-right dùng {title, bullets (1-6 ý ngắn), image (tuỳ chọn)}; image-full dùng {title, body, image (tuỳ chọn)}; ' +
-  'stats dùng {title, stats (1-4 mục {value, label})}; stat-image dùng {title, stats (1-2), image}; ' +
-  'timeline/cycle dùng {title, steps (3-6 bước)}; mindmap dùng {title, body (chủ đề giữa), items (2-6 nhánh dạng "Nhãn: ý con; ý con")}; quiz dùng ' +
-  '{kicker, question, options (2-4 phương án), answer (chỉ số 0-based hoặc "A"), explanation}; ' +
-  'example dùng {title, problem (đề bài), steps (2-4 bước giải), conclusion}; ' +
-  'hook dùng {kicker, title, body (câu hỏi mở bài), items (2-3 gợi ý ngắn)}. ' +
-  '"tone" tuỳ chọn: theme | soft | accent; thiếu thì theo mặc định của layout. "notes" là mảng ' +
-  'chuỗi ghi chú trình bày (tuỳ chọn). Công thức toán viết bằng ký tự Unicode (², √, ·, ×, Δ…), ' +
-  'không dùng LaTeX. Không thêm trường khác, không bọc markdown.'
-
-/** Chế độ HTML: model tự dựng một tệp HTML tự chứa (brief trong lib/htmlDeckPrompt). */
-const HTML_SYSTEM = HTML_DECK_SYSTEM
 
 /**
  * Lượt 1 của pipeline slide (chặng 26a): lập dàn ý + chọn style, chưa viết nội
@@ -137,11 +110,10 @@ export const WEB_SEARCH_SYSTEM =
  * Ghép system prompt của các tác vụ slide / bảng vẽ (server gọi qua server/aiTasks.ts)
  * ------------------------------------------------------------------ */
 
-/** Lượt chat slide: `plan` lập dàn ý, `chat` hỏi đáp, `html` slide HTML. */
+/** Lượt chat slide khi chưa có bài (hoặc làm bài mới): model tự chọn lập dàn ý hay trả lời bằng chữ. */
 export interface SlideChatInput extends SourceInput {
   pro?: boolean
-  variant: 'plan' | 'chat' | 'html'
-  /** bật luật hỏi lại (không áp cho `html`) */
+  /** bật luật hỏi lại */
   ask?: boolean
   contextSummary?: string
   webFound?: string
@@ -149,11 +121,11 @@ export interface SlideChatInput extends SourceInput {
   think?: boolean
 }
 
+const PLAN_OR_CHAT =
+  '\n\nNếu người dùng chỉ hỏi, xin tư vấn hay trò chuyện (không nhờ làm bài) thì KHÔNG lập dàn ý: trả lời bằng chữ, không kèm JSON.'
+
 export function buildSlideChatSystem(i: SlideChatInput): string {
-  const head =
-    i.variant === 'html'
-      ? HTML_SYSTEM
-      : (i.variant === 'plan' ? slidePlanSystem(i.pro) : SLIDE_SYSTEM + CHAT_MARKDOWN) + (i.ask ? ASK_RULE : '')
+  const head = slidePlanSystem(i.pro) + PLAN_OR_CHAT + CHAT_MARKDOWN + (i.ask ? ASK_RULE : '')
   return head + (i.contextSummary ? `\nBài trình bày hiện tại: ${i.contextSummary}` : '') + sourceSection(i) + webSection(i.webFound) + (i.think ? THINK_VI : '')
 }
 

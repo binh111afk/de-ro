@@ -530,9 +530,6 @@ export function applyExamReply(
     ? value.trim().slice(0, max).replace(/\bfigure\b/gi, 'hình').trim()
     : ''
   const say = clean(raw.say, 1200).replace(/(?:^|\n)[ \t]*Đã (?:sửa|thêm|xoá|xóa) \d+ khối[^\n]*/gi, '').trim()
-  if (!allowReplace && (raw.action === 'replace' || (!raw.action && Array.isArray(raw.blocks) && !raw.patch)))
-    return { text: 'Mình chưa áp dụng vì phần trả về sẽ thay cả đề.', failed: true }
-
   if (options.requirePatch && raw.action === 'append')
     return { text: 'Mình cần sửa đúng chỗ được yêu cầu trong đề.', failed: true }
 
@@ -580,7 +577,8 @@ export function applyExamReply(
   }
   try {
     if (action === 'replace' && blocks.length) {
-      if (!allowReplace) return { text: 'Mình chưa áp dụng vì phần trả về sẽ thay cả đề.', failed: true }
+      // chỉ hỏi khi bản mới đã qua kiểm tra, để bấm "Thay cả đề" là áp được
+      if (!allowReplace) return { ...fallback('AI đã viết lại cả đề. Đề hiện tại vẫn giữ nguyên.'), needsConfirm: true }
       const next = editor.state.schema.nodeFromJSON(blocksToTipTap(blocks))
       if (next.eq(editor.state.doc) || !editor.commands.setContent(next)) return fail
       // setContent thay cả tài liệu nên selection cũ được map lại tuỳ vị trí

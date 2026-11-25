@@ -36,7 +36,7 @@ export type AiCall = {
  *   task-doc      soạn / sửa đề         question       hỏi đáp chữ thường (đề, slide)
  *   ask-clarify   hỏi lại trước khi soạn task-slide     lập dàn ý / viết slide
  *   task-slide-pro lập dàn ý / viết slide chế độ Chuyên nghiệp (task-slide = chế độ thường)
- *   task-slide-html slide HTML          edit-slide     sửa slide có sẵn bằng lệnh
+ *   edit-slide    sửa slide có sẵn bằng lệnh
  *   board         bảng vẽ               web-search     tìm trên web
  *   task-exam-online đề tương tác       edit-question  sửa một câu / một đoạn
  *   figure        hình / đồ thị         bank           ngân hàng câu hỏi (admin)
@@ -51,7 +51,7 @@ export function aiKind(task?: unknown, input?: unknown): string {
     case 'hoi-truoc':
       return 'ask-clarify'
     case 'slide-chat':
-      return o.variant === 'chat' ? 'question' : o.variant === 'html' ? 'task-slide-html' : o.pro === true ? 'task-slide-pro' : 'task-slide'
+      return o.variant === 'chat' ? 'question' : o.pro === true ? 'task-slide-pro' : 'task-slide'
     case 'slide-lo':
     case 'slide-trang':
       return o.pro === true ? 'task-slide-pro' : 'task-slide'

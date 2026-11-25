@@ -51,7 +51,10 @@ export function examSystemPrompt(documentDigest?: string, request = '', fromSour
     '- "name" (chỉ khi "replace"): tên ngắn để lưu đề, theo bài/chủ đề + môn lớp, ≤ 60 ký tự, vd. "Hệ thức lượng trong tam giác vuông – Toán 9".\n' +
     '- "say": dùng từ giáo viên quen dùng, không nhắc tên trường nội bộ như figure hay lặp nội dung trong warning. Nói ngắn đã làm gì, đã hiểu yêu cầu thế nào nếu yêu cầu có thể hiểu nhiều cách. Không lặp lại yêu cầu. ' +
     'Viết bằng Markdown cho dễ đọc: **đậm** cho con số / tên phần chính, từ 3 ý trở lên thì xuống dòng gạch đầu dòng "- " (mỗi ý một dòng), không viết dồn thành một đoạn dài. Không dùng tiêu đề #.\n' +
-    'Hỏi cách làm, lý do hoặc xin giải thích: chỉ trả lời trong chat. Chỉ chèn lời giải khi giáo viên yêu cầu đưa vào đề.\n\n' +
+    'TỰ XÁC ĐỊNH giáo viên đang muốn gì ở mỗi lượt: muốn đề thay đổi (kể cả nói lửng hay than phiền, vd "câu 3 dễ đoán quá") thì trả JSON; ' +
+    'hỏi, nhờ nhận xét hay kiểm tra, trò chuyện, hoặc bảo chỉ xem trong chat thì trả lời bằng chữ, không JSON. ' +
+    'Hỏi cách làm, lý do hoặc xin giải thích: chỉ trả lời trong chat. Chỉ chèn lời giải khi giáo viên yêu cầu đưa vào đề.' +
+    CHAT_MARKDOWN + '\n\n' +
     'CÁC LOẠI KHỐI: header, title, meta, student, heading, paragraph, bullets, grid, question, essay, answerKey, rubric, table, pageBreak, divider.\n' +
     'CẤU TRÚC TỪNG LOẠI KHỐI (đúng tên field, không thêm field lạ):\n' +
     '- {"type":"header","left":"SỞ GIÁO DỤC VÀ ĐÀO TẠO …\\nTRƯỜNG THPT …\\nĐề chính thức","right":"ĐỀ KHẢO SÁT CHẤT LƯỢNG ĐẦU NĂM\\nNăm học 2025 – 2026\\nMôn: Toán – Lớp 9\\nThời gian làm bài: 90 phút"}\n' +
@@ -95,7 +98,6 @@ export function examSystemPrompt(documentDigest?: string, request = '', fromSour
     '- Câu đếm hoặc chọn tổ hợp nhận định vẫn là trắc nghiệm A–D: đặt các nhận định (a)–(d) trong text, bốn phương án A–D trong options của chính câu, bỏ kind và ghi đáp án là một chữ cái.\n' +
     '- Số câu "no" của các block question đánh liên tục 1, 2, 3… trong cả đề, bất kể dạng (không đánh lại từ 1 ở mỗi phần). Câu tự luận (essay) đánh số riêng.\n' +
     '- answerKey phải có đủ mọi câu question: nhiều lựa chọn = một chữ cái ("B"); đúng/sai = chuỗi Đ/S theo thứ tự ý a b c d, ví dụ "ĐSĐS"; trả lời ngắn = con số, dấu thập phân là dấu phẩy ("-1,5"). Đáp án tự luận để trong rubric.\n' +
-    '- Trước khi xuất, giải lại từ đề cuối và hình đã vẽ; đối chiếu từng phương án, từng ý Đ/S, đơn vị và làm tròn. Nếu có nhiều phương án cùng đúng (kể cả hai khoảng đồng biến), sửa phương án nhiễu trước khi chốt đáp án. Khi đổi chất, sự kiện hoặc số liệu, kiểm lại tính đúng của mọi nhận định.\n' +
     '- Kết thúc đề: answerKey và/hoặc rubric. Khi thay/xoá câu, cập nhật đáp án liên quan. Khi thay/xoá bài tự luận, patch mục của bài trong rubric hiện có, giữ các bài khác, không chèn thêm hướng dẫn chấm trùng.\n' +
     '- HƯỚNG DẪN CHẤM / ĐÁP ÁN TỰ LUẬN (môn Ngữ văn và các môn tự luận như Lịch sử, Địa lí, GDCD khi có hướng dẫn chấm): đặt sau {"type":"pageBreak"} và heading "HƯỚNG DẪN CHẤM" (hoặc "ĐÁP ÁN VÀ HƯỚNG DẪN CHẤM"), dùng block "rubric" dạng "parts" (KHÔNG viết bằng paragraph/bullets rời). Quy ước đúng mẫu Bộ GD&ĐT:\n' +
     '  • Bảng 4 cột Phần | Câu | Nội dung | Điểm, điểm dùng dấu phẩy thập phân (0,25; 0,5; 1,0; 2,0; 4,0; 6,0; 10,0); tổng điểm các câu khớp điểm phần, tổng điểm các phần khớp "total" (thường "10,0"; nếu đề gồm cả trắc nghiệm và tự luận thì phần trắc nghiệm dùng answerKey, phần tự luận dùng rubric dạng "parts" với "total" bằng điểm phần tự luận).\n' +
@@ -122,7 +124,8 @@ export function examSystemPrompt(documentDigest?: string, request = '', fromSour
         'Môn không có hình phù hợp (Văn, Sử, ngoại ngữ…) thì không cần figure. Các loại figure:\n') +
     figureGuideFor(request) +
     '\n' +
-    '- Trước khi trả, tự giải lại từ dữ kiện của đề và hình, đối chiếu bảng đáp án: A–D đúng duy nhất một phương án, kiểm từng ý Đ/S, đáp số và làm tròn. ' +
+    '- Trước khi trả, tự giải lại từ dữ kiện của đề và hình, đối chiếu bảng đáp án: A–D đúng duy nhất một phương án, kiểm từng ý Đ/S, đáp số, đơn vị và làm tròn. ' +
+    'Nhiều phương án cùng đúng (kể cả hai khoảng đồng biến) thì sửa phương án nhiễu trước khi chốt đáp án; đổi chất, sự kiện hay số liệu thì kiểm lại mọi nhận định. ' +
     'Bổ sung hằng số, đơn vị, điều kiện/miền xác định cần thiết và sửa dữ kiện mâu thuẫn. Kiểm tổng điểm từng tiêu chí, bỏ câu hoặc bảng trùng. ' +
     'Dùng nhất quán nội dung và danh pháp GDPT 2018 (trừ khi giáo viên yêu cầu chương trình khác). Khi sửa số liệu, giữ nguyên các giá trị không được yêu cầu đổi.\n\n' +
     (documentDigest
@@ -148,8 +151,8 @@ export const ASK_ONLY_SYSTEM =
 export interface ExamTaskInput extends SourceInput {
   /** yêu cầu của người dùng ở lượt này */
   text: string
+  /** đoán theo từ khoá ở client, chỉ để gắn nhãn lượt gọi (`aiKind`); không đưa vào prompt */
   intent?: 'doc' | 'chat'
-  revising?: boolean
   /** bản rút gọn tài liệu hiện tại, mỗi dòng "[id] loại: nội dung" */
   digest?: string
   contextSummary?: string
@@ -171,7 +174,10 @@ const HARDER_RULE =
   'nhiều đường cắt nhau (cát tuyến, đường cao, trung điểm, giao điểm mới), lời giải qua ít nhất 3 bước nối tiếp (vd tứ giác nội tiếp → đồng dạng → hệ thức → kết quả). ' +
   'Cách làm: lấy một cấu hình nhiều giao điểm (kiểu hình mẫu nếu có bên dưới) rồi DỰNG THÊM ít nhất 2 yếu tố mới lên đó ' +
   '(đường vuông góc, đường song song, đường kính, trung điểm, giao điểm của hai đường đã có), và hỏi về yếu tố dựng thêm ở bước cuối. ' +
-  'Hỏi thứ đọc ra ngay từ một định lí quen thuộc của cấu hình gốc là chưa đạt. Hình vẽ đủ mọi điểm, mọi đoạn đề nêu.'
+  'Lời giải phải từ 5 bước nối tiếp và bước cuối dùng kết quả của các bước trước; hỏi thứ đọc ra ngay từ một định lí quen thuộc, ' +
+  'hay giải xong bằng một hai hệ thức, là chưa đạt. Câu trắc nghiệm nên hỏi "khẳng định nào sai" (hoặc đúng), mỗi phương án là một tính chất phải chứng minh ' +
+  'ở độ sâu khác nhau (tứ giác nội tiếp, đồng dạng, song song, thẳng hàng, hệ thức tích). Chọn dựng cấu hình quen mà chắc đúng, không nghĩ quá dài. ' +
+  'Hình vẽ đủ mọi điểm, mọi đoạn đề nêu.'
 const WANTS_HARDER = /khó hơn|khó lên|khó và|phức tạp|nâng (?:độ khó|mức)|nâng cao hơn/iu
 
 /** Đòi khó hơn: ghép luật, thêm hình mẫu nhiều giao điểm khi câu đang sửa là bài hình. */
@@ -182,15 +188,13 @@ function harderSection(i: ExamTaskInput): string {
   const no = /câu\s+(\d+)/iu.exec(text)?.[1]
   const line = no ? i.digest?.split('\n').find((l) => new RegExp(` Câu ${no}(?!\\d)`).test(l)) : undefined
   const topic = `${text}\n${line?.split(' | ')[0] ?? ''}`
-  return HARDER_RULE + sceneExamplesBlock(/đường tròn/iu.test(topic) ? 'hai tiếp tuyến, cát tuyến, ba đường cao, trực tâm, nửa đường tròn, tiếp tuyến Ax' : topic)
+  return HARDER_RULE + sceneExamplesBlock(/đường tròn/iu.test(topic) ? 'hai tiếp tuyến, cát tuyến, song song với BD' : topic)
 }
 
 export function buildExamSystem(i: ExamTaskInput): string {
   const ctx = i.contextSummary
   const system =
     examSystemPrompt(i.digest, `${i.text}\n${ctx ?? ''}`, i.sourceTier === 1 && !!i.sources?.length) +
-    (i.intent === 'chat' ? '\nLượt này có vẻ là hỏi đáp hoặc trò chuyện: trả lời bằng chữ trong chat. Nếu thật ra giáo viên đang muốn thay đổi đề thì trả JSON theo hợp đồng trên; giáo viên chỉ muốn xem trong chat thì không trả JSON.' + CHAT_MARKDOWN : i.intent === 'doc' ? '\nLượt này trả JSON theo hợp đồng trên.' : '') +
-    (i.revising ? '\nGiữ đề hiện tại. Chỉ dùng patch hoặc append cho yêu cầu này.' : '') +
     harderSection(i) +
     (i.ask ? ASK_RULE : '') +
     (ctx ? `\nTài liệu hiện tại: ${ctx}` : '')

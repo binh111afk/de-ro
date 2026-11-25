@@ -3,7 +3,7 @@ import { isLayoutId } from '../src/lib/slideLayouts.ts'
 import { DECK_THEMES } from '../src/lib/slideTheme.ts'
 import { DECOR_KITS } from '../src/lib/slideDecor.ts'
 import { SLIDE_STYLE_PACKS } from '../src/lib/slideStyles.ts'
-import { applyEdits, looksLikeEdit, parseEditCommands } from '../src/lib/slideEdit.ts'
+import { applyEdits, parseEditCommands } from '../src/lib/slideEdit.ts'
 import { parseDeckPlan } from '../src/lib/aiDeck.ts'
 import { emptyDeck } from '../src/store/docs.ts'
 
@@ -164,21 +164,6 @@ for (const [input, expected] of testAliases) {
   }
 }
 console.log('  ✅ resolveDesignId nhận diện chính xác các alias có/không dấu')
-
-// 3. looksLikeEdit
-const editPhrases = [
-  'đổi bài này sang kiểu thiết kế Công nghệ',
-  'áp dụng thiết kế bảng đen',
-  'làm giống thiết kế Thanh lịch',
-  'theo mẫu bảng đen',
-]
-for (const phrase of editPhrases) {
-  if (!looksLikeEdit(phrase)) {
-    console.error(`  ❌ looksLikeEdit không nhận diện câu: "${phrase}"`)
-    allPassed = false
-  }
-}
-console.log('  ✅ looksLikeEdit nhận diện đúng các câu lệnh thiết kế')
 
 // 4. parseEditCommands
 const editJson = '{"action":"edit","commands":[{"op":"apply_design","id":"bang-den"}]}'

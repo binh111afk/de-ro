@@ -518,6 +518,20 @@ export const SCENE_EXAMPLES: SceneExample[] = [
     ]),
   },
   {
+    id: 'cat-tuyen-song-song',
+    tags: ['cát tuyến', 'hai tiếp tuyến', 'song song với BD'],
+    problem: 'Từ điểm S nằm ngoài đường tròn (O) kẻ hai tiếp tuyến SA, SB và cát tuyến SCD không đi qua O (C nằm giữa S và D). SO cắt AB tại H, cắt cung nhỏ AB tại I; M là trung điểm CD. Qua C kẻ đường thẳng song song với BD, cắt AB tại E và AD tại F.',
+    json: scene([
+      'O(0; 0) S(-9; 0)', 'tròn O 4',
+      'tiếp tuyến từ S tới O 4 B A',
+      'D = tròn O 4 góc -48', 'C = SD cắt tròn O 4',
+      'H = SO cắt AB', 'I = SO cắt tròn O 4', 'M = trung điểm CD',
+      '_Q = đối xứng B qua M', 'E = AB cắt C_Q', 'F = AD cắt C_Q',
+      'SA, SB, SD, SO, AB, AC, AD, BC, BD, CF, ME, OM',
+      'vuông OMD', 'vuông OHA',
+    ]),
+  },
+  {
     id: 'tam-giac-ba-duong-cao',
     tags: ['ba đường cao', 'các đường cao', 'nội tiếp đường tròn (O)', 'trực tâm'],
     problem: 'Cho tam giác ABC nhọn nội tiếp đường tròn (O). Ba đường cao AD, BE, CF cắt nhau tại H. Tia AD cắt (O) tại N, M là trung điểm của BC.',

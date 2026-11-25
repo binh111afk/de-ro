@@ -12,445 +12,45 @@ import { useCallback, useEffect, useRef, useState, type DragEvent } from 'react'
 import { Link } from 'react-router-dom'
 import { useSession } from '@/lib/useSession'
 import { Button } from '@/components/ui'
-import { IconDocExam } from '@/components/docIcons'
 import { AiQuotaRing, TopupLink } from '@/components/AiQuotaRing'
-import { AiQuotaError, callLlm, callLlmChecked, lastAiQuota, TOKENS_PER_POINT, type LlmMessage, type LlmProgress } from '@/lib/llm'
+import { AiQuotaError, callLlm, TOKENS_PER_POINT, type LlmMessage } from '@/lib/llm'
 import { khungPromptFor } from '@/lib/khungPrompt'
-import {
-  parseAiObject,
-  parseDeckPlan,
-  proPlan,
-  type AiSlidePayload,
-  type DeckPlan,
-  type DeckPlanSlide,
-} from '@/lib/aiDeck'
-import { checkSlide, dropRepeatedGraphic, parseBatchSlides, planDecorKit, repairPrompt } from '@/lib/slideAi'
-import { DECK_THEMES, PRO_THEMES } from '@/lib/slideTheme'
-import { designById } from '@/lib/slideDesigns'
-import { isLayoutId } from '@/lib/slideLayouts'
-import { looksLikeEdit, parseAddedSlide, parseEditCommands, type SlideEditOp } from '@/lib/slideEdit'
-import { buildSourcePack, isDocx, isPdf, pickedKey, type PickedSource, type SourcePack } from '@/lib/sources'
+import type { AiSlidePayload, DeckPlan } from '@/lib/aiDeck'
+import type { SlideEditOp } from '@/lib/slideEdit'
+import { buildSourcePack, isDocx, pickedKey, type PickedSource, type SourcePack } from '@/lib/sources'
 import { BookOpen, Globe, RotateCcw, ThumbsDown, ThumbsUp } from 'lucide-react'
 import { SiteSelect } from '@/components/SiteSelect'
-import { CONTINUE_EXAM_EDIT, chatOnly, examIntent,isExamMutationReply, rewritesWholeExam, type AiApplyResult } from '@/lib/aiDocContext'
-import { looksLikeComplaint, nearlySame, rememberAiTurn, reportAi } from '@/lib/aiFeedback'
+import { CONTINUE_EXAM_EDIT, chatOnly, rewritesWholeExam, startsWithJson, type AiApplyResult } from '@/lib/aiDocContext'
+import { looksLikeComplaint, nearlySame, reportAi } from '@/lib/aiFeedback'
 import { dialog } from '@/components/Dialog'
 import { SourcePicker } from './SourcePicker'
 import { cn } from '@/lib/cn'
 import { AI_ATTACH_EVENT, takeAiRefs, type AiRef } from '@/lib/aiAttach'
 import { chatHistoryKey, encodeChatHistory, loadChatHistory, saveChatHistory } from '@/lib/aiChatHistory'
-import { extractJson } from '@/lib/llm'
-import { mergeChunks, parseChunk, planExamSplit, type ChunkJson } from '@/lib/examSplit'
-import aiThinkingAnim from '@/assets/ai-assistant.svg'
-import { Markdown } from '@/lib/aiChatMarkdown'
+import { planExamSplit } from '@/lib/examSplit'
 import { compactHistory } from '@/lib/aiHistory'
 import 'katex/dist/katex.min.css'
-import { ASK_DEFAULT, AiAskPanel, askHistoryText, needsAskFirst, parseAsk, type AiAsk } from './AiAskPanel'
+import { ASK_DEFAULT, AiAskPanel, needsAskFirst, parseAsk } from './AiAskPanel'
 import { IconClose, IconEnter, IconPaperclip, IconStop } from './icons'
+import { finishBoard } from './ai/boardFlow'
+import {
+  ActLog, ATTACH_ACCEPT, ATTACH_ICONS, attachKind, BOARD_STARTERS, DeckProgress, formatSize, newId, PlanCard, RefIcon,
+  SentAttachments, SLIDE_STARTERS, SOURCE_KIND_LABEL, SourceAttachmentIcon, SourcesButton, STARTERS, ThinkingLine, TypedMarkdown,
+  type Attachment,
+} from './ai/chatParts'
+import { finishExam, runExamSplit } from './ai/examFlow'
+import { createLiveLog, type TurnCtx } from './ai/flowKit'
+import { finishSlide, generateDeck, runSlideEdit } from './ai/slideFlow'
+import { AI_EFFORT } from './ai/slideGen'
+import { closeLog, detectIntent, historyOf, leftTokens, spentSince, type ActStep, type AiMode, type ChatTurn } from './ai/turns'
 
-type AttachKind = 'doc' | 'sheet' | 'pdf' | 'image'
-
-interface Attachment {
-  id: string
-  name: string
-  size: number
-  kind: AttachKind
-  /** object URL chỉ dành cho ảnh */
-  url?: string
-  /** giữ File để trích nội dung trước khi gọi AI (docx/pdf/xlsx) */
-  file?: File
+const SPLIT_REPLACE = 'Soạn cả đề mới, thay đề đang mở'
+const SPLIT_ASK = {
+  questions: [{ q: 'Đề đang mở đã có nội dung. Bạn muốn làm gì?', options: [SPLIT_REPLACE, 'Chỉ thêm vài câu vào đề đang mở'] }],
+  noFigure: true as const,
 }
 
-const ATTACH_ICONS: Record<Exclude<AttachKind, 'image'>, string> = {
-  doc: '/brand/file-icons/doc.svg',
-  sheet: '/brand/file-icons/sheet.svg',
-  pdf: '/brand/file-icons/pdf.svg',
-}
-
-/** Chỉ nhận tài liệu Word/Excel/PDF và ảnh — đúng danh sách người dùng chốt. */
-const ATTACH_ACCEPT = '.doc,.docx,.xls,.xlsx,.csv,.pdf,image/*'
-
-function attachKind(file: { name: string; type?: string }): AttachKind | null {
-  const name = file.name.toLowerCase()
-  if (file.type?.startsWith('image/')) return 'image'
-  if (isPdf(file.name, file.type)) return 'pdf'
-  if (isDocx(file.name, file.type) || /\.(doc|rtf)$/.test(name)) return 'doc'
-  if (/\.(xlsx?|csv)$/.test(name)) return 'sheet'
-  return null
-}
-
-function formatSize(bytes: number): string {
-  if (bytes < 1024) return `${bytes} B`
-  if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`
-  return `${(bytes / 1024 / 1024).toFixed(1)} MB`
-}
-
-const SOURCE_KIND_LABEL = {
-  mine: 'Đề của tôi',
-  community: 'Đề cộng đồng',
-  library: 'Kho tài liệu',
-}
-
-function SourceAttachmentIcon({ source }: { source: Pick<PickedSource, 'name' | 'kind'> }) {
-  if (source.kind !== 'library') return <IconDocExam className="ai-attachment__icon" />
-
-  const kind = attachKind({ name: source.name })
-  return <img src={ATTACH_ICONS[kind && kind !== 'image' ? kind : 'doc']} alt="" className="ai-attachment__icon" />
-}
-
-
-const newId = (() => {
-  let seq = 0
-  return () =>
-    typeof crypto !== 'undefined' && 'randomUUID' in crypto
-      ? crypto.randomUUID()
-      : `attach-${Date.now()}-${++seq}`
-})()
-
-/** Theo dõi `prefers-reduced-motion` — hiệu ứng gõ chữ tắt khi người dùng cần. */
-function useReducedMotion() {
-  const [reduced, setReduced] = useState(
-    () =>
-      typeof window !== 'undefined' &&
-      window.matchMedia('(prefers-reduced-motion: reduce)').matches,
-  )
-  useEffect(() => {
-    const mq = window.matchMedia('(prefers-reduced-motion: reduce)')
-    const onChange = () => setReduced(mq.matches)
-    mq.addEventListener('change', onChange)
-    return () => mq.removeEventListener('change', onChange)
-  }, [])
-  return reduced
-}
-
-/**
- * Hiện câu trả lời dần dần như đang gõ. Tốc độ co theo độ dài để đề dài không
- * kéo dài quá ~1,6s; tắt hẳn khi `prefers-reduced-motion`.
- */
-function TypedMarkdown({ text, chat, animate }: { text: string; chat: boolean; animate: boolean }) {
-  const reduced = useReducedMotion()
-  const [shown, setShown] = useState(reduced || !animate ? text : '')
-
-  useEffect(() => {
-    if (reduced || !animate || !text) {
-      setShown(text)
-      return
-    }
-    const duration = Math.min(1600, 140 + text.length * 3)
-    const start = performance.now()
-    let raf = 0
-    const tick = (now: number) => {
-      const progress = Math.min(1, (now - start) / duration)
-      setShown(text.slice(0, Math.ceil(progress * text.length)))
-      if (progress < 1) raf = requestAnimationFrame(tick)
-    }
-    raf = requestAnimationFrame(tick)
-    return () => cancelAnimationFrame(raf)
-  }, [text, reduced, animate])
-
-  return <Markdown text={shown} chat={chat} />
-}
-
-export interface ChatTurn {
-  id: string
-  role: 'user' | 'assistant'
-  text: string
-  /** tệp đính kèm của lượt người dùng (để hiển thị lại trong chat) */
-  files?: Attachment[]
-  fileNames?: string[]
-  pickedSources?: Pick<PickedSource, 'name' | 'kind'>[]
-  askSourcePack?: SourcePack
-  /** thành phần đang chọn được đính kèm (bảng vẽ, câu hỏi, slide) */
-  refs?: string[]
-  /** true khi đang chờ model */
-  pending?: boolean
-  /** 'doc' = yêu cầu soạn/sửa tài liệu, 'chat' = hỏi đáp thường */
-  intent?: 'doc' | 'chat'
-  /** tên các nguồn đã dùng cho lượt này (tệp mẫu / tài liệu lưu / web) */
-  sources?: string[]
-  /** trang web lượt tìm trên web đã dẫn */
-  webSources?: Array<{ url: string; title: string }>
-  /** cảnh báo nguồn (tệp không đọc được, chưa cấu hình search…) */
-  sourceNote?: string
-  /** thông báo lỗi nếu lượt lỗi */
-  error?: string
-  /** dàn ý slide chờ duyệt (chặng 26a) */
-  plan?: DeckPlan
-  planState?: 'pending' | 'approved' | 'cancelled'
-  /** tiến trình sinh từng slide (chặng 26b) */
-  progress?: { done: number; total: number; current?: string; written?: number; live?: string }
-  /** soạn đề: nhật ký việc AI đang làm (chỉ bước có thật), bước cuối `active` là bước đang chạy */
-  log?: ActStep[]
-  /** AI hỏi lại vì yêu cầu mơ hồ; 'open' = panel hỏi đang chờ trả lời */
-  ask?: AiAsk
-  askState?: 'open' | 'done'
-  /** kết quả không áp được vào đề: yêu cầu để gửi lại bằng nút Thử lại */
-  retry?: string
-  /** người dùng đã bấm 👎 */
-  vote?: 'up' | 'down'
-  /** token đã tiêu cho lượt này (chênh lệch hạn mức trước / sau); không có khi không biết hạn mức */
-  cost?: number
-  /** lỗi do không đủ điểm AI: kèm link nạp điểm */
-  topup?: boolean
-}
-
-interface ActStep {
-  label: string
-  state: 'active' | 'done' | 'failed'
-  /** tóm tắt ngắn bên phải (vd "45 giây", "7/20 câu") */
-  note?: string
-  /** dòng chữ mờ chạy theo khi bước đang chạy: AI đang nghĩ gì / đang viết câu nào */
-  live?: string
-}
-
-/** đóng bước đang chạy (xong / lỗi) */
-const closeLog = (log: ActStep[], state: 'done' | 'failed', note?: string): ActStep[] =>
-  log.map((s) => (s.state === 'active' ? { ...s, state, live: undefined, ...(note !== undefined ? { note } : {}) } : s))
-
-/** một dòng, giữ phần cuối (chữ mới nhất) */
-const tailLine = (s: string, n: number) => {
-  const t = s.replace(/\s+/g, ' ').trim()
-  return t.length > n ? `…${t.slice(-n)}` : t
-}
-
-/** nhật ký kiểu app code: bước đang chạy có dòng chạy theo, bước xong để lại tóm tắt */
-function ActLog({ steps }: { steps: ActStep[] }) {
-  return (
-    <ol className="ai-steps" aria-label="AI đang làm">
-      {steps.map((s, i) => (
-        <li key={i} className={`ai-step ai-step--${s.state}`}>
-          <span className="ai-step__icon" aria-hidden="true">
-            {s.state === 'done' ? '✓' : s.state === 'failed' ? '!' : <img className="ai-step__mascot" src={aiThinkingAnim} alt="" />}
-          </span>
-          <span className="ai-step__label">{s.label}</span>
-          {s.note ? <span className="ai-step__note">{s.note}</span> : null}
-          {s.state === 'active' && s.live ? <span className="ai-step__live">{s.live}</span> : null}
-        </li>
-      ))}
-    </ol>
-  )
-}
-
-function SentAttachments({ turn }: { turn: ChatTurn }) {
-  const files = turn.files ?? turn.fileNames?.map((name) => ({ name, kind: attachKind({ name }), url: undefined, size: undefined }))
-  if (!files?.length && !turn.refs?.length && !turn.pickedSources?.length) return null
-  return (
-    <div className="ai-msg-files">
-      {turn.refs?.map((label, i) => (
-        <span key={`ref-${i}`} className="ai-attachment ai-msg-file" data-tip={label}>
-          <span className="ai-attachment__icon grid place-items-center text-clay"><RefIcon /></span>
-          <span className="ai-attachment__meta">
-            <span className="ai-attachment__name">{label}</span>
-          </span>
-        </span>
-      ))}
-      {files?.map((file, i) => (
-        <span key={`file-${i}`} className="ai-attachment ai-msg-file" data-tip={file.name}>
-          {file.url ? (
-            <img src={file.url} alt="" className="ai-attachment__thumb" />
-          ) : file.kind && file.kind !== 'image' ? (
-            <img src={ATTACH_ICONS[file.kind]} alt="" className="ai-attachment__icon" />
-          ) : (
-            <span className="ai-attachment__icon grid place-items-center"><IconPaperclip size={16} /></span>
-          )}
-          <span className="ai-attachment__meta">
-            <span className="ai-attachment__name">{file.name}</span>
-            {file.size != null && <span className="ai-attachment__size">{formatSize(file.size)}</span>}
-          </span>
-        </span>
-      ))}
-      {turn.pickedSources?.map((p, i) => (
-        <span key={`source-${i}`} className="ai-attachment ai-msg-file" data-tip={p.name}>
-          <SourceAttachmentIcon source={p} />
-          <span className="ai-attachment__meta">
-            <span className="ai-attachment__name">{p.name}</span>
-            <span className="ai-attachment__size">{SOURCE_KIND_LABEL[p.kind]}</span>
-          </span>
-        </span>
-      ))}
-    </div>
-  )
-}
-
-const leftTokens = () => (lastAiQuota ? lastAiQuota.limit - lastAiQuota.used : null)
-/** token đã tiêu kể từ `start` (số còn lại lúc bắt đầu lượt); undefined khi không biết hoặc không tốn */
-const spentSince = (start: number | null) => {
-  const now = leftTokens()
-  if (start == null || now == null || start <= now) return undefined
-  // tính theo số điểm vòng điểm hiển thị (làm tròn xuống) để hiệu khớp với con số người dùng đọc
-  const pts = Math.floor(start / TOKENS_PER_POINT) - Math.floor(now / TOKENS_PER_POINT)
-  return Math.max(1, pts) * TOKENS_PER_POINT
-}
-
-/** Nút mở danh sách nguồn đã dùng. */
-function SourcesButton({ sources, web }: { sources?: string[]; web?: Array<{ url: string; title: string }> }) {
-  const n = (sources?.length ?? 0) + (web?.length ?? 0)
-  const showSources = () => {
-    void dialog.show(
-      <>
-        {n > 0 ? (
-          <ul className="max-h-[55vh] list-disc space-y-1 overflow-auto pl-5 [overflow-wrap:anywhere]">
-            {sources?.map((source, i) => <li key={i}>{source}</li>)}
-            {web?.map(({ url, title }, i) => {
-              const parsed = URL.canParse(url) ? new URL(url) : null
-              return (
-                <li key={i}>
-                  {parsed && (parsed.protocol === 'https:' || parsed.protocol === 'http:') ? (
-                    <>
-                      <a className="underline" href={parsed.href} target="_blank" rel="noopener noreferrer">{title}</a>
-                      <span className="block text-xs text-ink-3">{parsed.hostname}</span>
-                    </>
-                  ) : title}
-                </li>
-              )
-            })}
-          </ul>
-        ) : null}
-      </>,
-      'Nguồn',
-    )
-  }
-  return (
-    <div className="ai-sources">
-      <button type="button" className="ai-sources__btn" aria-haspopup="dialog" onClick={showSources}>
-        Nguồn ({n})
-      </button>
-    </div>
-  )
-}
-
-const STARTERS = [
-  {
-    title: 'Sinh đề trắc nghiệm',
-    prompt: 'Soạn đề trắc nghiệm 20 câu môn Toán lớp 9 về hệ thức lượng, kèm đáp án.',
-  },
-  {
-    title: 'Sinh đề tự luận',
-    prompt: 'Soạn đề tự luận 4 câu môn Toán lớp 9 về hệ thức lượng, có thang điểm chi tiết.',
-  },
-  {
-    title: 'Rà soát đề hiện tại',
-    prompt: 'Đọc đề thi đang soạn, phát hiện lỗi trình bày và đề xuất chỉnh sửa.',
-  },
-  {
-    title: 'Thêm câu hỏi',
-    prompt: 'Bổ sung 5 câu trắc nghiệm vào cuối phần trắc nghiệm, độ khó tăng dần.',
-  },
-]
-
-/** gợi ý riêng cho ngữ cảnh soạn slide */
-/** soạn đề, soạn slide, hay bảng vẽ (chỉ trò chuyện, chưa vẽ lên bảng) */
-export type AiMode = 'exam' | 'slide' | 'board'
-
-const BOARD_STARTERS = [
-  {
-    title: 'Gợi ý hình minh hoạ',
-    prompt: 'Tôi đang giảng định lý Pytago lớp 8. Gợi ý cách vẽ hình minh hoạ lên bảng, từng bước một.',
-  },
-  {
-    title: 'Dàn ý trình bày bảng',
-    prompt: 'Lập dàn ý chia bảng thành các phần để giảng bài "Hệ thức lượng trong tam giác vuông" lớp 9.',
-  },
-  {
-    title: 'Ví dụ giảng nhanh',
-    prompt: 'Cho 3 ví dụ ngắn, giải được ngay trên bảng, về phương trình bậc hai lớp 9.',
-  },
-  {
-    title: 'Câu hỏi gợi mở',
-    prompt: 'Gợi ý 5 câu hỏi gợi mở để hỏi học sinh khi giảng về lực ma sát lớp 10.',
-  },
-]
-
-function RefIcon() {
-  return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-      <path d="M4 7V5a1 1 0 0 1 1-1h2M17 4h2a1 1 0 0 1 1 1v2M20 17v2a1 1 0 0 1-1 1h-2M7 20H5a1 1 0 0 1-1-1v-2" />
-      <path d="M9 12l2 2 4-4" />
-    </svg>
-  )
-}
-
-const SLIDE_STARTERS = [
-  {
-    title: 'Lập dàn ý bài giảng',
-    prompt: 'Lập dàn ý bài giảng 8 slide về hệ thức lượng lớp 9, mỗi slide có tiêu đề và các ý chính.',
-  },
-  {
-    title: 'Sinh nội dung slide',
-    prompt: 'Viết nội dung chi tiết cho bài giảng về hệ thức lượng lớp 9, chia thành các slide ngắn gọn.',
-  },
-  {
-    title: 'Tóm tắt nội dung',
-    prompt: 'Tóm tắt bài giảng đang soạn thành các slide tiêu đề ngắn, dễ trình bày.',
-  },
-  {
-    title: 'Gợi ý hình ảnh',
-    prompt: 'Gợi ý hình ảnh và biểu đồ phù hợp cho từng slide trong bài giảng về hệ thức lượng.',
-  },
-]
-
-/** Dải trạng thái khi chờ model. API hiện trả một lượt nên đây là tiến trình
- * mô phỏng (không phải log suy luận thật); muốn đúng từng bước cần streaming. */
-const EXAM_THINKING = [
-  'Đang phân tích yêu cầu…',
-  'Đang lên bố cục đề…',
-  'Đang viết đầu đề…',
-  'Đang soạn nội dung câu hỏi…',
-  'Đang kiểm tra đáp án…',
-  'Đang rà soát lại đề…',
-  'Đang hoàn thiện…',
-]
-const SLIDE_THINKING = [
-  'Đang phân tích yêu cầu…',
-  'Đang lên dàn ý slide…',
-  'Đang viết tiêu đề slide…',
-  'Đang soạn nội dung từng slide…',
-  'Đang thêm ghi chú trình bày…',
-  'Đang hoàn thiện…',
-]
-const CHAT_THINKING = [
-  'Đang xem câu hỏi…',
-  'Đang soạn câu trả lời…',
-  'Đang kiểm tra lại…',
-]
-
-/** Đoán nhanh yêu cầu có sửa tài liệu không, để chọn dải trạng thái phù hợp. */
-function detectIntent(text: string, mode: AiMode): 'doc' | 'chat' {
-  if (mode === 'board') return 'chat'
-  if (mode === 'exam') return examIntent(text)
-  const t = text.toLowerCase()
-  const hints = ['slide', 'bài giảng', 'dàn ý', 'tóm tắt', 'hình ảnh', 'thêm', 'sửa', 'đổi', 'soạn', 'sinh', 'viết']
-  return hints.some((h) => t.includes(h)) ? 'doc' : 'chat'
-}
-
-function ThinkingLine({ mode, intent }: { mode: AiMode; intent?: 'doc' | 'chat' }) {
-  const steps =
-    intent === 'chat' ? CHAT_THINKING : mode === 'slide' ? SLIDE_THINKING : EXAM_THINKING
-  const [step, setStep] = useState(0)
-  useEffect(() => {
-    setStep(0)
-    const timer = setInterval(
-      () => setStep((n) => Math.min(n + 1, steps.length - 1)),
-      2400,
-    )
-    return () => clearInterval(timer)
-  }, [steps])
-  return (
-    <div className="ai-thinking">
-      {/* animation "Trợ lý giấy" do người dùng cung cấp — SVG tự chạy,
-          không cần lottie-web (~450 KB JS) */}
-      <img
-        className="ai-thinking__anim"
-        src={aiThinkingAnim}
-        alt=""
-        aria-hidden="true"
-        width={22}
-        height={22}
-      />
-      <span>{steps[step]}</span>
-    </div>
-  )
-}
+export type { AiMode, ChatTurn } from './ai/turns'
 
 const SLIDE_PRO_WARN_KEY = 'dethinhbien-slide-pro-warned'
 const SLIDE_MODES = [
@@ -458,263 +58,6 @@ const SLIDE_MODES = [
   { value: 'pro', label: 'Chuyên nghiệp' },
 ] as const
 const WEB_WARN_KEY = 'dethinhbien-web-search-warned'
-
-/** Lịch sử hội thoại gửi kèm mỗi lượt gọi model. */
-function historyOf(turns: ChatTurn[]): LlmMessage[] {
-  return turns.flatMap((t) => {
-    const names = t.files?.map((f) => f.name) ?? t.fileNames
-    const pickedNames = t.pickedSources?.map((p) => p.name)
-    if (!t.text.trim() && !names?.length && !pickedNames?.length && !t.refs?.length) return []
-    return [{
-      role: t.role,
-      content: t.text +
-        (t.ask ? `\n${askHistoryText(t.ask)}` : '') +
-        (names?.length ? `\n[Tệp đính kèm: ${names.join(', ')}]` : '') +
-        (pickedNames?.length ? `\n[Nguồn đính kèm: ${pickedNames.join(', ')}]` : '') +
-        (t.refs?.length ? `\n[Phần đính kèm: ${t.refs.join(', ')}]` : ''),
-    }]
-  })
-}
-
-/** Thẻ dàn ý chờ duyệt — chặng 26a: xem trước khi sinh nội dung từng slide. */
-function PlanCard({
-  plan,
-  state = 'pending',
-  busy,
-  onApprove,
-  onCancel,
-}: {
-  plan?: DeckPlan
-  state?: ChatTurn['planState']
-  busy: boolean
-  onApprove: (plan: DeckPlan) => void
-  onCancel: () => void
-}) {
-  if (!plan) return null
-  const theme = plan.theme ? [...DECK_THEMES, ...PRO_THEMES].find((t) => t.id === plan.theme) : undefined
-  const designName = plan.design ? designById(plan.design)?.name : undefined
-  const tags = [`${plan.slides.length} slide`, designName, theme?.name, plan.audience].filter(Boolean) as string[]
-
-  return (
-    <div className={`ai-plan${state !== 'pending' ? ' is-done' : ''}`}>
-      <div className="ai-plan-head">
-        <div className="ai-plan-title">{plan.title || 'Dàn ý bài trình bày'}</div>
-        <div className="ai-plan-meta">{tags.join(' · ')}</div>
-      </div>
-      <ol className="ai-plan-list">
-        {plan.slides.map((slide, index) => (
-          <li key={`${index}-${slide.title}`} className="ai-plan-row">
-            <span className="ai-plan-index">{index + 1}</span>
-            <div className="ai-plan-slide">
-              <div className="ai-plan-slide-title">{slide.title}</div>
-              {slide.brief ? (
-                <div className="ai-plan-brief" title={slide.brief}>
-                  {slide.brief}
-                </div>
-              ) : null}
-            </div>
-          </li>
-        ))}
-      </ol>
-      {state === 'pending' ? (
-        <div className="ai-plan-actions">
-          <button type="button" className="ai-plan-ghost" onClick={onCancel}>
-            Huỷ
-          </button>
-          <button
-            type="button"
-            className="ai-plan-primary"
-            onClick={() => onApprove(plan)}
-            disabled={busy}
-          >
-            Tạo {plan.slides.length} slide
-          </button>
-        </div>
-      ) : (
-        <div className="ai-plan-state">
-          {state === 'approved' ? 'Đã tạo slide từ dàn ý này' : 'Đã huỷ'}
-        </div>
-      )}
-    </div>
-  )
-}
-
-/** Tiến trình thật khi sinh từng slide (chặng 26b). */
-function DeckProgress({
-  done,
-  total,
-  current,
-  written,
-  live,
-}: {
-  done: number
-  total: number
-  current?: string
-  /** số trang đã viết xong (kể cả trang trong lô đang chạy, chưa chèn) */
-  written?: number
-  /** dòng chạy theo: AI đang nghĩ gì / đang viết trang nào */
-  live?: string
-}) {
-  const shown = Math.max(done, written ?? 0)
-  return (
-    <ActLog
-      steps={[{ label: 'Viết slide', state: 'active', note: `${shown}/${total} slide`, live: live ?? (current ? `Đang viết: ${current}` : undefined) }]}
-    />
-  )
-}
-
-/**
- * Sinh nội dung một slide từ dàn ý đã duyệt. Sai field bắt buộc thì sửa đúng
- * một lần; vẫn sai trả null để slide đó bị bỏ, không chèn nội dung rác.
- */
-export async function generateSlide(
-  plan: DeckPlan,
-  planSlide: DeckPlanSlide,
-  index: number,
-  signal: AbortSignal,
-  pro?: boolean,
-  recovery = false,
-  retryOf?: string,
-): Promise<AiSlidePayload | null> {
-  // system prompt do server ghép từ dàn ý (task slide-trang)
-  const task = { name: 'slide-trang', input: { plan, index, pro: pro === true || undefined } }
-  const user = `Viết slide ${index + 1}: "${planSlide.title}".`
-  // bộ trang trí là của cả deck (chọn ở dàn ý), gắn vào mọi trang
-  const decorKit = planDecorKit(plan)
-  const withKit = (page: AiSlidePayload): AiSlidePayload => ({ ...page, decorKit })
-  const first = await callLlm([{ role: 'user', content: user }], { signal, reasoningEffort: AI_EFFORT.slide, task, retryOf })
-  const check = checkSlide(
-    parseAiObject(first.content),
-    planSlide.layout,
-    planSlide.tone,
-  )
-  if (recovery) return check.errors.length ? null : withKit(check.page)
-  if (!check.errors.length && !check.readability.length) return withKit(check.page)
-
-  return repairSlide(plan, index, first.content, check, signal, pro, first.receipt)
-}
-
-async function repairSlide(
-  plan: DeckPlan, index: number, raw: string, check: ReturnType<typeof checkSlide>,
-  signal: AbortSignal, pro?: boolean, retryOf?: string,
-): Promise<AiSlidePayload | null> {
-  const slide = plan.slides[index]
-  const repaired = await callLlm(
-    [
-      { role: 'user', content: `Viết slide ${index + 1}: "${slide.title}".` },
-      { role: 'assistant', content: raw },
-      { role: 'user', content: repairPrompt([...check.errors, ...check.readability]) },
-    ],
-    { signal, reasoningEffort: AI_EFFORT.slide, retryOf, task: { name: 'slide-trang', input: { plan, index, pro: pro === true || undefined } } },
-  ).catch((error: unknown) => {
-    signal.throwIfAborted()
-    if (check.errors.length && error instanceof AiQuotaError) throw error
-    return null
-  })
-
-  if (repaired) {
-    const next = checkSlide(parseAiObject(repaired.content), slide.layout, slide.tone)
-    if (!next.errors.length) return { ...next.page, decorKit: planDecorKit(plan) }
-  }
-  if (!check.errors.length) return { ...check.page, decorKit: planDecorKit(plan) }
-  return recoverSlide(plan, index, signal, pro, repaired?.receipt)
-}
-
-function recoverSlide(plan: DeckPlan, index: number, signal: AbortSignal, pro?: boolean, retryOf?: string): Promise<AiSlidePayload | null> {
-  const slides = [...plan.slides]
-  const original = slides[index]
-  slides[index] = { ...original, layout: pro ? 'editorial-text' : 'bullets', tone: undefined }
-  return generateSlide({ ...plan, slides }, slides[index], index, signal, pro, true, retryOf)
-}
-
-/**
- * Mức suy luận của model theo việc. Đo thật (`npm run eval:exam`, `eval:slides --effort`, 11/2026, deepseek-v4.1-flash):
- * - Đề Toán THPT QG: max 34,3k token / 240 s, medium 31,1k / 214 s, low 23,6k / 160 s — đúng cấu trúc, không thấy sai ở low.
- * - 15 slide: medium 51,7k, low 44,2k token — chất lượng ngang nhau.
- * → dùng low cho cả hai.
- */
-export const AI_EFFORT: { exam: 'low' | 'medium' | 'high' | 'max'; slide: 'low' | 'medium' | 'high' | 'max' } = {
-  exam: 'low',
-  slide: 'low',
-}
-
-/** Số slide mỗi lần gọi model: gộp để không gửi lại prompt chung cho từng slide. */
-export const SLIDE_BATCH = 5
-
-/**
- * Sinh một nhóm slide trong một lần gọi. Sửa riêng trang lỗi, thử lại với bố cục
- * đơn giản nếu vẫn thiếu trường bắt buộc.
- */
-export async function generateSlideBatch(
-  plan: DeckPlan,
-  indices: number[],
-  signal: AbortSignal,
-  /** có thì gọi dạng stream để hiện tiến độ thật của lô (suy nghĩ, trang đang viết) */
-  onProgress?: (p: LlmProgress) => void,
-  pro?: boolean,
-): Promise<Array<AiSlidePayload | null>> {
-  if (indices.length === 1) return [await generateSlide(plan, plan.slides[indices[0]], indices[0], signal, pro)]
-  const decorKit = planDecorKit(plan)
-  const withKit = (page: AiSlidePayload): AiSlidePayload => ({ ...page, decorKit })
-  // cả nhóm không đọc được (JSON hỏng/cụt) → hoàn token lượt đó, gọi lại một lần
-  const res = await callLlmChecked(
-    [
-      { role: 'user', content: `Viết slide ${indices.map((i) => i + 1).join(', ')}.` },
-    ],
-    { signal, reasoningEffort: AI_EFFORT.slide, onProgress, task: { name: 'slide-lo', input: { plan, indices, think: !!onProgress, pro: pro === true || undefined } } },
-    (content) => parseBatchSlides(parseAiObject(content), indices.length).some(Boolean),
-  ).catch((error: unknown) => {
-    signal.throwIfAborted()
-    if (error instanceof AiQuotaError) throw error
-    return null
-  })
-  const items = res ? parseBatchSlides(parseAiObject(res.content), indices.length) : []
-  return Promise.all(
-    indices.map(async (index, k) => {
-      const planSlide = plan.slides[index]
-      if (!items[k]) return generateSlide(plan, planSlide, index, signal, pro)
-      const check = checkSlide(items[k], planSlide.layout, planSlide.tone)
-      if (!check.errors.length && !check.readability.length) return withKit(check.page)
-      return repairSlide(plan, index, JSON.stringify(items[k]), check, signal, pro)
-    }).map(page => page.catch((error: unknown) => {
-      signal.throwIfAborted()
-      if (error instanceof AiQuotaError) throw error
-      return null
-    })),
-  )
-}
-
-/**
- * Vòng chấm bằng mắt: giám khảo (model nhìn ảnh slide) chê gì thì nêu đúng điều đó cho
- * model viết lại slide — giữ layout, đổi cách viết/chia ý. Trả null nếu bản sửa hỏng.
- * Ảnh chụp do caller lo (app không có sẵn DOM→ảnh; xem `eval-slides --polish`).
- */
-export async function polishSlide(
-  plan: DeckPlan,
-  planSlide: DeckPlanSlide,
-  index: number,
-  previous: AiSlidePayload,
-  issues: string[],
-  signal: AbortSignal,
-  pro?: boolean,
-): Promise<AiSlidePayload | null> {
-  const reply = await callLlm(
-    [
-      { role: 'user', content: `Viết slide ${index + 1}: "${planSlide.title}".` },
-      { role: 'assistant', content: JSON.stringify(previous) },
-      {
-        role: 'user',
-        content:
-          'Giám khảo nhìn ảnh slide vừa dựng và chê: ' + issues.join(' | ') +
-          '. Sửa NỘI DUNG để khắc phục (chia ý rõ hơn, rút gọn chỗ dày chữ, nêu ý chính nổi bật; ' +
-          'bỏ "graphic" nếu bị chê lạc nghĩa), giữ nguyên layout, trả DUY NHẤT một JSON hợp lệ.',
-      },
-    ],
-    { signal, reasoningEffort: AI_EFFORT.slide, task: { name: 'slide-trang', input: { plan, index, pro: pro === true || undefined } } },
-  )
-  const check = checkSlide(parseAiObject(reply.content), planSlide.layout, planSlide.tone)
-  return check.errors.length ? null : { ...check.page, decorKit: planDecorKit(plan) }
-}
 
 export function AiPanel({ historyKey, ...props }: Omit<React.ComponentProps<typeof AiConversation>, 'storageKey'> & { historyKey?: string }) {
   const mode = props.mode ?? 'exam'
@@ -990,18 +333,20 @@ function AiConversation({
       if (looksLikeComplaint(text)) reportAi('complaint', info, text)
       else if (override == null && nearlySame(text, prevUser.text)) reportAi('resend', info, text)
     }
-    const editingSlides = mode === 'slide' && existingSlideCount > 0 && !!onApplyEdits && looksLikeEdit(text)
-    const intent = answeringAsk || editingSlides || (!text && (sentFiles.length || sentPicked.length)) ? 'doc' : detectIntent(text, mode)
+    // đã có bài: gửi cả bài cho AI, nó tự chọn sửa, trả lời bằng chữ, hay xin làm bài mới (new_deck)
+    const editingSlides = mode === 'slide' && existingSlideCount > 0 && !!onApplyEdits && !answeringAsk
+    // đoán theo từ khoá: chỉ để hiện bước đang chạy và gắn nhãn lượt gọi
+    const intent =answeringAsk || editingSlides || (!text && (sentFiles.length || sentPicked.length)) ? 'doc' : detectIntent(text, mode)
     const originalRequest = answeringAsk ? turns.at(-2)?.text ?? text : text
     const requestWithAnswer = answeringAsk && originalRequest !== text ? `${originalRequest}\n\n${text}` : text
-    const revisingExam = mode === 'exam' && intent === 'doc' && !!documentDigest && !rewritesWholeExam(originalRequest)
+    // đề đang có nội dung: mọi lượt đều không được thay cả đề, trừ khi giáo viên bảo làm đề mới
+    const chosenReplace = answeringAsk && text.includes(SPLIT_REPLACE)
+    const revisingExam = mode === 'exam' && !!documentDigest && !rewritesWholeExam(originalRequest) && !chosenReplace
     setTurns((t) => [
       ...t,
       userTurn,
       { id: botId, role: 'assistant', text: '', pending: true, intent, log: [] },
     ])
-    // mọi chế độ (đề, slide, bảng vẽ) hiện nhật ký suy nghĩ thật, kể cả lượt hỏi chuyện
-    const examSteps = true
     const patchTurn = (p: (turn: ChatTurn) => Partial<ChatTurn>) =>
       setTurns((t) => t.map((turn) => (turn.id === botId ? { ...turn, ...p(turn) } : turn)))
     const logSet = (f: (log: ActStep[]) => ActStep[]) => patchTurn((t) => (t.log ? { log: f(t.log) } : {}))
@@ -1019,7 +364,7 @@ function AiConversation({
     abortRef.current = controller
 
     try {
-      const examDoc = intent === 'doc' && mode === 'exam'
+      const examDoc = mode === 'exam'
       const local = examDoc && !sentFiles.length && !sentRefs.length && !sentPicked.length
         ? onExamMaintenance?.(originalRequest) : undefined
       if (local) {
@@ -1028,22 +373,22 @@ function AiConversation({
       }
       // Ngoài luồng soạn đề, DOCX, PDF và nguồn đã chọn vẫn được đọc khi gửi.
       const sourceFiles = examDoc ? sentFiles : sentFiles.filter((f) =>
-        f.kind === 'pdf' || (mode === 'exam' && f.kind === 'image') || (f.kind === 'doc' && isDocx(f.name, f.file?.type)),
+        f.kind === 'pdf' || (f.kind === 'doc' && isDocx(f.name, f.file?.type)),
       )
       let pack: SourcePack = (answeringAsk && previousTurn?.askSourcePack) || { tier: 0, items: [], warnings: [] }
       if (sourceFiles.length || sentPicked.length) {
-        if (examSteps) logStart('Đọc nguồn')
+        logStart('Đọc nguồn')
         // đọc ảnh PDF mỗi lô mất vài chục giây: đếm giây để không trông như treo
         let readNote = ''
         const readAt = Date.now()
         const readSecs = () => `${Math.max(1, Math.round((Date.now() - readAt) / 1000))} giây`
-        const tick = examSteps ? setInterval(() => logPatch({ note: readNote ? `${readNote} · ${readSecs()}` : readSecs() }), 1000) : undefined
+        const tick = setInterval(() => logPatch({ note: readNote ? `${readNote} · ${readSecs()}` : readSecs() }), 1000)
         const added = await buildSourcePack(sourceFiles, sentPicked, {
-          onProgress: examSteps ? (note) => { readNote = note.replace(/…$/, ''); logPatch({ note: `${readNote} · ${readSecs()}` }) } : undefined,
+          onProgress: (note) => { readNote = note.replace(/…$/, ''); logPatch({ note: `${readNote} · ${readSecs()}` }) },
           signal: controller.signal,
         }).finally(() => clearInterval(tick))
         pack = { tier: pack.tier || added.tier, items: [...pack.items, ...added.items], warnings: [...pack.warnings, ...added.warnings] }
-        if (examSteps) logSet((l) => closeLog(l, 'done', `${pack.items.length} nguồn`))
+        logSet((l) => closeLog(l, 'done', `${pack.items.length} nguồn`))
       }
       const sourceNote = pack.warnings.length ? pack.warnings.join(' ') : undefined
       if (pack.items.length || sourceNote) {
@@ -1055,7 +400,7 @@ function AiConversation({
       }
       // khung chương trình Toán: đoán lớp/chương từ yêu cầu; lượt nối tiếp ("thêm 2 câu") thì lấy từ các lượt trước và đầu đề
       let khungBlock = ''
-      if (intent === 'doc' && mode === 'exam') {
+      if (mode === 'exam') {
         const prev = turns.filter((t) => t.role === 'user').slice(-3).map((t) => t.text).reverse()
         khungBlock =
           (await khungPromptFor(text)) ||
@@ -1066,8 +411,7 @@ function AiConversation({
       const history = compactHistory(historyOf(turns))
       // vừa hỏi lại xong thì không hỏi nữa; bảng vẽ không dùng panel hỏi
       const justAsked = turns.slice(-2).some((t) => t.ask)
-      const askRule = !(mode === 'board' || justAsked || (mode === 'exam' && (intent === 'chat' || revisingExam)))
-      const slideDoc = mode === 'slide' && intent === 'doc'
+      const askRule = !(mode === 'board' || justAsked || revisingExam)
       // server ghép system prompt từ `task` + dữ liệu người dùng này (client không giữ chữ prompt)
       const srcInput = {
         withSources: examDoc || pack.items.length > 0,
@@ -1079,8 +423,8 @@ function AiConversation({
         mode === 'board'
           ? { name: 'bang-ve', input: { ops: !!onBoardOps, contextSummary, ...srcInput } }
           : mode === 'slide'
-          ? { name: 'slide-chat', input: { variant: slideDoc ? 'plan' : 'chat', ask: askRule, contextSummary, ...srcInput, pro: slidePro || undefined } }
-          : { name: 'soan-de', input: { text: requestWithAnswer, intent, digest: documentDigest, contextSummary, revising: revisingExam, ask: askRule, ...srcInput } }
+          ? { name: 'slide-chat', input: { variant: 'plan', ask: askRule, contextSummary, ...srcInput, pro: slidePro || undefined } }
+          : { name: 'soan-de', input: { text: requestWithAnswer, intent, digest: documentDigest, contextSummary, ask: askRule, ...srcInput } }
 
       const messages: LlmMessage[] = [
         ...history,
@@ -1099,9 +443,18 @@ function AiConversation({
           return
         }
       }
+      // đề nguồn dài + "soạn lại / đổi số liệu": chia nhiều lượt nhỏ (một lượt cả đề thì model hết token)
+      const plan = mode === 'exam' && intent === 'doc' && onApplyBlocks && pack.items.length === 1
+        ? planExamSplit(originalRequest, pack.items[0].text)
+        : null
+      // đề đang mở có nội dung mà chưa rõ thay hay thêm: hỏi trước khi tốn nhiều lượt
+      if (plan && revisingExam && !answeringAsk) {
+        patchTurn(() => ({ text: '', ask: SPLIT_ASK, askState: 'open', pending: false, log: undefined, askSourcePack: pack }))
+        return
+      }
       // bật Tìm trên web: một lượt tìm + tóm tắt nguồn (DeepSeek, tắt suy luận), rồi soạn như thường với phần tóm tắt trong prompt
       if (webSearch && intent === 'doc' && mode !== 'board') {
-        if (examSteps) logStart('Tìm trên web')
+        logStart('Tìm trên web')
         const found = await callLlm(
           [
             { role: 'user', content: [...turns.filter((t) => t.role === 'user').slice(-2).map((t) => t.text), text].filter(Boolean).join('\n') },
@@ -1110,172 +463,21 @@ function AiConversation({
         )
         mainTask.input.webFound = found.content.trim()
         patchTurn(() => ({ webSources: found.citations }))
-        if (examSteps) logSet((l) => closeLog(l, 'done', found.citations?.length ? `${found.citations.length} trang web` : undefined))
+        logSet((l) => closeLog(l, 'done', found.citations?.length ? `${found.citations.length} trang web` : undefined))
       }
-      if (editingSlides && onApplyEdits) {
-        logStart('Xem phần cần sửa')
-        const editTask = {
-          name: 'slide-sua',
-          input: { context: editContext ?? contextSummary ?? '', ...srcInput, webFound: mainTask.input.webFound },
-        }
-        const allowLegacy = /(?:thêm|chèn|vẽ|tạo)[^.\n]*(?:sơ đồ tư duy|slide trắc nghiệm|slide câu hỏi)/iu.test(text)
-        const comparison = /(?:đổi|chuyển)[^.\n]*slide\s*(?:số\s*)?(\d+)[^.\n]*?(bảng so sánh|so sánh)/iu.exec(text)
-        const read = (content: string) => {
-          const result = parseEditCommands(content)
-          const ops = result.ops.filter(op => op.op !== 'add_slide' ||
-            (isLayoutId(op.layout) && !checkSlide({ ...op.fields, layout: op.layout }, op.layout).errors.length))
-          if (comparison) {
-            const table = comparison[2].toLowerCase().startsWith('bảng')
-            const hasContent = ops.some(op => op.op === 'set_layout' && op.slide === Number(comparison[1]) &&
-              (table ? op.layout === 'table' && Array.isArray(op.fields?.rows)
-                : op.layout === 'comparison' && Array.isArray(op.fields?.left) && Array.isArray(op.fields?.right)))
-            if (!hasContent) return { ...result, ops: [] }
-          }
-          const legacy = allowLegacy && !ops.length ? parseAddedSlide(content) : undefined
-          return { ...result, ops: legacy ? [legacy] : ops }
-        }
-        const first = await callLlm(messages, { signal: controller.signal, reasoningEffort: AI_EFFORT.slide, task: editTask })
-        let result = read(first.content)
-        if (!result.ops.length && !result.needsData) {
-          const again = await callLlm([...messages, {
-            role: 'user', content: 'Chỉ trả lệnh hợp lệ để thực hiện đúng phần được yêu cầu trên bài đang mở.',
-          }], { signal: controller.signal, reasoningEffort: AI_EFFORT.slide, retryOf: first.receipt, task: editTask })
-          result = read(again.content)
-        }
-        controller.signal.throwIfAborted()
-        const lines = result.ops.length ? await onApplyEdits(result.ops, controller.signal) : []
-        const notice = result.needsData ? 'Bạn gửi số liệu hoặc nguồn để mình vẽ biểu đồ nhé.'
-          : lines.join('\n\n') || 'Mình chưa sửa được slide. Bạn thử gửi lại yêu cầu nhé.'
-        patchTurn(() => ({
-          text: notice,
-          pending: false,
-          intent: 'doc',
-          log: undefined,
-          ...(!lines.length && !result.needsData ? { retry: originalRequest } : {}),
-        }))
-        return
+      const ctx: TurnCtx = {
+        mode, text, intent, originalRequest, revisingExam, userTurn, botId, messages, mainTask, srcInput, controller,
+        setTurns, patchTurn, logSet, logStart, logPatch, contextSummary, documentDigest, editContext, slidePro,
+        onApplyBlocks, onApplySlides, onApplyEdits, onBoardOps,
       }
+      if (editingSlides && await runSlideEdit(ctx)) return
       // phần suy nghĩ hiện thẳng cho giáo viên xem → bắt suy nghĩ bằng tiếng Việt (model mặc định nghĩ tiếng Anh)
-      if (examSteps) {
-        mainTask.input.think = true
-      }
-      // nhật ký thật khi soạn đề (stream): Suy nghĩ (dòng suy luận chạy theo + số giây) → Viết đề (câu đang viết, N/T câu)
-      const totalQ = Number(text.match(/(\d+)\s*câu/i)?.[1]) || 0
-      // `as`: được gán trong callback nên TS không được thu hẹp kiểu về ''
-      let phase = '' as '' | 'think' | 'write'
-      let phaseAt = Date.now()
-      let liveAt = 0
-      const secs = () => {
-        const s = Math.max(1, Math.round((Date.now() - phaseAt) / 1000))
-        const h = Math.floor(s / 3600)
-        const m = Math.floor((s % 3600) / 60)
-        return h ? `${h} giờ${m ? ` ${m} phút` : ''}` : m ? `${m} phút${s % 60 ? ` ${s % 60} giây` : ''}` : `${s} giây`
-      }
-      const onProgress = examSteps
-        ? (p: LlmProgress) => {
-            // server gọi lại / chuyển nguồn AI: giáo viên không cần biết. Bước đang chạy quay về "Suy nghĩ" (đếm giây tiếp),
-            // không để nhật ký trống (nguồn mới có thể không stream suy luận)
-            if (p.phase === 'retry') {
-              if (phase !== 'think') phaseAt = Date.now()
-              phase = 'think'
-              logSet((l) => [...l.filter((s) => s.state !== 'active' && s.label !== 'Suy nghĩ'), { label: 'Suy nghĩ', state: 'active' }])
-              return
-            }
-            if (p.phase === 'think') {
-              if (phase !== 'think') {
-                phase = 'think'
-                phaseAt = Date.now()
-                logStart('Suy nghĩ')
-              }
-              if (Date.now() - liveAt < 200) return
-              liveAt = Date.now()
-              logPatch({ note: secs(), live: tailLine(p.thinking, 140) || undefined })
-              return
-            }
-            if (phase !== 'write') {
-              // tính số giây TRƯỚC khi đổi phaseAt (hàm cập nhật state chạy sau)
-              const took = secs()
-              if (phase === 'think') logSet((l) => closeLog(l, 'done', took))
-              phase = 'write'
-              phaseAt = Date.now()
-              logStart(intent !== 'doc' ? 'Trả lời' : mode === 'slide' ? 'Lập dàn ý' : mode === 'board' ? 'Chuẩn bị nét vẽ' : 'Viết đề')
-            }
-            if (Date.now() - liveAt < 200) return
-            liveAt = Date.now()
-            const n = (p.text.match(/"type"\s*:\s*"question"/g) ?? []).length
-            const stem = [...p.text.matchAll(/"text"\s*:\s*"((?:[^"\\]|\\.)*)/g)].at(-1)?.[1]
-            logPatch({
-              note: n ? (totalQ ? `${Math.min(n, totalQ)}/${totalQ} câu` : `${n} câu`) : undefined,
-              live: stem ? tailLine(stem.replace(/\\n/g, ' ').replace(/\\(.)/g, '$1'), 110) : undefined,
-            })
-          }
-        : undefined
-      // đề nguồn dài + "soạn lại / đổi số liệu": chia nhiều lượt nhỏ (một lượt cả đề thì model hết token)
-      const split =
-        mode === 'exam' && intent === 'doc' && onApplyBlocks && pack.items.length === 1 && !revisingExam
-          ? planExamSplit(originalRequest, pack.items[0].text)
-          : null
-      if (split) {
-        const parts: ChunkJson[] = []
-        const skipped: number[] = []
-        const figsOf: boolean[][] = []
-        const splitTask = { ...mainTask, input: { ...mainTask.input, ask: false } }
-        const lastMsg = messages[messages.length - 1]
-        // nhật ký như một lượt thường: Suy nghĩ → Viết đề (N/T câu); suy nghĩ của các lượt sau chạy ngay trong bước Viết đề
-        const total = split.reduce((s, c) => s + c.count, 0)
-        let doneQ = 0
-        const chunkProgress = examSteps
-          ? (p: LlmProgress) => {
-              if (p.phase === 'retry') return
-              if (p.phase === 'think' && phase !== 'write') return onProgress!(p)
-              if (phase !== 'write') onProgress!({ ...p, phase: 'write', text: '' })
-              if (Date.now() - liveAt < 200) return
-              liveAt = Date.now()
-              const n = (p.text.match(/"type"\s*:\s*"(?:question|essay)"/g) ?? []).length
-              const stem = [...p.text.matchAll(/"text"\s*:\s*"((?:[^"\\]|\\.)*)/g)].at(-1)?.[1]
-              const live = p.phase === 'think' ? tailLine(p.thinking, 140) : stem ? tailLine(stem.replace(/\\n/g, ' ').replace(/\\(.)/g, '$1'), 110) : ''
-              logPatch({ note: `${Math.min(doneQ + n, total)}/${total} câu`, live: live || undefined })
-            }
-          : undefined
-        for (let i = 0; i < split.length; i++) {
-          controller.signal.throwIfAborted()
-          const msgs: LlmMessage[] = [...messages.slice(0, -1), { role: 'user', content: lastMsg.content + split[i].note }]
-          const opts = { signal: controller.signal, reasoningEffort: AI_EFFORT.exam, task: splitTask, onProgress: chunkProgress }
-          let r = await callLlm(msgs, opts)
-          let part = parseChunk(r.content, split[i])
-          if (!part) {
-            controller.signal.throwIfAborted()
-            r = await callLlm(msgs, { ...opts, retryOf: r.receipt, strong: true })
-            part = parseChunk(r.content, split[i])
-          }
-          if (part) {
-            parts.push(part)
-            figsOf.push(split[i].figs)
-          } else skipped.push(i + 1)
-          doneQ += split[i].count
-        }
-        controller.signal.throwIfAborted()
-        if (!parts.length) throw new Error('AI không soạn được đề, bạn thử lại nhé.')
-        logSet((l) => closeLog(l, 'done', `${doneQ - skipped.reduce((s, k) => s + split[k - 1].count, 0)} câu`))
-        logStart('Đưa vào đề')
-        await new Promise((r) => setTimeout(r, 350))
-        const result = onApplyBlocks!(mergeChunks(parts, figsOf, !skipped.length), true)
-        const ok = !!result && !result.failed
-        const missing = skipped.map((k) => split[k - 1].sourceRange)
-        const note = missing.length ? `\n\nCòn thiếu ${missing.join('; ')} trong đề mẫu.` : ''
-        if (ok) rememberAiTurn({ mode, request: userTurn.text, reply: result.text, context: documentDigest })
-        patchTurn((t) => ({
-          text: (result?.text ?? '') + note,
-          pending: false,
-          intent: 'doc',
-          ...(!ok && userTurn.text ? { retry: userTurn.text } : {}),
-          ...(t.log ? { log: closeLog(t.log, ok ? 'done' : 'failed') } : {}),
-        }))
-        return
-      }
-      onProgress?.({ phase: 'think', thought: 0, thinking: '', text: '' })
+      mainTask.input.think = true
+      const live = createLiveLog(ctx)
+      if (plan && !revisingExam) return await runExamSplit(ctx, plan, live)
+      live.onProgress({ phase: 'think', thought: 0, thinking: '', text: '' })
       // model chưa gửi gì (đang xếp hàng / suy luận không stream): số giây vẫn chạy
-      const ticker = examSteps ? setInterval(() => phase === 'think' && logPatch({ note: secs() }), 1000) : undefined
+      const ticker = setInterval(() => live.phase() === 'think' && logPatch({ note: live.secs() }), 1000)
       let res: Awaited<ReturnType<typeof callLlm>>
       try {
         res = await callLlm(messages, {
@@ -1283,7 +485,7 @@ function AiConversation({
           // Soạn slide trả JSON có schema rõ ràng; reasoning 'max' chỉ làm lượt
           // dàn ý kéo dài 30–60s (dễ vượt timeout proxy) mà không nội dung hơn.
           reasoningEffort: mode === 'slide' ? AI_EFFORT.slide : AI_EFFORT.exam,
-          onProgress,
+          onProgress: live.onProgress,
           strong: opt.strong,
           task: mainTask,
         })
@@ -1295,148 +497,20 @@ function AiConversation({
         patchTurn(() => ({ text: ask.intro || 'Mình cần biết thêm vài điều trước khi soạn.', ask, askState: 'open', intent: 'doc', pending: false, log: undefined, askSourcePack: pack }))
         return
       }
-      if (examSteps) {
-        const n = (res.content.match(/"type"\s*:\s*"question"/g) ?? []).length
-        const note = phase === 'write' ? (n ? `${n} câu` : undefined) : phase === 'think' ? secs() : undefined
-        logSet((l) => closeLog(l, 'done', note))
-        // lượt hỏi chuyện không kèm sửa đề thì không có bước này
-        // slide: thẻ dàn ý hiện ngay bên dưới nên không cần bước này
-        const apply = mode === 'board' ? /"ops"\s*:/.test(res.content)
-          : mode === 'exam' && (intent === 'doc' || (isExamMutationReply(res.content) && !chatOnly(originalRequest)))
-        if (apply) logStart(mode === 'board' ? 'Vẽ lên bảng' : 'Đưa vào đề')
-        // nhường một khung hình để bước kịp hiện trước khi áp (việc áp chạy đồng bộ)
-        if (apply) await new Promise((r) => setTimeout(r, 350))
-      }
+      const n = (res.content.match(/"type"\s*:\s*"question"/g) ?? []).length
+      const note = live.phase() === 'write' ? (n ? `${n} câu` : undefined) : live.phase() === 'think' ? live.secs() : undefined
+      logSet((l) => closeLog(l, 'done', note))
+      // lượt hỏi chuyện không kèm sửa đề thì không có bước này
+      // slide: thẻ dàn ý hiện ngay bên dưới nên không cần bước này
+      const apply = mode === 'board' ? /"ops"\s*:/.test(res.content)
+        : mode === 'exam' && startsWithJson(res.content) && !chatOnly(originalRequest)
+      if (apply) logStart(mode === 'board' ? 'Vẽ lên bảng' : 'Đưa vào đề')
+      // nhường một khung hình để bước kịp hiện trước khi áp (việc áp chạy đồng bộ)
+      if (apply) await new Promise((r) => setTimeout(r, 350))
       controller.signal.throwIfAborted()
-      if (mode === 'board') {
-        let say = res.content
-        let lines: string[] = []
-        let appliedOps = false
-        if (onBoardOps && /"ops"\s*:/.test(res.content)) {
-          try {
-            const raw = extractJson(res.content) as { say?: unknown; ops?: unknown }
-            if (Array.isArray(raw.ops)) {
-              appliedOps = true
-              lines = onBoardOps(raw.ops.filter((o): o is Record<string, unknown> => !!o && typeof o === 'object'))
-              say = typeof raw.say === 'string' ? raw.say : ''
-            }
-          } catch {
-            say = 'AI trả lệnh vẽ không đọc được, bạn thử nói lại ngắn hơn nhé.'
-          }
-        }
-        const text = [say.trim(), lines.length ? lines.map((l) => `• ${l}`).join('\n') : '', lines.length ? 'Bấm Ctrl+Z trên bảng nếu muốn hoàn tác.' : '']
-          .filter(Boolean).join('\n\n')
-        patchTurn((t) => ({ text, pending: false, intent: appliedOps ? 'doc' : 'chat', ...(t.log ? { log: appliedOps ? closeLog(t.log, 'done') : undefined } : {}) }))
-        return
-      }
-      if (mode === 'slide') {
-        // Lượt lập dàn ý: chỉ hiện thẻ chờ duyệt, chưa chạm vào deck.
-        let plan = slideDoc ? parseDeckPlan(res.content) : null
-        if (slideDoc && !plan) {
-          // Model thỉnh thoảng trả JSON hỏng/cụt: cho đúng một lượt sửa trước khi bỏ cuộc.
-          const again = await callLlm(
-            [
-              ...messages,
-              { role: 'assistant', content: res.content },
-              {
-                role: 'user',
-                content:
-                  'JSON dàn ý vừa trả không đọc được (sai dấu hoặc bị cắt). Trả lại DUY NHẤT một JSON hợp lệ, ' +
-                  'ngắn gọn hơn: mỗi "brief" ≤ 100 ký tự, không xuống dòng trong chuỗi.',
-              },
-            ],
-            { signal: controller.signal, reasoningEffort: AI_EFFORT.slide, retryOf: res.receipt, task: mainTask },
-          )
-          plan = parseDeckPlan(again.content)
-          controller.signal.throwIfAborted()
-        }
-        if (plan && slidePro) plan = proPlan(plan)
-        if (plan) {
-          setTurns((t) =>
-            t.map((turn) =>
-              turn.id === botId
-                ? {
-                    ...turn,
-                    text: `Dàn ý ${plan.slides.length} slide đã sẵn sàng. Xem và duyệt bên dưới để mình viết nội dung.`,
-                    plan,
-                    planState: 'pending',
-                    pending: false,
-                    ...(turn.log ? { log: closeLog(turn.log, 'done') } : {}),
-                  }
-                : turn,
-            ),
-          )
-          return
-        }
-        const structured = /^\s*(?:```(?:json)?\s*)?[{\[]/i.test(res.content) || /"(?:slides|commands)"\s*:/.test(res.content)
-        const added = structured ? await onApplySlides?.(res.content) ?? 0 : 0
-        const failed = !added && (slideDoc || structured)
-        patchTurn(turn => ({
-          text: added ? `Mình đã thêm ${added} slide.` : failed ? 'Mình chưa tạo được slide. Bạn thử lại nhé.' : res.content,
-          pending: false,
-          intent: added || slideDoc ? 'doc' : 'chat',
-          ...(failed ? { retry: originalRequest } : {}),
-          log: turn.log && (added || failed) ? closeLog(turn.log, failed ? 'failed' : 'done') : undefined,
-        }))
-      } else {
-        // JSON đề đã được áp vào tài liệu → hiện câu tóm tắt thay vì JSON thô;
-        // câu trả lời văn bản thường (không sửa tài liệu) giữ nguyên.
-        // loại lượt chỉ là đoán theo từ khoá: AI trả khác loại đã đoán thì vẫn nhận, không báo lỗi
-        const guessedChat = intent === 'chat' && isExamMutationReply(res.content)
-        // đoán là hỏi đáp mà AI sửa đề → áp vào đề, nhưng không cho thay cả đề đang có
-        const asEdit = intent === 'doc' || (guessedChat && !chatOnly(originalRequest))
-        const allowReplace = intent === 'doc' ? !revisingExam : !documentDigest || rewritesWholeExam(originalRequest)
-        const apply = (content: string) => onApplyBlocks?.(content, allowReplace, originalRequest)
-        let reply = res.content
-        // giáo viên bảo chỉ xem trong chat mà AI vẫn trả JSON: xin lại bằng chữ một lần
-        if (guessedChat && !asEdit) {
-          const again = await callLlm([...messages, {
-            role: 'user', content: 'Trả lời bằng chữ ngay trong chat, không trả JSON, không sửa đề.',
-          }], { signal: controller.signal, reasoningEffort: AI_EFFORT.exam, retryOf: res.receipt, task: mainTask })
-          controller.signal.throwIfAborted()
-          reply = again.content
-        }
-        const invalidChat = !asEdit && isExamMutationReply(reply)
-        const plainAnswer = !!res.content.trim() && !/^\s*(?:```(?:json)?\s*)?\{/i.test(res.content)
-        let result = asEdit && !plainAnswer ? apply(res.content) : undefined
-        // đề trả JSON hỏng (thường bị cắt cụt): hoàn token lượt đó và soạn lại đúng một lần
-        if (result?.failed && result.retryable !== false && onApplyBlocks) {
-          // gọi lại bằng model mạnh hơn (lượt đầu model nhanh không làm được)
-          const again = await callLlm([...messages, {
-            role: 'user',
-            content: 'Kết quả trước chưa đưa được vào đề. Hãy trả đủ thao tác hợp lệ với đúng id và nội dung, không chỉ báo đã hoàn tất.',
-          }], { signal: controller.signal, reasoningEffort: AI_EFFORT.exam, retryOf: res.receipt, strong: true, task: mainTask })
-          controller.signal.throwIfAborted()
-          result = apply(again.content) ?? result
-        }
-        // không áp được: hiện trong chat (kèm phần AI viết nếu đọc được) + nút Thử lại
-        const failed = !!result?.failed || invalidChat
-        const summary = result && !failed ? result.text : undefined
-        const text = invalidChat ? 'AI chưa trả lời được câu hỏi này.' : result?.text ?? reply
-        if (failed && import.meta.env.DEV) console.warn('[AI] JSON không áp được:', res.content)
-        if (summary) rememberAiTurn({ mode, request: userTurn.text, reply: summary, context: documentDigest })
-        setTurns((t) =>
-          t.map((turn) =>
-            turn.id === botId
-              ? {
-                  ...turn,
-                  text,
-                  pending: false,
-                  intent: result ? 'doc' : 'chat',
-                  ...(failed && originalRequest ? { retry: originalRequest } : {}),
-                  // chỉ có bước khi là lượt soạn đề; trả lời thường (không JSON) thì bỏ danh sách bước
-                  ...(turn.log
-                    ? summary
-                      ? { log: closeLog(turn.log, 'done') }
-                      : result?.failed
-                        ? { log: closeLog(turn.log, 'failed') }
-                        : { log: undefined }
-                    : {}),
-                }
-              : turn,
-          ),
-        )
-      }
+      if (mode === 'board') return finishBoard(ctx, res)
+      if (mode === 'slide') return await finishSlide(ctx, res)
+      await finishExam(ctx, res)
     } catch (err) {
       const aborted = (err as Error)?.name === 'AbortError'
       setTurns((t) =>
@@ -1470,177 +544,8 @@ function AiConversation({
 
   /** Lượt 2 (chặng 26b): duyệt dàn ý → sinh từng slide, chèn dần, sửa 1 lần. */
   const generateFromPlan = useCallback(
-    async (planTurnId: string, plan: DeckPlan) => {
-      // abortRef chặn double-click trước khi `busy` kịp render
-      if (busy || abortRef.current) return
-      const botId = `a${Date.now()}`
-      const total = plan.slides.length
-      setTurns((t) => [
-        ...t.map((turn) =>
-          turn.id === planTurnId ? { ...turn, planState: 'approved' as const } : turn,
-        ),
-        { id: `u${Date.now()}-plan`, role: 'user', text: 'Tạo slide từ dàn ý này.' },
-        {
-          id: botId,
-          role: 'assistant',
-          text: '',
-          pending: true,
-          intent: 'doc',
-          progress: { done: 0, total },
-        },
-      ])
-      setBusy(true)
-      const leftAtStart = leftTokens()
-      const controller = new AbortController()
-      abortRef.current = controller
-      onPendingSlides?.({ done: 0, total })
-
-      // undefined = chưa xong · null = bỏ (lỗi/sửa không được) · object = đã qua kiểm tra
-      const results: Array<AiSlidePayload | null | undefined> = new Array(total)
-      const collected: AiSlidePayload[] = []
-      let nextIndex = 0
-      /** slide kế tiếp được chèn — giữ đúng thứ tự dàn ý dù trang khác xong trước */
-      let cursor = 0
-      let skipped = 0
-      let quotaError: AiQuotaError | undefined
-      const usedGraphics = new Set<string>()
-
-      /** lô đang chạy (stream): số trang đã viết trong lô, theo chỉ số trang đầu lô */
-      const inFlight = new Map<number, number>()
-      let live: string | undefined
-      let liveAt = 0
-      const progress = (current?: string) => {
-        // editor vẽ số ô skeleton còn lại = total - cursor (kể cả trang bị bỏ)
-        onPendingSlides?.({ done: cursor, total })
-        const written = Math.min(total, results.filter((r) => r !== undefined).length + [...inFlight.values()].reduce((a, b) => a + b, 0))
-        setTurns((t) =>
-          t.map((turn) =>
-            turn.id === botId
-              ? { ...turn, progress: { done: cursor, total, current: current ?? turn.progress?.current, written, live } }
-              : turn,
-          ),
-        )
-      }
-      const batchProgress = (start: number, size: number) => (p: LlmProgress) => {
-        if (p.phase === 'retry') {
-          inFlight.set(start, 0)
-          live = 'Lỗi kết nối, đang thử lại…'
-          return progress()
-        }
-        // trang đã viết xong trong lô = số trang đã sang trang kế (mỗi trang có "layout")
-        const n = Math.max(0, (p.text.match(/"layout"\s*:/g) ?? []).length - 1)
-        inFlight.set(start, Math.min(size, n))
-        if (Date.now() - liveAt < 250) return
-        liveAt = Date.now()
-        if (p.phase === 'think') live = tailLine(p.thinking, 140) || undefined
-        else {
-          const title = [...p.text.matchAll(/"title"\s*:\s*"((?:[^"\\]|\\.)*)"/g)].at(-1)?.[1]
-          live = title ? `Đang viết: ${title.replace(/\\(.)/g, '$1')}` : undefined
-        }
-        progress()
-      }
-
-      const landReady = async () => {
-        while (!controller.signal.aborted && cursor < total && results[cursor] !== undefined) {
-          const raw = results[cursor]
-          const page = raw ? dropRepeatedGraphic(raw, usedGraphics) : raw
-          if (page) {
-            if (onAppendSlide) await onAppendSlide(page, plan)
-            else collected.push(page)
-          } else {
-            skipped++
-          }
-          cursor++
-        }
-        progress()
-      }
-
-      let landing = Promise.resolve()
-      const worker = async () => {
-        while (!controller.signal.aborted && !quotaError) {
-          const start = nextIndex
-          if (start >= total) return
-          nextIndex = Math.min(total, start + SLIDE_BATCH)
-          const indices = Array.from({ length: nextIndex - start }, (_, k) => start + k)
-          progress(plan.slides[start].title)
-          try {
-            const pages = await generateSlideBatch(plan, indices, controller.signal, batchProgress(start, indices.length), slidePro)
-            indices.forEach((index, k) => { results[index] = pages[k] })
-            inFlight.delete(start)
-          } catch (err) {
-            if (controller.signal.aborted) return
-            if (import.meta.env.DEV) console.warn('[AI] lỗi khi tạo slide', err)
-            if (err instanceof AiQuotaError) quotaError ??= err
-            indices.forEach((index) => { results[index] = null })
-            inFlight.delete(start)
-          }
-          landing = landing.then(landReady)
-          await landing
-        }
-      }
-
-      try {
-        // hai luồng song song: đủ nhanh, vẫn tránh dồn request lên provider
-        await Promise.all([worker(), worker()])
-
-        if (controller.signal.aborted) {
-          setTurns((t) =>
-            t.map((turn) =>
-              turn.id === botId
-                ? { ...turn, text: `Đã dừng sau ${cursor}/${total} slide.`, pending: false }
-                : turn,
-            ),
-          )
-          return
-        }
-
-        const added = onAppendSlide ? cursor - skipped : collected.length
-          ? await onApplySlides?.(JSON.stringify({ title: plan.title, slides: collected }), plan) ?? 0 : 0
-        skipped = total - added
-        if (quotaError) throw quotaError
-        const message = [
-          added
-            ? `Đã thêm ${added} slide vào bài trình bày.`
-            : 'Không thêm được slide nào.',
-          skipped
-            ? `Còn ${skipped} slide chưa tạo được.`
-            : '',
-        ]
-          .filter(Boolean)
-          .join(' ')
-        setTurns((t) =>
-          t.map((turn) =>
-            turn.id === botId
-              ? { ...turn, text: message, pending: false, progress: undefined }
-              : turn,
-          ),
-        )
-      } catch (err) {
-        const aborted = (err as Error)?.name === 'AbortError'
-        setTurns((t) =>
-          t.map((turn) =>
-            turn.id === botId
-              ? {
-                  ...turn,
-                  text: '',
-                  pending: false,
-                  progress: undefined,
-                  error: aborted
-                    ? 'Đã dừng.'
-                    : (err as Error)?.message || 'Không gọi được AI.',
-                  ...(err instanceof AiQuotaError ? { topup: true } : {}),
-                }
-              : turn,
-          ),
-        )
-      } finally {
-        const cost = spentSince(leftAtStart)
-        if (cost) setTurns((t) => t.map((turn) => (turn.id === botId ? { ...turn, cost } : turn)))
-        setBusy(false)
-        abortRef.current = null
-        onPendingSlides?.(null)
-      }
-    },
+    (planTurnId: string, plan: DeckPlan) =>
+      generateDeck(planTurnId, plan, { busy, abortRef, setTurns, setBusy, slidePro, onAppendSlide, onApplySlides, onPendingSlides }),
     [busy, onAppendSlide, onApplySlides, onPendingSlides, slidePro],
   )
 
@@ -1651,6 +556,13 @@ function AiConversation({
       ),
     )
   }, [])
+
+  const chooseReplace = (turn: ChatTurn, accept: boolean) => {
+    if (!turn.replace) return
+    const result = accept ? onApplyBlocks?.(turn.replace.content, true, turn.replace.request) : undefined
+    const text = accept ? result?.text ?? turn.text : 'Đã giữ đề cũ.'
+    setTurns((ts) => ts.map((t) => (t.id === turn.id ? { ...t, text, replace: undefined } : t)))
+  }
 
   const onKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -1788,6 +700,12 @@ function AiConversation({
                   {turn.topup ? <TopupLink className="ml-1.5 font-semibold underline" /> : null}
                 </div>
               ) : null}
+              {turn.replace && !busy && turn.id === turns[turns.length - 1]?.id ? (
+                <div className="flex gap-2">
+                  <button type="button" className="ai-retry" onClick={() => chooseReplace(turn, true)}>Thay cả đề</button>
+                  <button type="button" className="ai-retry" onClick={() => chooseReplace(turn, false)}>Giữ đề cũ</button>
+                </div>
+              ) : null}
               {turn.retry && !busy && turn.id === turns[turns.length - 1]?.id ? (
                 <button type="button" className="ai-retry" onClick={() => void send(turn.retry, { strong: true })}>
                   <RotateCcw size={13} /> Thử lại
@@ -1848,7 +766,7 @@ function AiConversation({
         <AiAskPanel
           key={openAsk.id}
           ask={openAsk.ask}
-          figure={mode !== 'slide'}
+          figure={mode !== 'slide' && !openAsk.ask.noFigure}
           request={turns.filter((t) => t.role === 'user').map((t) => t.text).join(' ')}
           onSubmit={answerAsk}
           onSkip={() => answerAsk(mode === 'exam' && documentDigest
