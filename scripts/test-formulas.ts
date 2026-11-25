@@ -7,7 +7,7 @@ import 'katex/contrib/mhchem'
 const ROOT = process.cwd()
 
 const CONTROL_CHAR_RE = /[\x07-\x09\x0b-\x1f]/
-const MISSING_SLASH_RE = /(?<![\\a-zA-Z])(cdot|sqrt|frac|approx|Rightarrow|Omega|mathrm|piint|pileft|tanwidehat)(?![a-zA-Z])|(?<![\\a-zA-Z])text\{|(?<![\\a-zA-Z0-9])pi(?![a-zA-Z0-9])/
+const MISSING_SLASH_RE = /(?<![\\a-zA-Z])(cdot|sqrt|frac|approx|circ|Rightarrow|Omega|mathrm|piint|pileft|tanwidehat)(?![a-zA-Z])|(?<![\\a-zA-Z])text\{|(?<![\\a-zA-Z0-9])pi(?![a-zA-Z0-9])/
 const FORMULA_RE = /\$\$([\s\S]*?)\$\$|\$([^$\n]+?)\$/g
 
 interface FormulaError {

@@ -363,7 +363,7 @@
             "Định luật khối lượng tác dụng và tốc độ phản ứng (Lớp 10 Chương 6)",
             "Biến thiên enthalpy $\\Delta_r H^\\circ_{298}$ (để xác định phản ứng tỏa hay thu nhiệt)",
             "Thuyết Brønsted - Lowry: Acid là chất cho proton ($H^+$), Base là chất nhận proton ($H^+$)",
-            "Khái niệm pH: $pH = -\\log[H^+]$, $[H^+][OH^-] = 10^{-14}$ ở $25^circ\\text{C}$",
+            "Khái niệm pH: $pH = -\\log[H^+]$, $[H^+][OH^-] = 10^{-14}$ ở $25^\\circ\\text{C}$",
             "Toán 11 HK2: Phép tính logarit thập phân $\\log_{10}$ (Lưu ý: Hoá học lớp 11 học pH ở HK1, Toán 11 học Logarit ở HK2, nên trong môn Hoá giáo viên giới thiệu quy ước tính $pH = -\\log[H^+]$ bằng bấm máy tính Casio)"
           ],
           "chat_va_phan_ung": [
