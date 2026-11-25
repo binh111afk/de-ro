@@ -5,7 +5,7 @@
  */
 
 import type { TableBlock } from '../data/docTypes'
-import { svgDataUrl } from './plot'
+import { svgDataUrl } from './plot.js'
 import { mathjax } from 'mathjax-full/js/mathjax.js'
 import { liteAdaptor } from 'mathjax-full/js/adaptors/liteAdaptor.js'
 import { RegisterHTMLHandler } from 'mathjax-full/js/handlers/html.js'

@@ -8,7 +8,7 @@
  * server bọc chữ nổi bật bằng U+E000 hoặc U+E011..U+E04F tới U+E001), hoặc ký hiệu * ✓ ✔ (*), [B].
  */
 import type { Question, QuestionType } from '@/data/types'
-import { formatTrueFalse, normalizeShort, parseTrueFalse } from './grading'
+import { formatTrueFalse, normalizeShort, parseTrueFalse } from './grading.js'
 
 const DEFAULT_POINTS: Record<string, number> = { 'trac-nghiem': 0.25, 'dung-sai': 1, 'tra-loi-ngan': 0.25, 'tu-luan': 1 }
 const qid = () => Math.random().toString(36).slice(2, 10)

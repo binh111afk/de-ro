@@ -81,7 +81,8 @@
     "test:pricing": "tsx scripts/test-pricing.mjs",
     "test:welcome-gift": "tsx --tsconfig tsconfig.app.json scripts/test-welcome-gift.mjs",
     "test:formulas": "tsx --tsconfig tsconfig.app.json scripts/test-formulas.ts",
-    "test:exam-code": "tsx --tsconfig tsconfig.app.json scripts/test-exam-code.ts"
+    "test:exam-code": "tsx --tsconfig tsconfig.app.json scripts/test-exam-code.ts",
+    "test:server-imports": "node scripts/test-server-imports.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^1.6.0",

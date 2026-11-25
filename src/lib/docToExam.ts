@@ -1,10 +1,10 @@
-import { isCodeSpan, splitExamInline } from './examCode'
+import { isCodeSpan, splitExamInline } from './examCode.js'
 import type { EssayBlock, ExamBlock, ExamDoc, QuestionBlock, RichText, Span, TableBlock } from '@/data/docTypes'
 import type { Exam, Question, QuestionImage, Section, Subject } from '@/data/types'
-import { mathTableImageSrc, renderExamTableSvg } from './table'
-import { svgDataUrl } from './plot'
+import { mathTableImageSrc, renderExamTableSvg } from './table.js'
+import { svgDataUrl } from './plot.js'
 import { formatTrueFalse, normalizeShort, parseTrueFalse } from './grading.js'
-import { parseExamText } from './parseExamText'
+import { parseExamText } from './parseExamText.js'
 
 /**
  * Chữ của một đoạn rich text cho đề tương tác: giữ công thức `$…$`, đậm/nghiêng/gạch chân
