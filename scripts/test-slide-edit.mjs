@@ -4,7 +4,7 @@
  */
 import assert from 'node:assert/strict'
 import { sanitizeSlide, slideFromAi } from '../src/lib/slideAi.ts'
-import { applyDeckDesign, applyEdits, parseAddedSlide, parseEditCommands } from '../src/lib/slideEdit.ts'
+import { applyDeckDesign, applyEdits, describeSlide, parseAddedSlide, parseEditCommands } from '../src/lib/slideEdit.ts'
 import { designById } from '../src/lib/slideDesigns.ts'
 import { contentFromSlide } from '../src/lib/slideLayouts.ts'
 import { textBoxHeight } from '../src/lib/slideMeasure.ts'
@@ -57,6 +57,61 @@ const deck = () => ({
   assert.equal(targeted.deck.slides[1].transition, 'fade')
   assert.equal(targeted.deck.slides[3].layout, 'quiz')
   assert.strictEqual(targeted.deck.slides[0], original.slides[0])
+}
+
+// --- đánh số theo bài trước khi áp, giữ phần người dùng tự thêm, phạm vi từng slide
+{
+  const titles = (d) => d.slides.map((s) => contentFromSlide(s).title)
+  const four = () => ({ ...deck(), slides: ['A', 'B', 'C', 'D'].map((t) => slideFromAi(page(t), theme)) })
+  const split = applyEdits(four(), [
+    { op: 'edit_slide', slide: 2, fields: { title: 'B1' } },
+    { op: 'add_slide', layout: 'bullets', fields: { title: 'B2', bullets: ['x'] }, after: 2 },
+    { op: 'add_slide', layout: 'bullets', fields: { title: 'B3', bullets: ['y'] }, after: 2 },
+    { op: 'edit_slide', slide: 3, fields: { title: 'C1' } },
+    { op: 'delete_slides', slides: [4] },
+  ])
+  assert.deepEqual(titles(split.deck), ['A', 'B1', 'B2', 'B3', 'C1'])
+
+  const failed = applyEdits(four(), [
+    { op: 'edit_slide', slide: 2, fields: { bullets: ['còn một ý'] } },
+    { op: 'add_slide', layout: 'bullets', fields: { title: 'Phần 2', bullets: Array(9).fill('ý') }, after: 2 },
+  ])
+  assert.equal(failed.changed, false, 'tách hỏng thì giữ nguyên slide gốc')
+  assert.equal(failed.rejected.length, 1)
+
+  const mine = four()
+  mine.slides[0].elements.push({ id: 'u1', type: 'shape', shape: 'star', x: 1, y: 1, w: 5, h: 5 })
+  Object.assign(mine.slides[0].elements.find((e) => e.id === 'title'), { x: 30, textColor: '#ff0000' })
+  mine.slides[0].elements.find((e) => e.id === 'bullets').text = Array(8).fill('Một ý khá dài do người dùng tự gõ vào slide').join('\n')
+  const kept = applyEdits(mine, [{ op: 'edit_slide', slide: 1, fields: { title: 'Mới' } }]).deck.slides[0]
+  const heading = kept.elements.find((e) => e.id === 'title')
+  assert.deepEqual([heading.text, heading.x, heading.textColor], ['Mới', 30, '#ff0000'])
+  assert.ok(kept.elements.some((e) => e.id === 'u1'), 'hình tự thêm còn nguyên')
+  assert.equal(kept.elements.find((e) => e.id === 'bullets').text.split('\n').length, 8, 'field không sửa giữ nguyên văn')
+  const relayout = applyEdits(mine, [{ op: 'set_layout', slide: 1, layout: 'statement', fields: { body: 'Một câu' } }])
+  assert.ok(relayout.deck.slides[0].elements.some((e) => e.id === 'u1'), 'đổi bố cục vẫn giữ hình tự thêm')
+
+  const one = four()
+  const styled = applyEdits(one, parseEditCommands(JSON.stringify({ action: 'edit', commands: [
+    { op: 'set_background', color: '#0f172a', slides: [3] },
+    { op: 'edit_element', slide: 2, id: 'title', scale: 1.25, color: '#ff0000' },
+  ] })).ops)
+  assert.strictEqual(styled.deck.slides[0], one.slides[0])
+  assert.equal(styled.deck.slides[2].background, '#0f172a')
+  assert.equal(styled.deck.theme, one.theme, 'đổi một slide không đổi bộ màu cả bài')
+  assert.equal(styled.deck.slides[1].elements.find((e) => e.id === 'title').textColor, '#ff0000')
+
+  const free = four()
+  free.slides[0] = { id: 'f', background: '#fff', elements: [{ id: 'k1', type: 'text', x: 1, y: 1, w: 50, h: 10, text: 'cũ' }] }
+  assert.match(describeSlide(free.slides[0], 0), /k1\(chữ "cũ"\)/)
+  assert.equal(applyEdits(free, [{ op: 'edit_element', slide: 1, id: 'k1', text: 'mới' }]).deck.slides[0].elements[0].text, 'mới')
+
+  const bare = applyEdits(four(), [{ op: 'set_layout', slide: 1, layout: 'comparison' }])
+  assert.equal(bare.changed, false)
+  assert.equal(bare.rejected.length, 1)
+  const many = { action: 'edit', commands: Array.from({ length: 16 }, (_, i) => ({ op: 'set_notes', slide: i + 1, notes: 'n' })) }
+  assert.equal(parseEditCommands(JSON.stringify(many)).ops.length, 16)
+  assert.equal(parseEditCommands('{"action":"none","say":"Chưa làm được."}').say, 'Chưa làm được.')
 }
 
 // --- parse
