@@ -174,6 +174,10 @@ function providerConfig() {
     anthropicApiKey: process.env.ANTHROPIC_API_KEY?.trim() || '',
     anthropicModel: process.env.ANTHROPIC_MODEL?.trim() || 'claude-opus-5-5',
     anthropicBaseURL: (process.env.ANTHROPIC_BASE_URL?.trim() || 'https://api.anthropic.com').replace(/\/+$/, ''),
+    // GLM chính hãng (Z.ai, chuẩn OpenAI) — ưu tiên 2, ngay sau DeepSeek. GLM 5.3 flash bắt buộc suy luận, không tắt được
+    glmApiKey: process.env.GLM_API_KEY?.trim() || '',
+    glmBaseURL: assertAllowedUrl((process.env.GLM_BASE_URL?.trim() || 'https://api.z.ai/api/paas/v4').replace(/\/+$/, '')).toString().replace(/\/+$/, ''),
+    glmModel: process.env.GLM_MODEL?.trim() || 'glm-5.3-flash',
     // DeepSeek chính hãng (chuẩn OpenAI) — dự phòng 1, thay Mercury (Inception đã đóng cổng API). Có cache prompt: phần trùng chỉ ~1/10 giá
     deepseekApiKey: process.env.DEEPSEEK_API_KEY?.trim() || '',
     deepseekBaseURL: assertAllowedUrl((process.env.DEEPSEEK_BASE_URL?.trim() || 'https://api.deepseek.com').replace(/\/+$/, '')).toString().replace(/\/+$/, ''),
@@ -205,6 +209,9 @@ async function liveConfig() {
     deepseekApiKey: o.deepseek?.apiKey || p.deepseekApiKey,
     deepseekBaseURL: o.deepseek?.baseUrl || p.deepseekBaseURL,
     deepseekModel: o.deepseek?.model || p.deepseekModel,
+    glmApiKey: o.glm?.apiKey || p.glmApiKey,
+    glmBaseURL: o.glm?.baseUrl || p.glmBaseURL,
+    glmModel: o.glm?.model || p.glmModel,
     fostaApiKey: o.fosta?.apiKey || p.fostaApiKey,
     fostaBaseURL: o.fosta?.baseUrl || p.fostaBaseURL,
     fostaModel: o.fosta?.model || p.fostaModel,
@@ -224,6 +231,7 @@ function pingTargets(p: ReturnType<typeof providerConfig>) {
   const list: Array<{ provider: string; model: string; key: string; url: string; opencode?: boolean; anthropic?: boolean }> = []
   if (p.apiKey) list.push({ provider: 'opencode', model: p.model, key: p.apiKey, url: p.endpoint.toString(), opencode: true })
   if (p.deepseekApiKey) list.push({ provider: 'deepseek', model: p.deepseekModel, key: p.deepseekApiKey, url: `${p.deepseekBaseURL}/chat/completions` })
+  if (p.glmApiKey) list.push({ provider: 'glm', model: p.glmModel, key: p.glmApiKey, url: `${p.glmBaseURL}/chat/completions` })
   if (p.fostaApiKey) list.push({ provider: 'fosta', model: p.fostaModel, key: p.fostaApiKey, url: `${p.fostaBaseURL}/chat/completions` })
   if (p.anyrouterApiKey) list.push({ provider: 'anyrouter', model: p.anyrouterModel, key: p.anyrouterApiKey, url: `${p.anyrouterBaseURL}/chat/completions` })
   if (p.nightrouterApiKey) list.push({ provider: 'nightrouter', model: p.nightrouterModel, key: p.nightrouterApiKey, url: `${p.nightrouterBaseURL}/chat/completions` })
@@ -521,21 +529,21 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
     } catch (err) {
       return json(res, 500, { error: safeError(err, isLocal(ip)) })
     }
-    if (!prov.apiKey && !prov.anyrouterApiKey && !prov.anthropicApiKey && !prov.deepseekApiKey && !prov.fostaApiKey && !prov.nightrouterApiKey) {
+    if (!prov.apiKey && !prov.anyrouterApiKey && !prov.anthropicApiKey && !prov.deepseekApiKey && !prov.glmApiKey && !prov.fostaApiKey && !prov.nightrouterApiKey) {
       return json(res, 500, {
-        error: 'Chưa cấu hình LLM_API_KEY, DEEPSEEK_API_KEY, ANYROUTER_API_KEY, NIGHTROUTER_API_KEY hoặc ANTHROPIC_API_KEY. Kiểm tra file .env/config provider.',
+        error: 'Chưa cấu hình LLM_API_KEY, DEEPSEEK_API_KEY, GLM_API_KEY,ANYROUTER_API_KEY, NIGHTROUTER_API_KEY hoặc ANTHROPIC_API_KEY. Kiểm tra file .env/config provider.',
       })
     }
 
-    // Thứ tự thử: DeepSeek chính hãng → opencode (model chính [+ LLM_FALLBACK_MODEL nếu đặt]) → FOSTA (gpt-6-luna) → AnyRouter (gpt-6.1-terra) → NightRouter → Claude (cuối cùng).
+    // Thứ tự thử: DeepSeek chính hãng → GLM chính hãng → opencode (model chính [+ LLM_FALLBACK_MODEL nếu đặt]) → FOSTA (gpt-6-luna) → AnyRouter (gpt-6.1-terra) → NightRouter → Claude (cuối cùng).
     // Provider dự phòng nào không có key thì bỏ qua.
     // `opencode` = gửi x-opencode-session + reasoning_effort; `effort` = chỉ gửi reasoning_effort (DeepSeek chính hãng).
     // `anthropic`: gọi Claude qua SDK (Messages API), không qua fetch kiểu OpenAI.
     // `stream`: gọi stream:true rồi gom SSE lại (AnyRouter)
-    type Target = { model: string; url: string; key: string; opencode: boolean; anthropic?: boolean; stream?: boolean; effort?: boolean; search?: boolean; strong?: boolean }
+    type Target = { model: string; url: string; key: string; opencode: boolean; anthropic?: boolean; stream?: boolean; effort?: boolean; search?: boolean; strong?: boolean; glm?: boolean }
     // tên provider cho log ai_calls
     const providerOf = (t: Target) =>
-      t.anthropic ? 'anthropic' : t.opencode ? 'opencode' : t.key === prov.deepseekApiKey ? 'deepseek' : t.key === prov.fostaApiKey ? 'fosta' : t.key === prov.anyrouterApiKey ? 'anyrouter' : t.key === prov.nightrouterApiKey ? 'nightrouter' : 'khac'
+      t.anthropic ? 'anthropic' : t.opencode ? 'opencode' : t.key === prov.deepseekApiKey ? 'deepseek' : t.glm ? 'glm' : t.key === prov.fostaApiKey ? 'fosta' : t.key === prov.anyrouterApiKey ? 'anyrouter' : t.key === prov.nightrouterApiKey ? 'nightrouter' : 'khac'
     type Usage = { prompt_tokens?: number; completion_tokens?: number; input_tokens?: number; output_tokens?: number } | undefined
     // Vercel có thể dừng function ngay sau khi trả lời → gom promise log, chờ trước khi return
     const pending: Promise<void>[] = []
@@ -577,18 +585,21 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
     }
     const targets: Target[] = []
     // client chỉ được chọn model nằm trong cấu hình của app (trước đây gửi tên model tuỳ ý là gọi được model đắt nhất của gateway)
-    const knownModels = [prov.model, prov.fallbackModel, prov.anthropicModel, prov.deepseekModel, prov.fostaModel, prov.anyrouterModel, prov.nightrouterModel].filter(Boolean)
+    const knownModels = [prov.model, prov.fallbackModel, prov.anthropicModel, prov.deepseekModel, prov.glmModel, prov.fostaModel, prov.anyrouterModel, prov.nightrouterModel].filter(Boolean)
     if (body.model !== undefined && !knownModels.includes(body.model)) body.model = undefined
     // client chỉ định đúng model dự phòng → bỏ qua opencode, gọi thẳng (thử/so chất lượng)
     const wantsBackup =
       (!!prov.anthropicApiKey && body.model === prov.anthropicModel) ||
       (!!prov.deepseekApiKey && body.model === prov.deepseekModel) ||
+      (!!prov.glmApiKey && body.model === prov.glmModel) ||
       (!!prov.fostaApiKey && body.model === prov.fostaModel) ||
       (!!prov.anyrouterApiKey && body.model === prov.anyrouterModel) ||
       (!!prov.nightrouterApiKey && body.model === prov.nightrouterModel)
     // ưu tiên 1: DeepSeek chính hãng (rẻ, có cache prompt).
     // opencode đã bỏ khỏi chuỗi (key hết hạn, 403 từ 24/11/2026); chỉ bật lại khi đặt OPENCODE_FALLBACK=1 (test dùng làm upstream giả).
     if (prov.deepseekApiKey) targets.push({ model: prov.deepseekModel, url: `${prov.deepseekBaseURL}/chat/completions`, key: prov.deepseekApiKey, opencode: false, effort: true })
+    // ưu tiên 2: GLM chính hãng
+    if (prov.glmApiKey) targets.push({ model: prov.glmModel, url: `${prov.glmBaseURL}/chat/completions`, key: prov.glmApiKey, opencode: false, effort: true, glm: true })
     if (process.env.OPENCODE_FALLBACK === '1' && prov.apiKey && !wantsBackup) {
       for (const m of [body.model ?? prov.model, prov.fallbackModel]) {
         if (m && !targets.some((t) => t.model === m)) targets.push({ model: m, url: prov.endpoint.toString(), key: prov.apiKey, opencode: true })
@@ -652,16 +663,19 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
         continue
       }
       // DeepSeek dùng chung trần đầu ra cho suy luận và câu trả lời.
-      const disableThinking = target.search || (quotaClamped && target.effort)
+      const disableThinking = !target.glm && (target.search || (quotaClamped && target.effort))
+      // GLM không tắt được suy luận và chỉ nhận low / high / max: bị kẹp hoặc không nêu mức thì low; temperature tối đa 1
+      const effort = !target.glm ? body.reasoningEffort : quotaClamped ? 'low' : body.reasoningEffort === 'medium' ? 'high' : body.reasoningEffort ?? 'low'
+      const temperature = target.glm && body.temperature !== undefined ? Math.min(1, body.temperature) : body.temperature
       let attemptBody = JSON.stringify({
         model: selectedModel,
         messages: body.messages,
         max_tokens: maxTokens,
-        ...(!disableThinking && (target.opencode || target.effort) && body.reasoningEffort ? { reasoning_effort: body.reasoningEffort } : {}),
+        ...(!disableThinking && (target.opencode || target.effort) && effort ? { reasoning_effort: effort } : {}),
         // bật suy luận thì DeepSeek chuyển sang tìm nhiều bước (đắt gấp 2–4 lần): lượt tìm chỉ cần tóm tắt nguồn
         ...(target.search ? { tools: [{ type: 'deepseek_web_search' }] } : {}),
         ...(disableThinking ? { thinking: { type: 'disabled' } } : {}),
-        ...(body.temperature !== undefined ? { temperature: body.temperature } : {}),
+        ...(temperature !== undefined ? { temperature } : {}),
         ...(target.stream || (wantStream && !target.search) ? { stream: true, stream_options: { include_usage: true } } : {}),
       })
       for (let attempt = 0; attempt < 3; attempt++) {
@@ -792,6 +806,8 @@ export async function handleLlmRequest(req: IncomingMessage, res: ServerResponse
             const hint = '\n\nLượt trước suy nghĩ quá dài nên chưa kịp viết. Lần này nghĩ ngắn gọn rồi viết ngay kết quả.'
             if (sys && typeof sys.content === 'string') sys.content += hint
             else retryBody.messages.unshift({ role: 'system', content: hint.trim() })
+          } else if (target.glm) {
+            retryBody.reasoning_effort = 'low'
           } else {
             delete retryBody.reasoning_effort
             retryBody.thinking = { type: 'disabled' }

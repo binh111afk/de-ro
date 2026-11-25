@@ -191,6 +191,8 @@ export function isDeepseekPeak(at: Date): boolean {
 /** Giá ước tính USD / 1 triệu token: [đầu vào, đầu vào trúng cache, đầu ra]. Đặt lại bằng env AI_PRICE_<NHÀ_CUNG_CẤP>="vào,cache,ra". */
 const DEFAULT_PRICE: Record<string, [number, number, number]> = {
   deepseek: DEEPSEEK_PEAK,
+  // GLM 5.3 flash (docs.z.ai/guides/overview/pricing)
+  glm: [0.15, 0.03, 0.5],
   opencode: [0.27, 0.27, 1.1],
   fosta: [0.27, 0.27, 1.1],
   anyrouter: [0.27, 0.27, 1.1],
