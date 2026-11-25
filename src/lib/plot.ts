@@ -189,6 +189,8 @@ export interface PlotSpec {
   asymptotes?: string
   /** khoảng tô giữa hai đường đầu tiên (hoặc giữa đường đầu tiên và trục Ox) */
   shade?: [number, number]
+  /** vùng tô do người dùng bấm chọn: mỗi vùng giữ một điểm nằm trong nó */
+  regions?: Array<[number, number]>
   /** vạch ngang ghi theo bội π/2 hoặc π */
   piAxis?: boolean
   /** độ lệch nhãn do người dùng kéo (khoá = id nhãn trên attr `data-lbl`) */
@@ -453,6 +455,130 @@ export function crossings(f: Fn, g: Fn, lo: number, hi: number): number[] {
   return out
 }
 
+/** khung toạ độ thật của hình đã vẽ (có thể rộng hơn miền trong spec) và khung viewBox */
+export interface PlotFrame {
+  xMin: number
+  xMax: number
+  yMin: number
+  yMax: number
+  W: number
+  H: number
+  PAD: number
+}
+
+export interface PlotRegion {
+  /** mỗi cột: hoành độ, mép dưới, mép trên */
+  cols: Array<[number, number, number]>
+  /** không chạm mép khung hình */
+  closed: boolean
+}
+
+/**
+ * Vùng chứa điểm (x; y), bị chặn bởi các đồ thị và đường nét đứt. Trục Ox, Oy chỉ
+ * làm biên khi thiếu chúng thì vùng không khép kín (kẻo Oy cắt đôi vùng giữa hai đồ thị).
+ */
+export function regionAt(spec: PlotSpec, frame: PlotFrame, x: number, y: number): PlotRegion | null {
+  const { xMin, xMax, yMin, yMax } = frame
+  if (!(x > xMin && x < xMax && y > yMin && y < yMax)) return null
+  const fns: Fn[] = []
+  const walls: number[] = []
+  const add = (expr: string) => {
+    try {
+      fns.push(parseExpr(expr))
+    } catch { /* đường sai cú pháp không làm biên */ }
+  }
+  spec.curves.forEach((c) => add(c.expr))
+  for (const line of (spec.asymptotes ?? '').split(/[;\n]/)) {
+    const m = /^\s*([xy])\s*=\s*(.+)$/i.exec(line)
+    if (!m) continue
+    if (m[1].toLowerCase() === 'y') add(m[2])
+    else try {
+      walls.push(parseExpr(m[2])(0))
+    } catch { /* như trên */ }
+  }
+
+  const build = (ox: boolean, oy: boolean): PlotRegion | null => {
+    const bounds = ox ? [...fns, () => 0] : fns
+    const stops = oy ? [...walls, 0] : walls
+    const here = bounds.map((f) => f(x))
+    const above = here.map((v) => y > v)
+    const at = (px: number): [number, number] | null => {
+      let lo = yMin
+      let hi = yMax
+      for (let i = 0; i < bounds.length; i++) {
+        const v = bounds[i](px)
+        if (Number.isFinite(v) !== Number.isFinite(here[i])) return null
+        if (!Number.isFinite(v)) continue
+        if (above[i]) lo = Math.max(lo, v)
+        else hi = Math.min(hi, v)
+      }
+      return hi > lo ? [lo, hi] : null
+    }
+    const first = at(x)
+    if (!first) return null
+    let closed = true
+    const walk = (end: number, wall: boolean) => {
+      const out: Array<[number, number, number]> = []
+      let px = x
+      let prev = first
+      while (px !== end) {
+        const next = end > x ? Math.min(end, px + (xMax - xMin) / 600) : Math.max(end, px - (xMax - xMin) / 600)
+        const iv = at(next)
+        if (!iv || iv[0] > prev[1] || iv[1] < prev[0]) {
+          // hai biên gặp nhau: chia đôi để lấy đúng đỉnh vùng
+          let a = px
+          let b = next
+          for (let k = 0; k < 30; k++) {
+            const mid = (a + b) / 2
+            if (at(mid)) a = mid
+            else b = mid
+          }
+          const tip = at(a)!
+          if (tip[1] - tip[0] > (yMax - yMin) / 50) closed = false
+          out.push([a, ...tip])
+          return out
+        }
+        px = next
+        prev = iv
+        out.push([px, ...iv])
+      }
+      if (!wall) closed = false
+      return out
+    }
+    const left = Math.max(xMin, ...stops.filter((v) => v < x))
+    const right = Math.min(xMax, ...stops.filter((v) => v > x))
+    const cols = [...walk(left, left > xMin).reverse(), [x, ...first] as [number, number, number], ...walk(right, right < xMax)]
+    if (cols.some(([, lo, hi]) => hi - lo > 1e-9 && (lo <= yMin || hi >= yMax))) closed = false
+    return { cols, closed }
+  }
+
+  let region: PlotRegion | null = null
+  for (const [ox, oy] of [[false, false], [true, false], [false, true], [true, true]]) {
+    region = build(ox, oy)
+    if (region?.closed) break
+  }
+  return region
+}
+
+/** Bấm vào (x; y) khi tô vùng: đang tô thì bỏ, chưa thì tô thêm. */
+export function toggleRegion(spec: PlotSpec, frame: PlotFrame, x: number, y: number): Pick<PlotSpec, 'regions' | 'shade'> {
+  const inside = (r: PlotRegion | null) => {
+    const i = r ? r.cols.findIndex((c) => c[0] >= x) : -1
+    return i >= 0 && x >= r!.cols[0][0] && y >= r!.cols[i][1] && y <= r!.cols[i][2]
+  }
+  const old = spec.regions ?? []
+  const kept = old.filter(([a, b]) => !inside(regionAt(spec, frame, a, b)))
+  // khoảng tô kiểu cũ (AI vẽ, hình đã lưu): bấm vào trong nó cũng bỏ được
+  if (spec.shade && x >= Math.min(...spec.shade) && x <= Math.max(...spec.shade)) {
+    try {
+      const [f, g] = [0, 1].map((i) => (spec.curves[i] ? parseExpr(spec.curves[i].expr)(x) : 0))
+      if (y >= Math.min(f, g) && y <= Math.max(f, g)) return { regions: kept, shade: undefined }
+    } catch { /* đường cong sai cú pháp */ }
+  }
+  if (kept.length === old.length && regionAt(spec, frame, x, y)) kept.push([x, y])
+  return { regions: kept, shade: spec.shade }
+}
+
 /** số phần tử ≤ v trong mảng đã sắp */
 function upper(arr: number[], v: number) {
   let l = 0
@@ -487,7 +613,7 @@ export function readPlotSpec(svgOrUrl: string | undefined | null): PlotSpec | nu
   }
 }
 
-export function renderPlotSvg(spec: PlotSpec): { svg: string; width: number; height: number } {
+export function renderPlotSvg(spec: PlotSpec): { svg: string; width: number; height: number; frame: PlotFrame } {
   let { xMin, xMax, yMin, yMax } = spec
   // khung y lớn (bước > 1): kéo hai đầu ra bội của bước như học sinh vẽ tay (y tới 27 → trục tới 30,
   // chia mỗi ô 5), chừa thêm nửa ô cho mũi tên kẻo vạch trên cùng sát mép bị bỏ số.
@@ -628,6 +754,7 @@ export function renderPlotSvg(spec: PlotSpec): { svg: string; width: number; hei
       out.unshift(guide)
     } catch { /* bỏ qua lệnh tiệm cận sai cú pháp */ }
   }
+  const shaded: string[] = []
   if (spec.shade && spec.curves.length) {
     const a = Math.max(xMin, Math.min(...spec.shade))
     const b = Math.min(xMax, Math.max(...spec.shade))
@@ -657,10 +784,20 @@ export function renderPlotSvg(spec: PlotSpec): { svg: string; width: number; hei
           prev = x
         }
         flush()
-        out.unshift('<pattern id="plotshade" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 0V6" stroke="#777" stroke-width="1.3"/></pattern>',
-          `<path data-shade="true" d="${lobes.join('')}" fill="url(#plotshade)" clip-path="url(#plotclip)"/>`)
+        shaded.push(lobes.join(''))
       } catch { /* đường cong sai cú pháp sẽ được bỏ qua ở dưới */ }
     }
+  }
+  const frame: PlotFrame = { xMin, xMax, yMin, yMax, W, H, PAD }
+  for (const [x, y] of spec.regions ?? []) {
+    const cols = regionAt(spec, frame, x, y)?.cols
+    if (!cols) continue
+    const edge = (list: typeof cols, i: 1 | 2) => list.map((c) => `${sx(c[0]).toFixed(1)} ${sy(c[i]).toFixed(1)}`).join('L')
+    shaded.push(`M${edge(cols, 2)}L${edge([...cols].reverse(), 1)}Z`)
+  }
+  if (shaded.length) {
+    out.unshift('<pattern id="plotshade" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 0V6" stroke="#777" stroke-width="1.3"/></pattern>',
+      ...shaded.map((d) => `<path data-shade="true" d="${d}" fill="url(#plotshade)" clip-path="url(#plotclip)"/>`))
   }
   const N = 1200
   const span = yMax - yMin
@@ -990,7 +1127,7 @@ export function renderPlotSvg(spec: PlotSpec): { svg: string; width: number; hei
     out.join('') +
     `</g>` +
     `</svg>`
-  return { svg, width: 640, height: Math.round(H * OUT_SCALE) }
+  return { svg, width: 640, height: Math.round(H * OUT_SCALE), frame }
 }
 
 export const svgDataUrl = (svg: string) => `data:image/svg+xml;base64,${btoa(unescape(encodeURIComponent(svg)))}`

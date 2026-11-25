@@ -3,11 +3,11 @@
  * phải xem trước ngay khi gõ; "Chèn" trả về SVG để trình soạn tự đưa vào.
  */
 import { useEffect, useMemo, useState } from 'react'
-import { ChevronRight, Plus, X } from 'lucide-react'
+import { ChevronRight, PaintBucket, Plus, X } from 'lucide-react'
 import { TrashIcon } from '@/components/appIcons'
 import { Button, inputClass } from '@/components/ui'
 import { cn } from '@/lib/cn'
-import { PLOT_COLORS, autoYRange, crossings, parseExpr,renderPlotSvg, svgDataUrl, type Fn, type PlotSpec } from '@/lib/plot'
+import { PLOT_COLORS, autoYRange, parseExpr, renderPlotSvg, svgDataUrl, toggleRegion, type Fn, type PlotSpec } from '@/lib/plot'
 
 export type { ToolImage as PlotImage } from '@/lib/toolSpec'
 import type { ToolImage as PlotImage, LabelPos } from '@/lib/toolSpec'
@@ -68,20 +68,11 @@ export function GraphToolModal({
   const x1 = Number(xMax.replace(',', '.'))
   const rangeError = !(Number.isFinite(x0) && Number.isFinite(x1) && x0 < x1) ? 'Miền x chưa hợp lệ' : null
 
-  // tô vùng giữa hai hàm đầu (một hàm thì với trục Ox); mặc định lấy từ giao điểm đầu đến giao điểm cuối
-  const autoShade = useMemo<[string, string]>(() => {
-    const fns = parsed.map((p) => p.fn).filter((f): f is Fn => Boolean(f))
-    const xs = fns.length && !rangeError ? crossings(fns[0], fns[1] ?? (() => 0), x0, x1) : []
-    const [a, b] = xs.length > 1 ? [xs[0], xs[xs.length - 1]] : [x0, x1]
-    const text = (v: number) => String(Math.round(v * 1e4) / 1e4)
-    return [text(a), text(b)]
-  }, [parsed, x0, x1, rangeError])
-  const [shadeOn, setShadeOn] = useState(Boolean(initial?.shade))
-  // null = theo giao điểm, đổi hàm số thì khoảng tô đổi theo
-  const [shadeRange, setShadeRange] = useState<[string, string] | null>(initial?.shade ? [String(initial.shade[0]), String(initial.shade[1])] : null)
-  const shownShade = shadeRange ?? autoShade
-  const [s0, s1] = shownShade.map((v) => (v.trim() ? Number(v.replace(',', '.')) : NaN))
-  const shadeError = shadeOn && !(Number.isFinite(s0) && Number.isFinite(s1) && s0 < s1)
+  const [shade, setShade] = useState(initial?.shade)
+  const [regions, setRegions] = useState(initial?.regions)
+  const [asymptotes, setAsymptotes] = useState(initial?.asymptotes ?? '')
+  // chế độ bấm vào vùng để tô / bỏ tô
+  const [fill, setFill] = useState(false)
 
   const spec = useMemo<PlotSpec | null>(() => {
     if (rangeError) return null
@@ -102,11 +93,12 @@ export function GraphToolModal({
       grid,
       labels,
       points: initial?.points,
-      asymptotes: initial?.asymptotes,
-      shade: shadeOn && !shadeError ? [s0, s1] : undefined,
+      asymptotes: asymptotes.trim() || undefined,
+      shade,
+      regions: regions?.length ? regions : undefined,
       piAxis: initial?.piAxis,
     }
-  }, [parsed, exprs, x0, x1, autoY, yMin, yMax, grid, labels, shadeOn, shadeError, s0, s1, rangeError, initial])
+  }, [parsed, exprs, x0, x1, autoY, yMin, yMax, grid, labels, asymptotes, shade, regions, rangeError, initial])
 
   // spec có labelPos → nằm trong <desc> của SVG, chèn/nhấp đúp sửa vẫn giữ độ lệch
   const plot = useMemo(() => (spec ? withTextHalo(applyLabelPos(renderPlotSvg({ ...spec, labelPos }), labelPos)) : null), [spec, labelPos])
@@ -114,6 +106,21 @@ export function GraphToolModal({
 
   // khi bật tự động, hiện miền y đang dùng trong ô (chỉ đọc)
   const shownY = autoY && spec ? [String(spec.yMin), String(spec.yMax)] : [yMin, yMax]
+
+  const clickRegion = (e: React.MouseEvent<HTMLImageElement>) => {
+    if (!spec || !plot) return
+    const f = plot.frame
+    const box = e.currentTarget.getBoundingClientRect()
+    // ảnh co kiểu object-contain: bỏ phần chừa trống hai bên
+    const k = Math.min(box.width / f.W, box.height / f.H)
+    const vx = (e.clientX - box.left - (box.width - f.W * k) / 2) / k
+    const vy = (e.clientY - box.top - (box.height - f.H * k) / 2) / k
+    const x = f.xMin + ((vx - f.PAD) / (f.W - 2 * f.PAD)) * (f.xMax - f.xMin)
+    const y = f.yMin + ((f.H - f.PAD - vy) / (f.H - 2 * f.PAD)) * (f.yMax - f.yMin)
+    const next = toggleRegion(spec, f, x, y)
+    setRegions(next.regions)
+    setShade(next.shade)
+  }
 
   return (
     <div className="fixed inset-0 z-[120] flex items-center justify-center bg-ink/30 p-0 md:p-4"
@@ -182,6 +189,16 @@ export function GraphToolModal({
                   </div>
                 ))}
               </div>
+              <label className="mt-2 block text-[12px] text-ink-3">
+                Đường nét đứt
+                <input
+                  value={asymptotes}
+                  onChange={(e) => setAsymptotes(e.target.value)}
+                  placeholder="x = 2; y = 1"
+                  spellCheck={false}
+                  className={cn(inputClass, 'mt-1 h-9 px-3 py-1 font-mono text-[13.5px]')}
+                />
+              </label>
               {exprs.length < MAX_CURVES && (
                 <button
                   type="button"
@@ -235,23 +252,6 @@ export function GraphToolModal({
               <h3 className="mb-1 text-[12px] font-semibold uppercase tracking-[0.04em] text-ink-3">Hiển thị</h3>
               <Check checked={grid} onChange={setGrid}>Lưới ô vuông</Check>
               <Check checked={labels} onChange={setLabels}>Ghi tên hàm cạnh đồ thị</Check>
-              <Check
-                checked={shadeOn}
-                onChange={(v) => {
-                  setShadeOn(v)
-                  setShadeRange(null)
-                }}
-              >
-                {parsed.filter((p) => p.fn).length > 1 ? 'Tô vùng giữa hai đồ thị' : 'Tô vùng với trục Ox'}
-              </Check>
-              {shadeOn && (
-                <div className="mt-2 grid grid-cols-[28px_1fr_16px_1fr] items-center gap-x-2 text-[13.5px] text-ink-2">
-                  <span className="font-serif italic">x</span>
-                  <input value={shownShade[0]} onChange={(e) => setShadeRange([e.target.value, shownShade[1]])} aria-label="Tô từ x" aria-invalid={shadeError} className={cn(numClass, shadeError && 'border-clay')} />
-                  <span className="text-center text-ink-4">→</span>
-                  <input value={shownShade[1]} onChange={(e) => setShadeRange([shownShade[0], e.target.value])} aria-label="Tô đến x" aria-invalid={shadeError} className={cn(numClass, shadeError && 'border-clay')} />
-                </div>
-              )}
             </section>
           </div>
 
@@ -264,12 +264,32 @@ export function GraphToolModal({
                 labelPos={labelPos}
                 onChange={setLabelPos}
                 move={move}
-                onToggle={() => setMove((v) => !v)}
+                onToggle={() => {
+                  setMove((v) => !v)
+                  setFill(false)
+                }}
+                modeExtra={
+                  <button
+                    type="button"
+                    aria-pressed={fill}
+                    onClick={() => {
+                      setFill((v) => !v)
+                      setMove(false)
+                    }}
+                    className={cn(
+                      'flex items-center gap-1 whitespace-nowrap rounded-[6px] border px-1.5 py-1 text-[11.5px] transition-colors',
+                      fill ? 'border-clay bg-clay-tint font-medium text-clay' : 'border-line text-ink-2 hover:border-ink-4',
+                    )}
+                  >
+                    <PaintBucket className="size-3.5" /> Tô vùng
+                  </button>
+                }
                 fallback={
                   <img
                     src={svgDataUrl(plot.svg)}
                     alt="Xem trước đồ thị"
-                    className="max-h-full max-w-full rounded-[4px] border border-line bg-white object-contain"
+                    onClick={fill ? clickRegion : undefined}
+                    className={cn(fill && 'cursor-crosshair', 'max-h-full max-w-full rounded-[4px] border border-line bg-white object-contain')}
                   />
                 }
               />
