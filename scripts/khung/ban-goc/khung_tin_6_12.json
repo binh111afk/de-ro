@@ -33,7 +33,7 @@
             "Khái niệm thông tin, dữ liệu, vật mang tin.",
             "Sơ đồ xử lý thông tin: Đầu vào (Input) -> Xử lý (Processing) -> Đầu ra (Output) và Lưu trữ.",
             "Khái niệm bit (0 hoặc 1), dãy bit.",
-            "Bảng đổi đơn vị dữ liệu: $1\text{ KB} = 1024\text{ B}$, $1\text{ MB} = 1024\text{ KB}$, $1\text{ GB} = 1024\text{ MB}$, $1\text{ TB} = 1024\text{ GB}$ (hoặc xấp xỉ 1000 theo SGK)."
+            "Bảng đổi đơn vị dữ liệu: $1\\text{ KB} = 1024\\text{ B}$, $1\\text{ MB} = 1024\\text{ KB}$, $1\\text{ GB} = 1024\\text{ MB}$, $1\\text{ TB} = 1024\\text{ GB}$ (hoặc xấp xỉ 1000 theo SGK)."
           ],
           "phan_mem_ngon_ngu": [
             "Không dùng phần mềm cụ thể. Dùng hình ảnh minh họa cơ bản của hệ thống máy tính."
@@ -1096,7 +1096,7 @@
           ],
           "dang_bai_dien_hinh": [
             "Dạng bài chuyển đổi số $45_{10}$ sang hệ nhị phân và hệ Hexa.",
-            "Dạng bài tính giá trị biểu thức logic $A \text{ AND } (\text{NOT } B)$ với $A=\text{True}, B=\text{False}$.",
+            "Dạng bài tính giá trị biểu thức logic $A \\text{ AND } (\\text{NOT } B)$ với $A=\\text{True}, B=\\text{False}$.",
             "Dạng bài xác định số byte cần thiết để lưu trữ một xâu ký tự Unicode UTF-8."
           ],
           "luu_y_ra_de": "CHỦ ĐỀ NÀY CHỈ DÀNH CHO HỌC SINH CHỌN ĐỊNH HƯỚNG KHOA HỌC MÁY TÍNH (CS). Học sinh ICT không học chương này."

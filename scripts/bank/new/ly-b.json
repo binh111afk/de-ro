@@ -680,7 +680,7 @@
       }
     ],
     "answer": "ĐĐĐĐ",
-    "explanation": "a) Đúng: $R_{23}=\frac{12cdot4}{16}=3,Omega$, mạch ngoài $4+3=7,Omega$. b) Đúng: $I=\frac{9}{7+0{,}5}=1{,}2$ A. c) Đúng: $U_{23}=1{,}2cdot3=3{,}6$ V, $I_3=0{,}9$ A. d) Đúng: $P_1=1{,}2^2cdot4=5{,}76$ W.",
+    "explanation": "a) Đúng: $R_{23}=\\frac{12\\cdot4}{16}=3\\,\\Omega$, mạch ngoài $4+3=7\\,\\Omega$. b) Đúng: $I=\\frac{9}{7+0{,}5}=1{,}2$ A. c) Đúng: $U_{23}=1{,}2\\cdot3=3{,}6$ V, $I_3=0{,}9$ A. d) Đúng: $P_1=1{,}2^2\\cdot4=5{,}76$ W.",
     "tags": [
       "mạch điện",
       "định luật Ôm"
