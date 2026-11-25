@@ -100,7 +100,7 @@
           ],
           "cong_thuc": [
             "ĐƯỢC DÙNG: Tính số lượng nucleotide mỗi loại theo nguyên tắc bổ sung ($A = T$, $G = C$; $N = 2A + 2G$).",
-            "KHÔNG DÙNG: Các dạng bài tập tính toán DNA siêu phức tạp của chương trình 2006 (như tính số liên kết hydrogen $H = 2A + 3G$, chiều dài $L = \frac{N}{2} \times 3.4\text{ Å}$, số chu kỳ xoắn $C = \frac{N}{20}$, số liên kết phosphodiester $2N - 2$...). Chương trình 2018 đã LOẠI BỎ bài tập tính toán kích thước DNA."
+            "KHÔNG DÙNG: Các dạng bài tập tính toán DNA siêu phức tạp của chương trình 2006 (như tính số liên kết hydrogen $H = 2A + 3G$, chiều dài $L = \\frac{N}{2} \\times 3.4\\text{ Å}$, số chu kỳ xoắn $C = \\frac{N}{20}$, số liên kết phosphodiester $2N - 2$...). Chương trình 2018 đã LOẠI BỎ bài tập tính toán kích thước DNA."
           ],
           "chua_duoc_dung": [
             "CHƯA DÙNG cơ chế tái bản DNA, phiên mã, dịch mã (học ở lớp 12).",
@@ -186,7 +186,7 @@
           ],
           "kien_thuc_duoc_dung": [
             "Khái niệm môi trường ưu trương, nhược trương, đẳng trương; hiện tượng co nguyên sinh và phản co nguyên sinh.",
-            "Phương trình tổng quát của Hô hấp tế bào ($C_6H_{12}O_6 + 6O_2 \rightarrow 6CO_2 + 6H_2O + \text{ATP}$) và Quang hợp ($6CO_2 + 6H_2O \rightarrow C_6H_{12}O_6 + 6O_2$).",
+            "Phương trình tổng quát của Hô hấp tế bào ($C_6H_{12}O_6 + 6O_2 \\rightarrow 6CO_2 + 6H_2O + \\text{ATP}$) và Quang hợp ($6CO_2 + 6H_2O \\rightarrow C_6H_{12}O_6 + 6O_2$).",
             "Công cụ Toán học: Đọc đồ thị ảnh hưởng của nhiệt độ/pH đến hoạt tính enzyme."
           ],
           "thuat_ngu": [
@@ -271,7 +271,7 @@
             "Diễn biến NST qua Giảm phân I và Giảm phân II; sự phân phân ly độc lập và trao đổi chéo."
           ],
           "cong_thuc": [
-            "ĐƯỢC DÙNG: Tính số tế bào con tạo thành từ $a$ tế bào ban đầu qua $k$ lần nguyên phân ($N_{tb} = a \times 2^k$); tính số NST, chromatid, tâm động trong một tế bào ở các kỳ nguyên phân/giảm phân.",
+            "ĐƯỢC DÙNG: Tính số tế bào con tạo thành từ $a$ tế bào ban đầu qua $k$ lần nguyên phân ($N_{tb} = a \\times 2^k$); tính số NST, chromatid, tâm động trong một tế bào ở các kỳ nguyên phân/giảm phân.",
             "KHÔNG DÙNG: Các dạng bài tập công thức phân bào siêu phức tạp của chương trình 2006 (như tính số nguyên liệu môi trường cung cấp cho giảm phân qua nhiều thế hệ tế bào sinh dục sơ khai, tính số loại giao tử khi có $n$ cặp NST xảy ra trao đổi chéo tại nhiều điểm...)."
           ],
           "chua_duoc_dung": [
@@ -306,7 +306,7 @@
           "kien_thuc_duoc_dung": [
             "Phương trình cơ bản lên men ethanol và lên men lactic.",
             "Thời gian thế hệ ($g$) và tốc độ sinh trưởng.",
-            "Công cụ Toán học: Công thức tính số lượng tế bào vi khuẩn trong nuôi cấy không liên tục $N_t = N_0 \times 2^n$ (với $n = t/g$)."
+            "Công cụ Toán học: Công thức tính số lượng tế bào vi khuẩn trong nuôi cấy không liên tục $N_t = N_0 \\times 2^n$ (với $n = t/g$)."
           ],
           "thuat_ngu": [
             "vi sinh vật",
@@ -326,7 +326,7 @@
             "Cơ chế tác động của các chất diệt khuẩn/ức chế sinh trưởng (cồn, phenol, chất tẩy rửa)."
           ],
           "cong_thuc": [
-            "ĐƯỢC DÙNG: Công thức tính số tế bào sau thời gian $t$: $N_t = N_0 \times 2^{t/g}$.",
+            "ĐƯỢC DÙNG: Công thức tính số tế bào sau thời gian $t$: $N_t = N_0 \\times 2^{t/g}$.",
             "KHÔNG DÙNG: Các bài tập toán vi sinh vật tính toán phức tạp bài toán pha trộn."
           ],
           "chua_duoc_dung": [
@@ -769,9 +769,9 @@
             "Trình bày được mối quan hệ giữa kiểu gene, môi trường và kiểu hình (mức phản ứng, sự mềm dẻo kiểu hình/thường biến)."
           ],
           "kien_thuc_duoc_dung": [
-            "Ký hiệu quy ước kiểu gene: $\frac{AB}{ab}$, $\frac{Ab}{aB}$, $X^A X^a$, $X^A Y$.",
+            "Ký hiệu quy ước kiểu gene: $\\frac{AB}{ab}$, $\\frac{Ab}{aB}$, $X^A X^a$, $X^A Y$.",
             "Tỉ lệ phân ly kiểu hình kinh điển: $3:1$, $1:2:1$, $9:3:3:1$, $1:1:1:1$, $1:1$.",
-            "Công cụ Toán học: Quy tắc nhân xác suất ($P(A \\cap B) = P(A) \times P(B)$ cho các sự kiện độc lập) và quy tắc cộng xác suất (cho các sự kiện xung đột). Học sinh đã học xác suất ở Toán 10 và 11."
+            "Công cụ Toán học: Quy tắc nhân xác suất ($P(A \\cap B) = P(A) \\times P(B)$ cho các sự kiện độc lập) và quy tắc cộng xác suất (cho các sự kiện xung đột). Học sinh đã học xác suất ở Toán 10 và 11."
           ],
           "thuat_ngu": [
             "allele",
@@ -795,7 +795,7 @@
             "Cơ chế di truyền tế bào chất: Hợp tử nhận tế bào chất chủ yếu từ trứng của mẹ."
           ],
           "cong_thuc": [
-            "ĐƯỢC DÙNG: Công thức tính tần số hoán vị gene $f = \frac{\text{Số cá thể hoán vị}}{\text{Tổng số cá thể}} \times 100\\%$ (với $f \\le 50\\%$); quy tắc tích số tỉ lệ giao tử; phép tính xác suất di truyền đơn giản.",
+            "ĐƯỢC DÙNG: Công thức tính tần số hoán vị gene $f = \\frac{\\text{Số cá thể hoán vị}}{\\text{Tổng số cá thể}} \\times 100\\%$ (với $f \\le 50\\%$); quy tắc tích số tỉ lệ giao tử; phép tính xác suất di truyền đơn giản.",
             "KHÔNG DÙNG: Các dạng bài tập lai 4-5 cặp tính trạng tương tác phức tạp, bài toán di truyền số lượng cồng kềnh của chương trình cũ 2006."
           ],
           "chua_duoc_dung": [
@@ -827,7 +827,7 @@
             "Mô tả được một số bệnh, tật di truyền ở người (Hội chứng Down, Turner, Klinefelter; bệnh Phenylketonuria, mù màu, máu khó đông) và liệu pháp gene, tư vấn di truyền."
           ],
           "kien_thuc_duoc_dung": [
-            "Công thức tần số allele $p(A) = D + \frac{H}{2}$, $q(a) = R + \frac{H}{2}$.",
+            "Công thức tần số allele $p(A) = D + \\frac{H}{2}$, $q(a) = R + \\frac{H}{2}$.",
             "Phương trình cân bằng Hardy-Weinberg: $p^2 AA + 2pq Aa + q^2 aa = 1$ (với $p + q = 1$).",
             "Ký hiệu phả hệ: Hình tròn (nữ), hình vuông (nam), tô đen (bị bệnh), không tô (bình thường).",
             "Công cụ Toán học: Giải phương trình bậc hai, căn bậc hai, xác suất kết hợp."
@@ -845,7 +845,7 @@
             "tư vấn di truyền"
           ],
           "qua_trinh_va_co_che": [
-            "Sự biến đổi cấu trúc di truyền qua các thế hệ tự thụ phấn: Tỉ lệ thể dị hợp $Aa$ giảm dần theo công thức $\\left(\frac{1}{2}\right)^n$, tỉ lệ thể đồng hợp $AA$ và $aa$ tăng dần.",
+            "Sự biến đổi cấu trúc di truyền qua các thế hệ tự thụ phấn: Tỉ lệ thể dị hợp $Aa$ giảm dần theo công thức $\\left(\\frac{1}{2}\\right)^n$, tỉ lệ thể đồng hợp $AA$ và $aa$ tăng dần.",
             "Cơ chế duy trì tần số allele không đổi qua các thế hệ ở quần thể giao phối ngẫu nhiên khi đạt cân bằng."
           ],
           "cong_thuc": [
@@ -987,7 +987,7 @@
           ],
           "kien_thuc_duoc_dung": [
             "Đồ thị đường cong tăng trưởng quần thể hình chữ J và hình chữ S.",
-            "Tính hiệu suất sinh thái giữa các bậc dinh dưỡng: $ef = \frac{E_{n+1}}{E_n} \times 100\\%$.",
+            "Tính hiệu suất sinh thái giữa các bậc dinh dưỡng: $ef = \\frac{E_{n+1}}{E_n} \\times 100\\%$.",
             "Sơ đồ chu trình Nitrogen và biến đổi khí hậu.",
             "Công cụ Toán học: Đọc đồ thị sinh thái, tính tỉ lệ phần trăm năng lượng chuyển tiếp."
           ],
@@ -1018,7 +1018,7 @@
             "Chu trình tuần hoàn carbon và nitrogen trong sinh quyển."
           ],
           "cong_thuc": [
-            "ĐƯỢC DÙNG: Tính kích thước quần thể theo phương pháp bắt - đánh dấu - thả lại: $N = \frac{M \times n}{m}$; tính hiệu suất sinh thái $ef = \frac{E_{n+1}}{E_n} \times 100\\%$; tính năng lượng còn lại ở bậc dinh dưỡng cao hơn.",
+            "ĐƯỢC DÙNG: Tính kích thước quần thể theo phương pháp bắt - đánh dấu - thả lại: $N = \\frac{M \\times n}{m}$; tính hiệu suất sinh thái $ef = \\frac{E_{n+1}}{E_n} \\times 100\\%$; tính năng lượng còn lại ở bậc dinh dưỡng cao hơn.",
             "KHÔNG DÙNG: Các bài tập lưới thức ăn đánh đố lập phương trình quá dài."
           ],
           "chua_duoc_dung": [

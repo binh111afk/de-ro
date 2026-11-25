@@ -2538,7 +2538,7 @@ export const BANK_THPT2: BankEntry[] = [
       }
     ],
     "answer": "ĐSĐĐ",
-    "explanation": "a) Đúng: 100,3 triệu. b) Sai: 1975–2002 tăng khoảng 32 triệu trong 27 năm, 2002–2022 tăng khoảng 21 triệu trong 20 năm. c) Đúng: $100{,}3cdot10^6/331{,}2cdot10^3approx303$ người/km², khoảng 300. d) Đúng: $100{,}3/47{,}4approx2{,}1$.",
+    "explanation": "a) Đúng: 100,3 triệu. b) Sai: 1975–2002 tăng khoảng 32 triệu trong 27 năm, 2002–2022 tăng khoảng 21 triệu trong 20 năm. c) Đúng: $100{,}3\\cdot10^6/331{,}2\\cdot10^3\\approx303$ người/km², khoảng 300. d) Đúng: $100{,}3/47{,}4\\approx2{,}1$.",
     "points": 1,
     "tags": [
       "dân số",
@@ -7316,7 +7316,7 @@ export const BANK_THPT2: BankEntry[] = [
       }
     ],
     "answer": "D",
-    "explanation": "$\frac{x}{(2-x)^2}=4Rightarrow4x^2-17x+16=0Rightarrow x=\frac{17-sqrt{33}}{8}approx1{,}41$ M (nghiệm còn lại lớn hơn 2, loại).",
+    "explanation": "$\\frac{x}{(2-x)^2}=4\\Rightarrow4x^2-17x+16=0\\Rightarrow x=\\frac{17-\\sqrt{33}}{8}\\approx1{,}41$ M (nghiệm còn lại lớn hơn 2, loại).",
     "points": 0.25,
     "tags": [
       "cân bằng hóa học",
@@ -7601,7 +7601,7 @@ export const BANK_THPT2: BankEntry[] = [
     "type": "tra-loi-ngan",
     "prompt": "Phản ứng $A\\rightleftharpoons B$ có hằng số cân bằng $K=9$ ở một nhiệt độ xác định. Ban đầu chỉ có $[A]=0{,}4$ M. Nồng độ của $B$ tại cân bằng (M) là bao nhiêu?",
     "answer": "0,36",
-    "explanation": "$K=\frac{[B]}{[A]}=9$ và $[A]+[B]=0{,}4Rightarrow[B]=0{,}36$ M.",
+    "explanation": "$K=\\frac{[B]}{[A]}=9$ và $[A]+[B]=0{,}4\\Rightarrow[B]=0{,}36$ M.",
     "points": 0.5,
     "tags": [
       "cân bằng hóa học",
@@ -7777,7 +7777,7 @@ export const BANK_THPT2: BankEntry[] = [
       }
     ],
     "answer": "A",
-    "explanation": "Đẳng nhiệt: $p_1V_1=p_2V_2Rightarrow p_2=\frac{2cdot10^{5}cdot2}{4}=1cdot10^{5}$ Pa.",
+    "explanation": "Đẳng nhiệt: $p_1V_1=p_2V_2\\Rightarrow p_2=\\frac{2\\cdot10^{5}\\cdot2}{4}=1\\cdot10^{5}$ Pa.",
     "points": 0.25,
     "tags": [
       "định luật Boyle",
@@ -8536,7 +8536,7 @@ export const BANK_THPT2: BankEntry[] = [
     "type": "tra-loi-ngan",
     "prompt": "Một lượng khí lí tưởng thực hiện chu trình như hình bên dưới: trạng thái 1 $(2;\\,4)$, 2 $(6;\\,4)$, 3 $(6;\\,1)$ (toạ độ theo hệ SI). Công toàn phần mà khí thực hiện trong một chu trình bằng bao nhiêu jun (J)?",
     "answer": "6",
-    "explanation": "Công toàn phần bằng diện tích tam giác 1–2–3 trên đồ thị p–V: $W=\frac{1}{2}cdot(6-2)cdot(4-1)=6$ J; chu trình đi theo chiều kim đồng hồ nên khí sinh công dương.",
+    "explanation": "Công toàn phần bằng diện tích tam giác 1–2–3 trên đồ thị p–V: $W=\\frac{1}{2}\\cdot(6-2)\\cdot(4-1)=6$ J; chu trình đi theo chiều kim đồng hồ nên khí sinh công dương.",
     "points": 0.5,
     "tags": [
       "chu trình",
@@ -9310,7 +9310,7 @@ export const BANK_THPT2: BankEntry[] = [
       }
     ],
     "answer": "ĐĐĐĐ",
-    "explanation": "a) Đúng: $R_{23}=\frac{12cdot4}{16}=3,Omega$, mạch ngoài $4+3=7,Omega$. b) Đúng: $I=\frac{9}{7+0{,}5}=1{,}2$ A. c) Đúng: $U_{23}=1{,}2cdot3=3{,}6$ V, $I_3=0{,}9$ A. d) Đúng: $P_1=1{,}2^2cdot4=5{,}76$ W.",
+    "explanation": "a) Đúng: $R_{23}=\\frac{12\\cdot4}{16}=3\\,\\Omega$, mạch ngoài $4+3=7\\,\\Omega$. b) Đúng: $I=\\frac{9}{7+0{,}5}=1{,}2$ A. c) Đúng: $U_{23}=1{,}2\\cdot3=3{,}6$ V, $I_3=0{,}9$ A. d) Đúng: $P_1=1{,}2^2\\cdot4=5{,}76$ W.",
     "points": 1,
     "tags": [
       "mạch điện",
@@ -11979,7 +11979,7 @@ export const BANK_THPT2: BankEntry[] = [
       }
     ],
     "answer": "ĐĐSS",
-    "explanation": "a) Đúng: cha mẹ bình thường sinh con gái bệnh nên bệnh do alen lặn trên NST thường (nếu trên X thì bố phải bệnh). b) Đúng: cả hai đều $Aa$. c) Sai: con trai bình thường có thể là $Aa$ (xác suất 2/3). d) Sai: $Aa\times Aa$ cho con bệnh với xác suất 1/4.",
+    "explanation": "a) Đúng: cha mẹ bình thường sinh con gái bệnh nên bệnh do alen lặn trên NST thường (nếu trên X thì bố phải bệnh). b) Đúng: cả hai đều $Aa$. c) Sai: con trai bình thường có thể là $Aa$ (xác suất 2/3). d) Sai: $Aa\\times Aa$ cho con bệnh với xác suất 1/4.",
     "points": 1,
     "tags": [
       "phả hệ",
@@ -16270,7 +16270,7 @@ export const BANK_THPT2: BankEntry[] = [
     "type": "tra-loi-ngan",
     "prompt": "Thể tích khối tròn xoay tạo thành khi quay hình phẳng giới hạn bởi $y=x^2+2$, $x=0$, $x=1$ và trục $Ox$ quanh trục $Ox$ là $V$. Giá trị của $\\frac{V}{\\pi}$ làm tròn đến hàng phần mười là bao nhiêu?",
     "answer": "5,5",
-    "explanation": "$V=piint_0^1(x^2+2)^2,dx=pileft(\frac{1}{5}+\frac{4}{3}+4\right)=\frac{83pi}{15}$, nên $\frac{V}{pi}=\frac{83}{15}approx 5{,}5$.",
+    "explanation": "$V=\\pi\\int_0^1(x^2+2)^2\\,dx=\\pi\\left(\\frac{1}{5}+\\frac{4}{3}+4\\right)=\\frac{83\\pi}{15}$, nên $\\frac{V}{\\pi}=\\frac{83}{15}\\approx 5{,}5$.",
     "points": 0.5,
     "tags": [
       "thể tích tròn xoay",
@@ -17715,7 +17715,7 @@ export const BANK_THPT2: BankEntry[] = [
       }
     ],
     "answer": "ĐĐSS",
-    "explanation": "a) Đúng: $6!=720$. b) Đúng: hai kiểu xen kẽ, mỗi kiểu $3!cdot3!=36$, tổng 72. c) Sai: coi ba nam là một khối có $4!cdot3!=144$ cách, $P=0{,}2$. d) Sai: xếp 3 nữ trước ($3!$ cách) tạo 4 chỗ trống, chọn 3 chỗ cho nam và hoán vị: $3!cdot C_4^3cdot3!=144$, $P=\frac{144}{720}=0{,}2$.",
+    "explanation": "a) Đúng: $6!=720$. b) Đúng: hai kiểu xen kẽ, mỗi kiểu $3!\\cdot3!=36$, tổng 72. c) Sai: coi ba nam là một khối có $4!\\cdot3!=144$ cách, $P=0{,}2$. d) Sai: xếp 3 nữ trước ($3!$ cách) tạo 4 chỗ trống, chọn 3 chỗ cho nam và hoán vị: $3!\\cdot C_4^3\\cdot3!=144$, $P=\\frac{144}{720}=0{,}2$.",
     "points": 1,
     "tags": [
       "xếp chỗ",
@@ -18408,7 +18408,7 @@ export const BANK_THPT2: BankEntry[] = [
       }
     ],
     "answer": "SSSĐ",
-    "explanation": "Gọi $M$ là trung điểm $BC$: $AM=2sqrt{3}$, $OA=\frac{2}{3}AM=\frac{4sqrt{3}}{3}$, $OM=\frac{2sqrt{3}}{3}$. a) Sai: $SA^2=6+\frac{16}{3}=\frac{34}{3}$, $SAapprox3{,}37\ne3sqrt{2}$. b) Sai: $\tanwidehat{SAO}=\frac{sqrt{6}}{4sqrt{3}/3}approx1{,}06$, góc $approx46{,}7^{circ}$. c) Sai: $V=\frac{1}{3}cdot4sqrt{3}cdotsqrt{6}=4sqrt{2}$. d) Đúng: $d(O,BC)=OM=\frac{2sqrt{3}}{3}$.",
+    "explanation": "Gọi $M$ là trung điểm $BC$: $AM=2\\sqrt{3}$, $OA=\\frac{2}{3}AM=\\frac{4\\sqrt{3}}{3}$, $OM=\\frac{2\\sqrt{3}}{3}$. a) Sai: $SA^2=6+\\frac{16}{3}=\\frac{34}{3}$, $SA\\approx3{,}37\\ne3\\sqrt{2}$. b) Sai: $\\tan\\widehat{SAO}=\\frac{\\sqrt{6}}{4\\sqrt{3}/3}\\approx1{,}06$, góc $\\approx46{,}7^{\\circ}$. c) Sai: $V=\\frac{1}{3}\\cdot4\\sqrt{3}\\cdot\\sqrt{6}=4\\sqrt{2}$. d) Đúng: $d(O,BC)=OM=\\frac{2\\sqrt{3}}{3}$.",
     "points": 1,
     "tags": [
       "hình học không gian",
@@ -18683,7 +18683,7 @@ export const BANK_THPT2: BankEntry[] = [
     "type": "tra-loi-ngan",
     "prompt": "Cho hình lập phương $ABCD.A'B'C'D'$ cạnh 4. Khoảng cách từ $A'$ đến mặt phẳng $(AB'C')$ là $d$. Giá trị của $d^2$, làm tròn đến hàng phần trăm, là bao nhiêu?",
     "answer": "8",
-    "explanation": "Chọn $A(0;0;0)$, $B'(4;0;4)$, $C'(4;4;4)$, $A'(0;0;4)$. Mặt phẳng $(AB'C')$ có VTPT $[\u000bec{AB'},\u000bec{AC'}]$ cùng phương $(1;0;-1)$, phương trình $x-z=0$. $d=\frac{|0-4|}{sqrt{2}}=2sqrt{2}$, $d^2=8$.",
+    "explanation": "Chọn $A(0;0;0)$, $B'(4;0;4)$, $C'(4;4;4)$, $A'(0;0;4)$. Mặt phẳng $(AB'C')$ có VTPT $[\\vec{AB'},\\vec{AC'}]$ cùng phương $(1;0;-1)$, phương trình $x-z=0$. $d=\\frac{|0-4|}{\\sqrt{2}}=2\\sqrt{2}$, $d^2=8$.",
     "points": 0.5,
     "tags": [
       "hình học không gian",

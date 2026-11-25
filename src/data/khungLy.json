@@ -199,7 +199,7 @@
             "CD": "Chủ đề 6. Động lượng"
           },
           "yeu_cau_can_dat": [
-            "Định nghĩa được động lượng $\\vec{p} = m\u000bec{v}$ (đơn vị kg·m/s hoặc N·s) và xung lượng của lực $\\Delta \\vec{p} = \\vec{F} \\Delta t$",
+            "Định nghĩa được động lượng $\\vec{p} = m\\vec{v}$ (đơn vị kg·m/s hoặc N·s) và xung lượng của lực $\\Delta \\vec{p} = \\vec{F} \\Delta t$",
             "Phát biểu và viết được hệ thức Định luật bảo toàn động lượng cho hệ kín (hệ cô lập): $\\vec{p}_{trước} = \\vec{p}_{sau}$",
             "Phân biệt được va chạm đàn hồi (bảo toàn cả động lượng và động năng) và va chạm mềm (chỉ bảo toàn động lượng)",
             "Vận dụng định luật bảo toàn động lượng giải bài toán chuyển động bằng phản lực (tên lửa, đạn nổ) và bài toán va chạm giữa hai vật"
@@ -210,7 +210,7 @@
             "Hệ phương trình bảo toàn động lượng và bảo toàn động năng"
           ],
           "cong_thuc": [
-            "Động lượng: $\\vec{p} = m\u000bec{v}$ (SI: kg·m/s)",
+            "Động lượng: $\\vec{p} = m\\vec{v}$ (SI: kg·m/s)",
             "Xung lượng của lực: $\\Delta \\vec{p} = \\vec{p}_2 - \\vec{p}_1 = \\vec{F} \\Delta t$",
             "Bảo toàn động lượng hệ kín: $m_1 \\vec{v}_1 + m_2 \\vec{v}_2 = m_1 \\vec{v}'_1 + m_2 \\vec{v}'_2$",
             "Va chạm mềm (hai vật dính vào nhau): $v' = \\frac{m_1 v_1 + m_2 v_2}{m_1 + m_2}$",
@@ -613,7 +613,7 @@
             "Bài toán thực tế: Tính áp suất lốp xe ô tô khi nhiệt độ tăng cao khi chạy đường dài, áp suất bình chứa khí oxy y tế",
             "Thí nghiệm thực hành: Khảo sát định luật Boyle bằng xilanh chia độ và áp kế"
           ],
-          "luu_y_ra_de": "Chương Khí lý tưởng được chuyển từ Lớp 10 cũ lên LỚP 12 HỌC KỲ 1. Bổ sung biểu thức áp suất khí theo mô hình động học phân tử và mối liên hệ giữa động năng phân tử với nhiệt độ $W_{đtb} = \frac{3}{2}kT$."
+          "luu_y_ra_de": "Chương Khí lý tưởng được chuyển từ Lớp 10 cũ lên LỚP 12 HỌC KỲ 1. Bổ sung biểu thức áp suất khí theo mô hình động học phân tử và mối liên hệ giữa động năng phân tử với nhiệt độ $W_{đtb} = \\frac{3}{2}kT$."
         },
         {
           "id": "ly12-tu-truong-cam-ung-dien-tu",
