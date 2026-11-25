@@ -2,6 +2,7 @@ import assert from 'node:assert/strict'
 import { toolFromRaw } from '../src/lib/docRewrite'
 import { renderTool } from '../src/lib/toolSpec'
 import { parseScene } from '../src/lib/scene'
+import { readPlotSpec, regionAt, renderPlotSvg, toggleRegion } from '../src/lib/plot'
 
 const draw = (raw: Record<string, unknown>) => renderTool(toolFromRaw(raw))
 const scene = draw({ kind: 'scene', text: 'O(0;0) A(-1;1) B(1;1)\nAB\ntròn O 2\nelip O 2 1' })
@@ -64,4 +65,19 @@ assert.match(stat('pyramid', 'Bậc 1; Bậc 2; Bậc 3; Bậc 4\nNăng lượng
 const pedigree = draw({ kind: 'pedigree', text: '10: nam bt\n20: nữ bệnh\n10 x 20 -> 30\n30: nam bt', generationNumbers: true })
 assert.equal((pedigree.svg.match(/>1<\/text>/g) ?? []).length, 2)
 assert.doesNotMatch(pedigree.svg, />30<\/text>/)
+// tô vùng bấm chọn: x+4 và x²/2 là trọn một vùng (Oy không cắt đôi); thiếu biên thì lấy Ox, Oy
+const two = renderPlotSvg({ curves: [{ expr: 'x^2/2', color: '#111' }, { expr: 'x+4', color: '#111' }], xMin: -4, xMax: 6, yMin: -1, yMax: 10, grid: false, labels: false })
+const spec2 = readPlotSpec(two.svg)!
+const span = (curve: string | null, x: number, y: number) => {
+  const spec = curve ? { ...spec2, curves: [{ expr: curve, color: '#111' }], yMin: -5 } : spec2
+  const { cols } = regionAt(spec, renderPlotSvg(spec).frame, x, y)!
+  return [cols[0][0], cols[cols.length - 1][0]].map((v) => Math.round(v * 100) / 100)
+}
+assert.deepEqual(span(null, 1, 3), [-2, 4])
+assert.deepEqual(span('x^2-4', 1, -1), [-2, 2])
+assert.deepEqual(span('4-x', 1, 1), [0, 4])
+const on = toggleRegion(spec2, two.frame, 1, 3)
+assert.equal(on.regions!.length, 1)
+assert.equal(toggleRegion({ ...spec2, ...on }, two.frame, -1, 2).regions!.length, 0)
+assert.match(renderPlotSvg({ ...spec2, ...on }).svg, /data-shade="true"/)
 console.log('✓ Hồi quy 11 công cụ vẽ: hình học, scene, plot, bảng xét dấu, mạch, thống kê và phả hệ')

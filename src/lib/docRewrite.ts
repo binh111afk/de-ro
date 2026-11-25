@@ -4,7 +4,7 @@
  */
 import { callLlm, extractJson } from './llm'
 import { GEO2D_SHAPES, GEO3D_SHAPES } from './geometry'
-import { PLOT_COLORS, autoYRange, fitAutoBounds, parseExpr, parsePlotPoints, type PlotSpec } from './plot'
+import { PLOT_COLORS, autoYRange, crossings,fitAutoBounds, parseExpr, parsePlotPoints, type PlotSpec } from './plot'
 import { fitOxyBounds } from './oxy'
 import { defaultGasProcesses, parseGasStates } from './gas'
 import { renderTool, type ToolDoc } from './toolSpec'
@@ -100,22 +100,9 @@ function planFromRaw(raw: Record<string, unknown>): ToolPlan {
   if (exprs.length === 2 && xMax - xMin <= 200) {
     const [f, g] = exprs.map(parseExpr)
     const span = yMax - yMin
-    const sample = (i: number) => xMin + (xMax - xMin) * i / 256
-    const diff = (x: number) => f(x) - g(x)
-    for (let i = 1; i <= 256; i++) {
-      let a = sample(i - 1)
-      let b = sample(i)
-      const da = diff(a)
-      const db = diff(b)
-      if (!Number.isFinite(da) || !Number.isFinite(db) || da === 0 || da * db > 0) continue
-      for (let j = 0; j < 24; j++) {
-        const mid = (a + b) / 2
-        if (Math.sign(diff(mid)) === Math.sign(da)) a = mid
-        else b = mid
-      }
-      const x = (a + b) / 2
+    for (const x of crossings(f, g, xMin, xMax)) {
       const y = f(x)
-      if (!Number.isFinite(y) || Math.abs(diff(x)) > span * 1e-6) continue
+      if (!Number.isFinite(y)) continue
       if (y > yMax && y <= yMax + span) yMax = y + span * 0.08
       if (y < yMin && y >= yMin - span) yMin = y - span * 0.08
     }
