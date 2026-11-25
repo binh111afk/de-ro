@@ -5,6 +5,7 @@
 import { DIFFICULTY_RULE } from '../difficulty.js'
 import { ASK_RULE, CHAT_MARKDOWN, THINK_VI } from './common.js'
 import { figureGuideFor } from './figureGuide.js'
+import { sceneExamplesBlock } from './sceneExamples.js'
 import { sourceSection, webSection, type SourceInput } from './sources.js'
 
 /**
@@ -165,8 +166,24 @@ const HARDER_RULE =
   '\nGIÁO VIÊN MUỐN KHÓ / PHỨC TẠP HƠN: tự thiết kế, không hỏi lại và không chờ giáo viên tả từng điểm, từng đường. ' +
   'Đổi chính bài toán (giả thiết, cấu hình, câu hỏi) để phải suy luận nhiều bước hơn mức hiện tại, kết hợp ít nhất hai kiến thức hay tính chất, vẫn trong chương trình của lớp. ' +
   'Mọi điểm, đường thêm vào đều phải cần cho lời giải; thêm chi tiết thừa hoặc gọi lại một đường đã có bằng tên khác không tính là khó hơn. ' +
-  '"Hình phức tạp hơn" nghĩa là bài có cấu hình phong phú hơn: viết lại đề rồi vẽ lại hình theo đề mới, cập nhật phương án và đáp án.'
+  '"Hình phức tạp hơn" nghĩa là bài có cấu hình phong phú hơn: viết lại đề rồi vẽ lại hình theo đề mới, cập nhật phương án và đáp án. ' +
+  'MỐC với bài hình học phẳng: ngang câu hình khó đề tuyển sinh lớp 10 (hoặc câu vận dụng cao cùng lớp): hình có từ 8 điểm được đặt tên trở lên, ' +
+  'nhiều đường cắt nhau (cát tuyến, đường cao, trung điểm, giao điểm mới), lời giải qua ít nhất 3 bước nối tiếp (vd tứ giác nội tiếp → đồng dạng → hệ thức → kết quả). ' +
+  'Cách làm: lấy một cấu hình nhiều giao điểm (kiểu hình mẫu nếu có bên dưới) rồi DỰNG THÊM ít nhất 2 yếu tố mới lên đó ' +
+  '(đường vuông góc, đường song song, đường kính, trung điểm, giao điểm của hai đường đã có), và hỏi về yếu tố dựng thêm ở bước cuối. ' +
+  'Hỏi thứ đọc ra ngay từ một định lí quen thuộc của cấu hình gốc là chưa đạt. Hình vẽ đủ mọi điểm, mọi đoạn đề nêu.'
 const WANTS_HARDER = /khó hơn|khó lên|khó và|phức tạp|nâng (?:độ khó|mức)|nâng cao hơn/iu
+
+/** Đòi khó hơn: ghép luật, thêm hình mẫu nhiều giao điểm khi câu đang sửa là bài hình. */
+function harderSection(i: ExamTaskInput): string {
+  const text = i.text.normalize('NFC')
+  if (!WANTS_HARDER.test(text)) return ''
+  // yêu cầu thường chỉ là "câu 5 khó hơn": nội dung câu nằm trong bản tóm tắt đề
+  const no = /câu\s+(\d+)/iu.exec(text)?.[1]
+  const line = no ? i.digest?.split('\n').find((l) => new RegExp(` Câu ${no}(?!\\d)`).test(l)) : undefined
+  const topic = `${text}\n${line?.split(' | ')[0] ?? ''}`
+  return HARDER_RULE + sceneExamplesBlock(/đường tròn/iu.test(topic) ? 'hai tiếp tuyến, cát tuyến, ba đường cao, trực tâm, nửa đường tròn, tiếp tuyến Ax' : topic)
+}
 
 export function buildExamSystem(i: ExamTaskInput): string {
   const ctx = i.contextSummary
@@ -174,7 +191,7 @@ export function buildExamSystem(i: ExamTaskInput): string {
     examSystemPrompt(i.digest, `${i.text}\n${ctx ?? ''}`, i.sourceTier === 1 && !!i.sources?.length) +
     (i.intent === 'chat' ? '\nLượt này có vẻ là hỏi đáp hoặc trò chuyện: trả lời bằng chữ trong chat. Nếu thật ra giáo viên đang muốn thay đổi đề thì trả JSON theo hợp đồng trên; giáo viên chỉ muốn xem trong chat thì không trả JSON.' + CHAT_MARKDOWN : i.intent === 'doc' ? '\nLượt này trả JSON theo hợp đồng trên.' : '') +
     (i.revising ? '\nGiữ đề hiện tại. Chỉ dùng patch hoặc append cho yêu cầu này.' : '') +
-    (WANTS_HARDER.test(i.text.normalize('NFC')) ? HARDER_RULE : '') +
+    harderSection(i) +
     (i.ask ? ASK_RULE : '') +
     (ctx ? `\nTài liệu hiện tại: ${ctx}` : '')
   return system + sourceSection(i) + webSection(i.webFound) + (i.think ? THINK_VI : '')

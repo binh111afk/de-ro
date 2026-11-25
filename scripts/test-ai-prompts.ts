@@ -54,6 +54,8 @@ for (const s of snaps) {
 
 // đòi khó hơn thì mới ghép luật tự thiết kế
 check('"khó hơn" ghép luật tự thiết kế', buildExamSystem({ text: 'câu 5 cho hình khó và phức tạp hơn' }).includes('MUỐN KHÓ'))
+check('câu hình đòi khó hơn: kèm hình mẫu theo câu trong bản tóm tắt',
+  buildExamSystem({ text: 'câu 5 khó hơn', digest: '- [k4] question Câu 5: Cho đường tròn (O) …' }).includes('Hình mẫu của các đề gần giống'))
 check('yêu cầu thường không ghép', !buildExamSystem({ text: 'soạn đề toán 9' }).includes('MUỐN KHÓ'))
 
 // câu hỏi nằm sau hình trong đề nguồn được đưa lên trước hình
