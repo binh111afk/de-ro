@@ -1483,6 +1483,28 @@ export default function BoardEditor({ id }: { id: string }) {
     selected.current = new Set(added.map((e) => e.id))
     commit()
   }
+  /** bảng trống: các đường kẻ gom một nhóm, ô vuông to để vẽ / đặt hình vào */
+  const insertTable = (rows: number, cols: number) => {
+    const c = canvasRef.current
+    if (!c) return
+    const v = view.current
+    const r = c.getBoundingClientRect()
+    const cell = Math.min(140, (r.width * 0.8) / cols, (r.height * 0.8) / rows) / v.zoom
+    const w = cell * cols, h = cell * rows
+    const [x, y] = freeSpot(r.width / 2 / v.zoom - v.scrollX - w / 2, r.height / 2 / v.zoom - v.scrollY - h / 2)
+    const groupId = newId()
+    const rule = (x0: number, y0: number, dx: number, dy: number): El => ({
+      ...newElement('line', [x0, y0]), ...DEFAULT_STYLE, ...(isDarkPaper(opts.current.paper) ? { stroke: CHALK_WHITE } : {}), roughness: 0, groupId, w: dx, h: dy, points: [[0, 0], [dx, dy]],
+    })
+    const added = [
+      ...Array.from({ length: rows + 1 }, (_, i) => rule(x, y + i * cell, w, 0)),
+      ...Array.from({ length: cols + 1 }, (_, i) => rule(x + i * cell, y, 0, h)),
+    ]
+    els.current.push(...added)
+    pickTool('select')
+    selected.current = new Set(added.map((e) => e.id))
+    commit()
+  }
   /** hình công cụ → phần tử gốc của bảng (một nhóm giữ ToolDoc); không chuyển được thì để ảnh như cũ */
   const toolEls = (img: ToolImage, x: number, y: number, w: number): El[] => {
     const doc = readToolDoc(img.svg)
@@ -2913,7 +2935,7 @@ export default function BoardEditor({ id }: { id: string }) {
             )}
             {mounted.has('tools') && (
               <div className={`absolute inset-0 overflow-y-auto px-3 pb-3 ${shownSide === 'tools' ? '' : 'invisible'}`}>
-                <ToolsPanel onInsertPlot={insertImage} onFormula={() => setDialog({ t: 'formula' })} />
+                <ToolsPanel onInsertPlot={insertImage} onBlankTable={insertTable} onFormula={() => setDialog({ t: 'formula' })} />
               </div>
             )}
           </div>

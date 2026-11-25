@@ -77,12 +77,40 @@ const SUBJECTS: Array<{ name: string; tools: Array<{ id: ToolId; label: string; 
   },
 ]
 
+/** lưới chọn kích thước bảng như Word: rê để xem, bấm để chọn */
+function TableGrid({ onPick }: { onPick: (rows: number, cols: number) => void }) {
+  const [at, setAt] = useState<[number, number]>([0, 0])
+  return (
+    <div className="mt-1 rounded-[6px] border border-line bg-white p-2.5">
+      <div className="grid grid-cols-8 gap-1" onMouseLeave={() => setAt([0, 0])}>
+        {Array.from({ length: 48 }, (_, i) => {
+          const rows = Math.floor(i / 8) + 1
+          const cols = (i % 8) + 1
+          return (
+            <button
+              key={i}
+              type="button"
+              aria-label={`${rows} hàng ${cols} cột`}
+              onMouseEnter={() => setAt([rows, cols])}
+              onFocus={() => setAt([rows, cols])}
+              onClick={() => onPick(rows, cols)}
+              className={cn('aspect-square rounded-[3px] border', rows <= at[0] && cols <= at[1] ? 'border-clay bg-clay-tint' : 'border-line')}
+            />
+          )
+        })}
+      </div>
+      <p className="mt-1.5 h-4 text-center text-[12px] tabular-nums text-ink-3">{at[0] ? `${at[0]} × ${at[1]}` : ''}</p>
+    </div>
+  )
+}
+
 export function ToolsPanel({
   disabled,
   onInsertPlot,
   examDoc,
   onFormula,
   onInsertBlocks,
+  onBlankTable,
 }: {
   disabled?: boolean
   onInsertPlot: (img: ToolImage) => void
@@ -91,6 +119,8 @@ export function ToolsPanel({
   /** bảng vẽ: có thì môn Toán hiện thêm "Công thức" (mở hộp LaTeX của bảng) */
   onFormula?: () => void
   onInsertBlocks?: (blocks: ExamBlock[]) => void
+  /** bảng vẽ: "Tạo bảng" chọn số hàng, cột rồi đặt bảng trống (không mở hộp nhập chữ) */
+  onBlankTable?: (rows: number, cols: number) => void
 }) {
   const FORMULA = { id: 'formula' as const, label: 'Công thức', desc: 'Gõ LaTeX, xem trước; bấm đúp trên bảng để sửa', Icon: Sigma }
   const subjects = SUBJECTS.map((s) => {
@@ -99,6 +129,7 @@ export function ToolsPanel({
     return s
   })
   const [open, setOpen] = useState<ToolId | null>(null)
+  const [gridOpen, setGridOpen] = useState(false)
   const [subject, setSubject] = useState(() => {
     try {
       return localStorage.getItem('tools.subject') ?? SUBJECTS[0].name
@@ -168,7 +199,11 @@ export function ToolsPanel({
                 <button
                   type="button"
                   disabled={disabled}
-                  onClick={() => (id === 'formula' ? onFormula?.() : setOpen(id))}
+                  onClick={() => {
+                    if (id === 'formula') onFormula?.()
+                    else if (id === 'table' && onBlankTable) setGridOpen((v) => !v)
+                    else setOpen(id)
+                  }}
                   className="flex w-full items-start gap-3 rounded-[6px] border border-line bg-white px-3 py-2.5 text-left transition-colors hover:border-ink-4 disabled:opacity-50"
                 >
                   <span className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-[6px] bg-paper-2 text-clay">
@@ -176,9 +211,17 @@ export function ToolsPanel({
                   </span>
                   <span className="min-w-0">
                     <span className="block text-[13.5px] font-medium text-ink">{label}</span>
-                    <span className="block text-[12px] leading-snug text-ink-3">{desc}</span>
+                    <span className="block text-[12px] leading-snug text-ink-3">{id === 'table' && onBlankTable ? 'Bảng trống để đặt hình' : desc}</span>
                   </span>
                 </button>
+                {id === 'table' && onBlankTable && gridOpen && (
+                  <TableGrid
+                    onPick={(rows, cols) => {
+                      onBlankTable(rows, cols)
+                      setGridOpen(false)
+                    }}
+                  />
+                )}
               </li>
             ))}
           </ul>
