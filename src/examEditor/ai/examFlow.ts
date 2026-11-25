@@ -20,7 +20,8 @@ export async function runExamSplit(ctx: TurnCtx, split: SplitChunk[], live: Live
   const chunkProgress = (p: LlmProgress) => {
         if (p.phase === 'retry') return
         if (p.phase === 'think' && live.phase() !== 'write') return live.onProgress(p)
-        if (live.phase() !== 'write') live.onProgress({ ...p, phase: 'write', text: '' })
+        // '{' để bước mở ra ghi "Viết đề" (chữ rỗng bị hiểu là đang trả lời)
+        if (live.phase() !== 'write') live.onProgress({ ...p, phase: 'write', text: '{' })
         if (live.throttled()) return
         const n = (p.text.match(/"type"\s*:\s*"(?:question|essay)"/g) ?? []).length
         const stem = [...p.text.matchAll(/"text"\s*:\s*"((?:[^"\\]|\\.)*)/g)].at(-1)?.[1]

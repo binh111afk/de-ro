@@ -44,6 +44,12 @@ import { finishSlide, generateDeck, runSlideEdit } from './ai/slideFlow'
 import { AI_EFFORT } from './ai/slideGen'
 import { closeLog, detectIntent, historyOf, leftTokens, spentSince, type ActStep, type AiMode, type ChatTurn } from './ai/turns'
 
+const SPLIT_REPLACE = 'Soạn cả đề mới, thay đề đang mở'
+const SPLIT_ASK = {
+  questions: [{ q: 'Đề đang mở đã có nội dung. Bạn muốn làm gì?', options: [SPLIT_REPLACE, 'Chỉ thêm vài câu vào đề đang mở'] }],
+  noFigure: true as const,
+}
+
 export type { AiMode, ChatTurn } from './ai/turns'
 
 const SLIDE_PRO_WARN_KEY = 'dethinhbien-slide-pro-warned'
@@ -334,7 +340,8 @@ function AiConversation({
     const originalRequest = answeringAsk ? turns.at(-2)?.text ?? text : text
     const requestWithAnswer = answeringAsk && originalRequest !== text ? `${originalRequest}\n\n${text}` : text
     // đề đang có nội dung: mọi lượt đều không được thay cả đề, trừ khi giáo viên bảo làm đề mới
-    const revisingExam = mode === 'exam' && !!documentDigest && !rewritesWholeExam(originalRequest)
+    const chosenReplace = answeringAsk && text.includes(SPLIT_REPLACE)
+    const revisingExam = mode === 'exam' && !!documentDigest && !rewritesWholeExam(originalRequest) && !chosenReplace
     setTurns((t) => [
       ...t,
       userTurn,
@@ -436,6 +443,15 @@ function AiConversation({
           return
         }
       }
+      // đề nguồn dài + "soạn lại / đổi số liệu": chia nhiều lượt nhỏ (một lượt cả đề thì model hết token)
+      const plan = mode === 'exam' && intent === 'doc' && onApplyBlocks && pack.items.length === 1
+        ? planExamSplit(originalRequest, pack.items[0].text)
+        : null
+      // đề đang mở có nội dung mà chưa rõ thay hay thêm: hỏi trước khi tốn nhiều lượt
+      if (plan && revisingExam && !answeringAsk) {
+        patchTurn(() => ({ text: '', ask: SPLIT_ASK, askState: 'open', pending: false, log: undefined, askSourcePack: pack }))
+        return
+      }
       // bật Tìm trên web: một lượt tìm + tóm tắt nguồn (DeepSeek, tắt suy luận), rồi soạn như thường với phần tóm tắt trong prompt
       if (webSearch && intent === 'doc' && mode !== 'board') {
         logStart('Tìm trên web')
@@ -458,12 +474,7 @@ function AiConversation({
       // phần suy nghĩ hiện thẳng cho giáo viên xem → bắt suy nghĩ bằng tiếng Việt (model mặc định nghĩ tiếng Anh)
       mainTask.input.think = true
       const live = createLiveLog(ctx)
-      // đề nguồn dài + "soạn lại / đổi số liệu": chia nhiều lượt nhỏ (một lượt cả đề thì model hết token)
-      const split =
-        mode === 'exam' && intent === 'doc' && onApplyBlocks && pack.items.length === 1 && !revisingExam
-          ? planExamSplit(originalRequest, pack.items[0].text)
-          : null
-      if (split) return await runExamSplit(ctx, split, live)
+      if (plan && !revisingExam) return await runExamSplit(ctx, plan, live)
       live.onProgress({ phase: 'think', thought: 0, thinking: '', text: '' })
       // model chưa gửi gì (đang xếp hàng / suy luận không stream): số giây vẫn chạy
       const ticker = setInterval(() => live.phase() === 'think' && logPatch({ note: live.secs() }), 1000)
@@ -755,7 +766,7 @@ function AiConversation({
         <AiAskPanel
           key={openAsk.id}
           ask={openAsk.ask}
-          figure={mode !== 'slide'}
+          figure={mode !== 'slide' && !openAsk.ask.noFigure}
           request={turns.filter((t) => t.role === 'user').map((t) => t.text).join(' ')}
           onSubmit={answerAsk}
           onSkip={() => answerAsk(mode === 'exam' && documentDigest
