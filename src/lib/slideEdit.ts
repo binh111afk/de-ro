@@ -121,6 +121,7 @@ export function editSystemPrompt(context: string): string {
     'Bố cục "cards" chứa 2–6 thẻ trong "items", mỗi thẻ tối đa 100 ký tự. Nếu người dùng muốn tách thành các thẻ riêng, giữ tên đầy đủ của từng mục. ' +
     'Từ bố cục "bullets" có thể gửi "items" để chuyển thẳng sang thẻ. "bullets" tối đa 6 ý, "timeline"/"cycle" 3–6 bước, "mindmap" 2–6 nhánh, "quiz" 2–4 phương án. ' +
     'Nếu người dùng yêu cầu tách thành nhiều slide, dùng "edit_slide" rồi "add_slide" cho phần còn lại.\n' +
+    'Người dùng chê nhiều chữ, dài, rối hoặc xin gọn lại: PHẢI viết lại nội dung ngắn đi rõ rệt (bớt ít nhất một phần ba số chữ, giữ ý chính) bằng edit_slide hoặc set_layout kèm fields mới; chỉ đổi bố cục là chưa làm gì.\n' +
     '- {"op":"add_slide","layout":"<id>","fields":{...},"position":2} — chèn đúng số slide được yêu cầu; bỏ position để thêm cuối. Với sơ đồ tư duy dùng mindmap, fields có title, body (chủ đề) và items (3–6 nhánh ngắn). Với trắc nghiệm dùng quiz, fields có question, options (2–4 phương án), answer (chỉ số từ 0).\n' +
     '- {"op":"duplicate_slide","slide":3}\n' +
     '- {"op":"set_notes","slide":3,"notes":"ghi chú trình bày"}\n' +
@@ -375,6 +376,8 @@ export interface EditResult {
   summary: string[]
   changed: boolean
   images: Array<{ slideId: string; description?: string }>
+  /** lỗi nội dung (quá dài, thiếu field) của lệnh bị bỏ — để xin model viết lại */
+  rejected: string[]
 }
 
 /** Áp lần lượt các lệnh lên deck (thuần, không đụng deck gốc). Lệnh lỗi bị bỏ, lệnh còn lại vẫn chạy. */
@@ -382,6 +385,7 @@ export function applyEdits(deck: Deck, ops: SlideEditOp[]): EditResult {
   let next = deck
   const summary: string[] = []
   const images: EditResult['images'] = []
+  const rejected: string[] = []
   const html = deck.format === 'html'
   const pick = (slides: number[] | undefined, count: number): number[] =>
     (slides ?? Array.from({ length: count }, (_, i) => i + 1)).filter((n) => n >= 1 && n <= count)
@@ -511,6 +515,7 @@ export function applyEdits(deck: Deck, ops: SlideEditOp[]): EditResult {
         const check = checkEditContent(patch, slide.layout, slide.tone, current)
         if (check.errors.length) {
           summary.push(editFailure(`sửa slide ${op.slide}`, check.page.layout, check.errors))
+          rejected.push(`slide ${op.slide}: ${check.errors.join(', ')}`)
           break
         }
         const built = slideFromAi({ ...check.page, image, image2, imageCrop, image2Crop, graphic: check.page.graphic ?? graphic }, theme)
@@ -546,6 +551,11 @@ export function applyEdits(deck: Deck, ops: SlideEditOp[]): EditResult {
         const elements = check
           ? check.errors.length ? [] : composeLayout(theme, op.layout, { ...check.page, image: current.image, image2: current.image2, imageCrop: current.imageCrop, image2Crop: current.image2Crop }, tone)
           : composeLayout(theme, op.layout, base, tone)
+        if (check?.errors.length) {
+          summary.push(editFailure(`đổi slide ${op.slide}`, op.layout, check.errors))
+          rejected.push(`slide ${op.slide}: ${check.errors.join(', ')}`)
+          break
+        }
         if (!elements.length) {
           summary.push(`Mình chưa đủ nội dung để đổi slide ${op.slide} sang dạng ${layoutName}.`)
           break
@@ -581,6 +591,7 @@ export function applyEdits(deck: Deck, ops: SlideEditOp[]): EditResult {
         const check = checkEditContent(patch, op.layout)
         if (check.errors.length) {
           summary.push(editFailure('thêm slide', check.page.layout, check.errors))
+          rejected.push(`slide mới (${op.layout}): ${check.errors.join(', ')}`)
           break
         }
         const built = slideFromAi(check.page, theme)
@@ -634,5 +645,5 @@ export function applyEdits(deck: Deck, ops: SlideEditOp[]): EditResult {
       }
     }
   }
-  return { deck: next, summary, changed: next !== deck, images }
+  return { deck: next, summary, changed: next !== deck, images, rejected }
 }

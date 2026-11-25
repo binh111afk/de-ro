@@ -74,6 +74,7 @@ function AiConversation({
   onClearSlides,
   editContext,
   onApplyEdits,
+  onCheckEdits,
   onPendingSlides,
   contextSummary,
   documentDigest,
@@ -102,6 +103,8 @@ function AiConversation({
   editContext?: string
   /** áp lệnh sửa slide có sẵn do AI trả về; trả các dòng báo lại người dùng */
   onApplyEdits?: (ops: SlideEditOp[], signal: AbortSignal) => string[] | Promise<string[]>
+  /** lỗi nội dung nếu áp thử các lệnh (không đổi bài) */
+  onCheckEdits?: (ops: SlideEditOp[]) => string[]
   /** báo số slide còn chờ để editor vẽ ô skeleton (null = xong/huỷ) */
   onPendingSlides?: (state: { done: number; total: number } | null) => void
   /** mô tả ngắn tài liệu hiện tại, đưa vào system prompt */
@@ -468,7 +471,7 @@ function AiConversation({
       const ctx: TurnCtx = {
         mode, text, intent, originalRequest, revisingExam, userTurn, botId, messages, mainTask, srcInput, controller,
         setTurns, patchTurn, logSet, logStart, logPatch, contextSummary, documentDigest, editContext, slidePro,
-        onApplyBlocks, onApplySlides, onApplyEdits, onBoardOps,
+        onApplyBlocks, onApplySlides, onApplyEdits, onCheckEdits, onBoardOps,
       }
       if (editingSlides && await runSlideEdit(ctx)) return
       // phần suy nghĩ hiện thẳng cho giáo viên xem → bắt suy nghĩ bằng tiếng Việt (model mặc định nghĩ tiếng Anh)
@@ -535,7 +538,7 @@ function AiConversation({
       setBusy(false)
       abortRef.current = null
     }
-  }, [input, files, refs, picked, busy, turns, contextSummary, documentDigest, mode, onApplyBlocks, onExamMaintenance, onApplySlides, slidePro, existingSlideCount, editContext, onApplyEdits, onBoardOps])
+  }, [input, files, refs, picked, busy, turns, contextSummary, documentDigest, mode, onApplyBlocks, onExamMaintenance, onApplySlides, slidePro, existingSlideCount, editContext, onApplyEdits, onCheckEdits, onBoardOps])
 
   const stop = useCallback(() => {
     abortRef.current?.abort()

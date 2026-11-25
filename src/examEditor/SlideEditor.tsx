@@ -1982,6 +1982,7 @@ export function SlideEditor({
           onClearSlides={clearSlides}
           editContext={editContext}
           onApplyEdits={applyAiEdits}
+          onCheckEdits={ops => applyEdits(deckRef.current, ops).rejected}
           onPendingSlides={setPendingSlides}
           contextSummary={`bài giảng "${deck.title}", ${deck.slides.length} slide`}
         />

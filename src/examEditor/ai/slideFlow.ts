@@ -3,7 +3,7 @@ import type { Dispatch, MutableRefObject, SetStateAction } from 'react'
 import { AiQuotaError, callLlm, type LlmProgress, type LlmResult } from '@/lib/llm'
 import { startsWithJson } from '@/lib/aiDocContext'
 import { parseDeckPlan, proPlan, type AiSlidePayload, type DeckPlan } from '@/lib/aiDeck'
-import { checkSlide, dropRepeatedGraphic } from '@/lib/slideAi'
+import { dropRepeatedGraphic } from '@/lib/slideAi'
 import { isLayoutId } from '@/lib/slideLayouts'
 import { parseAddedSlide, parseEditCommands } from '@/lib/slideEdit'
 import { askAgain, type TurnCtx } from './flowKit'
@@ -23,8 +23,7 @@ export async function runSlideEdit(ctx: TurnCtx): Promise<boolean> {
   const comparison = /(?:đổi|chuyển)[^.\n]*slide\s*(?:số\s*)?(\d+)[^.\n]*?(bảng so sánh|so sánh)/iu.exec(text)
   const read = (content: string) => {
     const result = parseEditCommands(content)
-    const ops = result.ops.filter(op => op.op !== 'add_slide' ||
-      (isLayoutId(op.layout) && !checkSlide({ ...op.fields, layout: op.layout }, op.layout).errors.length))
+    const ops = result.ops.filter(op => op.op !== 'add_slide' || isLayoutId(op.layout))
     if (comparison) {
       const table = comparison[2].toLowerCase().startsWith('bảng')
       const hasContent = ops.some(op => op.op === 'set_layout' && op.slide === Number(comparison[1]) &&
@@ -44,10 +43,18 @@ export async function runSlideEdit(ctx: TurnCtx): Promise<boolean> {
   // bài khác từ đầu: đi tiếp xuống luồng lập dàn ý
   if (!/"action"\s*:\s*"new_deck"/.test(first.content)) {
     let result = read(first.content)
-    if (!result.ops.length && !result.needsData) {
-      const again = await askAgain(messages, 'Chỉ trả lệnh hợp lệ để thực hiện đúng phần được yêu cầu trên bài đang mở.', first,
+    // nội dung quá dài / thiếu field: xin viết lại một lần trước khi áp, thay vì báo không sửa được
+    const rejected = result.ops.length ? ctx.onCheckEdits?.(result.ops) ?? [] : []
+    if (rejected.length || (!result.ops.length && !result.needsData)) {
+      const again = await askAgain(
+        rejected.length ? [...messages, { role: 'assistant', content: first.content }] : messages,
+        rejected.length
+          ? `Chưa áp được vì ${rejected.join('; ')}. Viết ngắn lại cho vừa giới hạn (ngắn hơn hẳn mức tối đa) rồi trả lại đủ mọi lệnh.`
+          : 'Chỉ trả lệnh hợp lệ để thực hiện đúng phần được yêu cầu trên bài đang mở.',
+        first,
         { signal: controller.signal, reasoningEffort: AI_EFFORT.slide, task: editTask })
-      result = read(again.content)
+      const next = read(again.content)
+      if (next.ops.length || !result.ops.length) result = next
     }
     controller.signal.throwIfAborted()
     const lines = result.ops.length ? await onApplyEdits(result.ops, controller.signal) : []

@@ -33,6 +33,8 @@ export interface TurnCtx {
   onApplyBlocks?: (text: string, allowReplace: boolean, request?: string) => AiApplyResult | undefined
   onApplySlides?: (text: string, plan?: DeckPlan) => number | Promise<number>
   onApplyEdits?: (ops: SlideEditOp[], signal: AbortSignal) => string[] | Promise<string[]>
+  /** lỗi nội dung nếu áp thử các lệnh (không đổi bài) */
+  onCheckEdits?: (ops: SlideEditOp[]) => string[]
   onBoardOps?: (ops: Record<string, unknown>[]) => string[]
 }
 
