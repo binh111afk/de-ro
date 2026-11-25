@@ -678,7 +678,7 @@
     "level": "VD",
     "prompt": "Thể tích khối tròn xoay tạo thành khi quay hình phẳng giới hạn bởi $y=x^2+2$, $x=0$, $x=1$ và trục $Ox$ quanh trục $Ox$ là $V$. Giá trị của $\\frac{V}{\\pi}$ làm tròn đến hàng phần mười là bao nhiêu?",
     "answer": "5,5",
-    "explanation": "$V=piint_0^1(x^2+2)^2,dx=pileft(\frac{1}{5}+\frac{4}{3}+4\right)=\frac{83pi}{15}$, nên $\frac{V}{pi}=\frac{83}{15}approx 5{,}5$.",
+    "explanation": "$V=\\pi\\int_0^1(x^2+2)^2\\,dx=\\pi\\left(\\frac{1}{5}+\\frac{4}{3}+4\\right)=\\frac{83\\pi}{15}$, nên $\\frac{V}{\\pi}=\\frac{83}{15}\\approx 5{,}5$.",
     "tags": [
       "thể tích tròn xoay"
     ]

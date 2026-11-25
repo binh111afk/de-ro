@@ -485,7 +485,7 @@
       }
     ],
     "answer": "D",
-    "explanation": "$\frac{x}{(2-x)^2}=4Rightarrow4x^2-17x+16=0Rightarrow x=\frac{17-sqrt{33}}{8}approx1{,}41$ M (nghiệm còn lại lớn hơn 2, loại).",
+    "explanation": "$\\frac{x}{(2-x)^2}=4\\Rightarrow4x^2-17x+16=0\\Rightarrow x=\\frac{17-\\sqrt{33}}{8}\\approx1{,}41$ M (nghiệm còn lại lớn hơn 2, loại).",
     "tags": [
       "cân bằng hóa học"
     ]
@@ -737,7 +737,7 @@
     "level": "VDC",
     "prompt": "Phản ứng $A\\rightleftharpoons B$ có hằng số cân bằng $K=9$ ở một nhiệt độ xác định. Ban đầu chỉ có $[A]=0{,}4$ M. Nồng độ của $B$ tại cân bằng (M) là bao nhiêu?",
     "answer": "0,36",
-    "explanation": "$K=\frac{[B]}{[A]}=9$ và $[A]+[B]=0{,}4Rightarrow[B]=0{,}36$ M.",
+    "explanation": "$K=\\frac{[B]}{[A]}=9$ và $[A]+[B]=0{,}4\\Rightarrow[B]=0{,}36$ M.",
     "tags": [
       "cân bằng hóa học"
     ]

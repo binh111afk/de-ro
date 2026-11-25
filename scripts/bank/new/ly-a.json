@@ -155,7 +155,7 @@
       }
     ],
     "answer": "A",
-    "explanation": "Đẳng nhiệt: $p_1V_1=p_2V_2Rightarrow p_2=\frac{2cdot10^{5}cdot2}{4}=1cdot10^{5}$ Pa.",
+    "explanation": "Đẳng nhiệt: $p_1V_1=p_2V_2\\Rightarrow p_2=\\frac{2\\cdot10^{5}\\cdot2}{4}=1\\cdot10^{5}$ Pa.",
     "tags": [
       "định luật Boyle",
       "đồ thị"
@@ -842,7 +842,7 @@
     "level": "VDC",
     "prompt": "Một lượng khí lí tưởng thực hiện chu trình như hình bên dưới: trạng thái 1 $(2;\\,4)$, 2 $(6;\\,4)$, 3 $(6;\\,1)$ (toạ độ theo hệ SI). Công toàn phần mà khí thực hiện trong một chu trình bằng bao nhiêu jun (J)?",
     "answer": "6",
-    "explanation": "Công toàn phần bằng diện tích tam giác 1–2–3 trên đồ thị p–V: $W=\frac{1}{2}cdot(6-2)cdot(4-1)=6$ J; chu trình đi theo chiều kim đồng hồ nên khí sinh công dương.",
+    "explanation": "Công toàn phần bằng diện tích tam giác 1–2–3 trên đồ thị p–V: $W=\\frac{1}{2}\\cdot(6-2)\\cdot(4-1)=6$ J; chu trình đi theo chiều kim đồng hồ nên khí sinh công dương.",
     "tags": [
       "chu trình",
       "công của khí"

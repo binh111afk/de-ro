@@ -79,7 +79,8 @@
     "test:ai-feedback-admin": "tsx scripts/test-ai-feedback-admin.ts",
     "test:funnel": "tsx scripts/test-funnel.ts",
     "test:pricing": "tsx scripts/test-pricing.mjs",
-    "test:welcome-gift": "tsx --tsconfig tsconfig.app.json scripts/test-welcome-gift.mjs"
+    "test:welcome-gift": "tsx --tsconfig tsconfig.app.json scripts/test-welcome-gift.mjs",
+    "test:formulas": "tsx --tsconfig tsconfig.app.json scripts/test-formulas.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^1.6.0",

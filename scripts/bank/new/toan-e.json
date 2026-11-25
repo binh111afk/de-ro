@@ -461,7 +461,7 @@
       }
     ],
     "answer": "SSSĐ",
-    "explanation": "Gọi $M$ là trung điểm $BC$: $AM=2sqrt{3}$, $OA=\frac{2}{3}AM=\frac{4sqrt{3}}{3}$, $OM=\frac{2sqrt{3}}{3}$. a) Sai: $SA^2=6+\frac{16}{3}=\frac{34}{3}$, $SAapprox3{,}37\ne3sqrt{2}$. b) Sai: $\tanwidehat{SAO}=\frac{sqrt{6}}{4sqrt{3}/3}approx1{,}06$, góc $approx46{,}7^{circ}$. c) Sai: $V=\frac{1}{3}cdot4sqrt{3}cdotsqrt{6}=4sqrt{2}$. d) Đúng: $d(O,BC)=OM=\frac{2sqrt{3}}{3}$.",
+    "explanation": "Gọi $M$ là trung điểm $BC$: $AM=2\\sqrt{3}$, $OA=\\frac{2}{3}AM=\\frac{4\\sqrt{3}}{3}$, $OM=\\frac{2\\sqrt{3}}{3}$. a) Sai: $SA^2=6+\\frac{16}{3}=\\frac{34}{3}$, $SA\\approx3{,}37\\ne3\\sqrt{2}$. b) Sai: $\\tan\\widehat{SAO}=\\frac{\\sqrt{6}}{4\\sqrt{3}/3}\\approx1{,}06$, góc $\\approx46{,}7^{\\circ}$. c) Sai: $V=\\frac{1}{3}\\cdot4\\sqrt{3}\\cdot\\sqrt{6}=4\\sqrt{2}$. d) Đúng: $d(O,BC)=OM=\\frac{2\\sqrt{3}}{3}$.",
     "tags": [
       "hình học không gian",
       "hình chóp đều"
@@ -697,7 +697,7 @@
     "level": "VD",
     "prompt": "Cho hình lập phương $ABCD.A'B'C'D'$ cạnh 4. Khoảng cách từ $A'$ đến mặt phẳng $(AB'C')$ là $d$. Giá trị của $d^2$, làm tròn đến hàng phần trăm, là bao nhiêu?",
     "answer": "8",
-    "explanation": "Chọn $A(0;0;0)$, $B'(4;0;4)$, $C'(4;4;4)$, $A'(0;0;4)$. Mặt phẳng $(AB'C')$ có VTPT $[\u000bec{AB'},\u000bec{AC'}]$ cùng phương $(1;0;-1)$, phương trình $x-z=0$. $d=\frac{|0-4|}{sqrt{2}}=2sqrt{2}$, $d^2=8$.",
+    "explanation": "Chọn $A(0;0;0)$, $B'(4;0;4)$, $C'(4;4;4)$, $A'(0;0;4)$. Mặt phẳng $(AB'C')$ có VTPT $[\\vec{AB'},\\vec{AC'}]$ cùng phương $(1;0;-1)$, phương trình $x-z=0$. $d=\\frac{|0-4|}{\\sqrt{2}}=2\\sqrt{2}$, $d^2=8$.",
     "tags": [
       "hình học không gian",
       "khoảng cách"

@@ -580,7 +580,7 @@
       }
     ],
     "answer": "ĐĐSS",
-    "explanation": "a) Đúng: cha mẹ bình thường sinh con gái bệnh nên bệnh do alen lặn trên NST thường (nếu trên X thì bố phải bệnh). b) Đúng: cả hai đều $Aa$. c) Sai: con trai bình thường có thể là $Aa$ (xác suất 2/3). d) Sai: $Aa\times Aa$ cho con bệnh với xác suất 1/4.",
+    "explanation": "a) Đúng: cha mẹ bình thường sinh con gái bệnh nên bệnh do alen lặn trên NST thường (nếu trên X thì bố phải bệnh). b) Đúng: cả hai đều $Aa$. c) Sai: con trai bình thường có thể là $Aa$ (xác suất 2/3). d) Sai: $Aa\\times Aa$ cho con bệnh với xác suất 1/4.",
     "tags": [
       "phả hệ"
     ]

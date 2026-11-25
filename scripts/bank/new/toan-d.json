@@ -536,7 +536,7 @@
       }
     ],
     "answer": "ĐĐSS",
-    "explanation": "a) Đúng: $6!=720$. b) Đúng: hai kiểu xen kẽ, mỗi kiểu $3!cdot3!=36$, tổng 72. c) Sai: coi ba nam là một khối có $4!cdot3!=144$ cách, $P=0{,}2$. d) Sai: xếp 3 nữ trước ($3!$ cách) tạo 4 chỗ trống, chọn 3 chỗ cho nam và hoán vị: $3!cdot C_4^3cdot3!=144$, $P=\frac{144}{720}=0{,}2$.",
+    "explanation": "a) Đúng: $6!=720$. b) Đúng: hai kiểu xen kẽ, mỗi kiểu $3!\\cdot3!=36$, tổng 72. c) Sai: coi ba nam là một khối có $4!\\cdot3!=144$ cách, $P=0{,}2$. d) Sai: xếp 3 nữ trước ($3!$ cách) tạo 4 chỗ trống, chọn 3 chỗ cho nam và hoán vị: $3!\\cdot C_4^3\\cdot3!=144$, $P=\\frac{144}{720}=0{,}2$.",
     "tags": [
       "xếp chỗ",
       "xác suất"

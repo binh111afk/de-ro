@@ -557,7 +557,7 @@
           ],
           "cong_thuc": [
             "Độ cồn (Độ rượu): $V_{ethanol} / V_{dung dịch} \\times 100^\\circ$",
-            "Phản ứng thế Na với Alcohol $n$ nấc: $n_{H_2} = \frac{n}{2} n_{alcohol}$",
+            "Phản ứng thế Na với Alcohol $n$ nấc: $n_{H_2} = \\frac{n}{2} n_{alcohol}$",
             "Alcohol đa chức có 2 nhóm $-OH$ kề nhau tác dụng với $Cu(OH)_2$ tạo dung dịch xanh lam thẫm"
           ],
           "chua_duoc_dung": [
