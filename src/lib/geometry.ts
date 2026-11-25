@@ -837,11 +837,12 @@ function solid(spec: Geo3dSpec): Solid {
     }
     case 'prism3':
     case 'prism3-oblique': {
-      const A: P3 = [0, 0.9, 0]
-      const B: P3 = [0.75, 0, 0]
-      const C: P3 = [1.9, 0.9, 0]
+      // B nhô hẳn ra trước và lệch phải A, cạnh bên cao cỡ cạnh đáy (hình SGK): mặt trái không bị hẹp dí
+      const A: P3 = [0, 1.25, 0]
+      const B: P3 = [1.3, 0, 0]
+      const C: P3 = [2.1, 1.25, 0]
       const skew = spec.shape === 'prism3-oblique' ? 0.66 : 0
-      const up = (p: P3): P3 => [p[0] + skew, p[1], h]
+      const up = (p: P3): P3 => [p[0] + skew, p[1], h * 1.27]
       return {
         pts: [A, B, C, up(A), up(B), up(C)],
         faces: [[0, 1, 2], [3, 4, 5], [0, 1, 4, 3], [1, 2, 5, 4], [2, 0, 3, 5]],
