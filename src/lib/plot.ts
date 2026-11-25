@@ -208,13 +208,17 @@ export function parsePlotPoints(text: string | undefined): Array<{ name: string;
   return out
 }
 
-export const PLOT_COLORS = ['#1f5fbf', '#c0392b', '#2e7d32', '#8e44ad']
+/** đường đồ thị màu đen như hình in trong SGK; nhiều đường thì phân biệt bằng tên hàm ghi cạnh nét */
+export const PLOT_COLORS = ['#111111']
 
 /** bề rộng khung vẽ (px); chiều cao tính theo miền y để hai trục cùng đơn vị */
-const W = 640
-const PAD = 36
-const H_MIN = 220
-const H_MAX = 720
+/** bề rộng hệ toạ độ vẽ. Hình chèn vào đề rộng ~300px: W nhỏ thì nét và chữ mới đủ đậm, đủ to như hình SGK. */
+const W = 420
+const PAD = 28
+const H_MIN = 145
+const H_MAX = 470
+/** kích thước ảnh xuất ra giữ như cũ (bảng vẽ, slide đặt hình theo số này) */
+const OUT_SCALE = 640 / W
 
 /** bước vạch chia "đẹp" (1, 2, 5 × 10^k) cho khoảng `span` */
 function niceStep(span: number) {
@@ -226,6 +230,12 @@ function niceStep(span: number) {
   const p = Math.pow(10, Math.floor(Math.log10(raw)))
   const m = raw / p
   return (m <= 1 ? 1 : m <= 2 ? 2 : m <= 5 ? 5 : 10) * p
+}
+
+/** Số trên trục sát nhau quá (dưới `min` đơn vị vẽ) thì lên bước "đẹp" kế tiếp: 1 → 2 → 5 → 10. */
+function roomyStep(step: number, pxPerUnit: number, min: number): number {
+  while (step * pxPerUnit < min) step *= String(step).replace(/[0.]/g, '') === '2' ? 2.5 : 2
+  return step
 }
 
 /** Mở các đầu trục tự chọn đủ chứa đối tượng và chừa chỗ cho nhãn. */
@@ -484,7 +494,7 @@ export function renderPlotSvg(spec: PlotSpec): { svg: string; width: number; hei
   const sx = (x: number) => PAD + ((x - xMin) / (xMax - xMin)) * (W - 2 * PAD)
   const sy = (y: number) => H - PAD - ((y - yMin) / (yMax - yMin)) * (H - 2 * PAD)
   const out: string[] = []
-  const font = `font-family="'Times New Roman',serif" font-size="15"`
+  const font = `font-family="'Times New Roman',serif" font-size="17"`
 
   // trục nằm ở 0 nếu 0 trong miền, không thì bám mép
   const ax = Math.min(Math.max(0, yMin), yMax)
@@ -493,7 +503,7 @@ export function renderPlotSvg(spec: PlotSpec): { svg: string; width: number; hei
   const Y0 = sy(ax)
   // miền x bị nới theo miền y → dùng luôn bước của trục y cho cả hai trục
   const stepX = spec.piAxis ? (xMax - xMin > 7 * Math.PI ? 2 * Math.PI : xMax - xMin > 4.1 * Math.PI ? Math.PI : Math.PI / 2)
-    : forced && sY ? sY : niceStep(xMax - xMin)
+    : forced && sY ? sY : roomyStep(niceStep(xMax - xMin), unit, 26)
   const fmtX = (v: number) => {
     if (!spec.piAxis) return fmt(v)
     const halves = Math.round(v * 2 / Math.PI)
@@ -502,7 +512,7 @@ export function renderPlotSvg(spec: PlotSpec): { svg: string; width: number; hei
     return `${halves < 0 ? '−' : ''}${n === 1 ? '' : n}π${halves % 2 ? '/2' : ''}`
   }
   // cùng đơn vị thì cùng bước chia (trừ khi đành co giãn)
-  const stepY = !spec.piAxis && Math.abs((H - 2 * PAD) / (yMax - yMin) - unit) < 1e-6 ? stepX : sY || niceStep(yMax - yMin)
+  const stepY = !spec.piAxis && Math.abs((H - 2 * PAD) / (yMax - yMin) - unit) < 1e-6 ? stepX : sY || roomyStep(niceStep(yMax - yMin), (H - 2 * PAD) / (yMax - yMin), 19)
   const ticks = (lo: number, hi: number, step: number) => {
     const r: number[] = []
     for (let v = Math.ceil(lo / step - 1e-9) * step; v <= hi + 1e-9; v += step) r.push(Math.round(v / step) * step)
@@ -541,16 +551,16 @@ export function renderPlotSvg(spec: PlotSpec): { svg: string; width: number; hei
     if (!p.proj || p.x === ay || p.y === ax) continue
     const px = sx(p.x).toFixed(1)
     const py = sy(p.y).toFixed(1)
-    out.push(`<path d="M${px} ${py}V${Y0.toFixed(1)}M${px} ${py}H${X0.toFixed(1)}" stroke="#222" stroke-width="1" stroke-dasharray="4 3" fill="none"/>`)
+    out.push(`<path d="M${px} ${py}V${Y0.toFixed(1)}M${px} ${py}H${X0.toFixed(1)}" stroke="#222" stroke-width="1.1" stroke-dasharray="4 3" fill="none"/>`)
   }
 
   // trục + mũi tên
   out.push(
-    `<path d="M${PAD - 6} ${Y0}H${W - 4}M${X0} ${H - PAD + 6}V4" stroke="#222" stroke-width="1.4" fill="none"/>`,
+    `<path d="M${PAD - 6} ${Y0}H${W - 4}M${X0} ${H - PAD + 6}V4" stroke="#222" stroke-width="1.5" fill="none"/>`,
     `<path d="M${W - 4} ${Y0}l-9 -4v8z M${X0} 4l-4 9h8z" fill="#222"/>`,
     `<text x="${W - 10}" y="${Y0 - 10}" ${font} font-style="italic" text-anchor="end" data-lbl="ax:x">x</text>`,
     `<text x="${X0 + 9}" y="16" ${font} font-style="italic" data-lbl="ax:y">y</text>`,
-    showOrigin ? `<text x="${X0 - 5}" y="${Y0 + 16}" ${font} font-style="italic" text-anchor="end" data-lbl="ax:O">O</text>` : '',
+    showOrigin ? `<text x="${X0 - 5}" y="${Y0 + 17}" ${font} font-style="italic" text-anchor="end" data-lbl="ax:O">O</text>` : '',
   )
   // dấu ngắt trục (hai gạch chéo sát gốc O), nền trắng che khúc trục ở giữa
   if (breakY)
@@ -563,15 +573,15 @@ export function renderPlotSvg(spec: PlotSpec): { svg: string; width: number; hei
     if (Math.abs(v) < 1e-9) continue
     const x = sx(v)
     tickPath.push(`M${x.toFixed(1)} ${Y0 - 3}v6`)
-    out.push(`<text x="${x.toFixed(1)}" y="${Y0 + 17}" ${font} text-anchor="middle" data-lbl="x:${Math.round(v * 1000) / 1000}">${fmtX(v)}</text>`)
+    out.push(`<text x="${x.toFixed(1)}" y="${Y0 + 18}" ${font} text-anchor="middle" data-lbl="x:${Math.round(v * 1000) / 1000}">${fmtX(v)}</text>`)
   }
   for (const v of ty) {
     if (Math.abs(v) < 1e-9) continue
     const y = sy(v)
     tickPath.push(`M${X0 - 3} ${y.toFixed(1)}h6`)
-    out.push(`<text x="${X0 - 7}" y="${(y + 5).toFixed(1)}" ${font} text-anchor="end" data-lbl="y:${Math.round(v * 1000) / 1000}">${fmt(v)}</text>`)
+    out.push(`<text x="${X0 - 7}" y="${(y + 6).toFixed(1)}" ${font} text-anchor="end" data-lbl="y:${Math.round(v * 1000) / 1000}">${fmt(v)}</text>`)
   }
-  out.push(`<path d="${tickPath.join('')}" stroke="#222" stroke-width="1.2"/>`)
+  out.push(`<path d="${tickPath.join('')}" stroke="#222" stroke-width="1.3"/>`)
 
   // đường cong: lấy mẫu dày, ngắt nét ở chỗ không xác định hoặc nhảy vọt (tiệm cận)
   out.push(`<clipPath id="plotclip"><rect x="${PAD - 2}" y="${PAD - 2}" width="${W - 2 * PAD + 4}" height="${H - 2 * PAD + 4}"/></clipPath>`)
@@ -688,7 +698,7 @@ export function renderPlotSvg(spec: PlotSpec): { svg: string; width: number; hei
       }
       prev = ok ? y : NaN
     }
-    out.push(`<path d="${d}" stroke="${c.color}" stroke-width="3.2" fill="none" stroke-linecap="round" stroke-linejoin="round" clip-path="url(#plotclip)"/>`)
+    out.push(`<path d="${d}" stroke="${c.color}" stroke-width="2.8" fill="none" stroke-linecap="round" stroke-linejoin="round" clip-path="url(#plotclip)"/>`)
 
     // Tìm các vị trí mỏ neo hợp lệ: trong miền 8% mép trong và không sát chỗ nhảy tiệm cận
     const validIndices: number[] = []
@@ -769,8 +779,8 @@ export function renderPlotSvg(spec: PlotSpec): { svg: string; width: number; hei
 
       const pretty = prettyExpr(cr.c.expr)
       const visibleText = 'y = ' + pretty.replace(/<[^>]+>/g, '')
-      const halfW = Math.max(16, (visibleText.length * 7.5) / 2)
-      const halfH = 7.5
+      const halfW = Math.max(18, (visibleText.length * 8.5) / 2)
+      const halfH = 8.5
 
       interface Candidate {
         cx: number
@@ -804,7 +814,7 @@ export function renderPlotSvg(spec: PlotSpec): { svg: string; width: number; hei
 
         const nx = Math.sin(theta)
         const ny = -Math.cos(theta)
-        const D_NORM = 12
+        const D_NORM = 13
 
         const sides = [
           { side: 1, cx: cr.points[k].px + D_NORM * nx, cy: cr.points[k].py + D_NORM * ny },
@@ -937,7 +947,7 @@ export function renderPlotSvg(spec: PlotSpec): { svg: string; width: number; hei
   // điểm đặt tên: "M(0; 0)", thêm "chiếu" để kẻ nét đứt xuống hai trục
   for (const p of plotPoints) {
     const [px, py] = [sx(p.x), sy(p.y)]
-    out.push(`<circle cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" r="3.6" fill="#111"/>`)
+    out.push(`<circle cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" r="3.2" fill="#111"/>`)
     // nằm trên đường cong ở đáy lõm (cực tiểu) thì ghi tên phía dưới, kẻo đè lên nét
     let below = py < 40
     try {
@@ -952,14 +962,14 @@ export function renderPlotSvg(spec: PlotSpec): { svg: string; width: number; hei
   }
 
   const svg =
-    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}">` +
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="640" height="${Math.round(H * OUT_SCALE)}">` +
     `<desc>${esc(JSON.stringify({ dePlot: spec }))}</desc>` +
     `<rect width="${W}" height="${H}" fill="#fff"/>` +
     `<g fill="#222">` +
     out.join('') +
     `</g>` +
     `</svg>`
-  return { svg, width: W, height: H }
+  return { svg, width: 640, height: Math.round(H * OUT_SCALE) }
 }
 
 export const svgDataUrl = (svg: string) => `data:image/svg+xml;base64,${btoa(unescape(encodeURIComponent(svg)))}`
