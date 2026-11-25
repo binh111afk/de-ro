@@ -432,6 +432,27 @@ export function autoYRange(fns: Fn[], xMin: number, xMax: number): [number, numb
   return xSpan >= 4 ? [Math.floor(lo), Math.ceil(hi)] : [lo, hi]
 }
 
+/** Hoành độ giao điểm của f và g trên [lo, hi], tăng dần (bỏ chỗ chỉ tiếp xúc và chỗ nhảy qua tiệm cận). */
+export function crossings(f: Fn, g: Fn, lo: number, hi: number): number[] {
+  const diff = (x: number) => f(x) - g(x)
+  const out: number[] = Math.abs(diff(lo)) < 1e-9 ? [lo] : []
+  for (let i = 1; i <= 256; i++) {
+    let a = lo + ((hi - lo) * (i - 1)) / 256
+    let b = lo + ((hi - lo) * i) / 256
+    const da = diff(a)
+    const db = diff(b)
+    if (!Number.isFinite(da) || !Number.isFinite(db) || da === 0 || da * db > 0) continue
+    for (let j = 0; j < 40; j++) {
+      const mid = (a + b) / 2
+      if (Math.sign(diff(mid)) === Math.sign(da)) a = mid
+      else b = mid
+    }
+    const x = (a + b) / 2
+    if (Math.abs(diff(x)) < 1e-6) out.push(x)
+  }
+  return out
+}
+
 /** số phần tử ≤ v trong mảng đã sắp */
 function upper(arr: number[], v: number) {
   let l = 0

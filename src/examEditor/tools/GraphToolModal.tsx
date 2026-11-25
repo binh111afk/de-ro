@@ -7,7 +7,7 @@ import { ChevronRight, Plus, X } from 'lucide-react'
 import { TrashIcon } from '@/components/appIcons'
 import { Button, inputClass } from '@/components/ui'
 import { cn } from '@/lib/cn'
-import { PLOT_COLORS, autoYRange, parseExpr, renderPlotSvg, svgDataUrl, type Fn, type PlotSpec } from '@/lib/plot'
+import { PLOT_COLORS, autoYRange, crossings, parseExpr,renderPlotSvg, svgDataUrl, type Fn, type PlotSpec } from '@/lib/plot'
 
 export type { ToolImage as PlotImage } from '@/lib/toolSpec'
 import type { ToolImage as PlotImage, LabelPos } from '@/lib/toolSpec'
@@ -68,6 +68,21 @@ export function GraphToolModal({
   const x1 = Number(xMax.replace(',', '.'))
   const rangeError = !(Number.isFinite(x0) && Number.isFinite(x1) && x0 < x1) ? 'Miền x chưa hợp lệ' : null
 
+  // tô vùng giữa hai hàm đầu (một hàm thì với trục Ox); mặc định lấy từ giao điểm đầu đến giao điểm cuối
+  const autoShade = useMemo<[string, string]>(() => {
+    const fns = parsed.map((p) => p.fn).filter((f): f is Fn => Boolean(f))
+    const xs = fns.length && !rangeError ? crossings(fns[0], fns[1] ?? (() => 0), x0, x1) : []
+    const [a, b] = xs.length > 1 ? [xs[0], xs[xs.length - 1]] : [x0, x1]
+    const text = (v: number) => String(Math.round(v * 1e4) / 1e4)
+    return [text(a), text(b)]
+  }, [parsed, x0, x1, rangeError])
+  const [shadeOn, setShadeOn] = useState(Boolean(initial?.shade))
+  // null = theo giao điểm, đổi hàm số thì khoảng tô đổi theo
+  const [shadeRange, setShadeRange] = useState<[string, string] | null>(initial?.shade ? [String(initial.shade[0]), String(initial.shade[1])] : null)
+  const shownShade = shadeRange ?? autoShade
+  const [s0, s1] = shownShade.map((v) => (v.trim() ? Number(v.replace(',', '.')) : NaN))
+  const shadeError = shadeOn && !(Number.isFinite(s0) && Number.isFinite(s1) && s0 < s1)
+
   const spec = useMemo<PlotSpec | null>(() => {
     if (rangeError) return null
     const fns = parsed.map((p) => p.fn).filter((f): f is Fn => Boolean(f))
@@ -88,10 +103,10 @@ export function GraphToolModal({
       labels,
       points: initial?.points,
       asymptotes: initial?.asymptotes,
-      shade: initial?.shade,
+      shade: shadeOn && !shadeError ? [s0, s1] : undefined,
       piAxis: initial?.piAxis,
     }
-  }, [parsed, exprs, x0, x1, autoY, yMin, yMax, grid, labels, rangeError, initial])
+  }, [parsed, exprs, x0, x1, autoY, yMin, yMax, grid, labels, shadeOn, shadeError, s0, s1, rangeError, initial])
 
   // spec có labelPos → nằm trong <desc> của SVG, chèn/nhấp đúp sửa vẫn giữ độ lệch
   const plot = useMemo(() => (spec ? withTextHalo(applyLabelPos(renderPlotSvg({ ...spec, labelPos }), labelPos)) : null), [spec, labelPos])
@@ -220,6 +235,23 @@ export function GraphToolModal({
               <h3 className="mb-1 text-[12px] font-semibold uppercase tracking-[0.04em] text-ink-3">Hiển thị</h3>
               <Check checked={grid} onChange={setGrid}>Lưới ô vuông</Check>
               <Check checked={labels} onChange={setLabels}>Ghi tên hàm cạnh đồ thị</Check>
+              <Check
+                checked={shadeOn}
+                onChange={(v) => {
+                  setShadeOn(v)
+                  setShadeRange(null)
+                }}
+              >
+                {parsed.filter((p) => p.fn).length > 1 ? 'Tô vùng giữa hai đồ thị' : 'Tô vùng với trục Ox'}
+              </Check>
+              {shadeOn && (
+                <div className="mt-2 grid grid-cols-[28px_1fr_16px_1fr] items-center gap-x-2 text-[13.5px] text-ink-2">
+                  <span className="font-serif italic">x</span>
+                  <input value={shownShade[0]} onChange={(e) => setShadeRange([e.target.value, shownShade[1]])} aria-label="Tô từ x" aria-invalid={shadeError} className={cn(numClass, shadeError && 'border-clay')} />
+                  <span className="text-center text-ink-4">→</span>
+                  <input value={shownShade[1]} onChange={(e) => setShadeRange([shownShade[0], e.target.value])} aria-label="Tô đến x" aria-invalid={shadeError} className={cn(numClass, shadeError && 'border-clay')} />
+                </div>
+              )}
             </section>
           </div>
 
