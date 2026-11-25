@@ -149,7 +149,7 @@ export default function BoardEditor({ id }: { id: string }) {
       const active = drag.current?.t === 'laser' ? drag.current.trail : null
       for (const tr of laser.current) {
         let i = 0
-        while (i < tr.ts.length && now - tr.ts[i] > LASER_LIFE) i++
+        while (i < tr.ts.length && now - tr.ts[i] > (tr.life ?? LASER_LIFE)) i++
         if (i) { tr.pts.splice(0, i); tr.ts.splice(0, i) }
       }
       laser.current = laser.current.filter((tr) => tr.pts.length || tr === active)
@@ -705,7 +705,7 @@ export default function BoardEditor({ id }: { id: string }) {
       return
     }
     if (t === 'laser') {
-      const trail: LaserTrail = { pts: [p], ts: [performance.now()], color: opts.current.laserColor, size: opts.current.laserSize }
+      const trail: LaserTrail = { pts: [p], ts: [performance.now()], color: opts.current.laserColor, size: opts.current.laserSize, life: opts.current.laserLife }
       laser.current.push(trail)
       drag.current = { t: 'laser', trail }
       redraw()
@@ -2538,6 +2538,13 @@ export default function BoardEditor({ id }: { id: string }) {
               <span className="flex size-4 items-center justify-center">
                 <span className="rounded-full" style={{ width: DOT_SIZES[i + 1], height: DOT_SIZES[i + 1], background: o.laserColor }} />
               </span>
+            </Chip>
+          ))}
+        </Group>
+        <Group label="Biến mất sau">
+          {[1, 2, 3, 5].map((s) => (
+            <Chip key={s} active={(o.laserLife ?? LASER_LIFE) === s * 1000} onClick={() => setOpt('laserLife', s * 1000)}>
+              {s} giây
             </Chip>
           ))}
         </Group>

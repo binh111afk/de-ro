@@ -31,6 +31,8 @@ export interface Opts {
   /** bút laser: màu và độ dày (hệ số) */
   laserColor: string
   laserSize: number
+  /** bút laser: vệt biến mất sau bao lâu (ms); bảng cũ chưa có thì LASER_LIFE */
+  laserLife?: number
   /** thùng sơn: màu và kiểu tô */
   bucketFill: string
   bucketStyle: FillStyle

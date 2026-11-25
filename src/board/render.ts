@@ -449,6 +449,8 @@ export interface LaserTrail {
   /** màu (#rrggbb) và hệ số độ dày lúc vẽ vệt này */
   color?: string
   size?: number
+  /** mỗi điểm của vệt sống bao lâu (ms) trước khi mờ hẳn */
+  life?: number
 }
 
 /** '#rrggbb' → 'r, g, b' để ghép vào rgba() */
@@ -731,7 +733,7 @@ export function render(
   const segs = (tr: LaserTrail, pass: (a: number) => void) => {
     const P = tr.pts
     for (let i = 1; i < P.length; i++) {
-      const a = 1 - (now - tr.ts[i]) / LASER_LIFE
+      const a = 1 - (now - tr.ts[i]) / (tr.life ?? LASER_LIFE)
       if (a <= 0) continue
       // đoạn cong qua trung điểm để vệt trơn, không gãy khúc
       const m0: Pt = i > 1 ? [(P[i - 2][0] + P[i - 1][0]) / 2, (P[i - 2][1] + P[i - 1][1]) / 2] : P[0]
