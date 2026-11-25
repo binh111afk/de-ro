@@ -160,12 +160,21 @@ export interface ExamTaskInput extends SourceInput {
   think?: boolean
 }
 
+/** Chỉ ghép khi giáo viên đòi khó hơn: họ chỉ nói vậy, việc nghĩ ra bài khó là của AI. */
+const HARDER_RULE =
+  '\nGIÁO VIÊN MUỐN KHÓ / PHỨC TẠP HƠN: tự thiết kế, không hỏi lại và không chờ giáo viên tả từng điểm, từng đường. ' +
+  'Đổi chính bài toán (giả thiết, cấu hình, câu hỏi) để phải suy luận nhiều bước hơn mức hiện tại, kết hợp ít nhất hai kiến thức hay tính chất, vẫn trong chương trình của lớp. ' +
+  'Mọi điểm, đường thêm vào đều phải cần cho lời giải; thêm chi tiết thừa hoặc gọi lại một đường đã có bằng tên khác không tính là khó hơn. ' +
+  '"Hình phức tạp hơn" nghĩa là bài có cấu hình phong phú hơn: viết lại đề rồi vẽ lại hình theo đề mới, cập nhật phương án và đáp án.'
+const WANTS_HARDER = /khó hơn|khó lên|khó và|phức tạp|nâng (?:độ khó|mức)|nâng cao hơn/iu
+
 export function buildExamSystem(i: ExamTaskInput): string {
   const ctx = i.contextSummary
   const system =
     examSystemPrompt(i.digest, `${i.text}\n${ctx ?? ''}`, i.sourceTier === 1 && !!i.sources?.length) +
     (i.intent === 'chat' ? '\nLượt này có vẻ là hỏi đáp hoặc trò chuyện: trả lời bằng chữ trong chat. Nếu thật ra giáo viên đang muốn thay đổi đề thì trả JSON theo hợp đồng trên; giáo viên chỉ muốn xem trong chat thì không trả JSON.' + CHAT_MARKDOWN : i.intent === 'doc' ? '\nLượt này trả JSON theo hợp đồng trên.' : '') +
     (i.revising ? '\nGiữ đề hiện tại. Chỉ dùng patch hoặc append cho yêu cầu này.' : '') +
+    (WANTS_HARDER.test(i.text.normalize('NFC')) ? HARDER_RULE : '') +
     (i.ask ? ASK_RULE : '') +
     (ctx ? `\nTài liệu hiện tại: ${ctx}` : '')
   return system + sourceSection(i) + webSection(i.webFound) + (i.think ? THINK_VI : '')

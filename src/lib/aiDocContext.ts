@@ -54,6 +54,8 @@ export const isExamMutationReply = (text: string) =>
 
 /** ảnh đồ thị: giữ cấu hình công cụ vẽ để AI biết hình vẽ gì, nhưng cắt bớt */
 const MAX_PLOT = 900
+/** khối giáo viên nhắc tới thì AI cần cả hình cũ mới sửa được */
+const MAX_FOCUS_PLOT = 8000
 
 export const blockKey = (index: number) => `k${index}`
 
@@ -108,8 +110,8 @@ export function referencedNos(text: string): FocusRefs {
 }
 
 /** Ẩn dữ liệu ảnh (data URL rất dài), cắt cấu hình đồ thị — phần còn lại giữ nguyên. */
-export function stripImages(v: unknown, images: NonNullable<Span['image']>[] = []): unknown {
-  if (Array.isArray(v)) return v.map((item) => stripImages(item, images))
+export function stripImages(v: unknown, images: NonNullable<Span['image']>[] = [], maxPlot = MAX_PLOT): unknown {
+  if (Array.isArray(v)) return v.map((item) => stripImages(item, images, maxPlot))
   if (!v || typeof v !== 'object') return v
   const out: Record<string, unknown> = {}
   for (const [k, val] of Object.entries(v as Record<string, unknown>)) {
@@ -118,9 +120,9 @@ export function stripImages(v: unknown, images: NonNullable<Span['image']>[] = [
       out.image = {
         ref: images.push(img) - 1,
         alt: img.alt || 'ảnh',
-        ...(img.plot && img.plot.length <= MAX_PLOT ? { figure: img.plot } : {}),
+        ...(img.plot && img.plot.length <= maxPlot ? { figure: img.plot } : {}),
       }
-    } else out[k] = stripImages(val, images)
+    } else out[k] = stripImages(val, images, maxPlot)
   }
   return out
 }
@@ -129,7 +131,7 @@ export function stripImages(v: unknown, images: NonNullable<Span['image']>[] = [
 export function fullBlockText(node: JSONContent, index: number): string {
   const blocks = tipTapToBlocks({ type: 'doc', content: [node] })
   if (!blocks.length) return ''
-  const body = blocks.length === 1 ? stripImages(blocks[0]) : stripImages(blocks)
+  const body = stripImages(blocks.length === 1 ? blocks[0] : blocks, [], MAX_FOCUS_PLOT)
   return `[${blockKey(index)}] ${JSON.stringify(body)}`
 }
 

@@ -52,6 +52,10 @@ for (const s of snaps) {
   check('withSources không nguồn: có luật "không có nguồn"', buildExamSystem({ text: 'x', withSources: true }).includes('KHÔNG CÓ NGUỒN CHO LƯỢT NÀY'))
 }
 
+// đòi khó hơn thì mới ghép luật tự thiết kế
+check('"khó hơn" ghép luật tự thiết kế', buildExamSystem({ text: 'câu 5 cho hình khó và phức tạp hơn' }).includes('MUỐN KHÓ'))
+check('yêu cầu thường không ghép', !buildExamSystem({ text: 'soạn đề toán 9' }).includes('MUỐN KHÓ'))
+
 // câu hỏi nằm sau hình trong đề nguồn được đưa lên trước hình
 {
   const src = 'Câu 9: Cho hàm số có bảng biến thiên như sau:\n[Hình: Bảng biến thiên …]\nHàm số nghịch biến trên khoảng nào?\nA. $(-1;3)$. B. $(3;+\\infty)$.'
