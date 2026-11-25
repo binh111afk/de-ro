@@ -2,6 +2,7 @@
 
 Chỉ mở phiên liên quan đến việc đang làm. Mới nhất ở trên.
 
+- [phiên 57](phien-57.md): thử AI thật, sửa "Thay cả đề" và sửa slide, **gộp `refactor/ai` vào `main`** (đã push), so DeepSeek / GLM; việc phiên sau: thử trên bản chạy thật
 - [phiên 56](phien-56.md): **gỡ rối phần AI** trên nhánh `refactor/ai` (đã push, chưa gộp), **GLM `glm-5.3-flash` ưu tiên 2** trên `main`; việc đầu phiên sau: thử với AI thật
 - [phiên 55](phien-55.md): **AI vẽ hình** (thư mục `src/lib/scene/`, lệnh dựng điểm, kho 47 hình mẫu, nới cú pháp scene/oxy/geo2d), khung AI soạn đề (trả lời trong chat, cảnh báo điểm khi đính kèm, không lộ model dự phòng), DeepSeek cạn token gọi lại, bỏ opencode, xoá khối mẫu; việc dở: lỗi "AI chưa trả lời được câu hỏi này"
 - [phiên 53](phien-53.md): **trang admin AI & Server chia 4 tab**, Lãi / lỗ AI + Phản hồi AI + bot Telegram 5xx / PayOS, **sơ đồ tự do cho AI vẽ hình** (`scene`: tròn, elip, hộp, chữ, mũi tên, cung, quạt, đa giác tô; mục `5c` của `figureGuide.ts`), luật chọn câu từ tệp + dấu công thức / hình không đọc được khi nhập Word, kiểm prompt injection, kiểm file đề mẫu thật; việc đề xuất chờ duyệt (cấm tự thêm hình, hình khớp số liệu đổi, câu báo "nhiều yêu cầu AI chạy cùng lúc")
