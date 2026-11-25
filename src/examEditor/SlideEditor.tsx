@@ -1189,7 +1189,7 @@ export function SlideEditor({
       updateDeck(result.deck)
     }
     const lines = [...result.summary]
-    for (const { slideId, description } of result.images) {
+    for (const { slideId, description, replace } of result.images) {
       const slide = deckRef.current.slides.find(s => s.id === slideId)
       if (!slide) continue
       const content = contentFromSlide(slide)
@@ -1208,8 +1208,9 @@ export function SlideEditor({
         if (activeImageJobs.current !== imageJobs || index < 0) continue
         const selected = current.slides[index]
         const slot = selected.elements.find(el => el.type === 'image' && !el.src)
+          ?? (replace ? selected.elements.find(el => el.type === 'image' && !el.decor && !el.locked) : undefined)
         const elements = slot
-          ? selected.elements.map(el => el === slot ? { ...el, src } : el)
+          ? selected.elements.map(el => el === slot ? { ...el, src, crop: undefined } : el)
           : [
               ...selected.elements.map(el => el.decor || el.y + el.h <= 24 ? el : { ...el, x: el.x * 0.66, w: el.w * 0.66 }),
               { id: uid(), type: 'image' as const, x: 68, y: 27, w: 26, h: 62, src },
@@ -1219,7 +1220,7 @@ export function SlideEditor({
         historyRef.current.future = []
         deckRef.current = updated
         updateDeck({ slides: updated.slides })
-        lines.push(`Mình đã thêm ảnh vào slide ${index + 1}.`)
+        lines.push(slot?.src ? `Mình đã đổi ảnh ở slide ${index + 1}.` : `Mình đã thêm ảnh vào slide ${index + 1}.`)
       } catch {
         signal.throwIfAborted()
         lines.push('Mình chưa thêm được ảnh. Bạn thử lại nhé.')

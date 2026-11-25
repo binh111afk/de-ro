@@ -20,17 +20,9 @@ export async function runSlideEdit(ctx: TurnCtx): Promise<boolean> {
     input: { context: editContext ?? contextSummary ?? '', ...srcInput, webFound: mainTask.input.webFound },
   }
   const allowLegacy = /(?:thêm|chèn|vẽ|tạo)[^.\n]*(?:sơ đồ tư duy|slide trắc nghiệm|slide câu hỏi)/iu.test(text)
-  const comparison = /(?:đổi|chuyển)[^.\n]*slide\s*(?:số\s*)?(\d+)[^.\n]*?(bảng so sánh|so sánh)/iu.exec(text)
   const read = (content: string) => {
     const result = parseEditCommands(content)
     const ops = result.ops.filter(op => op.op !== 'add_slide' || isLayoutId(op.layout))
-    if (comparison) {
-      const table = comparison[2].toLowerCase().startsWith('bảng')
-      const hasContent = ops.some(op => op.op === 'set_layout' && op.slide === Number(comparison[1]) &&
-        (table ? op.layout === 'table' && Array.isArray(op.fields?.rows)
-          : op.layout === 'comparison' && Array.isArray(op.fields?.left) && Array.isArray(op.fields?.right)))
-      if (!hasContent) return { ...result, ops: [] }
-    }
     const legacy = allowLegacy && !ops.length ? parseAddedSlide(content) : undefined
     return { ...result, ops: legacy ? [legacy] : ops }
   }
@@ -45,11 +37,11 @@ export async function runSlideEdit(ctx: TurnCtx): Promise<boolean> {
     let result = read(first.content)
     // nội dung quá dài / thiếu field: xin viết lại một lần trước khi áp, thay vì báo không sửa được
     const rejected = result.ops.length ? ctx.onCheckEdits?.(result.ops) ?? [] : []
-    if (rejected.length || (!result.ops.length && !result.needsData)) {
+    if (rejected.length || (!result.ops.length && !result.needsData && !result.say)) {
       const again = await askAgain(
         rejected.length ? [...messages, { role: 'assistant', content: first.content }] : messages,
         rejected.length
-          ? `Chưa áp được vì ${rejected.join('; ')}. Viết ngắn lại cho vừa giới hạn (ngắn hơn hẳn mức tối đa) rồi trả lại đủ mọi lệnh.`
+          ? `Chưa áp được vì ${rejected.join('; ')}. Viết ngắn lại cho vừa giới hạn (ngắn hơn hẳn mức tối đa), hoặc chia bớt sang slide mới bằng add_slide, rồi trả lại đủ mọi lệnh.`
           : 'Chỉ trả lệnh hợp lệ để thực hiện đúng phần được yêu cầu trên bài đang mở.',
         first,
         { signal: controller.signal, reasoningEffort: AI_EFFORT.slide, task: editTask })
@@ -59,13 +51,13 @@ export async function runSlideEdit(ctx: TurnCtx): Promise<boolean> {
     controller.signal.throwIfAborted()
     const lines = result.ops.length ? await onApplyEdits(result.ops, controller.signal) : []
     const notice = result.needsData ? 'Bạn gửi số liệu hoặc nguồn để mình vẽ biểu đồ nhé.'
-      : lines.join('\n\n') || 'Mình chưa sửa được slide. Bạn thử gửi lại yêu cầu nhé.'
+      : lines.join('\n\n') || result.say || 'Mình chưa sửa được slide. Bạn thử gửi lại yêu cầu nhé.'
     patchTurn(() => ({
       text: notice,
       pending: false,
       intent: 'doc',
       log: undefined,
-      ...(!lines.length && !result.needsData ? { retry: originalRequest } : {}),
+      ...(!lines.length && !result.needsData && !result.say ? { retry: originalRequest } : {}),
     }))
     return true
   }
