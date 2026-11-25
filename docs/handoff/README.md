@@ -2,6 +2,7 @@
 
 Chỉ mở phiên liên quan đến việc đang làm. Mới nhất ở trên.
 
+- [phiên 55](phien-55.md): **AI vẽ hình** (thư mục `src/lib/scene/`, lệnh dựng điểm, kho 47 hình mẫu, nới cú pháp scene/oxy/geo2d), khung AI soạn đề (trả lời trong chat, cảnh báo điểm khi đính kèm, không lộ model dự phòng), DeepSeek cạn token gọi lại, bỏ opencode, xoá khối mẫu; việc dở: lỗi "AI chưa trả lời được câu hỏi này"
 - [phiên 53](phien-53.md): **trang admin AI & Server chia 4 tab**, Lãi / lỗ AI + Phản hồi AI + bot Telegram 5xx / PayOS, **sơ đồ tự do cho AI vẽ hình** (`scene`: tròn, elip, hộp, chữ, mũi tên, cung, quạt, đa giác tô; mục `5c` của `figureGuide.ts`), luật chọn câu từ tệp + dấu công thức / hình không đọc được khi nhập Word, kiểm prompt injection, kiểm file đề mẫu thật; việc đề xuất chờ duyệt (cấm tự thêm hình, hình khớp số liệu đổi, câu báo "nhiều yêu cầu AI chạy cùng lúc")
 - [phiên 52](phien-52.md): **điểm chào mừng do admin đặt** (một nguồn: Điều khoản / Hồ sơ / bảng người dùng bám theo), popup quà chào mừng, nhãn `kind` slide Pro, trạng thái vẽ ảnh AI, chẩn đoán PayOS 429, **hạ tầng email `lienhe@dero.id.vn` (iNET + ImprovMX; chưa đổi trên web, chờ Bộ Công Thương)**
 - [phiên 51](phien-51.md): **nhãn chi phí AI** (`ai_calls.kind` / `billed`, `aiKind`), rút gọn lịch sử chat, điểm chào mừng 120, nhánh `feat/slide-chuyen-nghiep` (slide "Chuyên nghiệp": layout biên tập, ảnh nền AI, font + hiệu ứng chữ; chưa gộp), cách làm việc với Codex; chống tạo tài khoản hàng loạt (Turnstile, alias Gmail, hook IP); việc giao: slide Pro còn xấu, bot Telegram báo bất thường
