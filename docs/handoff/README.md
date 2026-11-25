@@ -2,6 +2,7 @@
 
 Chỉ mở phiên liên quan đến việc đang làm. Mới nhất ở trên.
 
+- [phiên 58](phien-58.md): **AI sửa slide** (đánh số trước khi áp, giữ phần tự chỉnh, lệnh `set_background` / `edit_element`), **đồ thị đường đen, chữ to** + hình lăng trụ; đã push; việc phiên sau: thử trên bản chạy thật
 - [phiên 57](phien-57.md): thử AI thật, sửa "Thay cả đề" và sửa slide, **gộp `refactor/ai` vào `main`** (đã push), so DeepSeek / GLM; việc phiên sau: thử trên bản chạy thật
 - [phiên 56](phien-56.md): **gỡ rối phần AI** trên nhánh `refactor/ai` (đã push, chưa gộp), **GLM `glm-5.3-flash` ưu tiên 2** trên `main`; việc đầu phiên sau: thử với AI thật
 - [phiên 55](phien-55.md): **AI vẽ hình** (thư mục `src/lib/scene/`, lệnh dựng điểm, kho 47 hình mẫu, nới cú pháp scene/oxy/geo2d), khung AI soạn đề (trả lời trong chat, cảnh báo điểm khi đính kèm, không lộ model dự phòng), DeepSeek cạn token gọi lại, bỏ opencode, xoá khối mẫu; việc dở: lỗi "AI chưa trả lời được câu hỏi này"
