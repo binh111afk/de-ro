@@ -69,6 +69,7 @@
     "test:ai-history": "tsx scripts/test-ai-history.ts",
     "test:ai-prompts": "tsx scripts/test-ai-prompts.ts",
     "test:ai-prompts-slide": "tsx scripts/test-ai-prompts-slide.ts",
+    "eval:ai": "tsx --tsconfig tsconfig.app.json scripts/ai-cases/run.ts",
     "build:prompts": "node scripts/build-server-prompts.mjs --write",
     "test:admin-content": "tsx scripts/test-admin-content.ts",
     "test:admin-bank": "tsx scripts/test-admin-bank.ts",
