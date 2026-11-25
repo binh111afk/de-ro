@@ -1173,10 +1173,12 @@ function AiConversation({
       }
       const onProgress = examSteps
         ? (p: LlmProgress) => {
-            // server chuyển sang nguồn AI khác: giáo viên không cần biết, bỏ bước đang chạy rồi làm lại từ đầu, không báo lỗi
+            // server gọi lại / chuyển nguồn AI: giáo viên không cần biết. Bước đang chạy quay về "Suy nghĩ" (đếm giây tiếp),
+            // không để nhật ký trống (nguồn mới có thể không stream suy luận)
             if (p.phase === 'retry') {
-              logSet((l) => l.filter((s) => s.state !== 'active'))
-              phase = ''
+              if (phase !== 'think') phaseAt = Date.now()
+              phase = 'think'
+              logSet((l) => [...l.filter((s) => s.state !== 'active' && s.label !== 'Suy nghĩ'), { label: 'Suy nghĩ', state: 'active' }])
               return
             }
             if (p.phase === 'think') {
