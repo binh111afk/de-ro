@@ -29,15 +29,13 @@ const same = (name: string, s: string | null) => {
 // file đóng gói không cũ so với mã nguồn
 check('server/generated/prompts.js đúng với mã nguồn (npm run build:prompts nếu cũ)', readFileSync(OUT, 'utf8') === (await bundlePrompts()))
 
-// bảng vẽ, tìm web, sửa slide, HTML
+// bảng vẽ, tìm web, sửa slide
 const board = buildTaskSystem('bang-ve', {}) ?? ''
 same('BOARD_SYSTEM', board)
 const boardOps = buildTaskSystem('bang-ve', { ops: true }) ?? ''
 same('BOARD_OPS_GUIDE', boardOps.slice(board.length))
 same('WEB_SEARCH_SYSTEM', buildTaskSystem('tim-web', {}))
 same('editSystemPrompt', buildTaskSystem('slide-sua', { context: 'Bài trình bày hiện tại (mẫu)' }))
-same('HTML_DECK_SYSTEM', buildTaskSystem('slide-chat', { variant: 'html' }))
-same('SLIDE_SYSTEM', buildTaskSystem('slide-chat', { variant: 'chat' }))
 same('SLIDE_PLAN_SYSTEM', buildTaskSystem('slide-chat', { variant: 'plan' }))
 
 // từng trang / từng lô trên hai dàn ý mẫu
@@ -51,11 +49,10 @@ for (const k of Object.keys(snap.plans)) {
 
 // phần ghép thêm của lượt chat: luật hỏi lại, ngữ cảnh, nguồn, web (đúng thứ tự như AiPanel cũ)
 {
-  const base = buildTaskSystem('slide-chat', { variant: 'chat' }) as string
-  const full = buildTaskSystem('slide-chat', { variant: 'chat', ask: true, contextSummary: 'tóm tắt', withSources: true, sourceTier: 1, sources: [{ tier: 1, name: 'mau.pptx', text: 'nội dung' }], webFound: ' web ' }) as string
+  const base = buildTaskSystem('slide-chat', { variant: 'plan' }) as string
+  check('slide-chat: tab bản cũ gửi variant chat dùng chung prompt', buildTaskSystem('slide-chat', { variant: 'chat' }) === base)
+  const full = buildTaskSystem('slide-chat', { variant: 'plan', ask: true, contextSummary: 'tóm tắt', withSources: true, sourceTier: 1, sources: [{ tier: 1, name: 'mau.pptx', text: 'nội dung' }], webFound: ' web ' }) as string
   check('slide-chat: ghép ask + ngữ cảnh + nguồn + web', full.startsWith(base + ASK_RULE + '\nBài trình bày hiện tại: tóm tắt\n\nNGUỒN ƯU TIÊN 1') && full.includes('--- NGUỒN 1 (ưu tiên 1)\nmau.pptx\nnội dung') && full.endsWith('\n\nNGUỒN TÌM TRÊN WEB (số liệu mới, ưu tiên dùng; số liệu lấy từ đây thì ghi nguồn ngắn trong đề/slide):\nweb'))
-  const html = buildTaskSystem('slide-chat', { variant: 'html', ask: true }) as string
-  check('slide-chat html: không có luật hỏi lại', !html.includes('HỎI LẠI KHI YÊU CẦU MƠ HỒ'))
   check('slide-lo: bắt suy nghĩ tiếng Việt khi think', (buildTaskSystem('slide-lo', { plan: snap.plans.toan, indices: [0, 1], think: true }) as string).includes('NGÔN NGỮ SUY NGHĨ'))
 }
 

@@ -4,7 +4,7 @@
  */
 import assert from 'node:assert/strict'
 import { sanitizeSlide, slideFromAi } from '../src/lib/slideAi.ts'
-import { applyDeckDesign, applyEdits, looksLikeEdit, parseAddedSlide, parseEditCommands } from '../src/lib/slideEdit.ts'
+import { applyDeckDesign, applyEdits, parseAddedSlide, parseEditCommands } from '../src/lib/slideEdit.ts'
 import { designById } from '../src/lib/slideDesigns.ts'
 import { contentFromSlide } from '../src/lib/slideLayouts.ts'
 import { textBoxHeight } from '../src/lib/slideMeasure.ts'
@@ -22,24 +22,6 @@ const deck = () => ({
   createdAt: '',
   updatedAt: '',
 })
-
-// --- bước lọc
-assert.equal(looksLikeEdit('đổi phông chữ sang Times New Roman'), true)
-assert.equal(looksLikeEdit('thay bộ màu thành xanh rừng'), true)
-assert.equal(looksLikeEdit('xoá slide 3'), true)
-assert.equal(looksLikeEdit('soạn bài giảng về quang hợp'), false)
-assert.equal(looksLikeEdit('sửa tiêu đề slide 2 thành Mở đầu'), true)
-assert.equal(looksLikeEdit('rút gọn slide 3'), true)
-assert.equal(looksLikeEdit('đổi bố cục slide 4 sang mốc thời gian'), true)
-assert.equal(looksLikeEdit('slide 2 có 5 loại biểu đồ, bạn sửa lại thành 5 mục riêng rẽ đi, ghi đầy đủ là biểu đồ gì'), true)
-
-for (const request of [
-  'slide 2 có 5 đại lượng đặc trưng, tách thành 5 mục riêng',
-  'thêm ảnh minh hoạ cho slide 4', 'thêm ảnh minh hoạ', 'thêm hiệu ứng',
-  'thêm biểu đồ cột so sánh lực lượng ta và Pháp', 'thêm slide câu hỏi trắc nghiệm',
-  'vẽ sơ đồ tư duy tổng kết', 'đổi slide 5 thành bảng so sánh Fe và Cu tác dụng với axit',
-]) assert.equal(looksLikeEdit(request), true, request)
-assert.equal(looksLikeEdit('Soạn 10 slide bài mới, thêm biểu đồ'), false)
 
 {
   const original = deck()

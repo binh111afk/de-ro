@@ -107,11 +107,11 @@ function slideInput(raw: unknown): SlideTaskInput {
   return { ...input, pro: pro === true }
 }
 
-/** `slide-chat`: lượt chat trong trình soạn slide (variant: plan = lập dàn ý, chat, html). */
+/** `slide-chat`: lượt chat khi soạn slide. `chat` chỉ còn do tab mở từ bản cũ gửi, dùng chung prompt với `plan`. */
 function slideChat(raw: unknown): string | null {
   const o = slideInput(raw)
-  if (o.variant !== 'plan' && o.variant !== 'chat' && o.variant !== 'html') return null
-  return buildSlideChatSystem({ variant: o.variant, pro: o.pro === true, ask: o.ask === true, contextSummary: str(o.contextSummary), webFound: str(o.webFound), think: o.think === true, ...sourceFields(o) })
+  if (o.variant !== 'plan' && o.variant !== 'chat') return null
+  return buildSlideChatSystem({ pro: o.pro === true, ask: o.ask === true, contextSummary: str(o.contextSummary), webFound: str(o.webFound), think: o.think === true, ...sourceFields(o) })
 }
 
 /** `bang-ve`: trợ lý bảng vẽ (hỏi đáp, hoặc nhận lệnh vẽ khi `ops`). */

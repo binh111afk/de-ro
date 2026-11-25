@@ -47,7 +47,7 @@ type Task = (typeof TASKS)[number]
 function taskInput(task: Task, user: string) {
   switch (task) {
     case 'soan-de': return { text: user }
-    case 'slide-chat': return { variant: 'chat' }
+    case 'slide-chat': return { variant: 'plan' }
     case 'bang-ve': return { ops: true }
     default: return {} // hoi-truoc, sua-cau và tim-web có system prompt cố định.
   }

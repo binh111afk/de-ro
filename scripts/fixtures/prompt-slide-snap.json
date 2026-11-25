@@ -99,11 +99,6 @@
    "sha256": "3d8ce806c3d05937357894c2d277e489c9f3329e26e6e252b94967a44ee3de49"
   },
   {
-   "name": "SLIDE_SYSTEM",
-   "len": 1921,
-   "sha256": "ae47998dba05abd62a4ca27839a9396d427ee3131221c0aa4e9e670fd9409bed"
-  },
-  {
    "name": "SLIDE_PLAN_SYSTEM",
    "len": 23853,
    "sha256": "cb6586a14e0d790cd7e4fd44859a453d11f7b721a4fa23944c3e1c521dda7c9c"
@@ -112,11 +107,6 @@
    "name": "WEB_SEARCH_SYSTEM",
    "len": 319,
    "sha256": "2490dc2fe01cb8957fd8ff51fc79badd96da4563b20596adf883742bf9f29903"
-  },
-  {
-   "name": "HTML_DECK_SYSTEM",
-   "len": 2425,
-   "sha256": "ab334f4074a238205a2ca7822fba365a0d6b7a57efd8fb77eafacfd3983e2176"
   },
   {
    "name": "editSystemPrompt",

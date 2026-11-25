@@ -96,16 +96,6 @@ const stackOf = (font: string): string =>
         ? 'Be Vietnam Pro'
         : `'${font}', 'Be Vietnam Pro', sans-serif`
 
-/** Câu của người dùng có vẻ là yêu cầu SỬA slide có sẵn (bước lọc rẻ trước khi gọi model). */
-export const looksLikeEdit = (text: string): boolean => {
-  text = text.normalize('NFC').trim()
-  if (/^(?:hãy\s+)?(?:soạn|tạo|viết|làm|sinh)\s+(?!thêm\s)(?:(?:cho (?:tôi|mình)|một)\s+)*(?:lại\s+)?(?:\d+\s+slide|slide\s+(?:bài|về|mới)|bài (?:giảng|trình bày))/iu.test(text)) return false
-  if (/slide\s*(?:số\s*)?\d+[^.\n]{0,90}(?:tách|gộp|thêm|xóa|xoá|đổi|rút|chuyển|viết)|(?:thêm|chèn|bổ sung)\s+(?:(?:một|1|vài|\d+)\s+)?(?:slide|trang|ảnh|hình minh họa|hình minh hoạ|hiệu ứng|biểu đồ|câu hỏi trắc nghiệm)|(?:vẽ|tạo|thêm|chèn|làm)\s+(?:(?:một|1)\s+)?(?:sơ đồ tư duy|biểu đồ)/iu.test(text)) return true
-  return /(đổi|thay|chuyển|sửa|chỉnh|set|áp|dùng|chọn|làm giống|theo|sang)[^.\n]{0,40}(phông|font|màu|theme|bộ màu|tông|nền|hiệu ứng|bố cục|thiết kế|bộ mẫu|mẫu slide|mẫu)|(áp dụng)[^.\n]{0,40}(thiết kế|bộ mẫu|mẫu slide|mẫu)|(xoá|xóa|bỏ|xoa)\s+slide|(di chuyển|dời|đưa)\s+slide|(sửa|đổi|thay|chỉnh|rút gọn|viết lại|thêm|bớt|bỏ|ngắn|dài)[^.\n]{0,40}(slide\s*(số\s*)?\d|tiêu đề|bố cục)|slide\s*(số\s*)?\d+[^.\n]{0,40}(sửa|đổi|thay|rút gọn|viết lại|ngắn|dài|thêm|bớt)/i.test(
-    text,
-  )
-}
-
 /** `context`: mô tả deck hiện tại (theme, phông, danh sách slide) để model chọn đúng. */
 export function editSystemPrompt(context: string): string {
   const themes = DECK_THEMES.map((t) => `${t.id}=${t.name} (${t.vibe})`).join('; ')

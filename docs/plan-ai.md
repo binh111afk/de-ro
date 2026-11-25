@@ -81,6 +81,11 @@ Chưa đo được: hội thoại nhiều lượt, tệp đính kèm, tìm trên
 - Trong `exam.ts`: bỏ thử từng nhóm luật; bộ thử không xấu đi thì xoá.
 - Xong khi: prompt ngắn hơn (đo ký tự và token), số ca đạt không giảm.
 
+**Đã làm (25/11):** bộ thử 30/30.
+- Xoá prompt slide HTML (`htmlDeckPrompt.ts`), prompt hỏi đáp slide (`SLIDE_SYSTEM`, hết luôn mâu thuẫn Unicode / LaTeX) và `looksLikeEdit`. `variant: 'chat'` còn nhận cho tab mở từ bản cũ. Hiển thị slide HTML đã lưu giữ nguyên.
+- `exam.ts`: gộp hai đoạn "giải lại trước khi trả". Prompt soạn đề gần như không ngắn đi (36.414 → 36.291 ký tự).
+- Không làm: `ve-do-thi` dùng lại `figureGuide` (khác định dạng trả về, phần trùng vài dòng); lõi chung (sau khi xoá `SLIDE_SYSTEM` còn quá ít để gộp, thêm luật phạm vi vào slide / bảng là siết thêm); bỏ thử từng nhóm luật trong `exam.ts` (bộ thử chưa chấm được đúng sai, độ khó, định dạng nên không biết bỏ có hại không).
+
 ### Bước 3. Tách `AiPanel`
 - Giao diện chat riêng; ba luồng đề / slide / bảng vẽ riêng; một hàm gọi lại dùng chung.
 - Chỉ chuyển code, không đổi hành vi. File CRLF: giữ nguyên kiểu xuống dòng.

@@ -98,7 +98,6 @@ export function examSystemPrompt(documentDigest?: string, request = '', fromSour
     '- Câu đếm hoặc chọn tổ hợp nhận định vẫn là trắc nghiệm A–D: đặt các nhận định (a)–(d) trong text, bốn phương án A–D trong options của chính câu, bỏ kind và ghi đáp án là một chữ cái.\n' +
     '- Số câu "no" của các block question đánh liên tục 1, 2, 3… trong cả đề, bất kể dạng (không đánh lại từ 1 ở mỗi phần). Câu tự luận (essay) đánh số riêng.\n' +
     '- answerKey phải có đủ mọi câu question: nhiều lựa chọn = một chữ cái ("B"); đúng/sai = chuỗi Đ/S theo thứ tự ý a b c d, ví dụ "ĐSĐS"; trả lời ngắn = con số, dấu thập phân là dấu phẩy ("-1,5"). Đáp án tự luận để trong rubric.\n' +
-    '- Trước khi xuất, giải lại từ đề cuối và hình đã vẽ; đối chiếu từng phương án, từng ý Đ/S, đơn vị và làm tròn. Nếu có nhiều phương án cùng đúng (kể cả hai khoảng đồng biến), sửa phương án nhiễu trước khi chốt đáp án. Khi đổi chất, sự kiện hoặc số liệu, kiểm lại tính đúng của mọi nhận định.\n' +
     '- Kết thúc đề: answerKey và/hoặc rubric. Khi thay/xoá câu, cập nhật đáp án liên quan. Khi thay/xoá bài tự luận, patch mục của bài trong rubric hiện có, giữ các bài khác, không chèn thêm hướng dẫn chấm trùng.\n' +
     '- HƯỚNG DẪN CHẤM / ĐÁP ÁN TỰ LUẬN (môn Ngữ văn và các môn tự luận như Lịch sử, Địa lí, GDCD khi có hướng dẫn chấm): đặt sau {"type":"pageBreak"} và heading "HƯỚNG DẪN CHẤM" (hoặc "ĐÁP ÁN VÀ HƯỚNG DẪN CHẤM"), dùng block "rubric" dạng "parts" (KHÔNG viết bằng paragraph/bullets rời). Quy ước đúng mẫu Bộ GD&ĐT:\n' +
     '  • Bảng 4 cột Phần | Câu | Nội dung | Điểm, điểm dùng dấu phẩy thập phân (0,25; 0,5; 1,0; 2,0; 4,0; 6,0; 10,0); tổng điểm các câu khớp điểm phần, tổng điểm các phần khớp "total" (thường "10,0"; nếu đề gồm cả trắc nghiệm và tự luận thì phần trắc nghiệm dùng answerKey, phần tự luận dùng rubric dạng "parts" với "total" bằng điểm phần tự luận).\n' +
@@ -125,7 +124,8 @@ export function examSystemPrompt(documentDigest?: string, request = '', fromSour
         'Môn không có hình phù hợp (Văn, Sử, ngoại ngữ…) thì không cần figure. Các loại figure:\n') +
     figureGuideFor(request) +
     '\n' +
-    '- Trước khi trả, tự giải lại từ dữ kiện của đề và hình, đối chiếu bảng đáp án: A–D đúng duy nhất một phương án, kiểm từng ý Đ/S, đáp số và làm tròn. ' +
+    '- Trước khi trả, tự giải lại từ dữ kiện của đề và hình, đối chiếu bảng đáp án: A–D đúng duy nhất một phương án, kiểm từng ý Đ/S, đáp số, đơn vị và làm tròn. ' +
+    'Nhiều phương án cùng đúng (kể cả hai khoảng đồng biến) thì sửa phương án nhiễu trước khi chốt đáp án; đổi chất, sự kiện hay số liệu thì kiểm lại mọi nhận định. ' +
     'Bổ sung hằng số, đơn vị, điều kiện/miền xác định cần thiết và sửa dữ kiện mâu thuẫn. Kiểm tổng điểm từng tiêu chí, bỏ câu hoặc bảng trùng. ' +
     'Dùng nhất quán nội dung và danh pháp GDPT 2018 (trừ khi giáo viên yêu cầu chương trình khác). Khi sửa số liệu, giữ nguyên các giá trị không được yêu cầu đổi.\n\n' +
     (documentDigest
