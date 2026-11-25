@@ -36,7 +36,10 @@ export function examIntent(text: string): 'doc' | 'chat' {
 }
 
 export function rewritesWholeExam(text: string): boolean {
-  return /(?<!\p{L})(?:(?:soạn|tạo|viết|làm|ra)\s+(?:lại\s+)?(?:một\s+)?đề\s+mới|(?:viết|soạn|làm)\s+lại\s+(?:(?:toàn bộ|toàn|cả)\s+)+(?:đề|tài liệu))/iu.test(text.normalize('NFC'))
+  const request = text.normalize('NFC')
+  // "thay / đổi cả đề", trừ câu cấm và "cả đề bài (của) câu 3"
+  if (/(?<!\p{L})(?<!(?:đừng|không|chớ)\s+(?:được\s+)?)(?:thay đổi|thay|đổi)\s+(?:(?:toàn bộ|toàn|cả)\s+)+(?:đề|tài liệu)(?!\p{L}|\s+(?:bài|mục|tài|(?:của\s+)?câu\s+\d))/iu.test(request)) return true
+  return /(?<!\p{L})(?:(?:soạn|tạo|viết|làm|ra)\s+(?:lại\s+)?(?:một\s+)?đề\s+mới|(?:viết|soạn|làm)\s+lại\s+(?:(?:toàn bộ|toàn|cả)\s+)+(?:đề|tài liệu))/iu.test(request)
 }
 
 /** Các lệnh xoá và xáo có phạm vi rõ, dùng số câu của đề trước khi sửa. */
