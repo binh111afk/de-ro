@@ -90,6 +90,8 @@ Chưa đo được: hội thoại nhiều lượt, tệp đính kèm, tìm trên
 - Giao diện chat riêng; ba luồng đề / slide / bảng vẽ riêng; một hàm gọi lại dùng chung.
 - Chỉ chuyển code, không đổi hành vi. File CRLF: giữ nguyên kiểu xuống dòng.
 
+**Đã làm (25/11):** `AiPanel.tsx` 2.073 → 957 dòng (còn giao diện chat và `send`). Phần chuyển sang `src/examEditor/ai/`: `turns.ts` (kiểu lượt chat), `chatParts.tsx` (mảnh hiển thị), `slideGen.ts` (sinh slide), `flowKit.ts` (ngữ cảnh lượt, `askAgain`, nhật ký stream), `examFlow.ts`, `slideFlow.ts`, `boardFlow.ts`. Biến `examSteps` (luôn bằng true) đã bỏ. Hai chỗ gọi lại còn viết riêng vì không nối thêm lời dặn: một phần đề tách bị hỏng, và sửa trang slide.
+
 ## Chưa quyết
 
 - Câu rất khó (mức hình tuyển sinh 10): chỉnh prompt trên `deepseek-flash` mức `low` đã thử ba vòng, chưa đạt. Cần đo model mạnh hơn bằng bộ thử ở bước 0, tách khỏi việc gỡ rối.

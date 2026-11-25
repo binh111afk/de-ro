@@ -2,7 +2,7 @@
  * Chạy bộ yêu cầu thử qua DeepSeek (TỐN TIỀN THẬT) rồi chấm như web sẽ xử lý.
  *   npm run build:prompts && npm run eval:ai -- --label ten-dot [--only id1,id2] [--dry]
  * --dry: không gọi model, chỉ in web định gửi tác vụ nào. Kết quả ở eval-out/ai-cases/<label>/.
- * Đường đi (đoán loại lượt, nhận kết quả) chép theo `send` trong AiPanel.tsx: sửa bên đó thì sửa cả đây.
+ * Đường đi (đoán loại lượt, nhận kết quả) chép theo `send` (AiPanel.tsx) và các luồng trong src/examEditor/ai/: sửa bên đó thì sửa cả đây.
  */
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { Editor } from '@tiptap/core'
