@@ -153,7 +153,6 @@ export interface ExamTaskInput extends SourceInput {
   text: string
   /** đoán theo từ khoá ở client, chỉ để gắn nhãn lượt gọi (`aiKind`); không đưa vào prompt */
   intent?: 'doc' | 'chat'
-  revising?: boolean
   /** bản rút gọn tài liệu hiện tại, mỗi dòng "[id] loại: nội dung" */
   digest?: string
   contextSummary?: string
@@ -196,7 +195,6 @@ export function buildExamSystem(i: ExamTaskInput): string {
   const ctx = i.contextSummary
   const system =
     examSystemPrompt(i.digest, `${i.text}\n${ctx ?? ''}`, i.sourceTier === 1 && !!i.sources?.length) +
-    (i.revising ? '\nGiữ đề hiện tại. Chỉ dùng patch hoặc append cho yêu cầu này.' : '') +
     harderSection(i) +
     (i.ask ? ASK_RULE : '') +
     (ctx ? `\nTài liệu hiện tại: ${ctx}` : '')

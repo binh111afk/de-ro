@@ -44,6 +44,8 @@ export interface ChatTurn {
   askState?: 'open' | 'done'
   /** kết quả không áp được vào đề: yêu cầu để gửi lại bằng nút Thử lại */
   retry?: string
+  /** bản viết lại cả đề đang chờ giáo viên chọn thay hay giữ */
+  replace?: { content: string; request: string }
   /** người dùng đã bấm 👎 */
   vote?: 'up' | 'down'
   /** token đã tiêu cho lượt này (chênh lệch hạn mức trước / sau); không có khi không biết hạn mức */

@@ -70,6 +70,8 @@ export interface AiApplyResult {
   text: string
   failed?: boolean
   retryable?: false
+  /** AI viết lại cả đề đang có nội dung: chưa áp, chờ giáo viên chọn */
+  needsConfirm?: true
 }
 /** `k12` hoặc `[k12]` → 12; id không đúng dạng → -1. */
 export function keyIndex(id: string): number {

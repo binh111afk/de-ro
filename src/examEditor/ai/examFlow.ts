@@ -80,14 +80,17 @@ export async function finishExam(ctx: TurnCtx, res: LlmResult) {
   }
   const invalidChat = only && isExamMutationReply(reply)
   let result = !only && startsWithJson(res.content) ? apply(res.content) : undefined
+  let applied = res.content
   // đề trả JSON hỏng (thường bị cắt cụt): hoàn token lượt đó và soạn lại đúng một lần
-  if (result?.failed && result.retryable !== false && onApplyBlocks) {
+  if (result?.failed && !result.needsConfirm && result.retryable !== false && onApplyBlocks) {
     // gọi lại bằng model mạnh hơn (lượt đầu model nhanh không làm được)
     const again = await askAgain(messages, 'Kết quả trước chưa đưa được vào đề. Hãy trả đủ thao tác hợp lệ với đúng id và nội dung, không chỉ báo đã hoàn tất.', res,
       { signal: controller.signal, reasoningEffort: AI_EFFORT.exam, strong: true, task: mainTask })
     controller.signal.throwIfAborted()
     result = apply(again.content) ?? result
+    applied = again.content
   }
+  const confirm = !!result?.needsConfirm
   // không áp được: hiện trong chat (kèm phần AI viết nếu đọc được) + nút Thử lại
   const failed = !!result?.failed || invalidChat
   const summary = result && !failed ? result.text : undefined
@@ -102,10 +105,13 @@ export async function finishExam(ctx: TurnCtx, res: LlmResult) {
             text,
             pending: false,
             intent: result ? 'doc' : 'chat',
-            ...(failed && originalRequest ? { retry: originalRequest } : {}),
+            ...(confirm ? { replace: { content: applied, request: originalRequest } } : failed && originalRequest ? { retry: originalRequest } : {}),
             // chỉ có bước khi là lượt soạn đề; trả lời thường (không JSON) thì bỏ danh sách bước
             ...(turn.log
-              ? summary
+              ? confirm
+                // chưa đưa gì vào đề nên không giữ bước "Đưa vào đề"
+                ? { log: closeLog(turn.log.filter((s) => s.label !== 'Đưa vào đề'), 'done') }
+                : summary
                 ? { log: closeLog(turn.log, 'done') }
                 : result?.failed
                   ? { log: closeLog(turn.log, 'failed') }

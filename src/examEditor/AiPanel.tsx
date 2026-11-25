@@ -417,7 +417,7 @@ function AiConversation({
           ? { name: 'bang-ve', input: { ops: !!onBoardOps, contextSummary, ...srcInput } }
           : mode === 'slide'
           ? { name: 'slide-chat', input: { variant: 'plan', ask: askRule, contextSummary, ...srcInput, pro: slidePro || undefined } }
-          : { name: 'soan-de', input: { text: requestWithAnswer, intent, digest: documentDigest, contextSummary, revising: revisingExam, ask: askRule, ...srcInput } }
+          : { name: 'soan-de', input: { text: requestWithAnswer, intent, digest: documentDigest, contextSummary, ask: askRule, ...srcInput } }
 
       const messages: LlmMessage[] = [
         ...history,
@@ -545,6 +545,13 @@ function AiConversation({
       ),
     )
   }, [])
+
+  const chooseReplace = (turn: ChatTurn, accept: boolean) => {
+    if (!turn.replace) return
+    const result = accept ? onApplyBlocks?.(turn.replace.content, true, turn.replace.request) : undefined
+    const text = accept ? result?.text ?? turn.text : 'Đã giữ đề cũ.'
+    setTurns((ts) => ts.map((t) => (t.id === turn.id ? { ...t, text, replace: undefined } : t)))
+  }
 
   const onKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -680,6 +687,12 @@ function AiConversation({
                 <div className="ai-msg-error">
                   {turn.error}
                   {turn.topup ? <TopupLink className="ml-1.5 font-semibold underline" /> : null}
+                </div>
+              ) : null}
+              {turn.replace && !busy && turn.id === turns[turns.length - 1]?.id ? (
+                <div className="flex gap-2">
+                  <button type="button" className="ai-retry" onClick={() => chooseReplace(turn, true)}>Thay cả đề</button>
+                  <button type="button" className="ai-retry" onClick={() => chooseReplace(turn, false)}>Giữ đề cũ</button>
                 </div>
               ) : null}
               {turn.retry && !busy && turn.id === turns[turns.length - 1]?.id ? (

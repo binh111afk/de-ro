@@ -88,7 +88,7 @@ async function runExam(c: ExamCase): Promise<Result> {
     return { id: c.id, mode: 'de', pass: !why, got, why, task, tokens: r?.tokens ?? 0, seconds: r?.seconds ?? 0, reply: r?.content ?? '' }
   }
   if (dry) return done('-', undefined)
-  const r = await ask('soan-de', { text: c.text, intent, digest, revising, ask: askRule, think: true }, c.text + focusNote(editor.getJSON(), c.text))
+  const r = await ask('soan-de', { text: c.text, intent, digest, ask: askRule, think: true }, c.text + focusNote(editor.getJSON(), c.text))
   const before = questions(editor)
   const beforeJson = JSON.stringify(editor.getJSON())
   const only = chatOnly(c.text)
