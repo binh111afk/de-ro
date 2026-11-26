@@ -16,6 +16,7 @@ import { GRAPHIC_INK, graphicById, isGraphicId } from './slideGraphics'
 import { DECOR_ANCHORS, decorKitById } from './slideDecor'
 import { pickSlideAsset, type SlideAssetId } from './slideAssets'
 import { contrastRatio, mixHex, normalizeTheme, readableTextOn } from './slideTheme'
+import { PACK_COLORS, composePack, packCreditColor, type SlidePackId } from './slidePacks'
 
 export type SlideLayoutId =
   | 'title'
@@ -331,6 +332,7 @@ export function defaultTone(layoutId: string): SlideTone {
  * ------------------------------------------------------------------ */
 interface LayoutPalette {
   pro: boolean
+  pack?: SlidePackId
   displayFont: string
   text: typeof textEl
   tone: SlideTone
@@ -379,6 +381,8 @@ function paletteOf(theme: ReturnType<typeof normalizeTheme>, tone: SlideTone): L
     border: theme.border,
     borderColor: theme.borderColor,
   }
+  // Bộ phong cách có màu cố định, không đổi theo tông.
+  if (theme.pack) return { ...base, ...PACK_COLORS[theme.pack], pack: theme.pack }
   // Nền + tỉ lệ pha accent cho panel: panel đủ nhạt để chữ đọc thoải mái và
   // accent chỉ chiếm diện tích nhỏ (vạch, badge), không tô cả khối chữ.
   const pick0 =
@@ -1948,9 +1952,16 @@ function composeStatic(
   const resolved = normalizeTheme(theme)
   const id: SlideLayoutId = isLayoutId(layoutId) ? layoutId : 'bullets'
   const palette = paletteOf(resolved, tone && isTone(tone) ? tone : defaultTone(id))
-  const elements = withKitDecor(id, composeById(id, palette, content), content, palette)
+  const pack = palette.pack
+  const elements = pack
+    ? composePack(pack, id, content, palette.text, () => composeById(id, palette, content))
+    : withKitDecor(id, composeById(id, palette, content), content, palette)
   if (!elements.length) return elements
-  return withSlideCredit(elements, creditElement(content.credit, id === 'photo-full' ? PHOTO_MUTED : palette.muted, palette.pro ? 1.45 : undefined))
+  const creditColor = pack ? packCreditColor(pack, id) : id === 'photo-full' ? PHOTO_MUTED : palette.muted
+  const credit = creditElement(content.credit, creditColor, palette.pro ? 1.45 : undefined)
+  // bộ phong cách: hình trang trí nằm sát đáy, không co cả slide để chừa chỗ cho dòng nguồn
+  if (pack) return credit ? [...elements, credit] : elements
+  return withSlideCredit(elements, credit)
 }
 
 function composeById(id: SlideLayoutId, palette: LayoutPalette, content: SlideLayoutContent): SlideElement[] {

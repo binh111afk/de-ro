@@ -45,13 +45,19 @@ function solidHex(css: string | undefined): string | null {
 const order = (els: SlideElement[]) =>
   els.map((el, i) => ({ el, i })).sort((a, b) => (a.el.zIndex ?? 0) - (b.el.zIndex ?? 0) || a.i - b.i)
 
-function bgUnder(el: SlideElement, below: SlideElement[], slideBg: string): string {
+/** Ảnh nền giấy / khung của bộ phong cách: nhiều màu, chữ trên đó đã được chọn màu khi dựng. */
+const isPackBackdrop = (el: SlideElement) =>
+  el.type === 'image' && !!el.src?.startsWith('/slide-packs/') && el.x <= 0 && el.y <= 0 && el.w >= 100 && el.h >= 100
+
+/** `null`: không biết màu dưới chữ, giữ nguyên màu chữ. */
+function bgUnder(el: SlideElement, below: SlideElement[], slideBg: string): string | null {
   const own = solidHex(el.fill)
   if (own) return own
   const cx = el.x + el.w / 2
   const cy = el.y + el.h / 2
   for (let k = below.length - 1; k >= 0; k--) {
     const s = below[k]
+    if (isPackBackdrop(s)) return null
     if (s.type !== 'shape' || s.shape === 'line' || (s.opacity ?? 1) < 0.6) continue
     if (cx < s.x || cx > s.x + s.w || cy < s.y || cy > s.y + s.h) continue
     const scrimBg = photoScrimBackground(s, cx, cy)
@@ -72,7 +78,7 @@ export function readableElements(slide: Slide, theme: { fg: string; bg: string }
     const color = solidHex(el.textColor ?? theme.fg)
     if (!color) return
     const bg = bgUnder(el, sorted.slice(0, idx).map((x) => x.el), slideBg)
-    if (contrastRatio(color, bg) >= MIN_RATIO) return
+    if (!bg || contrastRatio(color, bg) >= MIN_RATIO) return
     const alt = contrastRatio(theme.fg, bg) >= MIN_RATIO ? theme.fg : readableTextOn(bg)
     fixed.set(el.id, alt)
   })

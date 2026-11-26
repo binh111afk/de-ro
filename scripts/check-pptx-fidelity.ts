@@ -126,6 +126,12 @@ function probe(id: string, type: SlideElement['type'], box: Box, props: Partial<
   const [x, y, w, h] = box
   return { id, type, x, y, w, h, ...props }
 }
+// Ảnh của bộ phong cách: Node không tải được '/slide-packs/...', mà phép kiểm crop giả định ảnh mẫu 16:9.
+const inlinePacks = <T extends { elements?: SlideElement[] }>(slide: T): T => ({
+  ...slide,
+  elements: slide.elements?.map(el => el.src?.startsWith('/slide-packs/') ? { ...el, src: PHOTO_PNG } : el),
+})
+
 function cases() {
   const theme = DECK_THEMES[0]
   const photo = { image: PHOTO_PNG, image2: PHOTO, imageCrop: { l: 10, t: 5, r: 20, b: 15 }, focusX: 20, focusY: 70,
@@ -179,7 +185,7 @@ function cases() {
     ])) },
     { family: 'Layout', decks: [makeDeck('composeLayout', theme, SLIDE_LAYOUTS.map(({ id }) => compose(theme, id)))] },
     { family: 'Chuyên nghiệp', decks: PRO_THEMES.map(t => makeDeck(t.id ?? t.bg, t,
-      PRO_LAYOUT_IDS.map(id => compose(t, id, ['photo-full', 'photo-compare', 'bignum'].includes(id) ? photo : {})),
+      PRO_LAYOUT_IDS.map(id => inlinePacks(compose(t, id, ['photo-full', 'photo-compare', 'bignum'].includes(id) ? photo : {}))),
     )) },
     { family: 'Mẫu kiểm riêng', decks: [
       makeDeck('nền / thuộc tính', { ...theme, decor: 'none' }, samples),

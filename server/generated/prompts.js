@@ -3206,6 +3206,13 @@ var proTheme = (id, name, vibe, accent, secondary, tags, paper = { bg: "#ece7dc"
   decor: "none",
   dark: false
 });
+var packTheme = (id, name, vibe, pack, tags, paper, ink, accent, secondary, heading, body) => ({
+  ...proTheme(id, name, vibe, accent, secondary, tags, { bg: paper, ink }),
+  pack,
+  fontHeading: heading,
+  fontBody: body,
+  fonts: { ...PRO_FONTS, heading, body }
+});
 var PRO_THEMES = [
   proTheme("tap-chi-do", "T\u1EA1p ch\xED \u0111\u1ECF", "gi\u1EA5y kem, m\u1EF1c \u0111en, \u0111\u1ECF g\u1EA1ch", "#a32c1d", "#2f6a5e", ["l\u1ECBch s\u1EED", "chi\u1EBFn tranh", "s\u1EF1 ki\u1EC7n x\xE3 h\u1ED9i", "b\xE1o ch\xED"]),
   proTheme("tap-chi-xanh", "T\u1EA1p ch\xED xanh", "gi\u1EA5y ng\xE0 h\u01A1i xanh, m\u1EF1c \u0111en, xanh l\xE1", "#3f632c", "#648446", ["sinh h\u1ECDc", "quang h\u1EE3p", "th\u1EF1c v\u1EADt", "r\u1EEBng", "h\u1EC7 sinh th\xE1i tr\xEAn c\u1EA1n"], { bg: "#edf0e5", ink: "#151a13" }),
@@ -3214,6 +3221,32 @@ var PRO_THEMES = [
   proTheme("tap-chi-bien", "T\u1EA1p ch\xED lam ng\u1ECDc", "gi\u1EA5y m\xE0u s\u01B0\u01A1ng, m\u1EF1c xanh s\xE2u, lam ng\u1ECDc", "#146273", "#367b86", ["\u0111\u1ECBa l\xFD bi\u1EC3n", "V\u1ECBnh H\u1EA1 Long", "\u0111\u1EA1i d\u01B0\u01A1ng", "\u0111\u1EA3o", "s\xF4ng n\u01B0\u1EDBc", "sinh th\xE1i bi\u1EC3n"], { bg: "#e6efed", ink: "#102027" }),
   proTheme("tap-chi-dem", "T\u1EA1p ch\xED t\xEDm than", "gi\u1EA5y x\xE1m t\xEDm nh\u1EA1t, m\u1EF1c \u0111\xEAm, t\xEDm ch\xE0m", "#534782", "#74619e", ["thi\xEAn v\u0103n", "v\u1EADt l\xFD", "tin h\u1ECDc", "l\u1EADp tr\xECnh", "c\xF4ng ngh\u1EC7"], { bg: "#eceaf3", ink: "#191626" }),
   proTheme("tap-chi-dat", "T\u1EA1p ch\xED cam \u0111\u1EA5t", "gi\u1EA5y h\u1ED3ng ng\xE0, m\u1EF1c n\xE2u, cam \u0111\u1EA5t", "#98432f", "#ad664f", ["th\u1EC3 thao", "m\u1EF9 thu\u1EADt", "\xE2m nh\u1EA1c", "th\u1EE7 c\xF4ng", "v\u0103n h\xF3a"], { bg: "#f2e8df", ink: "#211713" }),
+  packTheme(
+    "co-dien-do",
+    "C\u1ED5 \u0111i\u1EC3n \u0111\u1ECF kem",
+    "khung tem th\u01B0 \u0111\u1ECF kem, chim h\u1EA1c, n\xFAi, sen ki\u1EC3u tranh c\u1ED5",
+    "co-dien",
+    ["l\u1ECBch s\u1EED Vi\u1EC7t Nam", "c\xE1ch m\u1EA1ng", "ch\xEDnh tr\u1ECB", "t\u01B0 t\u01B0\u1EDFng H\u1ED3 Ch\xED Minh", "truy\u1EC1n th\u1ED1ng d\xE2n t\u1ED9c", "danh nh\xE2n"],
+    "#fdeed3",
+    "#8b0000",
+    "#8b0000",
+    "#2f5d50",
+    "Playfair Display",
+    "Be Vietnam Pro"
+  ),
+  packTheme(
+    "dan-gian",
+    "D\xE2n gian",
+    "gi\u1EA5y k\u1EBB \xF4, m\xE0u n\u01B0\u1EDBc t\u01B0\u01A1i, tre, chu\u1ED3n chu\u1ED3n, \u0111\xECnh l\xE0ng",
+    "dan-gian",
+    ["tr\xF2 ch\u01A1i d\xE2n gian", "v\u0103n ho\xE1 Vi\u1EC7t", "l\u1EC5 T\u1EBFt", "m\u1EA7m non", "ti\u1EC3u h\u1ECDc", "l\xE0ng qu\xEA", "truy\u1EC7n c\u1ED5 t\xEDch"],
+    "#faf3e6",
+    "#4a2c1d",
+    "#b4461a",
+    "#3f7a3a",
+    "Nunito",
+    "Nunito"
+  ),
   proTheme("tap-chi-hong", "T\u1EA1p ch\xED h\u1ED3ng \u0111\u1EA5t", "gi\u1EA5y h\u1ED3ng nh\u1EA1t, m\u1EF1c m\u1EADn, h\u1ED3ng \u0111\u1EA5t", "#9a3b55", "#b0675e", ["t\xECnh y\xEAu", "t\xECnh b\u1EA1n", "gia \u0111\xECnh", "tu\u1ED5i h\u1ECDc tr\xF2", "c\u1EA3m x\xFAc", "th\u01A1 ca", "l\u1EC5 h\u1ED9i"], { bg: "#f4e7e6", ink: "#2a1620" })
 ];
 function resolveThemeId(id) {
@@ -3223,9 +3256,9 @@ function resolveThemeId(id) {
 }
 function rgb(hex) {
   const raw = hex.replace("#", "").trim();
-  const full = raw.length === 3 ? raw.split("").map((c8) => c8 + c8).join("") : raw;
-  const n10 = Number.parseInt(full, 16);
-  if (full.length !== 6 || !Number.isFinite(n10)) return [255, 255, 255];
+  const full2 = raw.length === 3 ? raw.split("").map((c8) => c8 + c8).join("") : raw;
+  const n10 = Number.parseInt(full2, 16);
+  if (full2.length !== 6 || !Number.isFinite(n10)) return [255, 255, 255];
   return [n10 >> 16 & 255, n10 >> 8 & 255, n10 & 255];
 }
 function toHex(value) {
@@ -5917,6 +5950,304 @@ function pickSlideAsset(text, used) {
   return best;
 }
 
+// src/lib/slidePacks.ts
+var PACK_COLORS = {
+  "co-dien": { background: "#8b0000", fg: "#8b0000", ink: "#8b0000", accent: "#8b0000", muted: "#7a3b2e", surface: "#fdeed3", panel: "#f7e2bd", onAccent: "#fdeed3" },
+  "dan-gian": { background: "#faf3e6", fg: "#4a2c1d", ink: "#962a0e", accent: "#b4461a", muted: "#7a5a45", surface: "#fff7e8", panel: "#ffe9b8", onAccent: "#ffffff" }
+};
+var CREAM = "#fdeed3";
+var ART = {
+  "co-dien/canh-mai": [800, 394],
+  "co-dien/canh-tung": [800, 281],
+  "co-dien/chim-en": [800, 609],
+  "co-dien/chim-hac": [473, 800],
+  "co-dien/goc-hoa-van": [800, 659],
+  "co-dien/hoa-sen": [663, 800],
+  "co-dien/mat-troi": [785, 800],
+  "co-dien/may": [800, 152],
+  "co-dien/nui": [800, 236],
+  "dan-gian/canh-tre": [800, 529],
+  "dan-gian/chuon-chuon": [800, 527],
+  "dan-gian/den-long": [653, 800],
+  "dan-gian/dieu": [800, 503],
+  "dan-gian/hoa-sen": [800, 673],
+  "dan-gian/mai-dinh": [800, 382],
+  "dan-gian/may": [800, 136],
+  "dan-gian/non-la": [800, 672],
+  "dan-gian/sach": [800, 658]
+};
+var box = (x, y, w, h) => ({ x: x / 12.8, y: y / 7.2, w: w / 12.8, h: h / 7.2 });
+var fs = (px) => px / 12.8;
+var image = (id, src, b, extra = {}) => ({
+  id,
+  type: "image",
+  src,
+  ...b,
+  radius: 0,
+  border: 0,
+  shadowLevel: 0,
+  ...extra
+});
+function art(n10, name, x, y, w, extra = {}) {
+  const [aw, ah] = ART[name];
+  return image(`decor-kit-${n10}`, `/slide-packs/${name}.png`, box(x, y, w, w * ah / aw), { decor: true, ...extra });
+}
+var full = (name) => image("decor-kit-0", `/slide-packs/${name}.png`, box(0, 0, 1280, 720), { decor: true, locked: true });
+var list = (value) => (value ?? []).map((v) => String(v ?? "").trim()).filter(Boolean);
+var upper = (text) => text?.trim().toLocaleUpperCase("vi") || void 0;
+var rowsOf = (c8) => (c8.stats ?? []).map((s9) => ({ value: String(s9.value ?? "").trim(), label: String(s9.label ?? "").trim() })).filter((s9) => s9.value || s9.label).slice(0, 5);
+var paragraphs = (c8) => {
+  const bullets = list(c8.bullets);
+  return (bullets.length ? bullets : list(c8.body?.split("\n"))).join("\n\n");
+};
+var statement = (c8) => c8.body?.trim() || c8.quote?.trim() || list(c8.bullets).join(" ") || c8.title?.trim() || "";
+function kitOf(text) {
+  return {
+    text,
+    title: (id, value, b, px, color, extra) => text(id, value, b, { variant: "title", fontWeight: 800, lineHeight: 1.15, valign: "top", fontSize: fs(px), textColor: color, ...extra }, 0.4),
+    body: (id, value, b, px, color, extra) => text(id, value, b, { variant: "body", lineHeight: 1.45, valign: "top", fontSize: fs(px), textColor: color, ...extra }, 0.55)
+  };
+}
+function coDien(id, c8, { title, body }) {
+  const red = PACK_COLORS["co-dien"].ink;
+  switch (id) {
+    case "photo-full":
+      if (c8.image) return [
+        full("co-dien/tem-day"),
+        image("image-1", c8.image, box(660, 110, 510, 500), { imagePosition: { x: c8.focusX ?? 50, y: c8.focusY ?? 40 }, crop: c8.imageCrop, border: 6, borderColor: red }),
+        art(1, "co-dien/chim-en", 540, 50, 170),
+        body("kicker", upper(c8.kicker), box(100, 91, 520, 58), 24, red, { fontWeight: 700 }),
+        title("title", c8.title, box(100, 160, 520, 280), 68, red, { valign: "middle" }),
+        body("subtitle", c8.subtitle, box(100, 470, 520, 140), 26, red)
+      ];
+      return [
+        full("co-dien/tem-bia"),
+        art(1, "co-dien/mat-troi", 830, 50, 300),
+        art(2, "co-dien/nui", 380, 470, 700, { opacity: 0.9 }),
+        art(3, "co-dien/may", 730, 260, 260),
+        art(4, "co-dien/chim-hac", 850, 80, 378),
+        body("kicker", upper(c8.kicker), box(100, 87, 600, 58), 24, red, { fontWeight: 700 }),
+        title("title", c8.title, box(96, 150, 640, 290), 96, red, { valign: "middle" }),
+        body("subtitle", c8.subtitle, box(100, 468, 520, 140), 28, red)
+      ];
+    case "manifesto": {
+      const text = statement(c8);
+      return [
+        full("co-dien/tem-tren"),
+        art(1, "co-dien/chim-en", 1130, 6, 130),
+        art(2, "co-dien/may", 60, 282, 260),
+        body("kicker", upper(c8.kicker), box(140, 31, 1e3, 54), 22, red, { fontWeight: 700, align: "center" }),
+        title("body", text, box(160, 84, 960, 230), text.length > 150 ? 42 : text.length > 80 ? 52 : 68, red, { align: "center", valign: "middle" }),
+        body("author", c8.author, box(190, 420, 900, 120), 28, CREAM, { align: "center" })
+      ];
+    }
+    case "editorial-text":
+      return [
+        full("co-dien/tem-ben"),
+        art(1, "co-dien/canh-mai", 880, 500, 340),
+        // nhãn dựng dọc bên trái: hộp ngang xoay 90° quanh tâm (125, 360)
+        title("kicker", upper(c8.kicker), box(-165, 315, 580, 90), 54, CREAM, { align: "center", valign: "middle", rotation: -90, letterSpacing: 0.02 }),
+        title("title", c8.title, box(310, 66, 870, 170), 52, red, { valign: "middle" }),
+        body("body", paragraphs(c8), box(310, 262, 640, 390), 27, red)
+      ];
+    case "rules": {
+      const rows = rowsOf(c8);
+      if (!rows.length) return [];
+      const h = Math.min(130, 390 / rows.length);
+      return [
+        full("co-dien/tem-day"),
+        art(1, "co-dien/canh-tung", 860, 36, 360),
+        body("kicker", upper(c8.kicker), box(96, 57, 700, 54), 22, red, { fontWeight: 700 }),
+        title("title", c8.title, box(96, 104, 780, 130), 52, red, { valign: "middle" }),
+        ...rows.flatMap((row, i) => {
+          const y = 256 + i * h;
+          return [
+            { id: `divider-${i + 1}`, type: "shape", shape: "rect", fill: red, opacity: 0.35, border: 0, shadowLevel: 0, ...box(100, y, 1080, 2) },
+            title(`item-${i + 1}-value`, row.value, box(96, y + 4, 240, h - 8), 38, red, { valign: "middle" }),
+            body(`item-${i + 1}-label`, row.label, box(360, y + 4, 820, h - 8), 26, red, { valign: "middle", lineHeight: 1.3 })
+          ];
+        })
+      ];
+    }
+    case "bignum":
+      return [
+        full("co-dien/tem-day"),
+        c8.image ? image("image-1", c8.image, box(730, 110, 440, 500), { imagePosition: { x: c8.focusX ?? 50, y: c8.focusY ?? 40 }, crop: c8.imageCrop, border: 6, borderColor: red }) : art(1, "co-dien/hoa-sen", 830, 220, 340),
+        art(2, "co-dien/chim-en", c8.image ? 620 : 990, 50, 150),
+        body("kicker", upper(c8.kicker), box(100, 81, 560, 58), 24, red, { fontWeight: 700 }),
+        title("bignum-value", c8.value, box(96, 140, 600, 270), 190, red, { valign: "middle", lineHeight: 1 }),
+        title("bignum-label", c8.label, box(100, 430, 580, 100), 40, red),
+        body("subtitle", c8.subtitle, box(100, 545, 580, 80), 24, red)
+      ];
+    default:
+      return null;
+  }
+}
+function danGian(id, c8, { title, body }) {
+  const { ink, fg } = PACK_COLORS["dan-gian"];
+  const paper = full("dan-gian/giay-o");
+  const blob = (x, y, size) => ({ id: "decor-kit-9", type: "shape", shape: "ellipse", fill: "#ffe2a8", border: 0, shadowLevel: 0, decor: true, ...box(x, y, size, size) });
+  const photo = (b, extra = {}) => image("image-1", c8.image, b, { imagePosition: { x: c8.focusX ?? 50, y: c8.focusY ?? 40 }, crop: c8.imageCrop, ...extra });
+  switch (id) {
+    case "photo-full":
+      return [
+        paper,
+        ...c8.image ? [blob(640, 50, 640), photo(box(700, 110, 520, 520), { shape: "ellipse" }), art(1, "dan-gian/canh-tre", 990, -40, 330)] : [art(1, "dan-gian/may", -80, -20, 700, { opacity: 0.85 }), art(2, "dan-gian/mai-dinh", 590, 400, 700), art(3, "dan-gian/canh-tre", 910, -40, 400)],
+        art(4, "dan-gian/chuon-chuon", 530, 90, 150),
+        body("kicker", upper(c8.kicker), box(100, 161, 540, 62), 28, fg, { fontWeight: 800 }),
+        title("title", c8.title, box(96, 226, 600, 250), c8.image ? 70 : 84, ink, { valign: "middle" }),
+        body("subtitle", c8.subtitle, box(100, 496, 480, 130), 28, fg)
+      ];
+    case "manifesto": {
+      const text = statement(c8);
+      return [
+        paper,
+        { id: "decor-kit-8", type: "shape", shape: "round", fill: "#ffdca4", radius: 32, border: 0, shadowLevel: 0, decor: true, ...box(160, 140, 960, 440) },
+        art(1, "dan-gian/canh-tre", -40, -40, 400, { flipX: true }),
+        art(2, "dan-gian/hoa-sen", 940, 450, 330),
+        art(3, "dan-gian/chuon-chuon", 940, 60, 140),
+        body("kicker", upper(c8.kicker), box(240, 169, 800, 54), 24, fg, { fontWeight: 800, align: "center" }),
+        title("body", text, box(230, 226, 820, 260), text.length > 150 ? 40 : text.length > 80 ? 50 : 66, ink, { align: "center", valign: "middle" }),
+        body("author", c8.author, box(260, 502, 760, 56), 24, fg, { align: "center" })
+      ];
+    }
+    case "editorial-text": {
+      const kite = (c8.title?.length ?? 0) % 2 === 0;
+      return [
+        paper,
+        blob(800, 20, 700),
+        ...kite ? [art(1, "dan-gian/dieu", 740, 160, 500), art(2, "dan-gian/may", 760, 650, 520)] : [art(1, "dan-gian/den-long", 880, -10, 290), art(2, "dan-gian/non-la", 850, 420, 360)],
+        body("kicker", upper(c8.kicker), box(96, 61, 640, 54), 24, fg, { fontWeight: 800 }),
+        title("title", c8.title, box(96, 112, 640, 170), 56, ink, { valign: "middle" }),
+        body("body", paragraphs(c8), box(100, 310, 610, 350), 27, fg)
+      ];
+    }
+    case "rules": {
+      const rows = rowsOf(c8);
+      if (!rows.length) return [];
+      const head = [
+        paper,
+        art(1, "dan-gian/sach", 1030, 0, 220),
+        art(2, "dan-gian/chuon-chuon", 20, 10, 100, { flipX: true }),
+        body("kicker", upper(c8.kicker), box(90, 49, 700, 54), 22, fg, { fontWeight: 800 }),
+        title("title", c8.title, box(90, 98, 920, 140), 54, ink, { valign: "middle" })
+      ];
+      if (rows.length <= 3) {
+        const colors = ["the-vang", "the-xanh", "the-tim"];
+        const left = 640 - (rows.length * 360 + (rows.length - 1) * 30) / 2;
+        return [...head, ...rows.flatMap((row, i) => {
+          const x = left + i * 390;
+          return [
+            image(`decor-kit-${3 + i}`, `/slide-packs/dan-gian/${colors[i]}.png`, box(x, 270, 360, 360), { decor: true }),
+            title(`item-${i + 1}-value`, row.value, box(x + 24, 310, 312, 90), 36, ink, { align: "center", valign: "middle" }),
+            body(`item-${i + 1}-label`, row.label, box(x + 28, 412, 304, 190), 26, fg, { align: "center" })
+          ];
+        })];
+      }
+      const h = Math.min(110, 400 / rows.length);
+      return [...head, ...rows.flatMap((row, i) => {
+        const y = 262 + i * h;
+        return [
+          { id: `divider-${i + 1}`, type: "shape", shape: "rect", fill: ink, opacity: 0.3, border: 0, shadowLevel: 0, ...box(100, y, 1080, 2) },
+          title(`item-${i + 1}-value`, row.value, box(96, y + 4, 240, h - 8), 34, ink, { valign: "middle" }),
+          body(`item-${i + 1}-label`, row.label, box(360, y + 4, 820, h - 8), 25, fg, { valign: "middle", lineHeight: 1.3 })
+        ];
+      })];
+    }
+    case "bignum":
+      return [
+        paper,
+        blob(720, 80, 560),
+        c8.image ? photo(box(770, 130, 460, 460), { shape: "ellipse" }) : art(1, "dan-gian/non-la", 800, 170, 420),
+        art(2, "dan-gian/chuon-chuon", 620, 40, 140),
+        body("kicker", upper(c8.kicker), box(100, 81, 560, 58), 24, fg, { fontWeight: 800 }),
+        title("bignum-value", c8.value, box(96, 140, 600, 270), 180, ink, { valign: "middle", lineHeight: 1 }),
+        title("bignum-label", c8.label, box(100, 430, 580, 100), 40, fg),
+        body("subtitle", c8.subtitle, box(100, 545, 580, 80), 24, fg)
+      ];
+    default:
+      return null;
+  }
+}
+function shared(pack, id, c8, { title, body }, standard) {
+  if (id !== "bullets" && id !== "photo-compare" && id !== "bars") return null;
+  const red = pack === "co-dien";
+  const { ink, fg } = PACK_COLORS[pack];
+  const rule = { id: "divider-1", type: "shape", shape: "rect", fill: ink, opacity: 0.45, border: 0, shadowLevel: 0, ...box(100, (c8.title?.length ?? 0) > 36 ? 250 : 206, 120, 5) };
+  const head = () => [
+    body("kicker", upper(c8.kicker), box(96, 57, 700, 54), 22, red ? ink : fg, { fontWeight: red ? 700 : 800 }),
+    title("title", c8.title, box(96, 114, 860, 130), 52, ink, { valign: "top" }),
+    rule
+  ];
+  const paper = full(red ? "co-dien/tem-day" : "dan-gian/giay-o");
+  if (id === "bullets") {
+    const items = list(c8.bullets).length ? list(c8.bullets) : list(c8.body?.split("\n"));
+    if (!items.length) return [];
+    const numbered = items.every((item) => /^\d+[.)]\s/.test(item));
+    const text = items.map((item) => numbered ? item : `\u2022 ${item}`).join("\n");
+    const size = text.length > 320 ? 24 : text.length > 180 ? 28 : 34;
+    return [
+      paper,
+      ...red ? [art(1, "co-dien/hoa-sen", 905, 300, 270), art(2, "co-dien/chim-en", 1e3, 52, 150)] : [
+        { id: "decor-kit-8", type: "shape", shape: "round", fill: "#ffe9b8", radius: 28, border: 0, shadowLevel: 0, decor: true, ...box(76, 274, 820, 396) },
+        art(1, "dan-gian/hoa-sen", 920, 400, 340),
+        art(2, "dan-gian/chuon-chuon", 960, 90, 170)
+      ],
+      ...head(),
+      body("bullets", text, red ? box(100, 278, 780, 380) : box(110, 292, 750, 360), size, red ? ink : fg, { valign: "middle", lineHeight: 1.7 })
+    ];
+  }
+  if (id === "photo-compare") {
+    const captions = Boolean(c8.caption || c8.caption2);
+    const h = captions ? 300 : 370;
+    const frame = red ? { border: 6, borderColor: ink } : { shape: "round", radius: 28, border: 6, borderColor: "#ffd98a" };
+    return [
+      paper,
+      red ? art(1, "co-dien/canh-tung", 900, 50, 320) : art(1, "dan-gian/canh-tre", 990, -40, 330),
+      ...head(),
+      image("image-1", c8.image, box(100, 280, 525, h), { crop: c8.imageCrop, ...frame }),
+      image("image-2", c8.image2, box(655, 280, 525, h), { crop: c8.image2Crop, ...frame }),
+      body("photo-caption", c8.caption, box(100, 594, 525, 66), 22, fg, { align: "center" }),
+      body("photo-caption-2", c8.caption2, box(655, 594, 525, 66), 22, fg, { align: "center" })
+    ];
+  }
+  const chart = standard().filter((el) => el.id.startsWith("bar"));
+  if (!chart.length) return [];
+  for (const el of chart) {
+    el.x = 8 + (el.x - 5) * 0.93;
+    el.y = 38 + (el.y - 26) * 0.84;
+    el.w *= 0.93;
+    el.h *= 0.84;
+  }
+  return [
+    paper,
+    red ? art(1, "co-dien/canh-tung", 900, 50, 320) : art(1, "dan-gian/sach", 1030, 0, 220),
+    ...head(),
+    ...chart
+  ];
+}
+function backdrop(pack) {
+  return pack === "co-dien" ? [full("co-dien/tem-day"), art(1, "co-dien/goc-hoa-van", 44, 36, 110)] : [full("dan-gian/giay-o"), art(1, "dan-gian/chuon-chuon", 1130, 6, 110)];
+}
+function composePack(pack, layoutId, content, text, standard) {
+  const kit = kitOf(text);
+  const built = (pack === "co-dien" ? coDien : danGian)(layoutId, content, kit) ?? shared(pack, layoutId, content, kit, standard);
+  if (built) return built.filter((el) => Boolean(el));
+  const elements = standard();
+  if (!elements.length) return elements;
+  if (pack === "co-dien") for (const el of elements) {
+    el.x = 5 + el.x * 0.9;
+    el.y = 6 + el.y * 0.88;
+    el.w *= 0.9;
+    el.h *= 0.88;
+    if (el.fontSize) el.fontSize *= 0.9;
+  }
+  return [...backdrop(pack), ...elements];
+}
+function packCreditColor(pack, layoutId) {
+  return pack === "co-dien" && layoutId === "manifesto" ? CREAM : PACK_COLORS[pack].muted;
+}
+
 // src/lib/slideLayouts.ts
 var isEditorialLayout = (id) => id === "bignum" || id === "photo-full" || id === "photo-compare" || id === "bars" || id === "rules" || id === "editorial-text" || id === "manifesto";
 var PRO_LAYOUT_IDS = ["photo-full", "manifesto", "editorial-text", "rules", "bignum", "bars", "photo-compare"];
@@ -6122,7 +6453,7 @@ function paletteOf(theme, tone) {
   const base = {
     pro: !!theme.pro,
     displayFont: theme.fonts.heading === "Be Vietnam Pro" ? "Arial Narrow, Arial" : theme.fonts.heading,
-    text: (id, value, box, style, minScale) => textEl(id, value, box, style, minScale, style.variant === "body" ? theme.fonts.body : theme.fonts.heading),
+    text: (id, value, box2, style, minScale) => textEl(id, value, box2, style, minScale, style.variant === "body" ? theme.fonts.body : theme.fonts.heading),
     tone,
     fg: theme.fg,
     accent: theme.accent,
@@ -6133,6 +6464,7 @@ function paletteOf(theme, tone) {
     border: theme.border,
     borderColor: theme.borderColor
   };
+  if (theme.pack) return { ...base, ...PACK_COLORS[theme.pack], pack: theme.pack };
   const pick0 = tone === "accent" ? { background: mixHex(theme.bg, theme.accent, theme.dark ? 0.2 : 0.07), surface: theme.bg, panelMix: theme.dark ? 0.18 : 0.14 } : tone === "soft" ? { background: theme.surface, surface: theme.bg, panelMix: theme.dark ? 0.18 : 0.14 } : { background: theme.bg, surface: theme.surface, panelMix: theme.dark ? 0.18 : 0.12 };
   const proDark = !!theme.pro && tone === "accent";
   const pick = proDark ? { background: theme.ink ?? "#161513", surface: mixHex(theme.ink ?? "#161513", theme.bg, 0.08), panelMix: 0.1 } : pick0;
@@ -6153,7 +6485,7 @@ function paletteOf(theme, tone) {
   };
 }
 var BASE_SIZE = /* @__PURE__ */ new WeakMap();
-function textEl(id, value, box, style, minScale, inheritedFont) {
+function textEl(id, value, box2, style, minScale, inheritedFont) {
   const text = value?.trim();
   if (!text) return null;
   const lineHeight = style.lineHeight ?? (style.variant === "title" ? 1.15 : 1.4);
@@ -6163,11 +6495,11 @@ function textEl(id, value, box, style, minScale, inheritedFont) {
   const family = font ? slideFontStack(font) : void 0;
   const metrics = { family, italic: style.fontStyle === "italic" };
   const oneLine = textBoxHeight(text.split("\n")[0], 1e3, baseSize, lineHeight);
-  if (!style.valign && box.h < oneLine) box = { ...box, h: oneLine };
+  if (!style.valign && box2.h < oneLine) box2 = { ...box2, h: oneLine };
   const fontSize = fitFontSize({
     text,
-    widthPct: box.w,
-    heightPct: box.h,
+    widthPct: box2.w,
+    heightPct: box2.h,
     baseCqw: baseSize,
     lineHeight,
     ...metrics,
@@ -6178,21 +6510,21 @@ function textEl(id, value, box, style, minScale, inheritedFont) {
     // của layout chỉ cao 12–13% nên 60% không đủ cho tiêu đề 60–80 ký tự.
     minScale: minScale ?? (style.variant === "title" ? 0.55 : void 0)
   });
-  const need = textBoxHeight(text, box.w, fontSize, lineHeight, {
+  const need = textBoxHeight(text, box2.w, fontSize, lineHeight, {
     weight: style.fontWeight ?? (style.variant === "title" ? 600 : 500),
     letterSpacing,
     ...metrics
   }) + (id === "bignum-value" ? 1.7 : 0.5);
-  if (need < box.h - 2) {
-    const spare = box.h - need;
+  if (need < box2.h - 2) {
+    const spare = box2.h - need;
     const shift = style.valign === "middle" ? spare / 2 : 0;
-    box = { ...box, y: box.y + shift, h: need };
+    box2 = { ...box2, y: box2.y + shift, h: need };
   }
   const el = {
     id,
     type: "text",
     text,
-    ...box,
+    ...box2,
     // Hộp chữ của layout giữ đúng hình học đã dựng; auto-height chỉ dành cho hộp
     // người dùng tự kéo (chặng 20) — nếu không thẻ/hai cột sẽ teo còn một dòng.
     fixedHeight: true,
@@ -6204,14 +6536,14 @@ function textEl(id, value, box, style, minScale, inheritedFont) {
   BASE_SIZE.set(el, baseSize);
   return el;
 }
-function shapeEl(id, box, fill, shape = "rect") {
-  return { id, type: "shape", shape, fill, ...box };
+function shapeEl(id, box2, fill, shape = "rect") {
+  return { id, type: "shape", shape, fill, ...box2 };
 }
-function iconEl(id, assetId, box, color) {
-  return { id, type: "icon", assetId, textColor: color, ...box };
+function iconEl(id, assetId, box2, color) {
+  return { id, type: "icon", assetId, textColor: color, ...box2 };
 }
-function graphicEl(id, graphicId, box, ink) {
-  return { id, type: "graphic", graphicId, textColor: ink, ...box };
+function graphicEl(id, graphicId, box2, ink) {
+  return { id, type: "graphic", graphicId, textColor: ink, ...box2 };
 }
 function ornament(id, ornId, x, y, w, ink, centerY = false) {
   const ratio = graphicById(ornId)?.ratio;
@@ -6225,23 +6557,23 @@ function numberTag(id, n10, bg, x, cy, w) {
   return ornament(id, `orn-the-so-${n10}`, x, cy, w, GRAPHIC_INK, true);
 }
 var GRAPHIC_PLATE = "#f7f9fc";
-function graphicPlate(id, graphicId, box, p5) {
+function graphicPlate(id, graphicId, box2, p5) {
   const inset = 1.4;
   const insetY = inset * (16 / 9);
   return [
-    { ...shapeEl(`${id}-plate`, box, GRAPHIC_PLATE, "round"), radius: Math.min(p5.radius, 18) },
+    { ...shapeEl(`${id}-plate`, box2, GRAPHIC_PLATE, "round"), radius: Math.min(p5.radius, 18) },
     graphicEl(id, graphicId, {
-      x: box.x + inset,
-      y: box.y + insetY,
-      w: box.w - inset * 2,
-      h: box.h - insetY * 2
+      x: box2.x + inset,
+      y: box2.y + insetY,
+      w: box2.w - inset * 2,
+      h: box2.h - insetY * 2
     }, GRAPHIC_INK)
   ];
 }
 var overlaps = (a34, b, pad = 0.6) => a34.x < b.x + b.w + pad && b.x < a34.x + a34.w + pad && a34.y < b.y + b.h + pad && b.y < a34.y + a34.h + pad;
 function textHeavy(content) {
   const lists = [content.bullets, content.items, content.steps, content.left, content.right];
-  const chars = lists.reduce((sum, list) => sum + (list ?? []).join("").length, content.body?.length ?? 0);
+  const chars = lists.reduce((sum, list2) => sum + (list2 ?? []).join("").length, content.body?.length ?? 0);
   return chars > 320;
 }
 function withKitDecor(id, els, content, p5) {
@@ -6259,9 +6591,9 @@ function withKitDecor(id, els, content, p5) {
     const h = w * 16 / (9 * graphic.ratio);
     const mx = 2.5;
     const my = mx * 16 / 9;
-    const box = typeof anchor.at === "object" ? { ...anchor.at, w, h } : { x: anchor.at[1] === "l" ? mx : 100 - mx - w, y: anchor.at[0] === "t" ? my : 100 - my - h, w, h };
-    if (blockers.some((el) => overlaps(box, el))) return;
-    out.push({ ...graphicEl(`decor-kit-${i + 1}`, graphic.id, box, p5.ink), decor: true });
+    const box2 = typeof anchor.at === "object" ? { ...anchor.at, w, h } : { x: anchor.at[1] === "l" ? mx : 100 - mx - w, y: anchor.at[0] === "t" ? my : 100 - my - h, w, h };
+    if (blockers.some((el) => overlaps(box2, el))) return;
+    out.push({ ...graphicEl(`decor-kit-${i + 1}`, graphic.id, box2, p5.ink), decor: true });
   });
   return out;
 }
@@ -6272,23 +6604,23 @@ var compact = (items) => items.filter((el) => el !== null);
 var HEADER_BOX = { x: 8, y: 7, w: 84, h: 16 };
 var HEADER_SIZES = [4.3, 3.8, 3.4, 3.1, 2.9];
 var bottomOf = (els) => els.reduce((m4, el) => Math.max(m4, el.y + el.h), 0);
-function titleEls(p5, title, box, sizes, rule = false, color = p5.fg) {
+function titleEls(p5, title, box2, sizes, rule = false, color = p5.fg) {
   const text = title?.trim();
   if (!text) return [];
-  const need = (size2) => textBoxHeight(text, box.w, size2, 1.15, { weight: 700 });
-  const size = sizes.find((s9) => need(s9) <= box.h) ?? sizes[sizes.length - 1];
-  const h = Math.min(box.h, Math.max(4, need(size)));
+  const need = (size2) => textBoxHeight(text, box2.w, size2, 1.15, { weight: 700 });
+  const size = sizes.find((s9) => need(s9) <= box2.h) ?? sizes[sizes.length - 1];
+  const h = Math.min(box2.h, Math.max(4, need(size)));
   return compact([
-    p5.text("title", text, { ...box, h }, {
+    p5.text("title", text, { ...box2, h }, {
       variant: "title",
       fontSize: size,
       fontWeight: 700,
       textColor: color
     }),
-    rule ? ornament("title-rule", "orn-ke-song-ngan", box.x, box.y + h + 1.25, 10, p5.accent, true) : null
+    rule ? ornament("title-rule", "orn-ke-song-ngan", box2.x, box2.y + h + 1.25, 10, p5.accent, true) : null
   ]);
 }
-var cleanList = (list) => (list ?? []).map((item) => item.trim()).filter(Boolean);
+var cleanList = (list2) => (list2 ?? []).map((item) => item.trim()).filter(Boolean);
 var linesOf = (text) => (text ?? "").split("\n").map((line) => line.replace(/^[•\-–]\s*/, "").trim()).filter(Boolean);
 var NUMBERED_LINE = /^(bước|buoc|step)\s*\d+\s*[:.)\-–]|^\d+\s*[.)]/i;
 var bulletText = (items) => items.every((item) => NUMBERED_LINE.test(item)) ? items.join("\n") : items.map((item) => `\u2022 ${item}`).join("\n");
@@ -6614,7 +6946,7 @@ function composeTwoColumn(p5, content) {
   const used = Math.max(heightOf(columns.left, size), heightOf(columns.right, size));
   const top = 27 + Math.max(0, (60 - used) / 2);
   const column = (side) => {
-    const box = boxFor(side);
+    const box2 = boxFor(side);
     let y = top;
     return columns[side].flatMap((block, index) => {
       const out = [];
@@ -6622,7 +6954,7 @@ function composeTwoColumn(p5, content) {
       if (block.label) {
         const h2 = labelH(block.label, size);
         out.push(
-          p5.text(`${id}-heading`, block.label, { x: box.x, y, w: colW, h: h2 }, {
+          p5.text(`${id}-heading`, block.label, { x: box2.x, y, w: colW, h: h2 }, {
             variant: "body",
             fontSize: size,
             fontWeight: 700,
@@ -6634,7 +6966,7 @@ function composeTwoColumn(p5, content) {
       }
       const h = textBoxHeight(block.text, colW, size * 0.95, 1.4, { weight: 500 });
       out.push(
-        p5.text(id, block.text, { x: box.x, y, w: colW, h }, {
+        p5.text(id, block.text, { x: box2.x, y, w: colW, h }, {
           variant: "body",
           fontSize: size * 0.95,
           textColor: p5.fg
@@ -6970,8 +7302,8 @@ function composeStatImage(p5, content) {
 var EDITORIAL_TITLE = { variant: "title", fontWeight: 800, lineHeight: 1.1, valign: "top" };
 var PHOTO_FOREGROUND = "#ffffff";
 var PHOTO_MUTED = "#e2e0dc";
-function layoutPhoto(id, src, box, crop, x = 50, y = 50) {
-  return { id, type: "image", src, ...box, crop, imagePosition: { x, y }, radius: 0 };
+function layoutPhoto(id, src, box2, crop, x = 50, y = 50) {
+  return { id, type: "image", src, ...box2, crop, imagePosition: { x, y }, radius: 0 };
 }
 function composeBigNum(p5, c8) {
   const w = c8.image ? 52 : 88;
@@ -6979,7 +7311,7 @@ function composeBigNum(p5, c8) {
   const size = value ? singleLineSize(value, w, c8.image ? 20 : 23, 800, slideFontStack(p5.displayFont)) : 20;
   return compact([
     c8.image ? layoutPhoto("image-1", c8.image, { x: 60, y: 9, w: 34, h: 76 }, c8.imageCrop, c8.focusX, c8.focusY) : null,
-    p5.text("kicker", upper(c8.kicker), { x: 5, y: 8, w, h: 11 }, {
+    p5.text("kicker", upper2(c8.kicker), { x: 5, y: 8, w, h: 11 }, {
       variant: "body",
       fontSize: 1.55,
       fontWeight: 700,
@@ -7065,8 +7397,8 @@ function composePhotoCompare(p5, c8) {
     }, 0.5)
   ]);
 }
-var upper = (text) => text?.toLocaleUpperCase("vi");
-var hairline = (id, box, color) => ({ ...shapeEl(id, box, color), border: 0, shadowLevel: 0 });
+var upper2 = (text) => text?.toLocaleUpperCase("vi");
+var hairline = (id, box2, color) => ({ ...shapeEl(id, box2, color), border: 0, shadowLevel: 0 });
 function composeRules(p5, c8) {
   const rows = (c8.stats ?? []).map((s9) => ({ value: String(s9.value ?? "").trim(), label: String(s9.label ?? "").trim() })).filter((s9) => s9.value || s9.label).slice(0, 5);
   if (rows.length === 0) return [];
@@ -7075,7 +7407,7 @@ function composeRules(p5, c8) {
   const longest = Math.max(...rows.map((r7) => r7.value.length));
   const valueSize = longest <= 9 ? 3.6 : longest <= 14 ? 3.1 : 2.7;
   return compact([
-    p5.text("kicker", upper(c8.kicker), { x: 5, y: 8, w: 80, h: 7 }, {
+    p5.text("kicker", upper2(c8.kicker), { x: 5, y: 8, w: 80, h: 7 }, {
       variant: "body",
       fontSize: 1.85,
       fontWeight: 700,
@@ -7116,7 +7448,7 @@ function composeEditorialText(p5, c8) {
   if (lines.length === 0 && !c8.title?.trim()) return [];
   const text = lines.join("\n\n");
   return compact([
-    p5.text("kicker", upper(c8.kicker), { x: 5, y: 8, w: 80, h: 7 }, {
+    p5.text("kicker", upper2(c8.kicker), { x: 5, y: 8, w: 80, h: 7 }, {
       variant: "body",
       fontSize: 1.85,
       fontWeight: 700,
@@ -7144,7 +7476,7 @@ function composeManifesto(p5, c8) {
   if (!text) return [];
   const size = text.length > 180 ? 3.7 : text.length > 110 ? 4.5 : 5.6;
   return compact([
-    p5.text("kicker", upper(c8.kicker), { x: 6, y: 12, w: 80, h: 7 }, {
+    p5.text("kicker", upper2(c8.kicker), { x: 6, y: 12, w: 80, h: 7 }, {
       variant: "body",
       fontSize: 1.85,
       fontWeight: 700,
@@ -7509,7 +7841,7 @@ function composeHook(p5, content) {
   if (!body) return [];
   const pills = cleanList(content.items).slice(0, 3);
   const graphic = chosenGraphic(content);
-  const art = { x: 72, y: 14, w: 14.1, h: 25 };
+  const art2 = { x: 72, y: 14, w: 14.1, h: 25 };
   const pillH = 13;
   const pillsTop = 46;
   return compact([
@@ -7529,7 +7861,7 @@ function composeHook(p5, content) {
       valign: "top"
     }),
     shapeEl("hook-panel", { x: 66, y: 11, w: 27, h: 80 }, p5.panel, "round"),
-    ...graphic ? graphicPlate("hook-graphic", graphic, art, p5) : [iconEl("hook-icon", pickSlideAsset(`${content.title ?? ""} ${body}`) ?? "idea", art, p5.accent)],
+    ...graphic ? graphicPlate("hook-graphic", graphic, art2, p5) : [iconEl("hook-icon", pickSlideAsset(`${content.title ?? ""} ${body}`) ?? "idea", art2, p5.accent)],
     pills.length ? p5.text("hook-label", "G\u1EE2I \xDD", { x: 68.5, y: 40.5, w: 22, h: 4.5 }, {
       variant: "body",
       fontSize: 1.5,
@@ -7595,10 +7927,10 @@ function composeMindmap(p5, content) {
   const nodeSize = [2.2, 1.9, 1.6, 1.4, 1.2].find((s9) => textBoxHeight(center, nodeW - 2, s9, 1.25, { weight: 700 }) <= nodeH - 2) ?? 1.2;
   const els = [];
   const nodes = [];
-  const place = (side, list) => {
-    const slot = area / list.length;
+  const place = (side, list2) => {
+    const slot = area / list2.length;
     const x = side === "right" ? 100 - 6 - colW : 6;
-    list.forEach(({ branch, index }, k) => {
+    list2.forEach(({ branch, index }, k) => {
       const color = colors[index % colors.length];
       const size = [1.6, 1.45, 1.3].find(
         (s9) => !branch.children.length || textBoxHeight(branch.children.join("\n"), colW - 1, s9, 1.35, { weight: 500 }) <= slot - labelH - 3
@@ -7663,9 +7995,13 @@ function composeStatic(theme, layoutId, content, tone) {
   const resolved = normalizeTheme(theme);
   const id = isLayoutId(layoutId) ? layoutId : "bullets";
   const palette2 = paletteOf(resolved, tone && isTone(tone) ? tone : defaultTone(id));
-  const elements = withKitDecor(id, composeById(id, palette2, content), content, palette2);
+  const pack = palette2.pack;
+  const elements = pack ? composePack(pack, id, content, palette2.text, () => composeById(id, palette2, content)) : withKitDecor(id, composeById(id, palette2, content), content, palette2);
   if (!elements.length) return elements;
-  return withSlideCredit(elements, creditElement(content.credit, id === "photo-full" ? PHOTO_MUTED : palette2.muted, palette2.pro ? 1.45 : void 0));
+  const creditColor = pack ? packCreditColor(pack, id) : id === "photo-full" ? PHOTO_MUTED : palette2.muted;
+  const credit = creditElement(content.credit, creditColor, palette2.pro ? 1.45 : void 0);
+  if (pack) return credit ? [...elements, credit] : elements;
+  return withSlideCredit(elements, credit);
 }
 function composeById(id, palette2, content) {
   switch (id) {
@@ -7871,7 +8207,7 @@ function withPlaceholders(layoutId, content) {
   const demo = DEMO[layoutId];
   const out = { ...content };
   const has = (value) => Boolean(value?.trim());
-  const list = (value) => (value?.length ?? 0) > 0;
+  const list2 = (value) => (value?.length ?? 0) > 0;
   switch (layoutId) {
     case "title":
     case "section":
@@ -7881,19 +8217,19 @@ function withPlaceholders(layoutId, content) {
       break;
     case "statement":
       if (!has(out.kicker)) out.kicker = demo.kicker;
-      if (!has(out.body) && !has(out.quote) && !list(out.bullets)) out.body = demo.body;
+      if (!has(out.body) && !has(out.quote) && !list2(out.bullets)) out.body = demo.body;
       break;
     case "bullets":
       if (!has(out.title)) out.title = demo.title;
-      if (!list(out.bullets)) out.bullets = demo.bullets;
+      if (!list2(out.bullets)) out.bullets = demo.bullets;
       break;
     case "cards":
       if (!has(out.title)) out.title = demo.title;
-      if (!list(out.items) && !list(out.bullets)) out.items = demo.items;
+      if (!list2(out.items) && !list2(out.bullets)) out.items = demo.items;
       break;
     case "two-column":
       if (!has(out.title)) out.title = demo.title;
-      if (!list(out.left) && !list(out.right) && !list(out.bullets) && !has(out.body)) {
+      if (!list2(out.left) && !list2(out.right) && !list2(out.bullets) && !has(out.body)) {
         out.left = demo.left;
         out.right = demo.right;
       }
@@ -7902,11 +8238,11 @@ function withPlaceholders(layoutId, content) {
       if (!has(out.title)) out.title = demo.title;
       if (!has(out.leftTitle)) out.leftTitle = demo.leftTitle;
       if (!has(out.rightTitle)) out.rightTitle = demo.rightTitle;
-      if (!list(out.left)) out.left = demo.left;
-      if (!list(out.right)) out.right = demo.right;
+      if (!list2(out.left)) out.left = demo.left;
+      if (!list2(out.right)) out.right = demo.right;
       break;
     case "quote":
-      if (!has(out.quote) && !has(out.body) && !list(out.bullets)) {
+      if (!has(out.quote) && !has(out.body) && !list2(out.bullets)) {
         out.quote = demo.quote;
         out.author = demo.author;
       }
@@ -7918,7 +8254,7 @@ function withPlaceholders(layoutId, content) {
     case "agenda":
       if (!has(out.kicker)) out.kicker = demo.kicker;
       if (!has(out.title)) out.title = demo.title;
-      if (!list(out.items) && !list(out.bullets)) out.items = demo.items;
+      if (!list2(out.items) && !list2(out.bullets)) out.items = demo.items;
       break;
     case "table":
       if (!has(out.title)) out.title = demo.title;
@@ -7927,7 +8263,7 @@ function withPlaceholders(layoutId, content) {
     case "image-left":
     case "image-right":
       if (!has(out.title)) out.title = demo.title;
-      if (!list(out.bullets) && !has(out.body)) out.bullets = demo.bullets;
+      if (!list2(out.bullets) && !has(out.body)) out.bullets = demo.bullets;
       break;
     case "image-full":
       if (!has(out.title)) out.title = demo.title;
@@ -7935,7 +8271,7 @@ function withPlaceholders(layoutId, content) {
       break;
     case "stats":
       if (!has(out.title)) out.title = demo.title;
-      if (!list(out.stats)) out.stats = demo.stats;
+      if (!list2(out.stats)) out.stats = demo.stats;
       break;
     case "bignum":
       if (!has(out.value)) out.value = out.stats?.[0]?.value ?? demo.value;
@@ -7954,28 +8290,28 @@ function withPlaceholders(layoutId, content) {
       break;
     case "bars":
       if (!has(out.title)) out.title = demo.title;
-      if (!list(out.bars)) out.bars = demo.bars;
+      if (!list2(out.bars)) out.bars = demo.bars;
       break;
     case "stat-image":
       if (!has(out.title)) out.title = demo.title;
-      if (!list(out.stats)) out.stats = demo.stats;
+      if (!list2(out.stats)) out.stats = demo.stats;
       break;
     case "timeline":
     case "cycle":
       if (!has(out.title)) out.title = demo.title;
-      if (!list(out.steps) && !list(out.bullets) && !has(out.body)) out.steps = demo.steps;
+      if (!list2(out.steps) && !list2(out.bullets) && !has(out.body)) out.steps = demo.steps;
       break;
     case "mindmap":
       if (!has(out.title)) out.title = demo.title;
       if (!has(out.body)) out.body = demo.body;
-      if (!list(out.items)) out.items = demo.items;
+      if (!list2(out.items)) out.items = demo.items;
       break;
     case "quiz":
-      if (!has(out.question) && !has(out.body) && !list(out.bullets)) {
+      if (!has(out.question) && !has(out.body) && !list2(out.bullets)) {
         out.question = demo.question;
         out.kicker = out.kicker || demo.kicker;
       }
-      if (!list(out.options)) {
+      if (!list2(out.options)) {
         out.options = demo.options;
         out.answer = demo.answer;
         out.explanation = out.explanation || demo.explanation;
@@ -7984,14 +8320,14 @@ function withPlaceholders(layoutId, content) {
     case "example":
       if (!has(out.title)) out.title = demo.title;
       if (!has(out.problem) && !has(out.body)) out.problem = demo.problem;
-      if (!list(out.steps)) out.steps = demo.steps;
+      if (!list2(out.steps)) out.steps = demo.steps;
       if (!has(out.conclusion)) out.conclusion = demo.conclusion;
       break;
     case "hook":
       if (!has(out.kicker)) out.kicker = demo.kicker;
       if (!has(out.title)) out.title = demo.title;
-      if (!has(out.body) && !list(out.bullets)) out.body = demo.body;
-      if (!list(out.items)) out.items = demo.items;
+      if (!has(out.body) && !list2(out.bullets)) out.body = demo.body;
+      if (!list2(out.items)) out.items = demo.items;
       break;
   }
   return out;
@@ -13112,8 +13448,8 @@ var LIST_LABEL = {
 function budgetLine(id) {
   const spec = budgetOf(id);
   const parts = [`t\u1ED5ng \u2264 ${spec.total} k\xFD t\u1EF1`];
-  for (const list of spec.lists ?? []) {
-    parts.push(`${LIST_LABEL[list.field]} \u2264 ${list.max}, m\u1ED7i m\u1EE5c \u2264 ${list.itemMax} k\xFD t\u1EF1`);
+  for (const list2 of spec.lists ?? []) {
+    parts.push(`${LIST_LABEL[list2.field]} \u2264 ${list2.max}, m\u1ED7i m\u1EE5c \u2264 ${list2.itemMax} k\xFD t\u1EF1`);
   }
   if (spec.table) parts.push(`b\u1EA3ng \u2264 ${spec.table.rows} h\xE0ng \xD7 ${spec.table.cols} c\u1ED9t, m\u1ED7i \xF4 \u2264 ${spec.table.cell} k\xFD t\u1EF1`);
   if (spec.stats) parts.push(`s\u1ED1 m\u1EE5c \u2264 ${spec.stats.max}, nh\xE3n s\u1ED1 li\u1EC7u \u2264 ${spec.stats.label} k\xFD t\u1EF1`);

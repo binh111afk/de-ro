@@ -189,6 +189,8 @@ export interface DeckTheme {
   shadow?: 'none' | 'soft' | 'hard'
   /** theme riêng của chế độ Chuyên nghiệp (không nằm trong catalog thường) */
   pro?: boolean
+  /** bộ phong cách có nền / hình trang trí riêng (lib/slidePacks.ts) */
+  pack?: 'co-dien' | 'dan-gian'
   /** màu mực của tông tối trong theme Chuyên nghiệp (nền slide nhấn) */
   ink?: string
   /** viền mặc định cho thẻ/panel (px) */

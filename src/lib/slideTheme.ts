@@ -714,6 +714,17 @@ const proTheme = (
   decor: 'none',
   dark: false,
 })
+/** bộ phong cách có hình vẽ riêng: màu và font đi cùng bộ */
+const packTheme = (
+  id: string, name: string, vibe: string, pack: NonNullable<DeckTheme['pack']>, tags: string[],
+  paper: string, ink: string, accent: string, secondary: string, heading: string, body: string,
+): DeckTheme => ({
+  ...proTheme(id, name, vibe, accent, secondary, tags, { bg: paper, ink }),
+  pack,
+  fontHeading: heading,
+  fontBody: body,
+  fonts: { ...PRO_FONTS, heading, body },
+})
 export const PRO_THEMES: DeckTheme[] = [
   proTheme('tap-chi-do', 'Tạp chí đỏ', 'giấy kem, mực đen, đỏ gạch', '#a32c1d', '#2f6a5e', ['lịch sử', 'chiến tranh', 'sự kiện xã hội', 'báo chí']),
   proTheme('tap-chi-xanh', 'Tạp chí xanh', 'giấy ngà hơi xanh, mực đen, xanh lá', '#3f632c', '#648446', ['sinh học', 'quang hợp', 'thực vật', 'rừng', 'hệ sinh thái trên cạn'], { bg: '#edf0e5', ink: '#151a13' }),
@@ -722,6 +733,12 @@ export const PRO_THEMES: DeckTheme[] = [
   proTheme('tap-chi-bien', 'Tạp chí lam ngọc', 'giấy màu sương, mực xanh sâu, lam ngọc', '#146273', '#367b86', ['địa lý biển', 'Vịnh Hạ Long', 'đại dương', 'đảo', 'sông nước', 'sinh thái biển'], { bg: '#e6efed', ink: '#102027' }),
   proTheme('tap-chi-dem', 'Tạp chí tím than', 'giấy xám tím nhạt, mực đêm, tím chàm', '#534782', '#74619e', ['thiên văn', 'vật lý', 'tin học', 'lập trình', 'công nghệ'], { bg: '#eceaf3', ink: '#191626' }),
   proTheme('tap-chi-dat', 'Tạp chí cam đất', 'giấy hồng ngà, mực nâu, cam đất', '#98432f', '#ad664f', ['thể thao', 'mỹ thuật', 'âm nhạc', 'thủ công', 'văn hóa'], { bg: '#f2e8df', ink: '#211713' }),
+  packTheme('co-dien-do', 'Cổ điển đỏ kem', 'khung tem thư đỏ kem, chim hạc, núi, sen kiểu tranh cổ', 'co-dien',
+    ['lịch sử Việt Nam', 'cách mạng', 'chính trị', 'tư tưởng Hồ Chí Minh', 'truyền thống dân tộc', 'danh nhân'],
+    '#fdeed3', '#8b0000', '#8b0000', '#2f5d50', 'Playfair Display', 'Be Vietnam Pro'),
+  packTheme('dan-gian', 'Dân gian', 'giấy kẻ ô, màu nước tươi, tre, chuồn chuồn, đình làng', 'dan-gian',
+    ['trò chơi dân gian', 'văn hoá Việt', 'lễ Tết', 'mầm non', 'tiểu học', 'làng quê', 'truyện cổ tích'],
+    '#faf3e6', '#4a2c1d', '#b4461a', '#3f7a3a', 'Nunito', 'Nunito'),
   proTheme('tap-chi-hong', 'Tạp chí hồng đất', 'giấy hồng nhạt, mực mận, hồng đất', '#9a3b55', '#b0675e', ['tình yêu', 'tình bạn', 'gia đình', 'tuổi học trò', 'cảm xúc', 'thơ ca', 'lễ hội'], { bg: '#f4e7e6', ink: '#2a1620' }),
 ]
 

@@ -1269,6 +1269,8 @@ export function SlideEditor({
     if (!slide || activeImageJobs.current !== imageJobs || !deckRef.current.slides.some(s => s.id === slide.id)) return
     // Chế độ Chuyên nghiệp: AI mô tả ảnh, app vẽ ảnh cho các bố cục biên tập
     if (page.imagePrompt || page.image2Prompt) {
+      // bộ phong cách: bìa đã có hình vẽ sẵn, không tốn điểm vẽ thêm ảnh
+      if (deckRef.current.theme.pack && slide.layout === 'photo-full' && deckRef.current.slides[0]?.id === slide.id) return
       const jobs: Array<[SlideImageSlot, string | undefined]> = [
         ['image', page.image ? undefined : page.imagePrompt],
         ['image2', page.image2 ? undefined : page.image2Prompt],
