@@ -39,7 +39,7 @@ import { readableElements } from '@/lib/slideContrast'
 import { designById, designTheme, type SlideDesign } from '@/lib/slideDesigns'
 import { applySkin } from '@/lib/slideSkins'
 import { appendSlidesToDeck, checkSlide, withImage } from '@/lib/slideAi'
-import { IMAGE_LAYOUTS, buildImagePrompt, generateSlideImage, loadProPhoto, queueImage } from '@/lib/imageGen'
+import { IMAGE_LAYOUTS, buildImagePrompt, buildRedrawPrompt, generateSlideImage,loadProPhoto, queueImage } from '@/lib/imageGen'
 import { uploadImage } from '@/lib/mediaStore'
 import { SLIDE_LAYOUTS, composeLayout, contentFromSlide, defaultTone, isLayoutId, toneBackground, withPlaceholders, type SlideLayoutId } from '@/lib/slideLayouts'
 import { AiPanel } from './AiPanel'
@@ -531,7 +531,8 @@ export function SlideEditor({
     const slide = slides.find((s) => s.id === slideId)
     if (!slide) return
     const content = contentFromSlide(slide)
-    const image = await generateSlideImage(buildImagePrompt(content.title, content.bullets))
+    const pro = deckRef.current.theme.pro
+    const image = await generateSlideImage(buildRedrawPrompt(pro, content.title, content.bullets), pro)
     setElementImage(slideId, elId, await uploadImage(image.dataUrl))
   }
 
@@ -1194,10 +1195,10 @@ export function SlideEditor({
       if (!slide) continue
       const content = contentFromSlide(slide)
       try {
-        const prompt = buildImagePrompt(content.title, description ? [description] : content.bullets, 'portrait', target.accent)
+        const prompt = buildRedrawPrompt(target.pro, content.title, description ? [description] : content.bullets, 'portrait', target.accent)
         const photo = await queueImage(() => {
           signal.throwIfAborted()
-          return generateSlideImage(prompt)
+          return generateSlideImage(prompt, target.pro)
         })
         signal.throwIfAborted()
         if (activeImageJobs.current !== imageJobs || !deckRef.current.slides.some(s => s.id === slideId)) continue

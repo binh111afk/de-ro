@@ -7,9 +7,9 @@
  * Model mặc định `sensenova/sensenova-u1.5-lite` (image generation, không phải
  * chat model).
  *
- * Ảnh slide (/api/image) ưu tiên GLM chính hãng (`GLM_API_KEY`, `GLM_BASE_URL`,
- * `GLM_IMAGE_MODEL`), rồi tới Agnes (`AGNES_API_KEY`, `AGNES_BASE_URL`, `AGNES_IMAGE_MODEL`), lỗi thì
- * quay về Xkiro: `IMAGE_BASE_URL`, `IMAGE_API_KEY`, `IMAGE_MODEL` trong `.env`.
+ * Ưu tiên Agnes (`AGNES_API_KEY`, `AGNES_BASE_URL`, `AGNES_IMAGE_MODEL`; miễn phí nhưng có giới hạn).
+ * Ảnh chụp của bài Chuyên nghiệp lỗi thì sang CogView-4 trả tiền (`GLM_API_KEY`, `GLM_BASE_URL`, `GLM_IMAGE_MODEL`),
+ * cuối cùng là Xkiro: `IMAGE_BASE_URL`, `IMAGE_API_KEY`, `IMAGE_MODEL` trong `.env`.
  * Không có env thì đọc provider Xkiro trong config ZCode của máy
  * (`~/.zcode/v2/provider_config.json`) — app chạy cục bộ, key không vào bundle.
  */
@@ -66,25 +66,25 @@ function xkiroFromZcode(): Partial<ImageConfig> {
 }
 
 /**
- * Thứ tự thử: CogView-4 của Z.ai (chỉ ảnh slide, ~10 s, trả URL ngay) → Agnes (`AGNES_API_KEY`, trả ảnh ngay, ~12–17 s,
- * chữ tiếng Việt đúng) → Xkiro/sensenova (job + poll). Provider thiếu key bị bỏ qua.
+ * Thứ tự thử: Agnes (trả ảnh ngay, miễn phí có giới hạn) → CogView-4 của Z.ai (chỉ ảnh chụp của bài Chuyên nghiệp,
+ * trả tiền từng ảnh; với tranh minh hoạ nó vẫn vẽ chữ và hay lạc đề) → Xkiro/sensenova (job + poll). Provider thiếu key bị bỏ qua.
  */
-function resolveConfigs(slide = false): ImageConfig[] {
+function resolveConfigs(photo = false): ImageConfig[] {
   const configs: ImageConfig[] = []
-  const glmKey = process.env.GLM_API_KEY?.trim()
-  if (slide && glmKey) {
-    configs.push({
-      baseUrl: (process.env.GLM_BASE_URL?.trim() || 'https://api.z.ai/api/paas/v4').replace(/\/+$/, ''),
-      apiKey: glmKey,
-      model: process.env.GLM_IMAGE_MODEL?.trim() || 'cogview-4-250304',
-    })
-  }
   const agnesKey = process.env.AGNES_API_KEY?.trim()
   if (agnesKey) {
     configs.push({
       baseUrl: (process.env.AGNES_BASE_URL?.trim() || 'https://apihub.agnes-ai.com/v1').replace(/\/+$/, ''),
       apiKey: agnesKey,
       model: process.env.AGNES_IMAGE_MODEL?.trim() || 'agnes-image-2.5-flash',
+    })
+  }
+  const glmKey = process.env.GLM_API_KEY?.trim()
+  if (photo && glmKey) {
+    configs.push({
+      baseUrl: (process.env.GLM_BASE_URL?.trim() || 'https://api.z.ai/api/paas/v4').replace(/\/+$/, ''),
+      apiKey: glmKey,
+      model: process.env.GLM_IMAGE_MODEL?.trim() || 'cogview-4-250304',
     })
   }
   const fallback = xkiroFromZcode()
@@ -204,8 +204,8 @@ export async function chargeAndGenerate(
   req: IncomingMessage,
   res: ServerResponse,
   getPrompt: () => Promise<string>,
-  /** getPrompt có thể đặt `kind` (nhãn log) sau khi đọc body; `slide` bật nhà cung cấp riêng cho ảnh slide */
-  tag: { kind?: string; slide?: boolean } = {},
+  /** getPrompt có thể đặt `kind` (nhãn log) sau khi đọc body; `photo` bật nhà cung cấp riêng cho ảnh chụp */
+  tag: { kind?: string; photo?: boolean } = {},
 ): Promise<{ dataUrl: string; quota: unknown } | null> {
   // vẽ ảnh AI chỉ cho người đã đăng nhập (máy dev không cần)
   const ip = clientIp(req)
@@ -234,7 +234,7 @@ export async function chargeAndGenerate(
       json(res, 400, { error: 'prompt là bắt buộc' })
       return null
     }
-    const configs = resolveConfigs(tag.slide)
+    const configs = resolveConfigs(tag.photo)
     if (!configs.length) {
       await release()
       json(res, 503, { error: 'Chưa cấu hình AGNES_API_KEY hoặc IMAGE_API_KEY.' })
@@ -281,11 +281,16 @@ export async function handleImageRequest(
   if (!(await guard(req, res, 'image'))) return
   if (req.method === 'OPTIONS') return json(res, 204, {})
   if (req.method !== 'POST') return json(res, 405, { error: 'Method not allowed' })
-  const tag: { kind?: string; slide?: boolean } = { slide: true }
+  const tag: { kind?: string; photo?: boolean } = {}
   const got = await chargeAndGenerate(req, res, async () => {
     const body = JSON.parse(await readBody(req)) as { prompt?: unknown; pro?: unknown }
-    if (body.pro === true) tag.kind = 'image-pro'
-    return typeof body.prompt === 'string' ? body.prompt : ''
+    if (body.pro === true) {
+      tag.kind = 'image-pro'
+      tag.photo = true
+    }
+    const prompt = typeof body.prompt === 'string' ? body.prompt.trim().slice(0, MAX_PROMPT - 100) : ''
+    // ảnh slide không được có chữ; câu tiếng Anh này cũng khiến generate() không nối lời dặn "chữ viết tiếng Việt"
+    return !prompt || /\bno text\b/i.test(prompt) ? prompt : `${prompt}\n\nNo text, no letters, no words anywhere in the image.`
   }, tag)
   if (got) json(res, 200, got)
 }

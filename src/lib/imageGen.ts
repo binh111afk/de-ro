@@ -40,8 +40,9 @@ export function buildImagePrompt(
   return (
     `Minh hoạ giáo dục chuyên nghiệp cho slide: ${topic || 'bài học'}. ` +
     `Phong cách editorial hiện đại, hình khối rõ, tương phản vừa mạnh, màu theo bài giảng${palette}, ` +
-    `một chủ thể chính dễ nhận biết, có khoảng thở cho phần chữ, ${layout}, không có chữ, ` +
-    `không watermark, không logo, không bố cục trống.`
+    `một chủ thể chính dễ nhận biết, có khoảng trống thoáng, ${layout}, không có chữ, ` +
+    // câu tiếng Anh để server không nối thêm lời dặn "chữ trong ảnh viết tiếng Việt" (làm model tưởng được viết chữ)
+    `không watermark, không logo, không bố cục trống. No text, no letters, no words anywhere in the image.`
   )
 }
 
@@ -51,6 +52,19 @@ export function buildPhotoPrompt(description: string): string {
     `${description.trim().replace(/[.\s]+$/, '')}. Authentic editorial photograph, natural light, realistic colour, fine detail, ` +
     'clear single subject with open space for overlaid text. No text, no letters, no watermark, no logo, no illustration, no cartoon.'
   )
+}
+
+/** Vẽ lại ảnh của slide đã có: bài Chuyên nghiệp dùng ảnh chụp, bài thường dùng tranh minh hoạ. */
+export function buildRedrawPrompt(
+  pro: boolean | undefined,
+  title?: string,
+  bullets: string[] = [],
+  orientation?: ImageOrientation,
+  accent?: string,
+): string {
+  if (!pro) return buildImagePrompt(title, bullets, orientation, accent)
+  const topic = [title, ...bullets.slice(0, 3)].map((text) => text?.trim()).filter(Boolean).join('; ')
+  return buildPhotoPrompt(topic || 'A school lesson')
 }
 
 /** Thu nhỏ + nén; lỗi canvas thì giữ nguyên ảnh gốc. */
