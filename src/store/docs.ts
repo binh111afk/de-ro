@@ -190,7 +190,7 @@ export interface DeckTheme {
   /** theme riêng của chế độ Chuyên nghiệp (không nằm trong catalog thường) */
   pro?: boolean
   /** bộ phong cách có nền / hình trang trí riêng (lib/slidePacks.ts) */
-  pack?: 'co-dien' | 'dan-gian' | 'khoa-hoc' | 'toan' | 'vat-ly' | 'hoa-hoc' | 'tin-hoc' | 'tam-ly' | 'sinh-hoc'
+  pack?: 'co-dien' | 'dan-gian' | 'khoa-hoc' | 'toan' | 'vat-ly' | 'hoa-hoc' | 'tin-hoc' | 'tam-ly' | 'sinh-hoc' | 'ngu-van' | 'dia-li' | 'tieng-anh' | 'kinh-te-phap-luat'
   /** màu mực của tông tối trong theme Chuyên nghiệp (nền slide nhấn) */
   ink?: string
   /** viền mặc định cho thẻ/panel (px) */

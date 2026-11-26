@@ -60,6 +60,22 @@ def sinh_hoc():
     hat_giay('sinh-hoc', '#fafaf4', ['#edede4', '#e7e8de', '#f0f0e8'], 5)
 
 
+def ngu_van():
+    hat_giay('ngu-van', '#fbf8f2', ['#efeae1', '#e9e3d9', '#f2eee6'], 13)
+
+
+def dia_li():
+    hat_giay('dia-li', '#f8faf8', ['#ebeeeb', '#e5e9e6', '#eef1ee'], 17)
+
+
+def tieng_anh():
+    hat_giay('tieng-anh', '#fcfaf7', ['#efece7', '#e9e6e1', '#f2efea'], 19)
+
+
+def kinh_te_phap_luat():
+    hat_giay('kinh-te-phap-luat', '#faf9f5', ['#edebe4', '#e7e5de', '#f0eee8'], 23)
+
+
 def tin_hoc():
     im = Image.new('RGB', (W * S, H * S), '#f8f7fc')
     d = ImageDraw.Draw(im)
@@ -94,3 +110,7 @@ hoa_hoc()
 tin_hoc()
 tam_ly()
 sinh_hoc()
+ngu_van()
+dia_li()
+tieng_anh()
+kinh_te_phap_luat()
