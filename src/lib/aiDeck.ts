@@ -86,7 +86,7 @@ export interface DeckPlan {
   theme?: string
   /** chế độ Chuyên nghiệp: bộ tạp chí dự phòng; còn trường này nghĩa là chưa chọn kiểu */
   themeMagazine?: string
-  /** chế độ Chuyên nghiệp: bộ tranh truyền thống dự phòng, dùng cùng themeMagazine */
+  /** chế độ Chuyên nghiệp: bộ tranh truyền thống, chỉ có khi hợp chủ đề */
   themeTranh?: string
   audience?: string
   /** phong cách trình bày, đưa vào prompt sinh từng slide */
@@ -282,7 +282,9 @@ export function proPlan(plan: DeckPlan, style?: ProStyle): DeckPlan {
     proThemesFor(kind).some((t) => t.id === id) ? id : fallback
   const theme = pick('doodle', plan.theme, 'trung-tinh-ve-tay')
   const themeMagazine = pick('magazine', plan.themeMagazine ?? plan.theme, proThemesFor('magazine')[0].id!)
-  const themeTranh = pick('tranh', plan.themeTranh ?? plan.theme, 'co-dien-do')
+  // bộ tranh không có fallback: model bỏ trống nghĩa là chủ đề không hợp, câu hỏi kiểu sẽ ẩn lựa chọn này
+  const themeTranh = [plan.themeTranh, plan.theme].find((id) => proThemesFor('tranh').some((t) => t.id === id))
+    ?? (style === 'tranh' ? 'co-dien-do' : undefined)
   const both = { ...plan, theme, themeMagazine, themeTranh, design: undefined, stylePack: 'editorial', decorKit: 'toi-gian', slides }
   return style ? withProStyle(both, style) : both
 }

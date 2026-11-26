@@ -51,11 +51,14 @@ const SPLIT_ASK = {
 }
 
 /** câu của app (không tốn lượt AI) sau khi duyệt dàn ý Chuyên nghiệp; không trả lời thì dùng bộ vẽ tay */
-const STYLE_ASK = {
-  questions: [{ q: 'Bạn muốn slide kiểu nào?', options: ['Doodle (vẽ tay)', 'Tạp chí', 'Tranh truyền thống'] }],
+const styleAskOf = (options: string[]) => ({
+  questions: [{ q: 'Bạn muốn slide kiểu nào?', options }],
   noFigure: true as const,
   noCustom: true as const,
-}
+})
+const STYLE_ASK = styleAskOf(['Doodle (vẽ tay)', 'Tạp chí'])
+/** chỉ dùng khi dàn ý có bộ tranh hợp chủ đề (themeTranh) */
+const STYLE_ASK_TRANH = styleAskOf(['Doodle (vẽ tay)', 'Tạp chí', 'Tranh truyền thống'])
 
 export type { AiMode, ChatTurn } from './ai/turns'
 
@@ -792,7 +795,7 @@ function AiConversation({
         </div>
       ) : styleAsk && !busy ? (
         // bỏ qua / hết giờ: câu trả lời không nêu kiểu → bộ vẽ tay
-        <AiAskPanel ask={STYLE_ASK} figure={false} onSubmit={chooseStyle} onSkip={() => chooseStyle('')} />
+        <AiAskPanel ask={styleAsk.plan.themeTranh ? STYLE_ASK_TRANH : STYLE_ASK} figure={false} onSubmit={chooseStyle} onSkip={() => chooseStyle('')} />
       ) : openAsk?.ask ? (
         <AiAskPanel
           key={openAsk.id}
