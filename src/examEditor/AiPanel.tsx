@@ -15,7 +15,7 @@ import { Button } from '@/components/ui'
 import { AiQuotaRing, TopupLink } from '@/components/AiQuotaRing'
 import { AiQuotaError, callLlm, TOKENS_PER_POINT, type LlmMessage } from '@/lib/llm'
 import { khungPromptFor } from '@/lib/khungPrompt'
-import type { AiSlidePayload, DeckPlan } from '@/lib/aiDeck'
+import { proStyleOf, withProStyle, type AiSlidePayload, type DeckPlan } from '@/lib/aiDeck'
 import type { SlideEditOp } from '@/lib/slideEdit'
 import { buildSourcePack, isDocx, pickedKey, type PickedSource, type SourcePack } from '@/lib/sources'
 import { BookOpen, Globe, RotateCcw, ThumbsDown, ThumbsUp } from 'lucide-react'
@@ -48,6 +48,13 @@ const SPLIT_REPLACE = 'Soạn cả đề mới, thay đề đang mở'
 const SPLIT_ASK = {
   questions: [{ q: 'Đề đang mở đã có nội dung. Bạn muốn làm gì?', options: [SPLIT_REPLACE, 'Chỉ thêm vài câu vào đề đang mở'] }],
   noFigure: true as const,
+}
+
+/** câu của app (không tốn lượt AI) sau khi duyệt dàn ý Chuyên nghiệp; không trả lời thì dùng bộ vẽ tay */
+const STYLE_ASK = {
+  questions: [{ q: 'Bạn muốn slide kiểu nào?', options: ['Doodle (vẽ tay)', 'Tạp chí'] }],
+  noFigure: true as const,
+  noCustom: true as const,
 }
 
 export type { AiMode, ChatTurn } from './ai/turns'
@@ -210,6 +217,8 @@ function AiConversation({
 
   /** dàn ý vừa duyệt khi deck đã có slide: chờ người dùng chọn ghi đè / nối tiếp */
   const [overwriteAsk, setOverwriteAsk] = useState<{ turnId: string; plan: DeckPlan } | null>(null)
+  /** dàn ý đã duyệt, đang chờ chọn kiểu slide */
+  const [styleAsk, setStyleAsk] = useState<{ turnId: string; plan: DeckPlan; clear: boolean } | null>(null)
   const abortRef = useRef<AbortController | null>(null)
   const scrollRef = useRef<HTMLDivElement>(null)
   const taRef = useRef<HTMLTextAreaElement>(null)
@@ -471,6 +480,7 @@ function AiConversation({
       const ctx: TurnCtx = {
         mode, text, intent, originalRequest, revisingExam, userTurn, botId, messages, mainTask, srcInput, controller,
         setTurns, patchTurn, logSet, logStart, logPatch, contextSummary, documentDigest, editContext, slidePro,
+        proStyle: [text, ...turns.filter((t) => t.role === 'user').slice(-3).reverse().map((t) => t.text)].map(proStyleOf).find(Boolean),
         onApplyBlocks, onApplySlides, onApplyEdits, onCheckEdits, onBoardOps,
       }
       if (editingSlides && await runSlideEdit(ctx)) return
@@ -552,7 +562,22 @@ function AiConversation({
     [busy, onAppendSlide, onApplySlides, onPendingSlides, slidePro],
   )
 
+  /** tạo slide từ dàn ý đã duyệt; chưa chốt kiểu thì hỏi trước (nối tiếp bài cũ thì giữ bộ vẽ tay, khỏi hỏi) */
+  const startDeck = (turnId: string, plan: DeckPlan, clear: boolean) => {
+    const append = existingSlideCount > 0 && !clear
+    if (slidePro && plan.themeMagazine && !append) return setStyleAsk({ turnId, plan, clear })
+    if (clear) onClearSlides?.()
+    void generateFromPlan(turnId, plan)
+  }
+  const chooseStyle = (reply: string) => {
+    if (!styleAsk) return
+    setStyleAsk(null)
+    if (styleAsk.clear) onClearSlides?.()
+    void generateFromPlan(styleAsk.turnId, withProStyle(styleAsk.plan, proStyleOf(reply) ?? 'doodle'))
+  }
+
   const cancelPlan = useCallback((planTurnId: string) => {
+    setStyleAsk(null)
     setTurns((t) =>
       t.map((turn) =>
         turn.id === planTurnId ? { ...turn, planState: 'cancelled' as const } : turn,
@@ -691,7 +716,7 @@ function AiConversation({
                 state={turn.planState}
                 busy={busy}
                 onApprove={(plan) =>
-                  existingSlideCount > 0 ? setOverwriteAsk({ turnId: turn.id, plan }) : void generateFromPlan(turn.id, plan)
+                  existingSlideCount > 0 ? setOverwriteAsk({ turnId: turn.id, plan }) : startDeck(turn.id, plan, false)
                 }
                 onCancel={() => cancelPlan(turn.id)}
               />
@@ -765,6 +790,9 @@ function AiConversation({
             <Button variant="primary" size="sm">Đăng nhập</Button>
           </Link>
         </div>
+      ) : styleAsk && !busy ? (
+        // bỏ qua / hết giờ: câu trả lời không nêu kiểu → bộ vẽ tay
+        <AiAskPanel ask={STYLE_ASK} figure={false} onSubmit={chooseStyle} onSkip={() => chooseStyle('')} />
       ) : openAsk?.ask ? (
         <AiAskPanel
           key={openAsk.id}
@@ -958,7 +986,7 @@ function AiConversation({
                 onClick={() => {
                   const ask = overwriteAsk
                   setOverwriteAsk(null)
-                  void generateFromPlan(ask.turnId, ask.plan)
+                  startDeck(ask.turnId, ask.plan, false)
                 }}
               >
                 Nối tiếp
@@ -969,8 +997,7 @@ function AiConversation({
                 onClick={() => {
                   const ask = overwriteAsk
                   setOverwriteAsk(null)
-                  onClearSlides?.()
-                  void generateFromPlan(ask.turnId, ask.plan)
+                  startDeck(ask.turnId, ask.plan, true)
                 }}
               >
                 Ghi đè

@@ -84,6 +84,8 @@ export interface DeckPlan {
   title?: string
   /** id trong DECK_THEMES; id lạ bị bỏ để deck giữ theme hiện tại */
   theme?: string
+  /** chế độ Chuyên nghiệp: bộ tạp chí dự phòng; còn trường này nghĩa là chưa chọn kiểu */
+  themeMagazine?: string
   audience?: string
   /** phong cách trình bày, đưa vào prompt sinh từng slide */
   style?: string
@@ -253,7 +255,7 @@ const PRO_LIGHT_LAYOUTS = new Set(['editorial-text', 'rules', 'bignum', 'bars'])
  * theme thuộc PRO_THEMES, không bộ thiết kế / hoạ tiết, chỉ dùng PRO_LAYOUT_IDS, slide đầu là ảnh tràn nền,
  * không hai slide liền kề cùng layout, cứ hai slide sáng liền nhau thì slide sau chuyển nền mực đen.
  */
-export function proPlan(plan: DeckPlan): DeckPlan {
+export function proPlan(plan: DeckPlan, style?: ProStyle): DeckPlan {
   const allowed = new Set<string>(PRO_LAYOUT_IDS)
   const last = plan.slides.length - 1
   const slides = plan.slides.map((slide, i) => {
@@ -273,8 +275,13 @@ export function proPlan(plan: DeckPlan): DeckPlan {
     if (!PRO_LIGHT_LAYOUTS.has(slide.layout)) { light = 0; continue }
     if (++light > 2) { slide.tone = 'accent'; light = 0 }
   }
-  const theme = PRO_THEMES.some((t) => t.id === plan.theme) ? plan.theme : PRO_THEMES[0].id
-  return { ...plan, theme, design: undefined, stylePack: 'editorial', decorKit: 'toi-gian', slides }
+  // model chọn lạc: bộ vẽ tay rơi về bộ trường lớp (trung tính), không phải bộ của một môn
+  const pick = (kind: ProStyle, id: string | undefined, fallback: string) =>
+    proThemesFor(kind).some((t) => t.id === id) ? id : fallback
+  const theme = pick('doodle', plan.theme, 'sinh-hoat-lop-ve-tay')
+  const themeMagazine = pick('magazine', plan.themeMagazine ?? plan.theme, proThemesFor('magazine')[0].id!)
+  const both = { ...plan, theme, themeMagazine, design: undefined, stylePack: 'editorial', decorKit: 'toi-gian', slides }
+  return style ? withProStyle(both, style) : both
 }
 
 /**
@@ -354,9 +361,12 @@ export function parseDeckPlan(raw: string): DeckPlan | null {
     const resolvedPack = isStylePackId(packId) ? packId : (design?.stylePack && isStylePackId(design.stylePack) ? design.stylePack : undefined)
     const resolvedKit = isDecorKitId(kitId) ? kitId : (design?.decorKit && isDecorKitId(design.decorKit) ? design.decorKit : undefined)
 
+    const magazineId = resolveThemeId(text(source.themeMagazine, 40))
+
     return {
       title,
       theme: resolvedTheme,
+      ...(magazineId ? { themeMagazine: magazineId } : {}),
       ...(design ? { design: design.id } : {}),
       ...(resolvedPack ? { stylePack: resolvedPack } : {}),
       ...(resolvedKit ? { decorKit: resolvedKit } : {}),
@@ -400,6 +410,23 @@ export function slideCatalogText(includeEditorial = false): string {
     ),
   ].join('\n')
 }
+
+/** kiểu slide Chuyên nghiệp: bộ tạp chí, hoặc bộ vẽ tay / minh hoạ (mọi bộ còn lại) */
+export type ProStyle = 'doodle' | 'magazine'
+
+export const proThemesFor = (style: ProStyle) =>
+  PRO_THEMES.filter((t) => !!t.id?.startsWith('tap-chi-') === (style === 'magazine'))
+
+/** đọc kiểu slide trong lời người dùng (câu yêu cầu hoặc câu trả lời panel hỏi) */
+export function proStyleOf(text: string): ProStyle | undefined {
+  if (/doodle|vẽ tay/iu.test(text)) return 'doodle'
+  if (/(?:kiểu|dạng|phong cách|mẫu|:)\s*tạp chí/iu.test(text)) return 'magazine'
+  return undefined
+}
+
+/** chốt kiểu cho dàn ý đang có cả hai bộ */
+export const withProStyle = (plan: DeckPlan, style: ProStyle): DeckPlan =>
+  ({ ...plan, theme: style === 'magazine' ? plan.themeMagazine ?? plan.theme : plan.theme, themeMagazine: undefined })
 
 /** Catalog của chế độ Chuyên nghiệp: chỉ bộ màu biên tập + bố cục biên tập (không bộ thiết kế, style pack, hoạ tiết). */
 export function slideProCatalogText(): string {

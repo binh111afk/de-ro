@@ -345,7 +345,8 @@ export function PlanCard({
   onCancel: () => void
 }) {
   if (!plan) return null
-  const theme = plan.theme ? [...DECK_THEMES, ...PRO_THEMES].find((t) => t.id === plan.theme) : undefined
+  // còn themeMagazine = chưa chọn kiểu, chưa biết bộ nào sẽ dùng
+  const theme = plan.theme && !plan.themeMagazine ? [...DECK_THEMES, ...PRO_THEMES].find((t) => t.id === plan.theme) : undefined
   const designName = plan.design ? designById(plan.design)?.name : undefined
   const tags = [`${plan.slides.length} slide`, designName, theme?.name, plan.audience].filter(Boolean) as string[]
 

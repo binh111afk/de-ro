@@ -17,6 +17,8 @@ export interface AiAsk {
   questions: AiAskQuestion[]
   /** câu hỏi của app, không phải của AI: không tự thêm câu hỏi hình */
   noFigure?: true
+  /** chỉ được chọn trong các lựa chọn có sẵn (không có ô "Khác…") */
+  noCustom?: true
 }
 
 const SUBJECT_RE =
@@ -194,7 +196,7 @@ export function AiAskPanel({
     if (n >= 1 && n <= q.options.length) {
       e.preventDefault()
       choose(q.options[n - 1])
-    } else if (n === q.options.length + 1) {
+    } else if (n === q.options.length + 1 && !ask.noCustom) {
       e.preventDefault()
       openCustom()
     } else if (e.key === 'Enter' && answered) {
@@ -262,7 +264,7 @@ export function AiAskPanel({
                 }}
               />
             </div>
-          ) : (
+          ) : ask.noCustom ? null : (
             <button type="button" className="ai-ask__opt is-other" onClick={openCustom}>
               <span className="ai-ask__key">{q.options.length + 1}</span>
               <span className="ai-ask__label">Khác…</span>

@@ -82,7 +82,7 @@ export async function finishSlide(ctx: TurnCtx, res: LlmResult) {
     plan = parseDeckPlan(again.content)
     controller.signal.throwIfAborted()
   }
-  if (plan && slidePro) plan = proPlan(plan)
+  if (plan && slidePro) plan = proPlan(plan, ctx.proStyle)
   if (plan) {
     setTurns((t) =>
       t.map((turn) =>
