@@ -1,4 +1,4 @@
-"""Vẽ nền giấy 1280×720 của bộ khoa học (chấm bi) và toán (ô li). Chạy từ gốc dự án."""
+"""Vẽ nền 1280×720 của các bộ theo môn. Chạy từ gốc dự án."""
 from pathlib import Path
 from PIL import Image, ImageDraw
 
@@ -36,5 +36,61 @@ def toan():
     save(im, 'toan')
 
 
+def hat_giay(name, nen, hat, seed):
+    """giấy trơn có hạt, dùng cho các bộ vẽ tay"""
+    import random
+    rnd = random.Random(seed)  # cố định để vẽ lại ra đúng nền cũ
+    im = Image.new('RGB', (W * S, H * S), nen)
+    d = ImageDraw.Draw(im)
+    for _ in range(2600):
+        x, y, r = rnd.uniform(0, W), rnd.uniform(0, H), rnd.uniform(0.5, 1.4)
+        d.ellipse([(x - r) * S, (y - r) * S, (x + r) * S, (y + r) * S], fill=rnd.choice(hat))
+    save(im, name)
+
+
+def vat_ly():
+    hat_giay('vat-ly', '#fbfaf6', ['#eeede8', '#e8e8e3', '#f1f0eb'], 11)
+
+
+def hoa_hoc():
+    hat_giay('hoa-hoc', '#faf9f6', ['#eeece6', '#e8e6df', '#f1efea'], 7)
+
+
+def sinh_hoc():
+    hat_giay('sinh-hoc', '#fafaf4', ['#edede4', '#e7e8de', '#f0f0e8'], 5)
+
+
+def tin_hoc():
+    im = Image.new('RGB', (W * S, H * S), '#f8f7fc')
+    d = ImageDraw.Draw(im)
+    for y in range(20, H, 28):
+        for x in range(20, W, 28):
+            d.ellipse([(x - 1) * S, (y - 1) * S, (x + 1) * S, (y + 1) * S], fill='#dcd8ee')
+    # đường mạch ở hai mép
+    for path in [[(0, 640), (36, 640), (62, 666), (62, 720)], [(0, 600), (22, 600), (44, 622), (44, 640)],
+                 [(1280, 90), (1250, 90), (1228, 68), (1228, 0)], [(1280, 130), (1262, 130), (1240, 108), (1240, 90)]]:
+        d.line([(x * S, y * S) for x, y in path], fill='#bdb3f0', width=3 * S, joint='curve')
+        x, y = path[-1]
+        d.ellipse([(x - 6) * S, (y - 6) * S, (x + 6) * S, (y + 6) * S], fill='#18c1a8')
+    d.rectangle([0, 0, W * S, 10 * S], fill='#6c4cf1')
+    save(im, 'tin-hoc')
+
+
+def tam_ly():
+    im = Image.new('RGB', (W * S, H * S), '#fbf4ec')
+    d = ImageDraw.Draw(im)
+    # các mảng giấy cắt mềm ở góc
+    d.ellipse([-220 * S, -250 * S, 230 * S, 110 * S], fill='#f6e3d3')
+    d.ellipse([-160 * S, -200 * S, 120 * S, 70 * S], fill='#f2d3c4')
+    d.ellipse([1060 * S, 640 * S, 1500 * S, 900 * S], fill='#dfe8dc')
+    d.ellipse([-120 * S, 668 * S, 300 * S, 900 * S], fill='#fbe9c4')
+    save(im, 'tam-ly')
+
+
 khoa_hoc()
 toan()
+vat_ly()
+hoa_hoc()
+tin_hoc()
+tam_ly()
+sinh_hoc()
