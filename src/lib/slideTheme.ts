@@ -739,6 +739,12 @@ export const PRO_THEMES: DeckTheme[] = [
   packTheme('dan-gian', 'Dân gian', 'giấy kẻ ô, màu nước tươi, tre, chuồn chuồn, đình làng', 'dan-gian',
     ['trò chơi dân gian', 'văn hoá Việt', 'lễ Tết', 'mầm non', 'tiểu học', 'làng quê', 'truyện cổ tích'],
     '#faf3e6', '#4a2c1d', '#b4461a', '#3f7a3a', 'Nunito', 'Nunito'),
+  packTheme('so-khoa-hoc', 'Sổ khoa học', 'sổ thí nghiệm giấy chấm bi, kính hiển vi, nguyên tử, tế bào vẽ tay', 'khoa-hoc',
+    ['vật lí', 'hóa học', 'sinh học', 'khoa học tự nhiên', 'thí nghiệm', 'thiên văn'],
+    '#f7f5ee', '#173f5f', '#0f7c8c', '#c4503f', 'Space Grotesk', 'Be Vietnam Pro'),
+  packTheme('toan-o-li', 'Toán ô li', 'giấy ô li lề đỏ, compa, thước, khối hình 3D nhiều màu', 'toan',
+    ['toán học', 'hình học', 'đại số', 'số học', 'giải tích', 'xác suất thống kê'],
+    '#fbfcff', '#1d3f8f', '#2f6fd6', '#c4561a', 'Lexend', 'Lexend'),
   proTheme('tap-chi-hong', 'Tạp chí hồng đất', 'giấy hồng nhạt, mực mận, hồng đất', '#9a3b55', '#b0675e', ['tình yêu', 'tình bạn', 'gia đình', 'tuổi học trò', 'cảm xúc', 'thơ ca', 'lễ hội'], { bg: '#f4e7e6', ink: '#2a1620' }),
 ]
 

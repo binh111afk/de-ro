@@ -3247,6 +3247,32 @@ var PRO_THEMES = [
     "Nunito",
     "Nunito"
   ),
+  packTheme(
+    "so-khoa-hoc",
+    "S\u1ED5 khoa h\u1ECDc",
+    "s\u1ED5 th\xED nghi\u1EC7m gi\u1EA5y ch\u1EA5m bi, k\xEDnh hi\u1EC3n vi, nguy\xEAn t\u1EED, t\u1EBF b\xE0o v\u1EBD tay",
+    "khoa-hoc",
+    ["v\u1EADt l\xED", "h\xF3a h\u1ECDc", "sinh h\u1ECDc", "khoa h\u1ECDc t\u1EF1 nhi\xEAn", "th\xED nghi\u1EC7m", "thi\xEAn v\u0103n"],
+    "#f7f5ee",
+    "#173f5f",
+    "#0f7c8c",
+    "#c4503f",
+    "Space Grotesk",
+    "Be Vietnam Pro"
+  ),
+  packTheme(
+    "toan-o-li",
+    "To\xE1n \xF4 li",
+    "gi\u1EA5y \xF4 li l\u1EC1 \u0111\u1ECF, compa, th\u01B0\u1EDBc, kh\u1ED1i h\xECnh 3D nhi\u1EC1u m\xE0u",
+    "toan",
+    ["to\xE1n h\u1ECDc", "h\xECnh h\u1ECDc", "\u0111\u1EA1i s\u1ED1", "s\u1ED1 h\u1ECDc", "gi\u1EA3i t\xEDch", "x\xE1c su\u1EA5t th\u1ED1ng k\xEA"],
+    "#fbfcff",
+    "#1d3f8f",
+    "#2f6fd6",
+    "#c4561a",
+    "Lexend",
+    "Lexend"
+  ),
   proTheme("tap-chi-hong", "T\u1EA1p ch\xED h\u1ED3ng \u0111\u1EA5t", "gi\u1EA5y h\u1ED3ng nh\u1EA1t, m\u1EF1c m\u1EADn, h\u1ED3ng \u0111\u1EA5t", "#9a3b55", "#b0675e", ["t\xECnh y\xEAu", "t\xECnh b\u1EA1n", "gia \u0111\xECnh", "tu\u1ED5i h\u1ECDc tr\xF2", "c\u1EA3m x\xFAc", "th\u01A1 ca", "l\u1EC5 h\u1ED9i"], { bg: "#f4e7e6", ink: "#2a1620" })
 ];
 function resolveThemeId(id) {
@@ -5929,9 +5955,9 @@ var SLIDE_ASSETS = {
   people: { icon: n8, group: "Con ng\u01B0\u1EDDi & s\u1EE9c kho\u1EBB", tags: ["b\u1EA1n b\xE8", "nh\xF3m", "c\u1ED9ng \u0111\u1ED3ng", "ng\u01B0\u1EDDi", "l\xE0ng"] },
   phone: { icon: s3, group: "Tin h\u1ECDc & c\xF4ng ngh\u1EC7", tags: ["\u0111i\u1EC7n tho\u1EA1i", "m\u1EA1ng x\xE3 h\u1ED9i", "tiktok", "facebook", "th\xF4ng b\xE1o", "m\xE0n h\xECnh"] }
 };
-function hasTag(haystack, tag) {
-  if (tag.length > 3) return haystack.includes(tag);
-  const escaped = tag.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+function hasTag(haystack, tag2) {
+  if (tag2.length > 3) return haystack.includes(tag2);
+  const escaped = tag2.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   return new RegExp(`(^|[^a-z\xE0-\u1EF90-9])${escaped}([^a-z\xE0-\u1EF90-9]|$)`, "i").test(haystack);
 }
 function pickSlideAsset(text, used) {
@@ -5940,7 +5966,7 @@ function pickSlideAsset(text, used) {
   let bestScore = 0;
   for (const id of SLIDE_ASSET_IDS) {
     if (used?.has(id)) continue;
-    const score = SLIDE_ASSETS[id].tags.reduce((sum, tag) => sum + (hasTag(haystack, tag) ? tag.length > 3 ? 1 : 0.5 : 0), 0);
+    const score = SLIDE_ASSETS[id].tags.reduce((sum, tag2) => sum + (hasTag(haystack, tag2) ? tag2.length > 3 ? 1 : 0.5 : 0), 0);
     if (score >= 1 && score > bestScore) {
       best = id;
       bestScore = score;
@@ -5953,7 +5979,9 @@ function pickSlideAsset(text, used) {
 // src/lib/slidePacks.ts
 var PACK_COLORS = {
   "co-dien": { background: "#8b0000", fg: "#8b0000", ink: "#8b0000", accent: "#8b0000", muted: "#7a3b2e", surface: "#fdeed3", panel: "#f7e2bd", onAccent: "#fdeed3" },
-  "dan-gian": { background: "#faf3e6", fg: "#4a2c1d", ink: "#962a0e", accent: "#b4461a", muted: "#7a5a45", surface: "#fff7e8", panel: "#ffe9b8", onAccent: "#ffffff" }
+  "dan-gian": { background: "#faf3e6", fg: "#4a2c1d", ink: "#962a0e", accent: "#b4461a", muted: "#7a5a45", surface: "#fff7e8", panel: "#ffe9b8", onAccent: "#ffffff" },
+  "khoa-hoc": { background: "#f7f5ee", fg: "#2c4256", ink: "#173f5f", accent: "#0f7c8c", muted: "#53687a", surface: "#ffffff", panel: "#e2f0ec", onAccent: "#ffffff" },
+  toan: { background: "#fbfcff", fg: "#34446b", ink: "#1d3f8f", accent: "#2f6fd6", muted: "#56658a", surface: "#ffffff", panel: "#eef4ff", onAccent: "#ffffff" }
 };
 var CREAM = "#fdeed3";
 var ART = {
@@ -5974,7 +6002,27 @@ var ART = {
   "dan-gian/mai-dinh": [800, 382],
   "dan-gian/may": [800, 136],
   "dan-gian/non-la": [800, 672],
-  "dan-gian/sach": [800, 658]
+  "dan-gian/sach": [800, 658],
+  "khoa-hoc/binh-tam-giac": [358, 540],
+  "khoa-hoc/bong-den": [480, 540],
+  "khoa-hoc/dna": [221, 540],
+  "khoa-hoc/hanh-tinh": [540, 315],
+  "khoa-hoc/kinh-hien-vi": [299, 540],
+  "khoa-hoc/la-cay": [379, 540],
+  "khoa-hoc/nam-cham": [402, 540],
+  "khoa-hoc/nguyen-tu": [540, 529],
+  "khoa-hoc/ong-nghiem": [540, 450],
+  "khoa-hoc/te-bao": [484, 540],
+  "toan/ban-tinh": [503, 540],
+  "toan/but-chi": [477, 540],
+  "toan/compa": [395, 540],
+  "toan/dau-phep-tinh": [540, 524],
+  "toan/e-ke": [533, 540],
+  "toan/hinh-tru-lang-tru": [540, 310],
+  "toan/khoi-hinh": [540, 205],
+  "toan/may-tinh": [423, 540],
+  "toan/thuoc-do-goc": [540, 323],
+  "toan/thuoc-ke": [539, 540]
 };
 var box = (x, y, w, h) => ({ x: x / 12.8, y: y / 7.2, w: w / 12.8, h: h / 7.2 });
 var fs = (px) => px / 12.8;
@@ -6169,17 +6217,175 @@ function danGian(id, c8, { title, body }) {
       return null;
   }
 }
-function shared(pack, id, c8, { title, body }, standard) {
+var STUDY_CYCLE = {
+  "khoa-hoc": ["#0f7c8c", "#e4695a", "#e9b949"],
+  toan: ["#2f6fd6", "#e8702f", "#2f9e7f"]
+};
+var shape = (id, b, fill, extra = {}) => ({ id, type: "shape", shape: "rect", fill, border: 0, shadowLevel: 0, ...b, ...extra });
+var deco = (n10, b, fill, extra = {}) => shape(`decor-kit-${n10}`, b, fill, { decor: true, ...extra });
+function tag(pack, value, x, y, { body }, center = false, strong = false) {
+  const label = upper(value);
+  if (!label) return [];
+  const w = Math.min(760, 60 + label.length * 17);
+  const left = center ? x - w / 2 : x;
+  return [
+    deco(40, box(left, y, w, 50), strong ? "#2f6fd6" : "#f6cf63", pack === "toan" ? { shape: "round", radius: 25 } : { rotation: -1.2, opacity: 0.92 }),
+    body("kicker", label, box(left, y + 2, w, 48), 22, strong ? "#ffffff" : PACK_COLORS[pack].ink, { fontWeight: 700, align: "center", valign: "middle", lineHeight: 1.2 })
+  ];
+}
+var studyHead = (pack, c8, kit) => [
+  ...tag(pack, c8.kicker, 106, 58, kit),
+  kit.title("title", c8.title, box(106, 118, 760, 132), 54, PACK_COLORS[pack].ink, { valign: "middle" })
+];
+function steps(pack, c8, { title, body }) {
+  const bullets = list(c8.bullets);
+  const items = bullets.length ? bullets : list(c8.body?.split("\n"));
+  const { fg } = PACK_COLORS[pack];
+  if (!items.length) return [];
+  if (items.length < 2 || items.length > 4) {
+    const text = items.length > 1 ? items.map((item) => `\u2022 ${item}`).join("\n") : items[0];
+    return [body(bullets.length ? "bullets" : "body", text, box(110, 276, 690, 390), text.length > 320 ? 24 : 28, fg, { valign: "middle", lineHeight: 1.6 })];
+  }
+  const h = Math.min(126, 390 / items.length);
+  const cycle = STUDY_CYCLE[pack];
+  return items.flatMap((item, i) => {
+    const y = 272 + i * h;
+    const color = cycle[i % cycle.length];
+    const mark = pack === "toan" ? { shape: "round", radius: 16 } : { shape: "ellipse" };
+    const at = box(128, y + (h - 18 - 56) / 2, 56, 56);
+    return [
+      pack === "toan" ? deco(50 + i, box(106, y, 710, h - 18), "#ffffff", { shape: "round", radius: 22, border: 3, borderColor: "#dbe7fb" }) : null,
+      deco(60 + i, at, color, mark),
+      title(`decor-kit-${70 + i}`, String(i + 1), at, 26, color === "#e9b949" ? "#173f5f" : "#ffffff", { align: "center", valign: "middle", decor: true, lineHeight: 1.1 }),
+      body(`bullet-${i + 1}`, item, box(206, y, 596, h - 18), 27, fg, { valign: "middle", lineHeight: 1.35 })
+    ];
+  });
+}
+function cards(pack, rows, { title, body }) {
+  const { ink, fg } = PACK_COLORS[pack];
+  const cycle = STUDY_CYCLE[pack];
+  if (rows.length > 3) {
+    const h = Math.min(104, 400 / rows.length);
+    return rows.flatMap((row, i) => {
+      const y = 272 + i * h;
+      return [
+        shape(`divider-${i + 1}`, box(106, y, 1070, 2), ink, { opacity: 0.25 }),
+        title(`item-${i + 1}-value`, row.value, box(106, y + 4, 250, h - 8), 32, ink, { valign: "middle" }),
+        body(`item-${i + 1}-label`, row.label, box(376, y + 4, 800, h - 8), 25, fg, { valign: "middle", lineHeight: 1.3 })
+      ];
+    });
+  }
+  const left = 664 - (rows.length * 336 + (rows.length - 1) * 36) / 2;
+  return rows.flatMap((row, i) => {
+    const x = left + i * 372;
+    const color = cycle[i % cycle.length];
+    return [
+      ...pack === "toan" ? [deco(50 + i, box(x, 276, 336, 356), "#ffffff", { shape: "round", radius: 28, border: 4, borderColor: color, shadowLevel: 1 })] : [
+        deco(50 + i, box(x, 276, 336, 356), "#ffffff", { shadowLevel: 1 }),
+        deco(60 + i, box(x, 276, 336, 10), color),
+        deco(70 + i, box(x + 108, 258, 120, 36), "#cfe3df", { opacity: 0.8, rotation: [-4, 3, -2][i] })
+      ],
+      title(`item-${i + 1}-value`, row.value, box(x + 18, 310, 300, 96), 36, ink, { align: "center", valign: "middle" }),
+      body(`item-${i + 1}-label`, row.label, box(x + 28, 424, 280, 188), 25, fg, { align: "center" })
+    ];
+  });
+}
+function study(pack, id, c8, kit) {
+  const { title, body } = kit;
+  const { ink, fg, accent } = PACK_COLORS[pack];
+  const math = pack === "toan";
+  const paper = full(`${pack}/giay`);
+  const photo = (x, y, w, h) => [
+    math ? null : deco(30, box(x - 16, y - 16, w + 32, h + 32), "#ffffff", { shadowLevel: 2 }),
+    image("image-1", c8.image, box(x, y, w, h), {
+      imagePosition: { x: c8.focusX ?? 50, y: c8.focusY ?? 40 },
+      crop: c8.imageCrop,
+      ...math ? { shape: "round", radius: 28, border: 6, borderColor: "#2f6fd6" } : {}
+    }),
+    math ? null : deco(31, box(x + w / 2 - 70, y - 32, 140, 38), "#e9b949", { opacity: 0.8, rotation: -3 })
+  ];
+  switch (id) {
+    case "photo-full":
+      return [
+        paper,
+        ...c8.image ? photo(730, 130, 450, 460) : math ? [art(1, "toan/e-ke", 800, 150, 370), art(2, "toan/compa", 700, 40, 160), art(3, "toan/but-chi", 1090, 440, 160), art(4, "toan/khoi-hinh", 660, 520, 380)] : [art(1, "khoa-hoc/kinh-hien-vi", 800, 106, 340), art(2, "khoa-hoc/nguyen-tu", 660, 36, 180), art(3, "khoa-hoc/binh-tam-giac", 670, 430, 180)],
+        ...tag(pack, c8.kicker, 110, 128, kit),
+        title("title", c8.title, box(106, 200, 590, 260), c8.image ? 62 : 74, ink, { valign: "middle" }),
+        body("subtitle", c8.subtitle, box(110, 478, 560, 130), 27, fg)
+      ];
+    case "manifesto": {
+      const text = statement(c8);
+      const formula = /[=≤≥]/.test(c8.author ?? "");
+      return [
+        paper,
+        math ? deco(8, box(180, 150, 920, 430), "#ffffff", { shape: "round", radius: 28, border: 4, borderColor: "#2f6fd6", shadowLevel: 1 }) : deco(8, box(190, 130, 900, 450), "#ffffff", { shadowLevel: 2 }),
+        ...math ? [art(1, "toan/thuoc-do-goc", 30, 560, 220), art(2, "toan/thuoc-ke", 1070, 30, 180), ...tag(pack, c8.kicker, 640, 126, kit, true, true)] : [
+          deco(9, box(148, 128, 150, 36), "#e9b949", { opacity: 0.8, rotation: -32 }),
+          deco(10, box(982, 126, 150, 36), "#e9b949", { opacity: 0.8, rotation: 32 }),
+          art(1, "khoa-hoc/dna", 46, 380, 120),
+          art(2, "khoa-hoc/bong-den", 1096, 440, 160),
+          body("kicker", upper(c8.kicker), box(240, 172, 800, 54), 22, accent, { fontWeight: 700, align: "center" })
+        ],
+        title("body", text, box(250, 232, 780, 214), text.length > 150 ? 36 : text.length > 90 ? 44 : 56, ink, { align: "center", valign: "middle" }),
+        formula ? title("author", c8.author, box(220, 458, 840, 100), 52, math ? "#c4561a" : accent, { align: "center", valign: "middle" }) : body("author", c8.author, box(240, 484, 800, 66), 24, fg, { align: "center" })
+      ];
+    }
+    case "editorial-text":
+    case "bullets": {
+      const items = steps(pack, c8, kit);
+      if (id === "bullets" && !items.length) return [];
+      return [
+        paper,
+        ...math ? [art(1, "toan/ban-tinh", 872, 264, 330), art(2, "toan/dau-phep-tinh", 1060, 40, 160)] : [
+          deco(8, box(836, 190, 390, 390), "#e2f0ec", { shape: "ellipse" }),
+          art(1, "khoa-hoc/te-bao", 866, 200, 330),
+          art(2, "khoa-hoc/la-cay", 1100, 14, 140)
+        ],
+        ...studyHead(pack, c8, kit),
+        ...items
+      ];
+    }
+    case "rules": {
+      const rows = rowsOf(c8);
+      if (!rows.length) return [];
+      return [
+        paper,
+        math ? art(1, "toan/hinh-tru-lang-tru", 930, 60, 290) : art(1, "khoa-hoc/ong-nghiem", 1010, 40, 180),
+        ...studyHead(pack, c8, kit),
+        ...cards(pack, rows, kit)
+      ];
+    }
+    case "bignum":
+      return [
+        paper,
+        ...c8.image ? photo(750, 130, 440, 460) : math ? [
+          deco(8, box(790, 130, 440, 440), "#fff1c9", { shape: "ellipse" }),
+          art(1, "toan/may-tinh", 870, 170, 285),
+          art(2, "toan/but-chi", 700, 40, 140)
+        ] : [art(1, "khoa-hoc/hanh-tinh", 690, 170, 520), art(2, "khoa-hoc/nam-cham", 1070, 500, 130)],
+        ...tag(pack, c8.kicker, 110, 100, kit),
+        title("bignum-value", c8.value, box(106, 168, 600, 250), 200, math ? "#d9611f" : ink, { valign: "middle", lineHeight: 1 }),
+        title("bignum-label", c8.label, box(110, 436, 590, 100), 40, ink),
+        body("subtitle", c8.subtitle, box(110, 556, 570, 90), 25, fg)
+      ];
+    default:
+      return null;
+  }
+}
+function shared(pack, id, c8, kit, standard) {
   if (id !== "bullets" && id !== "photo-compare" && id !== "bars") return null;
+  const { title, body } = kit;
+  const learn = pack === "khoa-hoc" || pack === "toan" ? pack : null;
   const red = pack === "co-dien";
   const { ink, fg } = PACK_COLORS[pack];
   const rule = { id: "divider-1", type: "shape", shape: "rect", fill: ink, opacity: 0.45, border: 0, shadowLevel: 0, ...box(100, (c8.title?.length ?? 0) > 36 ? 250 : 206, 120, 5) };
-  const head = () => [
+  const head = () => learn ? studyHead(learn, c8, kit) : [
     body("kicker", upper(c8.kicker), box(96, 57, 700, 54), 22, red ? ink : fg, { fontWeight: red ? 700 : 800 }),
     title("title", c8.title, box(96, 114, 860, 130), 52, ink, { valign: "top" }),
     rule
   ];
-  const paper = full(red ? "co-dien/tem-day" : "dan-gian/giay-o");
+  const paper = full(learn ? `${learn}/giay` : red ? "co-dien/tem-day" : "dan-gian/giay-o");
+  const corner = () => learn === "toan" ? art(1, "toan/hinh-tru-lang-tru", 930, 60, 290) : learn ? art(1, "khoa-hoc/ong-nghiem", 1010, 40, 180) : red ? art(1, "co-dien/canh-tung", 900, 50, 320) : id === "bars" ? art(1, "dan-gian/sach", 1030, 0, 220) : art(1, "dan-gian/canh-tre", 990, -40, 330);
   if (id === "bullets") {
     const items = list(c8.bullets).length ? list(c8.bullets) : list(c8.body?.split("\n"));
     if (!items.length) return [];
@@ -6200,10 +6406,10 @@ function shared(pack, id, c8, { title, body }, standard) {
   if (id === "photo-compare") {
     const captions = Boolean(c8.caption || c8.caption2);
     const h = captions ? 300 : 370;
-    const frame = red ? { border: 6, borderColor: ink } : { shape: "round", radius: 28, border: 6, borderColor: "#ffd98a" };
+    const frame = red ? { border: 6, borderColor: ink } : learn === "khoa-hoc" ? { border: 6, borderColor: "#ffffff", shadowLevel: 2 } : { shape: "round", radius: 28, border: 6, borderColor: learn ? "#2f6fd6" : "#ffd98a" };
     return [
       paper,
-      red ? art(1, "co-dien/canh-tung", 900, 50, 320) : art(1, "dan-gian/canh-tre", 990, -40, 330),
+      corner(),
       ...head(),
       image("image-1", c8.image, box(100, 280, 525, h), { crop: c8.imageCrop, ...frame }),
       image("image-2", c8.image2, box(655, 280, 525, h), { crop: c8.image2Crop, ...frame }),
@@ -6221,17 +6427,27 @@ function shared(pack, id, c8, { title, body }, standard) {
   }
   return [
     paper,
-    red ? art(1, "co-dien/canh-tung", 900, 50, 320) : art(1, "dan-gian/sach", 1030, 0, 220),
+    corner(),
     ...head(),
     ...chart
   ];
 }
 function backdrop(pack) {
-  return pack === "co-dien" ? [full("co-dien/tem-day"), art(1, "co-dien/goc-hoa-van", 44, 36, 110)] : [full("dan-gian/giay-o"), art(1, "dan-gian/chuon-chuon", 1130, 6, 110)];
+  switch (pack) {
+    case "co-dien":
+      return [full("co-dien/tem-day"), art(1, "co-dien/goc-hoa-van", 44, 36, 110)];
+    case "dan-gian":
+      return [full("dan-gian/giay-o"), art(1, "dan-gian/chuon-chuon", 1130, 6, 110)];
+    case "khoa-hoc":
+      return [full("khoa-hoc/giay"), art(1, "khoa-hoc/nguyen-tu", 1170, 8, 90)];
+    case "toan":
+      return [full("toan/giay"), art(1, "toan/dau-phep-tinh", 1180, 8, 80)];
+  }
 }
 function composePack(pack, layoutId, content, text, standard) {
   const kit = kitOf(text);
-  const built = (pack === "co-dien" ? coDien : danGian)(layoutId, content, kit) ?? shared(pack, layoutId, content, kit, standard);
+  const own = pack === "co-dien" ? coDien(layoutId, content, kit) : pack === "dan-gian" ? danGian(layoutId, content, kit) : study(pack, layoutId, content, kit);
+  const built = own ?? shared(pack, layoutId, content, kit, standard);
   if (built) return built.filter((el) => Boolean(el));
   const elements = standard();
   if (!elements.length) return elements;
@@ -6241,6 +6457,10 @@ function composePack(pack, layoutId, content, text, standard) {
     el.w *= 0.9;
     el.h *= 0.88;
     if (el.fontSize) el.fontSize *= 0.9;
+  }
+  if (pack === "khoa-hoc" || pack === "toan") for (const el of elements) {
+    el.x = 3.5 + el.x * 0.94;
+    el.w *= 0.94;
   }
   return [...backdrop(pack), ...elements];
 }
@@ -6536,8 +6756,8 @@ function textEl(id, value, box2, style, minScale, inheritedFont) {
   BASE_SIZE.set(el, baseSize);
   return el;
 }
-function shapeEl(id, box2, fill, shape = "rect") {
-  return { id, type: "shape", shape, fill, ...box2 };
+function shapeEl(id, box2, fill, shape2 = "rect") {
+  return { id, type: "shape", shape: shape2, fill, ...box2 };
 }
 function iconEl(id, assetId, box2, color) {
   return { id, type: "icon", assetId, textColor: color, ...box2 };
@@ -6783,7 +7003,7 @@ function composeCards(p5, content) {
   const cardH = rows === 1 ? 46 : (area.h - gap * (rows - 1)) / rows;
   const totalH = rows * cardH + (rows - 1) * gap;
   const startY = area.y + (area.h - totalH) / 2;
-  const cards = picked.flatMap((item, index) => {
+  const cards2 = picked.flatMap((item, index) => {
     const x = area.x + index % cols * (cardW + gap);
     const y = startY + Math.floor(index / cols) * (cardH + gap);
     const asset = pickSlideAsset(item, used);
@@ -6885,7 +7105,7 @@ function composeCards(p5, content) {
   });
   return compact([
     ...titleEls(p5, content.title, HEADER_BOX, HEADER_SIZES, true),
-    ...cards
+    ...cards2
   ]);
 }
 function splitTwoColumns(content) {
@@ -7579,20 +7799,20 @@ function withSlideCredit(elements, credit) {
   return [...fitted, credit];
 }
 function stepsOf(content) {
-  let steps = cleanList(content.steps);
-  if (steps.length === 0) steps = cleanList(content.bullets);
-  if (steps.length === 0) steps = linesOf(content.body);
-  return steps.slice(0, 6);
+  let steps2 = cleanList(content.steps);
+  if (steps2.length === 0) steps2 = cleanList(content.bullets);
+  if (steps2.length === 0) steps2 = linesOf(content.body);
+  return steps2.slice(0, 6);
 }
 function composeTimeline(p5, content) {
-  const steps = stepsOf(content);
-  if (steps.length < 3) return [];
-  const slot = 84 / steps.length;
-  const stepSize = steps.length <= 3 ? 2.6 : steps.length === 4 ? 2.3 : 2.05;
-  const nodes = steps.flatMap((step, index) => {
+  const steps2 = stepsOf(content);
+  if (steps2.length < 3) return [];
+  const slot = 84 / steps2.length;
+  const stepSize = steps2.length <= 3 ? 2.6 : steps2.length === 4 ? 2.3 : 2.05;
+  const nodes = steps2.flatMap((step, index) => {
     const center = 8 + slot * (index + 0.5);
     const left = center - slot / 2;
-    const tag = numberTag(`step-${index + 1}`, index + 1, p5.panel, center - 2.1, 44, 4.2);
+    const tag2 = numberTag(`step-${index + 1}`, index + 1, p5.panel, center - 2.1, 44, 4.2);
     const label = p5.text(`item-${index + 1}`, step, {
       x: left + 1,
       y: 51,
@@ -7604,7 +7824,7 @@ function composeTimeline(p5, content) {
       textColor: p5.fg,
       align: "center"
     });
-    if (tag) return [tag, label];
+    if (tag2) return [tag2, label];
     return [
       p5.text(`step-${index + 1}-index`, String(index + 1).padStart(2, "0"), {
         x: left,
@@ -7639,14 +7859,14 @@ function composeTimeline(p5, content) {
   ]);
 }
 function composeCycle(p5, content) {
-  const steps = stepsOf(content);
-  if (steps.length < 3) return [];
-  const count = steps.length;
+  const steps2 = stepsOf(content);
+  if (steps2.length < 3) return [];
+  const count = steps2.length;
   const nodeW = count <= 4 ? 16 : 14;
   const nodeH = nodeW * 16 / 9;
   const rx = count <= 4 ? 30 : 31;
   const ry = count <= 4 ? 22 : 23;
-  const nodes = steps.flatMap((step, index) => {
+  const nodes = steps2.flatMap((step, index) => {
     const angle = (-90 + 360 / count * index) * Math.PI / 180;
     const cx = 50 + rx * Math.cos(angle);
     const cy = 58 + ry * Math.sin(angle);
@@ -7767,9 +7987,9 @@ function composeQuiz(p5, content) {
   ]);
 }
 function composeExample(p5, content) {
-  const steps = cleanList(content.steps).slice(0, 4);
+  const steps2 = cleanList(content.steps).slice(0, 4);
   const problem = content.problem?.trim() || content.body?.trim();
-  if (!problem || steps.length < 2) return [];
+  if (!problem || steps2.length < 2) return [];
   const conclusion = content.conclusion?.trim();
   const header = titleEls(p5, content.title, HEADER_BOX, HEADER_SIZES, true);
   const top = Math.max(26, bottomOf(header) + 2.5);
@@ -7778,8 +7998,8 @@ function composeExample(p5, content) {
   const bottom = conclusion ? barY - 3 : 94;
   const areaH = bottom - top;
   const leftW = 32;
-  const rowH = Math.min(16, areaH / steps.length);
-  const stepsTop = top + (areaH - rowH * steps.length) / 2;
+  const rowH = Math.min(16, areaH / steps2.length);
+  const stepsTop = top + (areaH - rowH * steps2.length) / 2;
   const badgeW = 4.2;
   const badgeH = badgeW * 16 / 9;
   return compact([
@@ -7797,11 +8017,11 @@ function composeExample(p5, content) {
       fontSize: 2.5,
       textColor: p5.fg
     }),
-    ...steps.flatMap((step, index) => {
+    ...steps2.flatMap((step, index) => {
       const y = stepsTop + index * rowH;
-      const tag = rowH >= 12 ? numberTag(`step-${index + 1}-badge`, index + 1, p5.background, 43.5, y + rowH / 2, 3.2) : null;
+      const tag2 = rowH >= 12 ? numberTag(`step-${index + 1}-badge`, index + 1, p5.background, 43.5, y + rowH / 2, 3.2) : null;
       return [
-        ...tag ? [tag] : [
+        ...tag2 ? [tag2] : [
           shapeEl(`step-${index + 1}-badge`, { x: 43, y: y + (rowH - badgeH) / 2, w: badgeW, h: badgeH }, p5.accent, "ellipse"),
           p5.text(`step-${index + 1}-index`, String(index + 1), {
             x: 43,

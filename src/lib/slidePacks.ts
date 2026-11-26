@@ -7,11 +7,13 @@
 import type { SlideElement } from '@/store/docs'
 import type { SlideLayoutContent } from './slideLayouts'
 
-export type SlidePackId = 'co-dien' | 'dan-gian'
+export type SlidePackId = 'co-dien' | 'dan-gian' | 'khoa-hoc' | 'toan'
 
 export const PACK_COLORS = {
   'co-dien': { background: '#8b0000', fg: '#8b0000', ink: '#8b0000', accent: '#8b0000', muted: '#7a3b2e', surface: '#fdeed3', panel: '#f7e2bd', onAccent: '#fdeed3' },
   'dan-gian': { background: '#faf3e6', fg: '#4a2c1d', ink: '#962a0e', accent: '#b4461a', muted: '#7a5a45', surface: '#fff7e8', panel: '#ffe9b8', onAccent: '#ffffff' },
+  'khoa-hoc': { background: '#f7f5ee', fg: '#2c4256', ink: '#173f5f', accent: '#0f7c8c', muted: '#53687a', surface: '#ffffff', panel: '#e2f0ec', onAccent: '#ffffff' },
+  toan: { background: '#fbfcff', fg: '#34446b', ink: '#1d3f8f', accent: '#2f6fd6', muted: '#56658a', surface: '#ffffff', panel: '#eef4ff', onAccent: '#ffffff' },
 } as const
 
 const CREAM = '#fdeed3'
@@ -22,6 +24,11 @@ const ART: Record<string, [number, number]> = {
   'co-dien/goc-hoa-van': [800, 659], 'co-dien/hoa-sen': [663, 800], 'co-dien/mat-troi': [785, 800], 'co-dien/may': [800, 152], 'co-dien/nui': [800, 236],
   'dan-gian/canh-tre': [800, 529], 'dan-gian/chuon-chuon': [800, 527], 'dan-gian/den-long': [653, 800], 'dan-gian/dieu': [800, 503],
   'dan-gian/hoa-sen': [800, 673], 'dan-gian/mai-dinh': [800, 382], 'dan-gian/may': [800, 136], 'dan-gian/non-la': [800, 672], 'dan-gian/sach': [800, 658],
+  'khoa-hoc/binh-tam-giac': [358, 540], 'khoa-hoc/bong-den': [480, 540], 'khoa-hoc/dna': [221, 540], 'khoa-hoc/hanh-tinh': [540, 315],
+  'khoa-hoc/kinh-hien-vi': [299, 540], 'khoa-hoc/la-cay': [379, 540], 'khoa-hoc/nam-cham': [402, 540], 'khoa-hoc/nguyen-tu': [540, 529],
+  'khoa-hoc/ong-nghiem': [540, 450], 'khoa-hoc/te-bao': [484, 540],
+  'toan/ban-tinh': [503, 540], 'toan/but-chi': [477, 540], 'toan/compa': [395, 540], 'toan/dau-phep-tinh': [540, 524], 'toan/e-ke': [533, 540],
+  'toan/hinh-tru-lang-tru': [540, 310], 'toan/khoi-hinh': [540, 205], 'toan/may-tinh': [423, 540], 'toan/thuoc-do-goc': [540, 323], 'toan/thuoc-ke': [539, 540],
 }
 
 type Box = Pick<SlideElement, 'x' | 'y' | 'w' | 'h'>
@@ -258,19 +265,219 @@ function danGian(id: string, c: SlideLayoutContent, { title, body }: Kit): Built
 }
 
 /* ------------------------------------------------------------------ *
+ * Khoa học (sổ thí nghiệm) và Toán (giấy ô li): chung khung bố cục,
+ * khác nhãn, thẻ, màu và hình.
+ * ------------------------------------------------------------------ */
+type StudyId = 'khoa-hoc' | 'toan'
+
+const STUDY_CYCLE: Record<StudyId, string[]> = {
+  'khoa-hoc': ['#0f7c8c', '#e4695a', '#e9b949'],
+  toan: ['#2f6fd6', '#e8702f', '#2f9e7f'],
+}
+
+const shape = (id: string, b: Box, fill: string, extra: Partial<SlideElement> = {}): SlideElement =>
+  ({ id, type: 'shape', shape: 'rect', fill, border: 0, shadowLevel: 0, ...b, ...extra })
+
+const deco = (n: number, b: Box, fill: string, extra: Partial<SlideElement> = {}) =>
+  shape(`decor-kit-${n}`, b, fill, { decor: true, ...extra })
+
+/** nhãn nhỏ trên tiêu đề: mảnh giấy dán (khoa học) hoặc viên thuốc (toán) */
+function tag(pack: StudyId, value: string | undefined, x: number, y: number, { body }: Kit, center = false, strong = false): Built {
+  const label = upper(value)
+  if (!label) return []
+  const w = Math.min(760, 60 + label.length * 17)
+  const left = center ? x - w / 2 : x
+  return [
+    deco(40, box(left, y, w, 50), strong ? '#2f6fd6' : '#f6cf63', pack === 'toan' ? { shape: 'round', radius: 25 } : { rotation: -1.2, opacity: 0.92 }),
+    body('kicker', label, box(left, y + 2, w, 48), 22, strong ? '#ffffff' : PACK_COLORS[pack].ink, { fontWeight: 700, align: 'center', valign: 'middle', lineHeight: 1.2 }),
+  ]
+}
+
+const studyHead = (pack: StudyId, c: SlideLayoutContent, kit: Kit): Built => [
+  ...tag(pack, c.kicker, 106, 58, kit),
+  kit.title('title', c.title, box(106, 118, 760, 132), 54, PACK_COLORS[pack].ink, { valign: 'middle' }),
+]
+
+/** hai tới bốn ý đánh số trong vòng tròn / ô vuông bo; còn lại là một khối chữ */
+function steps(pack: StudyId, c: SlideLayoutContent, { title, body }: Kit): Built {
+  const bullets = list(c.bullets)
+  const items = bullets.length ? bullets : list(c.body?.split('\n'))
+  const { fg } = PACK_COLORS[pack]
+  if (!items.length) return []
+  if (items.length < 2 || items.length > 4) {
+    const text = items.length > 1 ? items.map((item) => `• ${item}`).join('\n') : items[0]
+    return [body(bullets.length ? 'bullets' : 'body', text, box(110, 276, 690, 390), text.length > 320 ? 24 : 28, fg, { valign: 'middle', lineHeight: 1.6 })]
+  }
+  const h = Math.min(126, 390 / items.length)
+  const cycle = STUDY_CYCLE[pack]
+  return items.flatMap((item, i) => {
+    const y = 272 + i * h
+    const color = cycle[i % cycle.length]
+    const mark = pack === 'toan' ? { shape: 'round' as const, radius: 16 } : { shape: 'ellipse' as const }
+    const at = box(128, y + (h - 18 - 56) / 2, 56, 56)
+    return [
+      pack === 'toan' ? deco(50 + i, box(106, y, 710, h - 18), '#ffffff', { shape: 'round', radius: 22, border: 3, borderColor: '#dbe7fb' }) : null,
+      deco(60 + i, at, color, mark),
+      title(`decor-kit-${70 + i}`, String(i + 1), at, 26, color === '#e9b949' ? '#173f5f' : '#ffffff', { align: 'center', valign: 'middle', decor: true, lineHeight: 1.1 }),
+      body(`bullet-${i + 1}`, item, box(206, y, 596, h - 18), 27, fg, { valign: 'middle', lineHeight: 1.35 }),
+    ]
+  })
+}
+
+/** tối đa ba thẻ dọc; nhiều hơn thì danh sách hàng ngang */
+function cards(pack: StudyId, rows: Array<{ value: string; label: string }>, { title, body }: Kit): Built {
+  const { ink, fg } = PACK_COLORS[pack]
+  const cycle = STUDY_CYCLE[pack]
+  if (rows.length > 3) {
+    const h = Math.min(104, 400 / rows.length)
+    return rows.flatMap((row, i) => {
+      const y = 272 + i * h
+      return [
+        shape(`divider-${i + 1}`, box(106, y, 1070, 2), ink, { opacity: 0.25 }),
+        title(`item-${i + 1}-value`, row.value, box(106, y + 4, 250, h - 8), 32, ink, { valign: 'middle' }),
+        body(`item-${i + 1}-label`, row.label, box(376, y + 4, 800, h - 8), 25, fg, { valign: 'middle', lineHeight: 1.3 }),
+      ]
+    })
+  }
+  const left = 664 - (rows.length * 336 + (rows.length - 1) * 36) / 2
+  return rows.flatMap((row, i) => {
+    const x = left + i * 372
+    const color = cycle[i % cycle.length]
+    return [
+      ...(pack === 'toan'
+        ? [deco(50 + i, box(x, 276, 336, 356), '#ffffff', { shape: 'round', radius: 28, border: 4, borderColor: color, shadowLevel: 1 })]
+        : [
+            deco(50 + i, box(x, 276, 336, 356), '#ffffff', { shadowLevel: 1 }),
+            deco(60 + i, box(x, 276, 336, 10), color),
+            deco(70 + i, box(x + 108, 258, 120, 36), '#cfe3df', { opacity: 0.8, rotation: [-4, 3, -2][i] }),
+          ]),
+      title(`item-${i + 1}-value`, row.value, box(x + 18, 310, 300, 96), 36, ink, { align: 'center', valign: 'middle' }),
+      body(`item-${i + 1}-label`, row.label, box(x + 28, 424, 280, 188), 25, fg, { align: 'center' }),
+    ]
+  })
+}
+
+function study(pack: StudyId, id: string, c: SlideLayoutContent, kit: Kit): Built | null {
+  const { title, body } = kit
+  const { ink, fg, accent } = PACK_COLORS[pack]
+  const math = pack === 'toan'
+  const paper = full(`${pack}/giay`)
+  /** ảnh: khung bo xanh (toán) hoặc tờ ảnh dán băng dính (khoa học) */
+  const photo = (x: number, y: number, w: number, h: number): Built => [
+    math ? null : deco(30, box(x - 16, y - 16, w + 32, h + 32), '#ffffff', { shadowLevel: 2 }),
+    image('image-1', c.image, box(x, y, w, h), {
+      imagePosition: { x: c.focusX ?? 50, y: c.focusY ?? 40 }, crop: c.imageCrop,
+      ...(math ? { shape: 'round' as const, radius: 28, border: 6, borderColor: '#2f6fd6' } : {}),
+    }),
+    math ? null : deco(31, box(x + w / 2 - 70, y - 32, 140, 38), '#e9b949', { opacity: 0.8, rotation: -3 }),
+  ]
+  switch (id) {
+    case 'photo-full':
+      return [
+        paper,
+        ...(c.image
+          ? photo(730, 130, 450, 460)
+          : math
+            ? [art(1, 'toan/e-ke', 800, 150, 370), art(2, 'toan/compa', 700, 40, 160), art(3, 'toan/but-chi', 1090, 440, 160), art(4, 'toan/khoi-hinh', 660, 520, 380)]
+            : [art(1, 'khoa-hoc/kinh-hien-vi', 800, 106, 340), art(2, 'khoa-hoc/nguyen-tu', 660, 36, 180), art(3, 'khoa-hoc/binh-tam-giac', 670, 430, 180)]),
+        ...tag(pack, c.kicker, 110, 128, kit),
+        title('title', c.title, box(106, 200, 590, 260), c.image ? 62 : 74, ink, { valign: 'middle' }),
+        body('subtitle', c.subtitle, box(110, 478, 560, 130), 27, fg),
+      ]
+    case 'manifesto': {
+      const text = statement(c)
+      // dòng cuối là công thức thì cho to và nổi, là tên người / nguồn thì để nhỏ
+      const formula = /[=≤≥]/.test(c.author ?? '')
+      return [
+        paper,
+        math
+          ? deco(8, box(180, 150, 920, 430), '#ffffff', { shape: 'round', radius: 28, border: 4, borderColor: '#2f6fd6', shadowLevel: 1 })
+          : deco(8, box(190, 130, 900, 450), '#ffffff', { shadowLevel: 2 }),
+        ...(math
+          ? [art(1, 'toan/thuoc-do-goc', 30, 560, 220), art(2, 'toan/thuoc-ke', 1070, 30, 180), ...tag(pack, c.kicker, 640, 126, kit, true, true)]
+          : [
+              deco(9, box(148, 128, 150, 36), '#e9b949', { opacity: 0.8, rotation: -32 }),
+              deco(10, box(982, 126, 150, 36), '#e9b949', { opacity: 0.8, rotation: 32 }),
+              art(1, 'khoa-hoc/dna', 46, 380, 120),
+              art(2, 'khoa-hoc/bong-den', 1096, 440, 160),
+              body('kicker', upper(c.kicker), box(240, 172, 800, 54), 22, accent, { fontWeight: 700, align: 'center' }),
+            ]),
+        title('body', text, box(250, 232, 780, 214), text.length > 150 ? 36 : text.length > 90 ? 44 : 56, ink, { align: 'center', valign: 'middle' }),
+        formula
+          ? title('author', c.author, box(220, 458, 840, 100), 52, math ? '#c4561a' : accent, { align: 'center', valign: 'middle' })
+          : body('author', c.author, box(240, 484, 800, 66), 24, fg, { align: 'center' }),
+      ]
+    }
+    case 'editorial-text':
+    case 'bullets': {
+      const items = steps(pack, c, kit)
+      if (id === 'bullets' && !items.length) return []
+      return [
+        paper,
+        ...(math
+          ? [art(1, 'toan/ban-tinh', 872, 264, 330), art(2, 'toan/dau-phep-tinh', 1060, 40, 160)]
+          : [
+              deco(8, box(836, 190, 390, 390), '#e2f0ec', { shape: 'ellipse' }),
+              art(1, 'khoa-hoc/te-bao', 866, 200, 330),
+              art(2, 'khoa-hoc/la-cay', 1100, 14, 140),
+            ]),
+        ...studyHead(pack, c, kit),
+        ...items,
+      ]
+    }
+    case 'rules': {
+      const rows = rowsOf(c)
+      if (!rows.length) return []
+      return [
+        paper,
+        math ? art(1, 'toan/hinh-tru-lang-tru', 930, 60, 290) : art(1, 'khoa-hoc/ong-nghiem', 1010, 40, 180),
+        ...studyHead(pack, c, kit),
+        ...cards(pack, rows, kit),
+      ]
+    }
+    case 'bignum':
+      return [
+        paper,
+        ...(c.image
+          ? photo(750, 130, 440, 460)
+          : math
+            ? [
+                deco(8, box(790, 130, 440, 440), '#fff1c9', { shape: 'ellipse' }),
+                art(1, 'toan/may-tinh', 870, 170, 285),
+                art(2, 'toan/but-chi', 700, 40, 140),
+              ]
+            : [art(1, 'khoa-hoc/hanh-tinh', 690, 170, 520), art(2, 'khoa-hoc/nam-cham', 1070, 500, 130)]),
+        ...tag(pack, c.kicker, 110, 100, kit),
+        title('bignum-value', c.value, box(106, 168, 600, 250), 200, math ? '#d9611f' : ink, { valign: 'middle', lineHeight: 1 }),
+        title('bignum-label', c.label, box(110, 436, 590, 100), 40, ink),
+        body('subtitle', c.subtitle, box(110, 556, 570, 90), 25, fg),
+      ]
+    default:
+      return null
+  }
+}
+
+/* ------------------------------------------------------------------ *
  * Gạch đầu dòng, so sánh ảnh, biểu đồ cột: cùng khung và hình của bộ
  * ------------------------------------------------------------------ */
-function shared(pack: SlidePackId, id: string, c: SlideLayoutContent, { title, body }: Kit, standard: () => SlideElement[]): Built | null {
+function shared(pack: SlidePackId, id: string, c: SlideLayoutContent, kit: Kit, standard: () => SlideElement[]): Built | null {
   if (id !== 'bullets' && id !== 'photo-compare' && id !== 'bars') return null
+  const { title, body } = kit
+  const learn: StudyId | null = pack === 'khoa-hoc' || pack === 'toan' ? pack : null
   const red = pack === 'co-dien'
   const { ink, fg } = PACK_COLORS[pack]
   const rule: SlideElement = { id: 'divider-1', type: 'shape', shape: 'rect', fill: ink, opacity: 0.45, border: 0, shadowLevel: 0, ...box(100, (c.title?.length ?? 0) > 36 ? 250 : 206, 120, 5) }
-  const head = (): Built => [
+  const head = (): Built => learn ? studyHead(learn, c, kit) : [
     body('kicker', upper(c.kicker), box(96, 57, 700, 54), 22, red ? ink : fg, { fontWeight: red ? 700 : 800 }),
     title('title', c.title, box(96, 114, 860, 130), 52, ink, { valign: 'top' }),
     rule,
   ]
-  const paper = full(red ? 'co-dien/tem-day' : 'dan-gian/giay-o')
+  const paper = full(learn ? `${learn}/giay` : red ? 'co-dien/tem-day' : 'dan-gian/giay-o')
+  const corner = (): SlideElement =>
+    learn === 'toan' ? art(1, 'toan/hinh-tru-lang-tru', 930, 60, 290)
+      : learn ? art(1, 'khoa-hoc/ong-nghiem', 1010, 40, 180)
+        : red ? art(1, 'co-dien/canh-tung', 900, 50, 320)
+          : id === 'bars' ? art(1, 'dan-gian/sach', 1030, 0, 220) : art(1, 'dan-gian/canh-tre', 990, -40, 330)
 
   if (id === 'bullets') {
     const items = list(c.bullets).length ? list(c.bullets) : list(c.body?.split('\n'))
@@ -295,10 +502,12 @@ function shared(pack: SlidePackId, id: string, c: SlideLayoutContent, { title, b
   if (id === 'photo-compare') {
     const captions = Boolean(c.caption || c.caption2)
     const h = captions ? 300 : 370
-    const frame = red ? { border: 6, borderColor: ink } : { shape: 'round' as const, radius: 28, border: 6, borderColor: '#ffd98a' }
+    const frame = red ? { border: 6, borderColor: ink }
+      : learn === 'khoa-hoc' ? { border: 6, borderColor: '#ffffff', shadowLevel: 2 as const }
+        : { shape: 'round' as const, radius: 28, border: 6, borderColor: learn ? '#2f6fd6' : '#ffd98a' }
     return [
       paper,
-      red ? art(1, 'co-dien/canh-tung', 900, 50, 320) : art(1, 'dan-gian/canh-tre', 990, -40, 330),
+      corner(),
       ...head(),
       image('image-1', c.image, box(100, 280, 525, h), { crop: c.imageCrop, ...frame }),
       image('image-2', c.image2, box(655, 280, 525, h), { crop: c.image2Crop, ...frame }),
@@ -318,7 +527,7 @@ function shared(pack: SlidePackId, id: string, c: SlideLayoutContent, { title, b
   }
   return [
     paper,
-    red ? art(1, 'co-dien/canh-tung', 900, 50, 320) : art(1, 'dan-gian/sach', 1030, 0, 220),
+    corner(),
     ...head(),
     ...chart,
   ]
@@ -326,9 +535,12 @@ function shared(pack: SlidePackId, id: string, c: SlideLayoutContent, { title, b
 
 /** Nền / trang trí đặt dưới các bố cục còn lại. */
 function backdrop(pack: SlidePackId): SlideElement[] {
-  return pack === 'co-dien'
-    ? [full('co-dien/tem-day'), art(1, 'co-dien/goc-hoa-van', 44, 36, 110)]
-    : [full('dan-gian/giay-o'), art(1, 'dan-gian/chuon-chuon', 1130, 6, 110)]
+  switch (pack) {
+    case 'co-dien': return [full('co-dien/tem-day'), art(1, 'co-dien/goc-hoa-van', 44, 36, 110)]
+    case 'dan-gian': return [full('dan-gian/giay-o'), art(1, 'dan-gian/chuon-chuon', 1130, 6, 110)]
+    case 'khoa-hoc': return [full('khoa-hoc/giay'), art(1, 'khoa-hoc/nguyen-tu', 1170, 8, 90)]
+    case 'toan': return [full('toan/giay'), art(1, 'toan/dau-phep-tinh', 1180, 8, 80)]
+  }
 }
 
 export function composePack(
@@ -339,7 +551,10 @@ export function composePack(
   standard: () => SlideElement[],
 ): SlideElement[] {
   const kit = kitOf(text)
-  const built = (pack === 'co-dien' ? coDien : danGian)(layoutId, content, kit) ?? shared(pack, layoutId, content, kit, standard)
+  const own = pack === 'co-dien' ? coDien(layoutId, content, kit)
+    : pack === 'dan-gian' ? danGian(layoutId, content, kit)
+      : study(pack, layoutId, content, kit)
+  const built = own ?? shared(pack, layoutId, content, kit, standard)
   if (built) return built.filter((el): el is SlideElement => Boolean(el))
   const elements = standard()
   if (!elements.length) return elements
@@ -350,6 +565,11 @@ export function composePack(
     el.w *= 0.9
     el.h *= 0.88
     if (el.fontSize) el.fontSize *= 0.9
+  }
+  // gáy sổ / đường lề bên trái
+  if (pack === 'khoa-hoc' || pack === 'toan') for (const el of elements) {
+    el.x = 3.5 + el.x * 0.94
+    el.w *= 0.94
   }
   return [...backdrop(pack), ...elements]
 }

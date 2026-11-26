@@ -2036,7 +2036,7 @@ const RESERVED = new Set([
   'problem', 'problem-label', 'conclusion', 'answer', 'center-node',
   'credit', 'bignum-value', 'bignum-label', 'photo-caption', 'photo-caption-2',
 ])
-const NUMBERED = /^(card|option|stat|step|item|node|left|right|link)-\d+(-value|-label|-index|-heading|-box)?$/
+const NUMBERED = /^(card|option|stat|step|item|node|left|right|link|bullet)-\d+(-value|-label|-index|-heading|-box)?$/
 const BAR_TEXT = /^bar-\d+-(label|value)$/
 const isRoleId = (id: string): boolean => RESERVED.has(id) || NUMBERED.test(id) || BAR_TEXT.test(id)
 
@@ -2086,6 +2086,8 @@ export function contentFromSlide(slide: Slide): SlideLayoutContent {
   const isComposedLayout = Boolean(slide.layout && isLayoutId(slide.layout)) && texts.some((el) => isRoleId(el.id))
   const bullets = [
     ...linesOf(byId('bullets')),
+    // bộ phong cách đánh số: mỗi ý một hộp `bullet-N`
+    ...texts.filter((el) => /^bullet-\d+$/.test(el.id)).sort((a, b) => suffixOf(a.id) - suffixOf(b.id)).map((el) => el.text),
     ...(isComposedLayout
       ? []
       : texts
