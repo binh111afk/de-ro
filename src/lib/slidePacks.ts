@@ -7,7 +7,7 @@
 import type { SlideElement } from '@/store/docs'
 import type { SlideLayoutContent } from './slideLayouts'
 
-export type SlidePackId = 'co-dien' | 'dan-gian' | 'khoa-hoc' | 'toan' | 'vat-ly' | 'hoa-hoc' | 'tin-hoc' | 'tam-ly' | 'sinh-hoc' | 'ngu-van' | 'dia-li' | 'tieng-anh' | 'kinh-te-phap-luat' | 'lich-su' | 'cong-nghe' | 'nghe-thuat' | 'the-duc'
+export type SlidePackId = 'co-dien' | 'dan-gian' | 'khoa-hoc' | 'toan' | 'vat-ly' | 'hoa-hoc' | 'tin-hoc' | 'tam-ly' | 'sinh-hoc' | 'ngu-van' | 'dia-li' | 'tieng-anh' | 'kinh-te-phap-luat' | 'lich-su' | 'cong-nghe' | 'nghe-thuat' | 'the-duc' | 'mam-non' | 'sinh-hoat-lop' | 'moi-truong' | 'kinh-doanh' | 'le-hoi'
 
 export const PACK_COLORS = {
   'co-dien': { background: '#8b0000', fg: '#8b0000', ink: '#8b0000', accent: '#8b0000', muted: '#7a3b2e', surface: '#fdeed3', panel: '#f7e2bd', onAccent: '#fdeed3' },
@@ -25,6 +25,11 @@ export const PACK_COLORS = {
   'cong-nghe': { background: '#f8f9fa', fg: '#39485a', ink: '#243a52', accent: '#b0541a', muted: '#5f6b79', surface: '#ffffff', panel: '#fbeadc', onAccent: '#ffffff' },
   'nghe-thuat': { background: '#fdf9f7', fg: '#4c3d58', ink: '#4a2f66', accent: '#b0386a', muted: '#74647c', surface: '#ffffff', panel: '#fbe6ee', onAccent: '#ffffff' },
   'the-duc': { background: '#f8faf6', fg: '#34493e', ink: '#1f4a38', accent: '#b34a1e', muted: '#5c6d63', surface: '#ffffff', panel: '#e5f2e4', onAccent: '#ffffff' },
+  'mam-non': { background: '#fffbf5', fg: '#44506e', ink: '#34508f', accent: '#c2452d', muted: '#6a728a', surface: '#ffffff', panel: '#fdeadf', onAccent: '#ffffff' },
+  'sinh-hoat-lop': { background: '#fbf9f4', fg: '#3a4b47', ink: '#234b45', accent: '#b05a14', muted: '#62706c', surface: '#ffffff', panel: '#e3f0ec', onAccent: '#ffffff' },
+  'moi-truong': { background: '#f7faf4', fg: '#37493e', ink: '#25503a', accent: '#2f7a45', muted: '#5d6e60', surface: '#ffffff', panel: '#e4f2df', onAccent: '#ffffff' },
+  'kinh-doanh': { background: '#f9f9fb', fg: '#3b4263', ink: '#232c55', accent: '#3d4fc4', muted: '#646a86', surface: '#ffffff', panel: '#e8ebfb', onAccent: '#ffffff' },
+  'le-hoi': { background: '#fffaf4', fg: '#593a3a', ink: '#8a1f2d', accent: '#b23020', muted: '#7a625e', surface: '#ffffff', panel: '#fde8e0', onAccent: '#ffffff' },
   'tin-hoc': { background: '#f8f7fc', fg: '#3a3560', ink: '#241d4d', accent: '#5a3ee0', muted: '#635d85', surface: '#ffffff', panel: '#ece8fd', onAccent: '#ffffff' },
   'tam-ly': { background: '#fbf4ec', fg: '#53392f', ink: '#5a2c1c', accent: '#a8532f', muted: '#7d6257', surface: '#fffaf5', panel: '#f8e4da', onAccent: '#ffffff' },
 } as const
@@ -69,6 +74,16 @@ const ART: Record<string, [number, number]> = {
   'nghe-thuat/hat-2': [169, 274], 'nghe-thuat/hat-3': [208, 225], 'nghe-thuat/khung-tranh': [540, 431], 'nghe-thuat/mang': [540, 229], 'nghe-thuat/trong': [540, 426],
   'the-duc/bong-da': [539, 540], 'the-duc/cup-vang': [540, 501], 'the-duc/hat-1': [253, 258], 'the-duc/hat-2': [247, 253], 'the-duc/hat-3': [150, 149],
   'the-duc/huy-chuong': [351, 540], 'the-duc/mang': [540, 229], 'the-duc/vot-cau-long': [304, 540], 'the-duc/xe-dap': [540, 305],
+  'mam-non/but-sap': [167, 540], 'mam-non/cau-vong': [540, 246], 'mam-non/gau-bong': [511, 540], 'mam-non/hat-1': [256, 246], 'mam-non/hat-2': [233, 231],
+  'mam-non/hat-3': [247, 212], 'mam-non/khoi-go': [330, 540], 'mam-non/mang': [540, 229], 'mam-non/ngua-go': [540, 510], 'mam-non/qua-bong': [525, 540],
+  'sinh-hoat-lop/ba-lo': [540, 539], 'sinh-hoat-lop/chong-vo': [404, 540], 'sinh-hoat-lop/chuong': [257, 540], 'sinh-hoat-lop/dong-ho': [528, 540], 'sinh-hoat-lop/hat-1': [165, 151],
+  'sinh-hoat-lop/hat-2': [154, 111], 'sinh-hoat-lop/hat-3': [112, 149], 'sinh-hoat-lop/mang': [540, 229], 'sinh-hoat-lop/thuoc-but': [72, 540], 'sinh-hoat-lop/truong-hoc': [540, 489],
+  'moi-truong/binh-tuoi': [540, 280], 'moi-truong/canh-tre': [263, 540], 'moi-truong/cay-xanh': [395, 540], 'moi-truong/hat-1': [149, 144], 'moi-truong/hat-2': [141, 136],
+  'moi-truong/hat-3': [116, 154], 'moi-truong/mang': [540, 229], 'moi-truong/thung-tai-che': [454, 540], 'moi-truong/trai-dat': [425, 540], 'moi-truong/tua-bin': [266, 540],
+  'kinh-doanh/bang-trinh-bay': [270, 540], 'kinh-doanh/bia-ten': [540, 482], 'kinh-doanh/but-may': [112, 540], 'kinh-doanh/ca-phe': [540, 423], 'kinh-doanh/hat-1': [226, 222],
+  'kinh-doanh/hat-2': [206, 202], 'kinh-doanh/hat-3': [141, 206], 'kinh-doanh/mang': [540, 229], 'kinh-doanh/may-tinh': [540, 362], 'kinh-doanh/ten-lua': [209, 540],
+  'le-hoi/banh-kem': [441, 540], 'le-hoi/bo-hoa': [484, 540], 'le-hoi/bong-bay': [327, 540], 'le-hoi/den-long': [121, 540], 'le-hoi/hat-1': [225, 202],
+  'le-hoi/hat-2': [218, 205], 'le-hoi/hat-3': [219, 202], 'le-hoi/hop-qua': [424, 540], 'le-hoi/mang': [540, 229], 'le-hoi/trong-hoi': [465, 540],
   // het dot 2
 }
 
@@ -309,7 +324,7 @@ function danGian(id: string, c: SlideLayoutContent, { title, body }: Kit): Built
  * Các bộ theo môn: chung một khung bố cục, mỗi bộ chỉ khai báo màu,
  * kiểu thẻ và chỗ đặt hình. Thêm bộ mới = thêm một mục vào STUDY.
  * ------------------------------------------------------------------ */
-type StudyId = 'khoa-hoc' | 'toan' | 'vat-ly' | 'hoa-hoc' | 'tin-hoc' | 'tam-ly' | 'sinh-hoc' | 'ngu-van' | 'dia-li' | 'tieng-anh' | 'kinh-te-phap-luat' | 'lich-su' | 'cong-nghe' | 'nghe-thuat' | 'the-duc'
+type StudyId = 'khoa-hoc' | 'toan' | 'vat-ly' | 'hoa-hoc' | 'tin-hoc' | 'tam-ly' | 'sinh-hoc' | 'ngu-van' | 'dia-li' | 'tieng-anh' | 'kinh-te-phap-luat' | 'lich-su' | 'cong-nghe' | 'nghe-thuat' | 'the-duc' | 'mam-non' | 'sinh-hoat-lop' | 'moi-truong' | 'kinh-doanh' | 'le-hoi'
 
 /** hình đặt gọn trong một ô: [tên, x, y, rộng, cao] (px trên slide 1280×720) */
 type Slot = [string, number, number, number, number]
@@ -428,6 +443,16 @@ const STUDY: Record<StudyId, StudyStyle> = {
     tallA: 'bang-mau', tallB: 'dan-guitar', pair: 'gia-ve', atom: 'trong', long: 'co-ve', mol: 'khung-tranh' }),
   'the-duc': veTay({ cycle: ['#2f7043', '#b34a1e', '#2b5f8c'], soft: '#e5f2e4', softText: '#245834', frame: '#b5dbb0', tints: ['#e5f2e4', '#fbe9e0', '#e4eef7'],
     tallA: 'bong-da', tallB: 'vot-cau-long', pair: 'cup-vang', atom: 'huy-chuong', long: 'vot-cau-long', mol: 'xe-dap' }),
+  'mam-non': veTay({ cycle: ['#c2452d', '#34508f', '#2f7a4f'], soft: '#fdeadf', softText: '#9a3520', frame: '#ffd27f', tints: ['#fdeadf', '#e6edfa', '#e3f2e6'],
+    tallA: 'gau-bong', tallB: 'khoi-go', pair: 'ngua-go', atom: 'qua-bong', long: 'but-sap', mol: 'cau-vong' }),
+  'sinh-hoat-lop': veTay({ cycle: ['#2f6d60', '#b05a14', '#35569a'], soft: '#e3f0ec', softText: '#245449', frame: '#f3cd7a', tints: ['#e3f0ec', '#faecdc', '#e6ebf7'],
+    tallA: 'ba-lo', tallB: 'chuong', pair: 'chong-vo', atom: 'dong-ho', long: 'thuoc-but', mol: 'truong-hoc' }),
+  'moi-truong': veTay({ cycle: ['#2f7a45', '#1f6b80', '#8a5a12'], soft: '#e4f2df', softText: '#235c35', frame: '#bfe3a8', tints: ['#e4f2df', '#e0eff3', '#f6eedc'],
+    tallA: 'trai-dat', tallB: 'cay-xanh', pair: 'tua-bin', atom: 'thung-tai-che', long: 'canh-tre', mol: 'binh-tuoi' }),
+  'kinh-doanh': veTay({ cycle: ['#3d4fc4', '#b8503a', '#1f6f6a'], soft: '#e8ebfb', softText: '#2f3c9a', frame: '#c3cbf5', tints: ['#e8ebfb', '#fbe9e4', '#e2f2f0'],
+    tallA: 'may-tinh', tallB: 'bang-trinh-bay', pair: 'ten-lua', atom: 'bia-ten', long: 'but-may', mol: 'ca-phe' }),
+  'le-hoi': veTay({ cycle: ['#b23020', '#8a5a10', '#2d6a55'], soft: '#fde8e0', softText: '#8f2418', frame: '#ffcf80', tints: ['#fde8e0', '#fbf0d8', '#e3f1ea'],
+    tallA: 'bo-hoa', tallB: 'bong-bay', pair: 'hop-qua', atom: 'banh-kem', long: 'den-long', mol: 'trong-hoi' }),
   'tam-ly': {
     cycle: ['#a8532f', '#4f7350', '#4c5c92'], onCycle: ['#ffffff', '#ffffff', '#ffffff'],
     cards: 'tint', tints: ['#f8e4da', '#e6eee3', '#fbefd3'], card: '#fffaf5', line: '#f0ddd0', radius: 40, rowCards: true, round: true,

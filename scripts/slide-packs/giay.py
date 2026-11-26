@@ -92,6 +92,26 @@ def the_duc():
     hat_giay('the-duc', '#f8faf6', ['#ecefea', '#e6eae4', '#eef1ec'], 41)
 
 
+def mam_non():
+    hat_giay('mam-non', '#fffbf5', ['#f2eee8', '#ece8e2', '#f4f1ec'], 43)
+
+
+def sinh_hoat_lop():
+    hat_giay('sinh-hoat-lop', '#fbf9f4', ['#eeece5', '#e8e6df', '#f1efe9'], 47)
+
+
+def moi_truong():
+    hat_giay('moi-truong', '#f7faf4', ['#ecefe8', '#e6eae2', '#eef1ea'], 53)
+
+
+def kinh_doanh():
+    hat_giay('kinh-doanh', '#f9f9fb', ['#ececf0', '#e6e6ec', '#efeff3'], 59)
+
+
+def le_hoi():
+    hat_giay('le-hoi', '#fffaf4', ['#f2ede7', '#ece7e1', '#f4f0eb'], 61)
+
+
 def tin_hoc():
     im = Image.new('RGB', (W * S, H * S), '#f8f7fc')
     d = ImageDraw.Draw(im)
@@ -134,3 +154,8 @@ lich_su()
 cong_nghe()
 nghe_thuat()
 the_duc()
+mam_non()
+sinh_hoat_lop()
+moi_truong()
+kinh_doanh()
+le_hoi()
