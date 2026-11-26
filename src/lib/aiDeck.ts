@@ -86,7 +86,7 @@ export interface DeckPlan {
   theme?: string
   /** chế độ Chuyên nghiệp: bộ tạp chí dự phòng; còn trường này nghĩa là chưa chọn kiểu */
   themeMagazine?: string
-  /** chế độ Chuyên nghiệp: bộ tranh truyền thống, chỉ có khi hợp chủ đề */
+  /** chế độ Chuyên nghiệp: bộ tranh truyền thống, chỉ có ở môn đã có bộ (proPlan đặt) */
   themeTranh?: string
   audience?: string
   /** phong cách trình bày, đưa vào prompt sinh từng slide */
@@ -282,10 +282,9 @@ export function proPlan(plan: DeckPlan, style?: ProStyle): DeckPlan {
     proThemesFor(kind).some((t) => t.id === id) ? id : fallback
   const theme = pick('doodle', plan.theme, 'trung-tinh-ve-tay')
   const themeMagazine = pick('magazine', plan.themeMagazine ?? plan.theme, proThemesFor('magazine')[0].id!)
-  // bộ tranh không có fallback: model bỏ trống nghĩa là chủ đề không hợp, câu hỏi kiểu sẽ ẩn lựa chọn này
-  const themeTranh = !TRANH_ENABLED ? undefined
-    : [plan.themeTranh, plan.theme].find((id) => proThemesFor('tranh').some((t) => t.id === id))
-      ?? (style === 'tranh' ? 'co-dien-do' : undefined)
+  // môn chưa có bộ tranh thì để trống, câu hỏi kiểu ẩn lựa chọn đó; người dùng gõ thẳng kiểu thì vẫn dùng bộ đang có
+  const themeTranh = (isBiology(plan) ? 'tranh-sinh-hoc' : TRANH_BY_SUBJECT[plan.subject ?? ''])
+    ?? (style === 'tranh' ? 'co-dien-do' : undefined)
   const both = { ...plan, theme, themeMagazine, themeTranh, design: undefined, stylePack: 'editorial', decorKit: 'toi-gian', slides }
   return style ? withProStyle(both, style) : both
 }
@@ -368,13 +367,11 @@ export function parseDeckPlan(raw: string): DeckPlan | null {
     const resolvedKit = isDecorKitId(kitId) ? kitId : (design?.decorKit && isDecorKitId(design.decorKit) ? design.decorKit : undefined)
 
     const magazineId = resolveThemeId(text(source.themeMagazine, 40))
-    const tranhId = resolveThemeId(text(source.themeTranh, 40))
 
     return {
       title,
       theme: resolvedTheme,
       ...(magazineId ? { themeMagazine: magazineId } : {}),
-      ...(tranhId ? { themeTranh: tranhId } : {}),
       ...(design ? { design: design.id } : {}),
       ...(resolvedPack ? { stylePack: resolvedPack } : {}),
       ...(resolvedKit ? { decorKit: resolvedKit } : {}),
@@ -428,14 +425,21 @@ const styleOfTheme = (id = ''): ProStyle =>
 
 export const proThemesFor = (style: ProStyle) => PRO_THEMES.filter((t) => styleOfTheme(t.id) === style)
 
-/** tạm ẩn kiểu "Tranh truyền thống" tới khi có thêm bộ; bật lại thì đổi thành true */
-const TRANH_ENABLED: boolean = false
+/** kiểu "Học thuật" (id nội bộ 'tranh') chỉ mở cho môn đã có bộ (id môn ở slideSubjects.ts); thêm bộ thì khai ở đây */
+const TRANH_BY_SUBJECT: Record<string, string> = { van: 'co-dien-do', 'lich-su': 'tranh-su-do' }
+
+/** Lí, Hoá, Sinh chung một môn nên bộ Sinh nhận riêng theo tên bài ("tế bào quang điện" là bài Lí) */
+const BIOLOGY = /sinh học|tế bào(?! quang điện)|di truyền|\badn\b|\bdna\b|nhiễm sắc|nguyên phân|giảm phân|quang hợp|vi sinh|vi khuẩn|thực vật|động vật|sinh thái|tiến ho[áa]|cơ thể người|hệ tuần hoàn|hệ tiêu ho|hệ hô hấp|hệ thần kinh/iu
+
+const isBiology = (plan: DeckPlan) =>
+  ['khtn', 'khac', undefined].includes(plan.subject) && BIOLOGY.test(`${plan.title ?? ''} ${plan.audience ?? ''}`.normalize('NFC'))
 
 /** đọc kiểu slide trong lời người dùng (câu yêu cầu hoặc câu trả lời panel hỏi) */
 export function proStyleOf(text: string): ProStyle | undefined {
   if (/doodle|vẽ tay/iu.test(text)) return 'doodle'
   if (/(?:kiểu|dạng|phong cách|mẫu|:)\s*tạp chí/iu.test(text)) return 'magazine'
-  if (TRANH_ENABLED && /(?:kiểu|dạng|phong cách|mẫu|:)\s*tranh truyền thống/iu.test(text)) return 'tranh'
+  // "học thuật" chỉ nhận từ câu trả lời của panel (sau dấu ":"), vì "phong cách học thuật" thường là nói về giọng văn
+  if (/:\s*học thuật|(?:kiểu|dạng|phong cách|mẫu|:)\s*tranh truyền thống/iu.test(text)) return 'tranh'
   return undefined
 }
 

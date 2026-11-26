@@ -119,7 +119,7 @@ export function defaultDecorKit(stylePack?: string, subject?: string): string {
   if (stylePack === 'keynote' || stylePack === 'bold' || stylePack === 'bento') return 'hinh-hoc'
   if (subject === 'toan' || subject === 'tin') return 'hinh-hoc'
   if (subject === 'khtn') return 'la-xanh'
-  if (subject === 'van' || subject === 'su-dia') return 'hoa-diu'
+  if (subject === 'van' || subject === 'lich-su' || subject === 'dia-li') return 'hoa-diu'
   return 've-tay'
 }
 

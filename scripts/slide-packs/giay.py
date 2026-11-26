@@ -48,6 +48,10 @@ def hat_giay(name, nen, hat, seed):
     save(im, name)
 
 
+def su_do():
+    hat_giay('su-do', '#f1efea', ['#e2ded6', '#d9d5cc', '#e9e6df'], 110)
+
+
 def vat_ly():
     hat_giay('vat-ly', '#fbfaf6', ['#eeede8', '#e8e8e3', '#f1f0eb'], 11)
 
@@ -204,3 +208,4 @@ y_te()
 giao_thong()
 gia_dinh()
 trung_tinh()
+su_do()

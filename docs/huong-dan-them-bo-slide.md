@@ -5,7 +5,7 @@ Ba kiểu, người dùng chọn sau khi duyệt dàn ý:
 | Kiểu | Id | Cần gì |
 |---|---|---|
 | **Doodle (vẽ tay)** | mọi id không thuộc hai nhóm dưới (các bộ `*-ve-tay` + bộ minh hoạ cũ) | 7 ảnh AI mỗi bộ |
-| **Tranh truyền thống** | `tranh-*`, cùng `co-dien-do`, `dan-gian` | 7 ảnh AI mỗi bộ; JSON ghi `"kieu": "tranh"` |
+| **Học thuật** (trong mã là `tranh`) | `tranh-*`, cùng `co-dien-do`, `dan-gian` | ảnh AI; JSON ghi `"kieu": "tranh"`. Chỉ hiện ở môn khai trong `TRANH_BY_SUBJECT` (`src/lib/aiDeck.ts`): Văn dùng `co-dien-do`, Lịch sử dùng `tranh-su-do`, bài Sinh (nhận theo tên bài, `isBiology`) dùng `tranh-sinh-hoc` |
 | **Tạp chí** | `tap-chi-*` (8 bộ) | chỉ màu, không cần ảnh |
 
 Việc phân nhóm theo tiền tố là tự động (`proThemesFor` trong `src/lib/aiDeck.ts`). Thêm bộ không phải sửa prompt bằng tay, nhưng **phải chạy `npm run build:prompts`** vì catalog bộ màu nằm trong prompt.
@@ -75,7 +75,7 @@ File ZIP là dữ liệu ngoài: giải nén vào thư mục trống mới (scra
 
 Viết file JSON theo `scripts/slide-packs/mau-bo.json` (nhiều bộ trong một mảng). Lưu ý:
 
-- `key` không dấu, gạch nối; theme id sẽ là `<key>-ve-tay`, hoặc `tranh-<key>` nếu ghi `"kieu": "tranh"` (tranh truyền thống; lúc xem thử cũng dùng id này, và prompt vẽ ảnh ghi nét mong muốn thay cho đoạn "doodle" ở mục 2).
+- `key` không dấu, gạch nối; theme id sẽ là `<key>-ve-tay`, hoặc `tranh-<key>` nếu ghi `"kieu": "tranh"` (kiểu Học thuật; lúc xem thử cũng dùng id này, và prompt vẽ ảnh ghi nét mong muốn thay cho đoạn "doodle" ở mục 2).
 - `fg` trên trắng tương phản ≥ 7; `ink`, `muted` ≥ 4.5 (`test:slide-pro` kiểm). `accent`, `cycle` đủ đậm để đọc.
 - `soft` nền nhạt của nhãn, `softText` chữ trên nền đó; `frame` màu mảng đốm góc (nhạt); `dots` ba màu hạt giấy gần `bg`; `seed` một số chưa dùng (đã dùng đến 101).
 - `tags` quyết định AI chọn bộ nào: ghi chủ đề cụ thể, bỏ tag trùng ở bộ cũ nếu bộ mới hợp hơn.

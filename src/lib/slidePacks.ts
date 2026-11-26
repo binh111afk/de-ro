@@ -7,7 +7,7 @@
 import type { SlideElement } from '@/store/docs'
 import type { SlideLayoutContent } from './slideLayouts'
 
-export type SlidePackId = 'co-dien' | 'dan-gian' | 'khoa-hoc' | 'toan' | 'vat-ly' | 'hoa-hoc' | 'tin-hoc' | 'tam-ly' | 'sinh-hoc' | 'ngu-van' | 'dia-li' | 'tieng-anh' | 'kinh-te-phap-luat' | 'lich-su' | 'cong-nghe' | 'nghe-thuat' | 'the-duc' | 'mam-non' | 'sinh-hoat-lop' | 'moi-truong' | 'kinh-doanh' | 'le-hoi' | 'quoc-phong' | 'huong-nghiep' | 'ngoai-ngu' | 'du-lich' | 'dinh-duong' | 'y-te' | 'giao-thong' | 'gia-dinh' | 'trung-tinh'
+export type SlidePackId = 'co-dien' | 'dan-gian' | 'khoa-hoc' | 'toan' | 'vat-ly' | 'hoa-hoc' | 'tin-hoc' | 'tam-ly' | 'sinh-hoc' | 'ngu-van' | 'dia-li' | 'tieng-anh' | 'kinh-te-phap-luat' | 'lich-su' | 'cong-nghe' | 'nghe-thuat' | 'the-duc' | 'mam-non' | 'sinh-hoat-lop' | 'moi-truong' | 'kinh-doanh' | 'le-hoi' | 'quoc-phong' | 'huong-nghiep' | 'ngoai-ngu' | 'du-lich' | 'dinh-duong' | 'y-te' | 'giao-thong' | 'gia-dinh' | 'trung-tinh' | 'su-do' | 'sinh-hoc-ht'
 
 export const PACK_COLORS = {
   'co-dien': { background: '#8b0000', fg: '#8b0000', ink: '#8b0000', accent: '#8b0000', muted: '#7a3b2e', surface: '#fdeed3', panel: '#f7e2bd', onAccent: '#fdeed3' },
@@ -39,6 +39,8 @@ export const PACK_COLORS = {
   'giao-thong': { background: '#fafaf7', fg: '#40465a', ink: '#27406b', accent: '#b83a2c', muted: '#656b7a', surface: '#ffffff', panel: '#e6eefa', onAccent: '#ffffff' },
   'gia-dinh': { background: '#fcf8f5', fg: '#51403f', ink: '#6e3340', accent: '#a8403c', muted: '#77696a', surface: '#ffffff', panel: '#fbe8e6', onAccent: '#ffffff' },
   'trung-tinh': { background: '#fbf9f4', fg: '#3b4a58', ink: '#27405a', accent: '#a84e2c', muted: '#5f6c77', surface: '#ffffff', panel: '#e4eef0', onAccent: '#ffffff' },
+  'su-do': { background: '#f1efea', fg: '#6b1a24', ink: '#760015', accent: '#760015', muted: '#7d4a50', surface: '#ffffff', panel: '#eadfdc', onAccent: '#ffffff' },
+  'sinh-hoc-ht': { background: '#fbf6f2', fg: '#34402f', ink: '#27401f', accent: '#4f7a3a', muted: '#5f6b58', surface: '#ffffff', panel: '#c8d89a', onAccent: '#ffffff' },
   'tin-hoc': { background: '#f8f7fc', fg: '#3a3560', ink: '#241d4d', accent: '#5a3ee0', muted: '#635d85', surface: '#ffffff', panel: '#ece8fd', onAccent: '#ffffff' },
   'tam-ly': { background: '#fbf4ec', fg: '#53392f', ink: '#5a2c1c', accent: '#a8532f', muted: '#7d6257', surface: '#fffaf5', panel: '#f8e4da', onAccent: '#ffffff' },
 } as const
@@ -111,6 +113,8 @@ const ART: Record<string, [number, number]> = {
   'gia-dinh/hat-3': [184, 184], 'gia-dinh/khan-len': [326, 540], 'gia-dinh/khung-anh': [540, 406], 'gia-dinh/mang': [540, 229], 'gia-dinh/ngoi-nha': [540, 458],
   'trung-tinh/bong-den': [506, 540], 'trung-tinh/bong-thoai': [540, 512], 'trung-tinh/but-chi': [144, 540], 'trung-tinh/hat-1': [254, 161], 'trung-tinh/hat-2': [158, 204],
   'trung-tinh/hat-3': [208, 207], 'trung-tinh/kinh-lup': [306, 540], 'trung-tinh/mang': [540, 229], 'trung-tinh/may-bay-giay': [540, 275], 'trung-tinh/ngoi-sao': [540, 523],
+  'su-do/nui-song': [1600, 388], 'su-do/dai-song': [1600, 70], 'su-do/cuon-thu': [840, 449], 'su-do/sach-but': [840, 529], 'su-do/ban-tac-chien': [1600, 437],
+  'sinh-hoc-ht/cum-bia': [571, 1000], 'sinh-hoc-ht/dai-chan': [1400, 175], 'sinh-hoc-ht/kinh-hien-vi': [353, 560], 'sinh-hoc-ht/te-bao': [840, 542],
   // het dot 2
 }
 
@@ -883,6 +887,301 @@ function study(pack: StudyId, id: string, c: SlideLayoutContent, kit: Kit): Buil
 }
 
 /* ------------------------------------------------------------------ *
+ * Sử đỏ: tiêu đề cao đậm, đỏ trầm trên giấy, hoa văn nét mảnh
+ * ------------------------------------------------------------------ */
+function suDo(id: string, c: SlideLayoutContent, { title, body }: Kit, standard: () => SlideElement[]): Built {
+  const red = PACK_COLORS['su-do'].ink
+  const fg = PACK_COLORS['su-do'].fg
+  const paper = full('su-do/giay')
+  const head = { fontWeight: 700, caps: true, lineHeight: 1.08 }
+  const rect = (name: string, x: number, y: number, w: number, h: number, fill: string = red): SlideElement =>
+    ({ id: name, type: 'shape', shape: 'rect', fill, border: 0, shadowLevel: 0, decor: true, ...box(x, y, w, h) })
+  const photo = (b: Box, src = c.image) =>
+    image('image-1', src, b, { imagePosition: { x: c.focusX ?? 50, y: c.focusY ?? 40 }, crop: c.imageCrop })
+  const frieze = (y: number) => c.credit ? null : art(7, 'su-do/dai-song', 0, y, 1280)
+  const long = (c.title?.length ?? 0) > 34
+
+  switch (id) {
+    case 'photo-full': {
+      if (c.image) return [
+        paper,
+        photo(box(660, 0, 620, 720)),
+        body('kicker', upper(c.kicker), box(70, 70, 540, 56), 22, fg, { fontWeight: 600 }),
+        title('title', c.title, box(70, 150, 550, 330), 86, red, { ...head, valign: 'middle' }),
+        body('subtitle', c.subtitle, box(70, 510, 540, 130), 26, fg),
+      ]
+      // bài về chiến tranh dùng bàn tác chiến, còn lại núi sông
+      const war = /chiến tranh|chiến dịch|chiến thắng|kháng chiến|khởi nghĩa|trận /i.test(`${c.title ?? ''} `.normalize('NFC'))
+      const scene = war ? 'su-do/ban-tac-chien' : 'su-do/nui-song'
+      // bàn tác chiến thu vào một chút để đèn bão không chạm dòng phụ bên phải
+      const wide = war ? 1160 : 1280
+      return [
+        paper,
+        art(1, scene, (1280 - wide) / 2, 720 - (wide * ART[scene][1]) / ART[scene][0], wide),
+        title('title', c.title, box(40, 24, 1200, 250), long ? 96 : 150, red, { ...head, align: 'center', valign: 'middle' }),
+        body('kicker', upper(c.kicker), box(44, 292, 320, 170), 28, fg, { fontWeight: 600, lineHeight: 1.35 }),
+        body('subtitle', c.subtitle, war ? box(866, 292, 370, 108) : box(966, 292, 270, 200), 28, fg, { align: 'right', lineHeight: 1.35 }),
+      ]
+    }
+    case 'manifesto': {
+      const text = statement(c)
+      return [
+        rect('decor-kit-0', 0, 0, 1280, 720),
+        rect('decor-kit-2', 110, 96, 1060, 528, PACK_COLORS['su-do'].background),
+        body('kicker', upper(c.kicker), box(180, 126, 920, 62), 28, fg, { fontWeight: 700, align: 'center' }),
+        title('body', text, box(190, 200, 900, 300), text.length > 150 ? 46 : text.length > 80 ? 60 : 76, red, { ...head, caps: false, align: 'center', valign: 'middle', lineHeight: 1.3 }),
+        body('author', c.author, box(190, 518, 900, 66), 32, fg, { align: 'center' }),
+      ]
+    }
+    case 'editorial-text':
+      return [
+        paper,
+        title('title', c.title, box(64, 44, c.image ? 590 : 760, 210), long ? 70 : 104, red, { ...head, valign: 'middle' }),
+        body('kicker', upper(c.kicker), box(68, 252, 560, 58), 26, red, { fontWeight: 700 }),
+        body('body', paragraphs(c), box(68, 318, 640, c.credit ? 330 : 370), 35, fg),
+        c.image ? photo(box(720, 0, 560, 720)) : art(1, 'su-do/cuon-thu', 730, 290, 510),
+      ]
+    case 'rules': {
+      const rows = rowsOf(c)
+      if (!rows.length) return []
+      const n = rows.length
+      const w = 1140 / n
+      const size = n > 4 ? 25 : n > 3 ? 29 : n > 2 ? 31 : 36
+      const short = rows.every((row) => row.value.length <= 4)
+      return [
+        paper,
+        title('title', c.title, box(60, 34, 1160, 180), long ? 68 : 100, red, { ...head, align: 'center', valign: 'middle' }),
+        body('kicker', upper(c.kicker), box(240, 204, 800, 56), 26, red, { fontWeight: 700, align: 'center' }),
+        rect('divider-0', 70, 372, 1140, 4),
+        ...rows.flatMap((row, i) => {
+          const x = 70 + i * w
+          return [
+            title(`item-${i + 1}-value`, row.value, box(x + 4, 262, w - 8, 96), short ? 64 : n > 3 ? 32 : 42, red, { ...head, caps: false, align: 'center', valign: 'middle', lineHeight: 1.15 }),
+            rect(`divider-${i * 2 + 1}`, x + w / 2 - 9, 365, 18, 18),
+            rect(`divider-${i * 2 + 2}`, x + 10, 404, 2, 220, '#b9868c'),
+            body(`item-${i + 1}-label`, row.label, box(x + 22, 404, w - 34, c.credit ? 226 : 232), size, fg, { lineHeight: 1.4 }),
+          ]
+        }),
+        frieze(654),
+      ]
+    }
+    case 'bignum':
+      return [
+        paper,
+        c.image ? photo(box(760, 0, 520, 720)) : art(1, 'su-do/sach-but', 730, 200, 500),
+        body('kicker', upper(c.kicker), box(70, 66, 600, 62), 28, red, { fontWeight: 700 }),
+        title('bignum-value', c.value, box(64, 130, 660, 280), 210, red, { ...head, valign: 'middle', lineHeight: 1 }),
+        title('bignum-label', c.label, box(70, 414, 640, 112), 58, red, { ...head, lineHeight: 1.15 }),
+        body('subtitle', c.subtitle, box(70, 530, 660, FLOOR - 530), 33, fg, { lineHeight: 1.35 }),
+      ]
+    case 'bullets': {
+      const items = list(c.bullets).length ? list(c.bullets) : list(c.body?.split('\n'))
+      if (!items.length) return []
+      const numbered = items.every((item) => /^\d+[.)]\s/.test(item))
+      const text = items.map((item) => (numbered ? item : `• ${item}`)).join('\n')
+      return [
+        paper,
+        title('title', c.title, box(50, 40, 500, 600), long ? 70 : 96, red, { ...head, valign: 'middle' }),
+        rect('divider-1', 580, 80, 2, 560, '#b9868c'),
+        body('bullets', text, box(612, 80, 620, c.credit ? 560 : 580), text.length > 320 ? 29 : text.length > 180 ? 34 : 42, fg, { valign: 'middle', lineHeight: 1.7 }),
+      ]
+    }
+    case 'photo-compare': {
+      const h = c.caption || c.caption2 ? 310 : 410
+      return [
+        paper,
+        title('title', c.title, box(60, 30, 1160, 170), long ? 52 : 76, red, { ...head, align: 'center', valign: 'middle' }),
+        image('image-1', c.image, box(70, 220, 555, h), { crop: c.imageCrop }),
+        image('image-2', c.image2, box(655, 220, 555, h), { crop: c.image2Crop }),
+        body('photo-caption', c.caption, box(70, 546, 555, c.credit ? 104 : 130), 27, fg, { align: 'center', lineHeight: 1.3 }),
+        body('photo-caption-2', c.caption2, box(655, 546, 555, c.credit ? 104 : 130), 27, fg, { align: 'center', lineHeight: 1.3 }),
+      ]
+    }
+    case 'bars': {
+      const chart = standard().filter((el) => el.id.startsWith('bar'))
+      if (!chart.length) return []
+      for (const el of chart) {
+        el.x = 8 + (el.x - 5) * 0.93
+        el.y = 36 + (el.y - 26) * 0.86
+        el.w *= 0.93
+        el.h *= 0.86
+      }
+      return [paper, title('title', c.title, box(60, 30, 1160, 190), long ? 52 : 76, red, { ...head, align: 'center', valign: 'middle' }), ...chart]
+    }
+    default: {
+      const elements = standard()
+      return elements.length ? [paper, ...elements] : []
+    }
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * Sinh học (Học thuật): nền kem, mảng xanh lá, thẻ đánh số, hình minh hoạ phẳng
+ * ------------------------------------------------------------------ */
+// dna, cây non còn mượn hình của bộ vẽ tay vì ảnh vẽ riêng chưa đạt
+const BIO_ART = {
+  microscope: 'sinh-hoc-ht/kinh-hien-vi',
+  dna: 'sinh-hoc/dna',
+  cell: 'sinh-hoc-ht/te-bao',
+  sprout: 'sinh-hoc/mam-cay',
+}
+
+/** hình bên cạnh phần chữ, chọn theo tiêu đề; không khớp mảng nào thì dùng tế bào */
+function bioScene(title = ''): { name: string; w: number } {
+  const t = ` ${title} `.normalize('NFC').toLocaleLowerCase('vi')
+  if (/adn|dna| gen |di truyền|nhiễm sắc|đột biến|tiến ho|tiến hó/.test(t)) return { name: BIO_ART.dna, w: 190 }
+  if (/thực vật|quang hợp| cây | rễ | lá |nảy mầm|sinh trưởng/.test(t)) return { name: BIO_ART.sprout, w: 220 }
+  if (/kính hiển vi|thực hành|thí nghiệm|quan sát|vi khuẩn|vi sinh|virus|virut/.test(t)) return { name: BIO_ART.microscope, w: 300 }
+  return { name: BIO_ART.cell, w: 460 }
+}
+
+/** đặt hình vào giữa khung bên phải, cao tối đa 520 */
+function bioSide(title: string | undefined): SlideElement {
+  const { name, w } = bioScene(title)
+  const [aw, ah] = ART[name]
+  const wide = Math.min(w, (520 * aw) / ah)
+  return art(1, name, 1010 - wide / 2, 360 - (wide * ah) / aw / 2, wide)
+}
+
+function sinhHocHt(id: string, c: SlideLayoutContent, { title, body }: Kit, standard: () => SlideElement[]): Built {
+  const { background: cream, ink, fg, panel: sage, accent: leaf } = PACK_COLORS['sinh-hoc-ht']
+  const head = { fontWeight: 800, caps: false, lineHeight: 1.12 }
+  const long = (c.title?.length ?? 0) > 34
+  const shape = (n: string, x: number, y: number, w: number, h: number, fill: string, extra: Partial<SlideElement> = {}): SlideElement =>
+    ({ id: n, type: 'shape', shape: 'rect', fill, border: 0, shadowLevel: 0, decor: true, ...box(x, y, w, h), ...extra })
+  const card = (n: string, x: number, y: number, w: number, h: number, fill: string = sage) =>
+    shape(n, x, y, w, h, fill, { shape: 'round', radius: 14 })
+  const dot = (n: string, x: number, y: number, d: number, fill: string = sage) => shape(n, x, y, d, d, fill, { shape: 'ellipse' })
+  const paper = shape('decor-kit-0', 0, 0, 1280, 720, cream, { locked: true })
+  const green = shape('decor-kit-0', 0, 0, 1280, 720, sage, { locked: true })
+  const photo = (b: Box) =>
+    image('image-1', c.image, b, { imagePosition: { x: c.focusX ?? 50, y: c.focusY ?? 40 }, crop: c.imageCrop })
+  // cụm hình bên phải của bìa
+  const cover = () => art(1, 'sinh-hoc-ht/cum-bia', 856, 30, (660 * ART['sinh-hoc-ht/cum-bia'][0]) / ART['sinh-hoc-ht/cum-bia'][1])
+  // dải hình chân trang
+  const strip = () => c.credit ? null : art(7, 'sinh-hoc-ht/dai-chan', 180, 604, 920)
+  // khung mép tròn như thành tế bào
+  const scallop = () => [
+    card('decor-kit-1', 130, 110, 1020, 500, cream),
+    ...Array.from({ length: 11 }, (_, i) => [dot(`decor-kit-${30 + i}`, 128 + i * 92, 70, 104, cream), dot(`decor-kit-${50 + i}`, 128 + i * 92, 546, 104, cream)]).flat(),
+    ...Array.from({ length: 5 }, (_, i) => [dot(`decor-kit-${70 + i}`, 84, 128 + i * 90, 104, cream), dot(`decor-kit-${80 + i}`, 1092, 128 + i * 90, 104, cream)]).flat(),
+  ]
+
+  switch (id) {
+    case 'photo-full':
+      return [
+        paper,
+        c.image ? photo(box(760, 0, 520, 720)) : cover(),
+        body('kicker', upper(c.kicker), box(84, 96, 640, 60), 28, leaf, { fontWeight: 800 }),
+        title('title', c.title, box(80, 168, 690, 340), long ? 72 : 104, ink, { ...head, valign: 'middle' }),
+        c.subtitle ? card('decor-kit-9', 80, 532, 680, 96) : null,
+        body('subtitle', c.subtitle, box(104, 540, 634, 80), 30, fg, { valign: 'middle', fontWeight: 600, lineHeight: 1.3 }),
+      ]
+    case 'manifesto': {
+      const text = statement(c)
+      return [
+        green,
+        ...scallop(),
+        body('kicker', upper(c.kicker), box(220, 138, 840, 58), 28, leaf, { fontWeight: 800, align: 'center' }),
+        title('body', text, box(210, 208, 860, 300), text.length > 150 ? 42 : text.length > 80 ? 54 : 68, ink, { ...head, align: 'center', valign: 'middle', lineHeight: 1.3 }),
+        body('author', c.author, box(220, 522, 840, 60), 30, fg, { align: 'center' }),
+      ]
+    }
+    case 'editorial-text':
+      return [
+        paper,
+        c.image ? photo(box(760, 0, 520, 720)) : bioSide(c.title),
+        body('kicker', upper(c.kicker), box(84, 48, 640, 66), 28, leaf, { fontWeight: 800 }),
+        title('title', c.title, box(80, 112, 660, 180), long ? 60 : 80, ink, { ...head, valign: 'middle' }),
+        shape('divider-1', 84, 308, 140, 8, sage),
+        body('body', paragraphs(c), box(84, 340, 660, c.credit ? 308 : 340), 34, fg),
+      ]
+    case 'rules': {
+      const rows = rowsOf(c)
+      if (!rows.length) return []
+      const n = rows.length
+      const gap = n > 4 ? 18 : 28
+      const w = (1140 - gap * (n - 1)) / n
+      const size = n > 4 ? 28 : n > 3 ? 34 : n > 2 ? 36 : 40
+      const short = rows.every((row) => row.value.length <= 4)
+      return [
+        paper,
+        title('title', c.title, box(60, 28, 1160, 130), long ? 56 : 72, ink, { ...head, align: 'center', valign: 'middle' }),
+        body('kicker', upper(c.kicker), box(240, 152, 800, 58), 26, leaf, { fontWeight: 800, align: 'center' }),
+        ...rows.flatMap((row, i) => {
+          const x = 70 + i * (w + gap)
+          const tone = i % 2 ? leaf : sage
+          const on = i % 2 ? '#ffffff' : ink
+          return [
+            short ? dot(`divider-${i * 2 + 1}`, x + w / 2 - 46, 214, 92, tone) : card(`divider-${i * 2 + 1}`, x, 214, w, 92, tone),
+            title(`item-${i + 1}-value`, row.value, box(x + 6, 218, w - 12, 84), short ? 42 : n > 3 ? 28 : 36, on, { ...head, align: 'center', valign: 'middle' }),
+            card(`divider-${i * 2 + 2}`, x, 322, w, 276),
+            body(`item-${i + 1}-label`, row.label, box(x + 16, 340, w - 32, 244), size, fg, { align: 'center', valign: 'middle', lineHeight: 1.35 }),
+          ]
+        }),
+        strip(),
+      ]
+    }
+    case 'bignum':
+      return [
+        green,
+        ...(c.image ? [] : scallop()),
+        ...(c.image ? [photo(box(760, 0, 520, 720))] : []),
+        ...(c.image ? [
+          body('kicker', upper(c.kicker), box(70, 66, 640, 60), 28, ink, { fontWeight: 800 }),
+          title('bignum-value', c.value, box(64, 130, 660, 260), 190, ink, { ...head, valign: 'middle', lineHeight: 1 }),
+          title('bignum-label', c.label, box(70, 400, 640, 110), 52, ink, head),
+          body('subtitle', c.subtitle, box(70, 526, 660, FLOOR - 526), 30, fg, { lineHeight: 1.35 }),
+        ] : [
+          body('kicker', upper(c.kicker), box(220, 118, 840, 66), 30, leaf, { fontWeight: 800, align: 'center' }),
+          title('bignum-value', c.value, box(220, 180, 840, 210), 170, ink, { ...head, align: 'center', valign: 'middle', lineHeight: 1 }),
+          title('bignum-label', c.label, box(220, 396, 840, 96), 48, ink, { ...head, align: 'center', valign: 'middle' }),
+          body('subtitle', c.subtitle, box(240, 500, 800, 90), 30, fg, { align: 'center', lineHeight: 1.35 }),
+        ]),
+      ]
+    case 'bullets': {
+      const items = list(c.bullets).length ? list(c.bullets) : list(c.body?.split('\n'))
+      if (!items.length) return []
+      const numbered = items.every((item) => /^\d+[.)]\s/.test(item))
+      const text = items.map((item) => (numbered ? item : `• ${item}`)).join('\n')
+      return [
+        green,
+        card('decor-kit-8', 556, 50, 674, c.credit ? 596 : 620, cream),
+        title('title', c.title, box(60, 90, 456, 410), long ? 56 : 72, ink, { ...head, valign: 'middle' }),
+        art(1, BIO_ART.microscope, 70, 500, 120),
+        body('bullets', text, box(590, 76, 606, c.credit ? 544 : 568), text.length > 320 ? 29 : text.length > 180 ? 34 : 40, fg, { valign: 'middle', lineHeight: 1.65 }),
+      ]
+    }
+    case 'photo-compare': {
+      const h = c.caption || c.caption2 ? 310 : 410
+      return [
+        paper,
+        title('title', c.title, box(60, 30, 1160, 170), long ? 52 : 68, ink, { ...head, align: 'center', valign: 'middle' }),
+        image('image-1', c.image, box(70, 220, 555, h), { crop: c.imageCrop, shape: 'round', radius: 18, border: 8, borderColor: sage }),
+        image('image-2', c.image2, box(655, 220, 555, h), { crop: c.image2Crop, shape: 'round', radius: 18, border: 8, borderColor: sage }),
+        body('photo-caption', c.caption, box(70, 546, 555, c.credit ? 104 : 130), 27, fg, { align: 'center', lineHeight: 1.3 }),
+        body('photo-caption-2', c.caption2, box(655, 546, 555, c.credit ? 104 : 130), 27, fg, { align: 'center', lineHeight: 1.3 }),
+      ]
+    }
+    case 'bars': {
+      const chart = standard().filter((el) => el.id.startsWith('bar'))
+      if (!chart.length) return []
+      for (const el of chart) {
+        el.x = 8 + (el.x - 5) * 0.93
+        el.y = 36 + (el.y - 26) * 0.86
+        el.w *= 0.93
+        el.h *= 0.86
+      }
+      return [paper, title('title', c.title, box(60, 30, 1160, 190), long ? 52 : 68, ink, { ...head, align: 'center', valign: 'middle' }), ...chart]
+    }
+    default: {
+      const elements = standard()
+      return elements.length ? [paper, ...elements] : []
+    }
+  }
+}
+
+/* ------------------------------------------------------------------ *
  * Gạch đầu dòng, so sánh ảnh, biểu đồ cột: cùng khung và hình của bộ
  * ------------------------------------------------------------------ */
 function shared(pack: SlidePackId, id: string, c: SlideLayoutContent, kit: Kit, standard: () => SlideElement[]): Built | null {
@@ -964,6 +1263,8 @@ function backdrop(pack: SlidePackId): SlideElement[] {
   switch (pack) {
     case 'co-dien': return [full('co-dien/tem-day'), art(1, 'co-dien/goc-hoa-van', 44, 36, 110)]
     case 'dan-gian': return [full('dan-gian/giay-o'), art(1, 'dan-gian/chuon-chuon', 1130, 6, 110)]
+    case 'su-do': return [full('su-do/giay')]
+    case 'sinh-hoc-ht': return []
   }
 }
 
@@ -977,6 +1278,8 @@ export function composePack(
   const kit = kitOf(text)
   const own = pack === 'co-dien' ? coDien(layoutId, content, kit)
     : pack === 'dan-gian' ? danGian(layoutId, content, kit)
+      : pack === 'su-do' ? suDo(layoutId, content, kit, standard)
+      : pack === 'sinh-hoc-ht' ? sinhHocHt(layoutId, content, kit, standard)
       : study(pack, layoutId, content, kit)
   const built = own ?? shared(pack, layoutId, content, kit, standard)
   if (built) return built.filter((el): el is SlideElement => Boolean(el))

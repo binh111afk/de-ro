@@ -151,7 +151,9 @@ assert.equal(deck.slides[0].bullets?.length, 1)
   const cases = {
     'Ước chung lớn nhất và cách tìm': 'toan',
     'Phân tích nhân vật Chí Phèo': 'van',
-    'Chiến thắng Điện Biên Phủ năm 1954': 'su-dia',
+    'Chiến thắng Điện Biên Phủ năm 1954': 'lich-su',
+    'Văn minh Ai Cập cổ đại': 'lich-su',
+    'Khí hậu và sông ngòi Việt Nam': 'dia-li',
     'Thì hiện tại hoàn thành trong tiếng Anh': 'ngoai-ngu',
     'Vòng lặp for trong Python': 'tin',
     'Phản ứng oxi hoá khử': 'khtn',
@@ -170,4 +172,17 @@ assert.equal(deck.slides[0].bullets?.length, 1)
   assert.ok(pageSystemPrompt(mk({ subject: 'van' }), slides[1], 1).includes('Ngữ văn'), 'prompt từng slide có luật môn')
 }
 
-console.log('test-slide-plan: 9 nhóm kiểm tra đạt')
+/* Bộ "Học thuật": Sinh nhận theo tên bài, Lí và Hoá không được thấy bộ Sinh. */
+{
+  const { proPlan } = await import('../src/lib/aiDeck.ts')
+  const slides = [{ title: 'Mở đầu', layout: 'title' }, { title: 'Hết', layout: 'closing' }]
+  const tranh = (title, subject = 'khtn') => proPlan({ ...parseDeckPlan(JSON.stringify({ title, slides })), subject }).themeTranh
+  assert.equal(tranh('Cấu trúc tế bào'), 'tranh-sinh-hoc')
+  assert.equal(tranh('Hệ sinh thái', 'khac'), 'tranh-sinh-hoc')
+  assert.equal(tranh('Tế bào quang điện'), undefined)
+  assert.equal(tranh('Phản ứng oxi hoá khử'), undefined)
+  assert.equal(tranh('Phòng chống virus máy tính', 'tin'), undefined)
+  assert.equal(tranh('Chiến dịch Điện Biên Phủ', 'lich-su'), 'tranh-su-do')
+}
+
+console.log('test-slide-plan: 10 nhóm kiểm tra đạt')

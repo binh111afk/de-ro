@@ -58,7 +58,7 @@ const styleAskOf = (options: string[]) => ({
 })
 const STYLE_ASK = styleAskOf(['Doodle (vẽ tay)', 'Tạp chí'])
 /** chỉ dùng khi dàn ý có bộ tranh hợp chủ đề (themeTranh) */
-const STYLE_ASK_TRANH = styleAskOf(['Doodle (vẽ tay)', 'Tạp chí', 'Tranh truyền thống'])
+const STYLE_ASK_TRANH = styleAskOf(['Doodle (vẽ tay)', 'Tạp chí', 'Học thuật'])
 
 export type { AiMode, ChatTurn } from './ai/turns'
 

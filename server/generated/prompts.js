@@ -3226,12 +3226,38 @@ var PRO_THEMES = [
     "C\u1ED5 \u0111i\u1EC3n \u0111\u1ECF kem",
     "khung tem th\u01B0 \u0111\u1ECF kem, chim h\u1EA1c, n\xFAi, sen ki\u1EC3u tranh c\u1ED5",
     "co-dien",
-    ["l\u1ECBch s\u1EED Vi\u1EC7t Nam", "c\xE1ch m\u1EA1ng", "ch\xEDnh tr\u1ECB", "t\u01B0 t\u01B0\u1EDFng H\u1ED3 Ch\xED Minh", "truy\u1EC1n th\u1ED1ng d\xE2n t\u1ED9c", "danh nh\xE2n"],
+    ["Ng\u1EEF v\u0103n", "v\u0103n h\u1ECDc Vi\u1EC7t Nam", "th\u01A1", "truy\u1EC7n", "t\xE1c ph\u1EA9m", "t\xE1c gi\u1EA3"],
     "#fdeed3",
     "#8b0000",
     "#8b0000",
     "#2f5d50",
     "Playfair Display",
+    "Be Vietnam Pro"
+  ),
+  packTheme(
+    "tranh-su-do",
+    "S\u1EED \u0111\u1ECF",
+    "\u0111\u1ECF tr\u1EA7m tr\xEAn gi\u1EA5y, ti\xEAu \u0111\u1EC1 cao \u0111\u1EADm, hoa v\u0103n n\xE9t m\u1EA3nh",
+    "su-do",
+    ["l\u1ECBch s\u1EED", "l\u1ECBch s\u1EED Vi\u1EC7t Nam", "l\u1ECBch s\u1EED th\u1EBF gi\u1EDBi", "c\xE1ch m\u1EA1ng", "v\u0103n minh c\u1ED5 \u0111\u1EA1i"],
+    "#f1efea",
+    "#760015",
+    "#760015",
+    "#5a3a3a",
+    "Oswald",
+    "Inter"
+  ),
+  packTheme(
+    "tranh-sinh-hoc",
+    "Sinh h\u1ECDc xanh",
+    "n\u1EC1n kem, m\u1EA3ng xanh l\xE1, th\u1EBB \u0111\xE1nh s\u1ED1, h\xECnh t\u1EBF b\xE0o minh ho\u1EA1 ph\u1EB3ng",
+    "sinh-hoc-ht",
+    ["sinh h\u1ECDc", "t\u1EBF b\xE0o", "di truy\u1EC1n", "vi sinh v\u1EADt", "sinh th\xE1i", "quang h\u1EE3p"],
+    "#fbf6f2",
+    "#27401f",
+    "#4f7a3a",
+    "#349a80",
+    "Montserrat",
     "Be Vietnam Pro"
   ),
   packTheme(
@@ -6358,6 +6384,8 @@ var PACK_COLORS = {
   "giao-thong": { background: "#fafaf7", fg: "#40465a", ink: "#27406b", accent: "#b83a2c", muted: "#656b7a", surface: "#ffffff", panel: "#e6eefa", onAccent: "#ffffff" },
   "gia-dinh": { background: "#fcf8f5", fg: "#51403f", ink: "#6e3340", accent: "#a8403c", muted: "#77696a", surface: "#ffffff", panel: "#fbe8e6", onAccent: "#ffffff" },
   "trung-tinh": { background: "#fbf9f4", fg: "#3b4a58", ink: "#27405a", accent: "#a84e2c", muted: "#5f6c77", surface: "#ffffff", panel: "#e4eef0", onAccent: "#ffffff" },
+  "su-do": { background: "#f1efea", fg: "#6b1a24", ink: "#760015", accent: "#760015", muted: "#7d4a50", surface: "#ffffff", panel: "#eadfdc", onAccent: "#ffffff" },
+  "sinh-hoc-ht": { background: "#fbf6f2", fg: "#34402f", ink: "#27401f", accent: "#4f7a3a", muted: "#5f6b58", surface: "#ffffff", panel: "#c8d89a", onAccent: "#ffffff" },
   "tin-hoc": { background: "#f8f7fc", fg: "#3a3560", ink: "#241d4d", accent: "#5a3ee0", muted: "#635d85", surface: "#ffffff", panel: "#ece8fd", onAccent: "#ffffff" },
   "tam-ly": { background: "#fbf4ec", fg: "#53392f", ink: "#5a2c1c", accent: "#a8532f", muted: "#7d6257", surface: "#fffaf5", panel: "#f8e4da", onAccent: "#ffffff" }
 };
@@ -6669,7 +6697,16 @@ var ART = {
   "trung-tinh/kinh-lup": [306, 540],
   "trung-tinh/mang": [540, 229],
   "trung-tinh/may-bay-giay": [540, 275],
-  "trung-tinh/ngoi-sao": [540, 523]
+  "trung-tinh/ngoi-sao": [540, 523],
+  "su-do/nui-song": [1600, 388],
+  "su-do/dai-song": [1600, 70],
+  "su-do/cuon-thu": [840, 449],
+  "su-do/sach-but": [840, 529],
+  "su-do/ban-tac-chien": [1600, 437],
+  "sinh-hoc-ht/cum-bia": [571, 1e3],
+  "sinh-hoc-ht/dai-chan": [1400, 175],
+  "sinh-hoc-ht/kinh-hien-vi": [353, 560],
+  "sinh-hoc-ht/te-bao": [840, 542]
   // het dot 2
 };
 var box = (x, y, w, h) => ({ x: x / 12.8, y: y / 7.2, w: w / 12.8, h: h / 7.2 });
@@ -7657,6 +7694,275 @@ function study(pack, id, c8, kit) {
       return null;
   }
 }
+function suDo(id, c8, { title, body }, standard) {
+  const red = PACK_COLORS["su-do"].ink;
+  const fg = PACK_COLORS["su-do"].fg;
+  const paper = full("su-do/giay");
+  const head = { fontWeight: 700, caps: true, lineHeight: 1.08 };
+  const rect = (name, x, y, w, h, fill = red) => ({ id: name, type: "shape", shape: "rect", fill, border: 0, shadowLevel: 0, decor: true, ...box(x, y, w, h) });
+  const photo = (b, src = c8.image) => image("image-1", src, b, { imagePosition: { x: c8.focusX ?? 50, y: c8.focusY ?? 40 }, crop: c8.imageCrop });
+  const frieze = (y) => c8.credit ? null : art(7, "su-do/dai-song", 0, y, 1280);
+  const long = (c8.title?.length ?? 0) > 34;
+  switch (id) {
+    case "photo-full": {
+      if (c8.image) return [
+        paper,
+        photo(box(660, 0, 620, 720)),
+        body("kicker", upper(c8.kicker), box(70, 70, 540, 56), 22, fg, { fontWeight: 600 }),
+        title("title", c8.title, box(70, 150, 550, 330), 86, red, { ...head, valign: "middle" }),
+        body("subtitle", c8.subtitle, box(70, 510, 540, 130), 26, fg)
+      ];
+      const war = /chiến tranh|chiến dịch|chiến thắng|kháng chiến|khởi nghĩa|trận /i.test(`${c8.title ?? ""} `.normalize("NFC"));
+      const scene = war ? "su-do/ban-tac-chien" : "su-do/nui-song";
+      const wide = war ? 1160 : 1280;
+      return [
+        paper,
+        art(1, scene, (1280 - wide) / 2, 720 - wide * ART[scene][1] / ART[scene][0], wide),
+        title("title", c8.title, box(40, 24, 1200, 250), long ? 96 : 150, red, { ...head, align: "center", valign: "middle" }),
+        body("kicker", upper(c8.kicker), box(44, 292, 320, 170), 28, fg, { fontWeight: 600, lineHeight: 1.35 }),
+        body("subtitle", c8.subtitle, war ? box(866, 292, 370, 108) : box(966, 292, 270, 200), 28, fg, { align: "right", lineHeight: 1.35 })
+      ];
+    }
+    case "manifesto": {
+      const text = statement(c8);
+      return [
+        rect("decor-kit-0", 0, 0, 1280, 720),
+        rect("decor-kit-2", 110, 96, 1060, 528, PACK_COLORS["su-do"].background),
+        body("kicker", upper(c8.kicker), box(180, 126, 920, 62), 28, fg, { fontWeight: 700, align: "center" }),
+        title("body", text, box(190, 200, 900, 300), text.length > 150 ? 46 : text.length > 80 ? 60 : 76, red, { ...head, caps: false, align: "center", valign: "middle", lineHeight: 1.3 }),
+        body("author", c8.author, box(190, 518, 900, 66), 32, fg, { align: "center" })
+      ];
+    }
+    case "editorial-text":
+      return [
+        paper,
+        title("title", c8.title, box(64, 44, c8.image ? 590 : 760, 210), long ? 70 : 104, red, { ...head, valign: "middle" }),
+        body("kicker", upper(c8.kicker), box(68, 252, 560, 58), 26, red, { fontWeight: 700 }),
+        body("body", paragraphs(c8), box(68, 318, 640, c8.credit ? 330 : 370), 35, fg),
+        c8.image ? photo(box(720, 0, 560, 720)) : art(1, "su-do/cuon-thu", 730, 290, 510)
+      ];
+    case "rules": {
+      const rows = rowsOf(c8);
+      if (!rows.length) return [];
+      const n10 = rows.length;
+      const w = 1140 / n10;
+      const size = n10 > 4 ? 25 : n10 > 3 ? 29 : n10 > 2 ? 31 : 36;
+      const short = rows.every((row) => row.value.length <= 4);
+      return [
+        paper,
+        title("title", c8.title, box(60, 34, 1160, 180), long ? 68 : 100, red, { ...head, align: "center", valign: "middle" }),
+        body("kicker", upper(c8.kicker), box(240, 204, 800, 56), 26, red, { fontWeight: 700, align: "center" }),
+        rect("divider-0", 70, 372, 1140, 4),
+        ...rows.flatMap((row, i) => {
+          const x = 70 + i * w;
+          return [
+            title(`item-${i + 1}-value`, row.value, box(x + 4, 262, w - 8, 96), short ? 64 : n10 > 3 ? 32 : 42, red, { ...head, caps: false, align: "center", valign: "middle", lineHeight: 1.15 }),
+            rect(`divider-${i * 2 + 1}`, x + w / 2 - 9, 365, 18, 18),
+            rect(`divider-${i * 2 + 2}`, x + 10, 404, 2, 220, "#b9868c"),
+            body(`item-${i + 1}-label`, row.label, box(x + 22, 404, w - 34, c8.credit ? 226 : 232), size, fg, { lineHeight: 1.4 })
+          ];
+        }),
+        frieze(654)
+      ];
+    }
+    case "bignum":
+      return [
+        paper,
+        c8.image ? photo(box(760, 0, 520, 720)) : art(1, "su-do/sach-but", 730, 200, 500),
+        body("kicker", upper(c8.kicker), box(70, 66, 600, 62), 28, red, { fontWeight: 700 }),
+        title("bignum-value", c8.value, box(64, 130, 660, 280), 210, red, { ...head, valign: "middle", lineHeight: 1 }),
+        title("bignum-label", c8.label, box(70, 414, 640, 112), 58, red, { ...head, lineHeight: 1.15 }),
+        body("subtitle", c8.subtitle, box(70, 530, 660, FLOOR - 530), 33, fg, { lineHeight: 1.35 })
+      ];
+    case "bullets": {
+      const items = list(c8.bullets).length ? list(c8.bullets) : list(c8.body?.split("\n"));
+      if (!items.length) return [];
+      const numbered = items.every((item) => /^\d+[.)]\s/.test(item));
+      const text = items.map((item) => numbered ? item : `\u2022 ${item}`).join("\n");
+      return [
+        paper,
+        title("title", c8.title, box(50, 40, 500, 600), long ? 70 : 96, red, { ...head, valign: "middle" }),
+        rect("divider-1", 580, 80, 2, 560, "#b9868c"),
+        body("bullets", text, box(612, 80, 620, c8.credit ? 560 : 580), text.length > 320 ? 29 : text.length > 180 ? 34 : 42, fg, { valign: "middle", lineHeight: 1.7 })
+      ];
+    }
+    case "photo-compare": {
+      const h = c8.caption || c8.caption2 ? 310 : 410;
+      return [
+        paper,
+        title("title", c8.title, box(60, 30, 1160, 170), long ? 52 : 76, red, { ...head, align: "center", valign: "middle" }),
+        image("image-1", c8.image, box(70, 220, 555, h), { crop: c8.imageCrop }),
+        image("image-2", c8.image2, box(655, 220, 555, h), { crop: c8.image2Crop }),
+        body("photo-caption", c8.caption, box(70, 546, 555, c8.credit ? 104 : 130), 27, fg, { align: "center", lineHeight: 1.3 }),
+        body("photo-caption-2", c8.caption2, box(655, 546, 555, c8.credit ? 104 : 130), 27, fg, { align: "center", lineHeight: 1.3 })
+      ];
+    }
+    case "bars": {
+      const chart = standard().filter((el) => el.id.startsWith("bar"));
+      if (!chart.length) return [];
+      for (const el of chart) {
+        el.x = 8 + (el.x - 5) * 0.93;
+        el.y = 36 + (el.y - 26) * 0.86;
+        el.w *= 0.93;
+        el.h *= 0.86;
+      }
+      return [paper, title("title", c8.title, box(60, 30, 1160, 190), long ? 52 : 76, red, { ...head, align: "center", valign: "middle" }), ...chart];
+    }
+    default: {
+      const elements = standard();
+      return elements.length ? [paper, ...elements] : [];
+    }
+  }
+}
+var BIO_ART = {
+  microscope: "sinh-hoc-ht/kinh-hien-vi",
+  dna: "sinh-hoc/dna",
+  cell: "sinh-hoc-ht/te-bao",
+  sprout: "sinh-hoc/mam-cay"
+};
+function bioScene(title = "") {
+  const t6 = ` ${title} `.normalize("NFC").toLocaleLowerCase("vi");
+  if (/adn|dna| gen |di truyền|nhiễm sắc|đột biến|tiến ho|tiến hó/.test(t6)) return { name: BIO_ART.dna, w: 190 };
+  if (/thực vật|quang hợp| cây | rễ | lá |nảy mầm|sinh trưởng/.test(t6)) return { name: BIO_ART.sprout, w: 220 };
+  if (/kính hiển vi|thực hành|thí nghiệm|quan sát|vi khuẩn|vi sinh|virus|virut/.test(t6)) return { name: BIO_ART.microscope, w: 300 };
+  return { name: BIO_ART.cell, w: 460 };
+}
+function bioSide(title) {
+  const { name, w } = bioScene(title);
+  const [aw, ah] = ART[name];
+  const wide = Math.min(w, 520 * aw / ah);
+  return art(1, name, 1010 - wide / 2, 360 - wide * ah / aw / 2, wide);
+}
+function sinhHocHt(id, c8, { title, body }, standard) {
+  const { background: cream, ink, fg, panel: sage, accent: leaf } = PACK_COLORS["sinh-hoc-ht"];
+  const head = { fontWeight: 800, caps: false, lineHeight: 1.12 };
+  const long = (c8.title?.length ?? 0) > 34;
+  const shape2 = (n10, x, y, w, h, fill, extra = {}) => ({ id: n10, type: "shape", shape: "rect", fill, border: 0, shadowLevel: 0, decor: true, ...box(x, y, w, h), ...extra });
+  const card = (n10, x, y, w, h, fill = sage) => shape2(n10, x, y, w, h, fill, { shape: "round", radius: 14 });
+  const dot = (n10, x, y, d, fill = sage) => shape2(n10, x, y, d, d, fill, { shape: "ellipse" });
+  const paper = shape2("decor-kit-0", 0, 0, 1280, 720, cream, { locked: true });
+  const green = shape2("decor-kit-0", 0, 0, 1280, 720, sage, { locked: true });
+  const photo = (b) => image("image-1", c8.image, b, { imagePosition: { x: c8.focusX ?? 50, y: c8.focusY ?? 40 }, crop: c8.imageCrop });
+  const cover = () => art(1, "sinh-hoc-ht/cum-bia", 856, 30, 660 * ART["sinh-hoc-ht/cum-bia"][0] / ART["sinh-hoc-ht/cum-bia"][1]);
+  const strip = () => c8.credit ? null : art(7, "sinh-hoc-ht/dai-chan", 180, 604, 920);
+  const scallop = () => [
+    card("decor-kit-1", 130, 110, 1020, 500, cream),
+    ...Array.from({ length: 11 }, (_, i) => [dot(`decor-kit-${30 + i}`, 128 + i * 92, 70, 104, cream), dot(`decor-kit-${50 + i}`, 128 + i * 92, 546, 104, cream)]).flat(),
+    ...Array.from({ length: 5 }, (_, i) => [dot(`decor-kit-${70 + i}`, 84, 128 + i * 90, 104, cream), dot(`decor-kit-${80 + i}`, 1092, 128 + i * 90, 104, cream)]).flat()
+  ];
+  switch (id) {
+    case "photo-full":
+      return [
+        paper,
+        c8.image ? photo(box(760, 0, 520, 720)) : cover(),
+        body("kicker", upper(c8.kicker), box(84, 96, 640, 60), 28, leaf, { fontWeight: 800 }),
+        title("title", c8.title, box(80, 168, 690, 340), long ? 72 : 104, ink, { ...head, valign: "middle" }),
+        c8.subtitle ? card("decor-kit-9", 80, 532, 680, 96) : null,
+        body("subtitle", c8.subtitle, box(104, 540, 634, 80), 30, fg, { valign: "middle", fontWeight: 600, lineHeight: 1.3 })
+      ];
+    case "manifesto": {
+      const text = statement(c8);
+      return [
+        green,
+        ...scallop(),
+        body("kicker", upper(c8.kicker), box(220, 138, 840, 58), 28, leaf, { fontWeight: 800, align: "center" }),
+        title("body", text, box(210, 208, 860, 300), text.length > 150 ? 42 : text.length > 80 ? 54 : 68, ink, { ...head, align: "center", valign: "middle", lineHeight: 1.3 }),
+        body("author", c8.author, box(220, 522, 840, 60), 30, fg, { align: "center" })
+      ];
+    }
+    case "editorial-text":
+      return [
+        paper,
+        c8.image ? photo(box(760, 0, 520, 720)) : bioSide(c8.title),
+        body("kicker", upper(c8.kicker), box(84, 48, 640, 66), 28, leaf, { fontWeight: 800 }),
+        title("title", c8.title, box(80, 112, 660, 180), long ? 60 : 80, ink, { ...head, valign: "middle" }),
+        shape2("divider-1", 84, 308, 140, 8, sage),
+        body("body", paragraphs(c8), box(84, 340, 660, c8.credit ? 308 : 340), 34, fg)
+      ];
+    case "rules": {
+      const rows = rowsOf(c8);
+      if (!rows.length) return [];
+      const n10 = rows.length;
+      const gap = n10 > 4 ? 18 : 28;
+      const w = (1140 - gap * (n10 - 1)) / n10;
+      const size = n10 > 4 ? 28 : n10 > 3 ? 34 : n10 > 2 ? 36 : 40;
+      const short = rows.every((row) => row.value.length <= 4);
+      return [
+        paper,
+        title("title", c8.title, box(60, 28, 1160, 130), long ? 56 : 72, ink, { ...head, align: "center", valign: "middle" }),
+        body("kicker", upper(c8.kicker), box(240, 152, 800, 58), 26, leaf, { fontWeight: 800, align: "center" }),
+        ...rows.flatMap((row, i) => {
+          const x = 70 + i * (w + gap);
+          const tone = i % 2 ? leaf : sage;
+          const on = i % 2 ? "#ffffff" : ink;
+          return [
+            short ? dot(`divider-${i * 2 + 1}`, x + w / 2 - 46, 214, 92, tone) : card(`divider-${i * 2 + 1}`, x, 214, w, 92, tone),
+            title(`item-${i + 1}-value`, row.value, box(x + 6, 218, w - 12, 84), short ? 42 : n10 > 3 ? 28 : 36, on, { ...head, align: "center", valign: "middle" }),
+            card(`divider-${i * 2 + 2}`, x, 322, w, 276),
+            body(`item-${i + 1}-label`, row.label, box(x + 16, 340, w - 32, 244), size, fg, { align: "center", valign: "middle", lineHeight: 1.35 })
+          ];
+        }),
+        strip()
+      ];
+    }
+    case "bignum":
+      return [
+        green,
+        ...c8.image ? [] : scallop(),
+        ...c8.image ? [photo(box(760, 0, 520, 720))] : [],
+        ...c8.image ? [
+          body("kicker", upper(c8.kicker), box(70, 66, 640, 60), 28, ink, { fontWeight: 800 }),
+          title("bignum-value", c8.value, box(64, 130, 660, 260), 190, ink, { ...head, valign: "middle", lineHeight: 1 }),
+          title("bignum-label", c8.label, box(70, 400, 640, 110), 52, ink, head),
+          body("subtitle", c8.subtitle, box(70, 526, 660, FLOOR - 526), 30, fg, { lineHeight: 1.35 })
+        ] : [
+          body("kicker", upper(c8.kicker), box(220, 118, 840, 66), 30, leaf, { fontWeight: 800, align: "center" }),
+          title("bignum-value", c8.value, box(220, 180, 840, 210), 170, ink, { ...head, align: "center", valign: "middle", lineHeight: 1 }),
+          title("bignum-label", c8.label, box(220, 396, 840, 96), 48, ink, { ...head, align: "center", valign: "middle" }),
+          body("subtitle", c8.subtitle, box(240, 500, 800, 90), 30, fg, { align: "center", lineHeight: 1.35 })
+        ]
+      ];
+    case "bullets": {
+      const items = list(c8.bullets).length ? list(c8.bullets) : list(c8.body?.split("\n"));
+      if (!items.length) return [];
+      const numbered = items.every((item) => /^\d+[.)]\s/.test(item));
+      const text = items.map((item) => numbered ? item : `\u2022 ${item}`).join("\n");
+      return [
+        green,
+        card("decor-kit-8", 556, 50, 674, c8.credit ? 596 : 620, cream),
+        title("title", c8.title, box(60, 90, 456, 410), long ? 56 : 72, ink, { ...head, valign: "middle" }),
+        art(1, BIO_ART.microscope, 70, 500, 120),
+        body("bullets", text, box(590, 76, 606, c8.credit ? 544 : 568), text.length > 320 ? 29 : text.length > 180 ? 34 : 40, fg, { valign: "middle", lineHeight: 1.65 })
+      ];
+    }
+    case "photo-compare": {
+      const h = c8.caption || c8.caption2 ? 310 : 410;
+      return [
+        paper,
+        title("title", c8.title, box(60, 30, 1160, 170), long ? 52 : 68, ink, { ...head, align: "center", valign: "middle" }),
+        image("image-1", c8.image, box(70, 220, 555, h), { crop: c8.imageCrop, shape: "round", radius: 18, border: 8, borderColor: sage }),
+        image("image-2", c8.image2, box(655, 220, 555, h), { crop: c8.image2Crop, shape: "round", radius: 18, border: 8, borderColor: sage }),
+        body("photo-caption", c8.caption, box(70, 546, 555, c8.credit ? 104 : 130), 27, fg, { align: "center", lineHeight: 1.3 }),
+        body("photo-caption-2", c8.caption2, box(655, 546, 555, c8.credit ? 104 : 130), 27, fg, { align: "center", lineHeight: 1.3 })
+      ];
+    }
+    case "bars": {
+      const chart = standard().filter((el) => el.id.startsWith("bar"));
+      if (!chart.length) return [];
+      for (const el of chart) {
+        el.x = 8 + (el.x - 5) * 0.93;
+        el.y = 36 + (el.y - 26) * 0.86;
+        el.w *= 0.93;
+        el.h *= 0.86;
+      }
+      return [paper, title("title", c8.title, box(60, 30, 1160, 190), long ? 52 : 68, ink, { ...head, align: "center", valign: "middle" }), ...chart];
+    }
+    default: {
+      const elements = standard();
+      return elements.length ? [paper, ...elements] : [];
+    }
+  }
+}
 function shared(pack, id, c8, kit, standard) {
   if (id !== "bullets" && id !== "photo-compare" && id !== "bars") return null;
   const { title, body } = kit;
@@ -7724,11 +8030,15 @@ function backdrop(pack) {
       return [full("co-dien/tem-day"), art(1, "co-dien/goc-hoa-van", 44, 36, 110)];
     case "dan-gian":
       return [full("dan-gian/giay-o"), art(1, "dan-gian/chuon-chuon", 1130, 6, 110)];
+    case "su-do":
+      return [full("su-do/giay")];
+    case "sinh-hoc-ht":
+      return [];
   }
 }
 function composePack(pack, layoutId, content, text, standard) {
   const kit = kitOf(text);
-  const own = pack === "co-dien" ? coDien(layoutId, content, kit) : pack === "dan-gian" ? danGian(layoutId, content, kit) : study(pack, layoutId, content, kit);
+  const own = pack === "co-dien" ? coDien(layoutId, content, kit) : pack === "dan-gian" ? danGian(layoutId, content, kit) : pack === "su-do" ? suDo(layoutId, content, kit, standard) : pack === "sinh-hoc-ht" ? sinhHocHt(layoutId, content, kit, standard) : study(pack, layoutId, content, kit);
   const built = own ?? shared(pack, layoutId, content, kit, standard);
   if (built) return built.filter((el) => Boolean(el));
   const elements = standard();
@@ -9882,24 +10192,45 @@ var SUBJECT_PACKS = [
     ]
   },
   {
-    id: "su-dia",
-    name: "L\u1ECBch s\u1EED & \u0110\u1ECBa l\xED",
-    keywords: ["lich su", "dia li", "dia ly", "chien tranh", "khoi nghia", "cach mang", "trieu dai", "khi hau", "dan cu", "kinh te", "ban do", "song ngoi", "chien thang", "chien dich", "dien bien phu", "phong kien", "thuc dan"],
+    id: "lich-su",
+    name: "L\u1ECBch s\u1EED",
+    keywords: ["lich su", "chien tranh", "khoi nghia", "cach mang", "khang chien", "trieu dai", "chien thang", "chien dich", "dien bien phu", "phong kien", "thuc dan", "van minh", "co dai"],
     graphicGroups: ["his", "geo", "nat", "people", "lit"],
     themeHint: "giay-am",
     structure: [
-      "B\u1ED1i c\u1EA3nh / v\u1ECB tr\xED, ph\u1EA1m vi",
-      "Di\u1EC5n bi\u1EBFn theo d\xF2ng th\u1EDDi gian (S\u1EED) ho\u1EB7c \u0111\u1EB7c \u0111i\u1EC3m theo v\xF9ng (\u0110\u1ECBa)",
+      "B\u1ED1i c\u1EA3nh l\u1ECBch s\u1EED",
       "Nguy\xEAn nh\xE2n",
+      "Di\u1EC5n bi\u1EBFn theo d\xF2ng th\u1EDDi gian",
       "K\u1EBFt qu\u1EA3, s\u1ED1 li\u1EC7u",
       "\xDD ngh\u0129a, b\xE0i h\u1ECDc",
       "C\u1EE7ng c\u1ED1 v\xE0 li\xEAn h\u1EC7"
     ],
     layouts: ["timeline", "stats", "comparison", "mindmap", "statement", "cards"],
     rules: [
-      "M\u1ED1c th\u1EDDi gian (n\u0103m, ng\xE0y), t\xEAn ri\xEAng v\xE0 s\u1ED1 li\u1EC7u ph\u1EA3i ch\xEDnh x\xE1c; c\xF3 \u0111\u01A1n v\u1ECB \u0111i k\xE8m (km\xB2, tri\u1EC7u ng\u01B0\u1EDDi, %).",
+      "M\u1ED1c th\u1EDDi gian (n\u0103m, ng\xE0y), t\xEAn ri\xEAng v\xE0 s\u1ED1 li\u1EC7u ph\u1EA3i ch\xEDnh x\xE1c.",
       "S\u1EF1 ki\u1EC7n x\u1EBFp theo tr\xECnh t\u1EF1: nguy\xEAn nh\xE2n \u2192 di\u1EC5n bi\u1EBFn \u2192 k\u1EBFt qu\u1EA3 \u2192 \xFD ngh\u0129a.",
       "Kh\xF4ng bi\u1EBFt ch\u1EAFc con s\u1ED1 hay m\u1ED1c th\u1EDDi gian th\xEC n\xEAu kh\xE1i qu\xE1t, \u0111\u1EEBng b\u1ECBa."
+    ]
+  },
+  {
+    id: "dia-li",
+    name: "\u0110\u1ECBa l\xED",
+    keywords: ["dia li", "dia ly", "dia hinh", "khi hau", "dan cu", "kinh te", "ban do", "song ngoi"],
+    graphicGroups: ["geo", "nat", "his", "people", "lit"],
+    themeHint: "giay-am",
+    structure: [
+      "V\u1ECB tr\xED, ph\u1EA1m vi",
+      "\u0110\u1EB7c \u0111i\u1EC3m t\u1EF1 nhi\xEAn",
+      "D\xE2n c\u01B0, kinh t\u1EBF theo v\xF9ng",
+      "S\u1ED1 li\u1EC7u, so s\xE1nh",
+      "Thu\u1EADn l\u1EE3i, kh\xF3 kh\u0103n",
+      "C\u1EE7ng c\u1ED1 v\xE0 li\xEAn h\u1EC7"
+    ],
+    layouts: ["stats", "comparison", "table", "mindmap", "statement", "cards"],
+    rules: [
+      "T\xEAn \u0111\u1ECBa danh v\xE0 s\u1ED1 li\u1EC7u ph\u1EA3i ch\xEDnh x\xE1c; c\xF3 \u0111\u01A1n v\u1ECB (km\xB2, tri\u1EC7u ng\u01B0\u1EDDi, %) v\xE0 n\u0103m c\u1EE7a s\u1ED1 li\u1EC7u.",
+      "Tr\xECnh b\xE0y \u0111\u1EB7c \u0111i\u1EC3m theo v\xF9ng ho\u1EB7c theo th\xE0nh ph\u1EA7n, n\xEAu quan h\u1EC7 nguy\xEAn nh\xE2n v\xE0 h\u1EC7 qu\u1EA3.",
+      "Kh\xF4ng bi\u1EBFt ch\u1EAFc con s\u1ED1 th\xEC n\xEAu kh\xE1i qu\xE1t, \u0111\u1EEBng b\u1ECBa."
     ]
   },
   {
@@ -15091,7 +15422,7 @@ B\xE0i tr\xECnh b\xE0y hi\u1EC7n t\u1EA1i: ${context}`;
 var BOARD_SYSTEM = "B\u1EA1n l\xE0 tr\u1EE3 l\xFD c\u1EE7a gi\xE1o vi\xEAn Vi\u1EC7t Nam \u0111ang gi\u1EA3ng b\xE0i tr\xEAn b\u1EA3ng v\u1EBD \u0111i\u1EC7n t\u1EED (v\u1EBD tay b\u1EB1ng b\xFAt, c\xF3 h\xECnh kh\u1ED1i, m\u0169i t\xEAn, ch\u1EEF, \u0111\u1ED3 th\u1ECB ch\xE8n t\u1EEB c\xF4ng c\u1EE5). Tr\u1EA3 l\u1EDDi b\u1EB1ng ti\u1EBFng Vi\u1EC7t, ng\u1EAFn g\u1ECDn, d\u1EC5 l\xE0m theo khi \u0111ang \u0111\u1EE9ng l\u1EDBp: g\u1EE3i \xFD c\xE1ch v\u1EBD h\xECnh minh ho\u1EA1 t\u1EEBng b\u01B0\u1EDBc, c\xE1ch chia b\u1ED1 c\u1EE5c b\u1EA3ng, v\xED d\u1EE5 ng\u1EAFn gi\u1EA3i \u0111\u01B0\u1EE3c tr\xEAn b\u1EA3ng, c\xE2u h\u1ECFi g\u1EE3i m\u1EDF. C\xF4ng th\u1EE9c to\xE1n trong c\xE2u tr\u1EA3 l\u1EDDi ch\u1EEF vi\u1EBFt b\u1EB1ng LaTeX trong $...$.";
 var BOARD_OPS_GUIDE = '\n\nB\u1EA0N V\u1EBC \u0110\u01AF\u1EE2C L\xCAN B\u1EA2NG. Khi ng\u01B0\u1EDDi d\xF9ng nh\u1EDD v\u1EBD, ghi, \u0111\u1ED5i ho\u1EB7c xo\xE1 th\u1EE9 g\xEC tr\xEAn b\u1EA3ng, CH\u1EC8 tr\u1EA3 v\u1EC1 m\u1ED9t JSON (kh\xF4ng b\u1ECDc markdown): {"say":"b\xE1o ng\u1EAFn \u0111\xE3 l\xE0m g\xEC, d\xF9ng **\u0111\u1EADm** cho \xFD ch\xEDnh, t\u1EEB 3 \xFD tr\u1EDF l\xEAn th\xEC g\u1EA1ch \u0111\u1EA7u d\xF2ng (-) m\u1ED7i \xFD m\u1ED9t d\xF2ng","ops":[...]}. C\xE2u h\u1ECFi b\xECnh th\u01B0\u1EDDng th\xEC tr\u1EA3 l\u1EDDi b\u1EB1ng ch\u1EEF nh\u01B0 th\u01B0\u1EDDng, kh\xF4ng JSON.\nTo\u1EA1 \u0111\u1ED9 l\xE0 \u0111\u01A1n v\u1ECB c\u1EE7a b\u1EA3ng (x sang ph\u1EA3i, y xu\u1ED1ng d\u01B0\u1EDBi), \u0111\u1EB7t h\xECnh trong v\xF9ng \u0111ang nh\xECn th\u1EA5y (xem "V\xF9ng nh\xECn th\u1EA5y"), ch\u1EEBa kho\u1EA3ng c\xE1ch \u0111\u1EC3 kh\xF4ng \u0111\xE8 l\xEAn h\xECnh c\xF3 s\u1EB5n. M\xE0u d\u1EA1ng "#rrggbb". C\xE1c l\u1EC7nh:\n- {"op":"figure","figure":{...c\u1EA5u h\xECnh h\xECnh v\u1EBD, xem danh s\xE1ch b\xEAn d\u01B0\u1EDBi},"x":100,"y":80,"w":360} \u2014 \u0111\u1ED3 th\u1ECB, b\u1EA3ng bi\u1EBFn thi\xEAn, h\xECnh h\u1ECDc, m\u1EA1ch \u0111i\u1EC7n\u2026 v\u1EBD CHU\u1EA8N b\u1EB1ng c\xF4ng c\u1EE5 c\xF3 s\u1EB5n. \u01AFu ti\xEAn l\u1EC7nh n\xE0y cho m\u1ECDi h\xECnh to\xE1n, l\xED, ho\xE1.\n- {"op":"shape","shape":"rectangle|ellipse|diamond","x":0,"y":0,"w":160,"h":90,"stroke":"#1e1e1e","fill":"transparent|#rrggbb","fillStyle":"hachure|solid|glass","strokeStyle":"solid|dashed|dotted","strokeWidth":2,"rough":true,"label":"ch\u1EEF \u1EDF gi\u1EEFa (tu\u1EF3 ch\u1ECDn)"}\n- {"op":"line","arrow":true,"points":[[x1,y1],[x2,y2]],"stroke":"#1e1e1e","strokeStyle":"solid","strokeWidth":2} \u2014 m\u0169i t\xEAn / \u0111\u01B0\u1EDDng th\u1EB3ng / \u0111\u01B0\u1EDDng g\u1EA5p kh\xFAc.\n- {"op":"text","text":"...","x":0,"y":0,"fontSize":24,"color":"#1e1e1e"} \u2014 ch\u1EEF th\u01B0\u1EDDng, kh\xF4ng LaTeX.\n- {"op":"pen","pen":"pencil|ball|fountain|brush|marker|highlight","color":"#1e1e1e","width":2,"points":[[x,y],...]} \u2014 n\xE9t v\u1EBD tay b\u1EB1ng b\xFAt; ho\u1EB7c thay "points" b\u1EB1ng "curve":{"type":"circle|ellipse|wave|star|polygon","cx":0,"cy":0,"r":60,"rx":80,"ry":50,"n":5,"len":300,"amp":20,"points":[[x,y],...]}. Ch\u1EC9 d\xF9ng khi ng\u01B0\u1EDDi d\xF9ng mu\u1ED1n v\u1EBD b\u1EB1ng b\xFAt; h\xECnh ph\u1EE9c t\u1EA1p th\xEC gi\u1EEF \u0111\u01A1n gi\u1EA3n.\n- {"op":"update","id":"<id>","stroke":"#...","fill":"#...","x":0,"y":0,"w":0,"h":0,"text":"..."} \u2014 s\u1EEDa h\xECnh c\xF3 s\u1EB5n (id trong danh s\xE1ch h\xECnh tr\xEAn b\u1EA3ng ho\u1EB7c ph\u1EA7n \u0111ang ch\u1ECDn).\n- {"op":"delete","ids":["<id>",...]}\nC\u1EA5u h\xECnh "figure" (gi\u1ED1ng c\xF4ng c\u1EE5 c\u1EE7a app):\n' + FIGURE_GUIDE;
 var SLIDE_PLAN_SYSTEM = 'B\u1EA1n l\xE0 tr\u1EE3 l\xFD AI c\u1EE7a tr\xECnh so\u1EA1n b\xE0i tr\xECnh b\xE0y ti\u1EBFng Vi\u1EC7t. Nhi\u1EC7m v\u1EE5: L\u1EACP D\xC0N \xDD, ch\u01B0a vi\u1EBFt n\u1ED9i dung chi ti\u1EBFt. Ch\u1EC9 tr\u1EA3 v\u1EC1 DUY NH\u1EA4T m\u1ED9t JSON h\u1EE3p l\u1EC7 (kh\xF4ng b\u1ECDc markdown, kh\xF4ng ch\u1EEF ngo\xE0i JSON):\n{"title":"...","theme":"<id>","stylePack":"<id>","decorKit":"<id>","design":"<id>","subject":"<id>","audience":"...","style":"...","mainIdeas":["..."],"slides":[{"title":"...","layout":"<id>","tone":"theme|soft|accent","kicker":"...","brief":"..."}]}\n\n' + slideCatalogText() + '\n\nQUY T\u1EAEC:\n- N\u1EBFu ng\u01B0\u1EDDi d\xF9ng y\xEAu c\u1EA7u l\xE0m theo m\u1ED9t b\u1ED9 thi\u1EBFt k\u1EBF c\u1EE5 th\u1EC3 (v\xED d\u1EE5 "theo thi\u1EBFt k\u1EBF Thanh l\u1ECBch", "gi\u1ED1ng m\u1EABu b\u1EA3ng \u0111en", "ki\u1EC3u t\u1ED1i gi\u1EA3n"\u2026), h\xE3y \u0111i\u1EC1n "design": "<id>" \u0111\xFAng b\u1ED9 thi\u1EBFt k\u1EBF \u0111\xF3, ch\u1ECDn \u0111\xFAng "theme", "decorKit", "stylePack" t\u01B0\u01A1ng \u1EE9ng v\xE0 b\xE1m theo nh\u1ECBp b\u1ED1 c\u1EE5c c\u1EE7a b\u1ED9.\n- S\u1ED1 slide theo y\xEAu c\u1EA7u; n\u1EBFu kh\xF4ng n\xEAu th\xEC 6\u201310 slide, t\u1ED1i \u0111a 16. M\u1ED7i slide ch\u1EC9 m\u1ED9t \xFD l\u1EDBn; ch\u1ECDn b\u1ED1 c\u1EE5c ch\u1EE9a \u0111\u1EE7 c\xE1c m\u1EE5c ng\u1EAFn li\xEAn quan (v\xED d\u1EE5 5\u20136 th\u1EBB) v\xE0 t\xE1ch slide khi n\u1ED9i dung v\u01B0\u1EE3t gi\u1EDBi h\u1EA1n b\u1ED1 c\u1EE5c.\n- Ch\u1ECDn nh\u1ECBp deck theo n\u1ED9i dung (b\xE0i gi\u1EA3ng / b\xE1o c\xE1o / h\u1ED9i th\u1EA3o / k\u1EC3 chuy\u1EC7n) \u2014 kh\xF4ng d\xF9ng m\u1ED9t chu\u1ED7i c\u1ED1 \u0111\u1ECBnh ki\u1EC3u ti\xEAu \u0111\u1EC1 \u2192 n\u1ED9i dung \u2192 4 th\u1EBB \u2192 \xFD t\u1ED5ng h\u1EE3p \u2192 timeline cho m\u1ECDi \u0111\u1EC1.\n- \u0110a d\u1EA1ng b\u1ED1 c\u1EE5c: kh\xF4ng d\xF9ng c\xF9ng m\u1ED9t layout \u1EDF hai slide li\u1EC1n nhau; deck 6 slide ph\u1EA3i c\xF3 \xEDt nh\u1EA5t 4 layout kh\xE1c nhau; "cards" t\u1ED1i \u0111a 1 l\u1EA7n trong 6 slide; ch\u1EC9 d\xF9ng layout c\u1EA7n d\u1EEF li\u1EC7u (table, stats, stat-image, quiz) khi n\u1ED9i dung th\u1EADt c\xF3 d\u1EEF li\u1EC7u.\n- B\xE1m c\u1EA5u tr\xFAc b\xE0i g\u1EE3i \xFD c\u1EE7a m\xF4n \u0111\xE3 ch\u1ECDn (xem M\xD4N H\u1ECCC) nh\u01B0ng g\u1ED9p/b\u1ECF b\u01B0\u1EDBc n\u1EBFu deck ng\u1EAFn; \u01B0u ti\xEAn layout g\u1EE3i \xFD c\u1EE7a m\xF4n khi n\u1ED9i dung h\u1EE3p.\n- B\xE0i gi\u1EA3ng c\xF3 v\xED d\u1EE5: d\xF9ng "example" cho v\xED d\u1EE5 m\u1EABu c\xF3 l\u1EDDi gi\u1EA3i (\u0111\u1EC1 b\xE0i \u2192 c\xE1c b\u01B0\u1EDBc \u2192 k\u1EBFt lu\u1EADn) v\xE0 "hook" cho m\u1EDF b\xE0i g\u1EE3i m\u1EDF (c\xE2u h\u1ECFi/t\xECnh hu\u1ED1ng) ngay sau slide ti\xEAu \u0111\u1EC1 ho\u1EB7c n\u1ED9i dung b\xE0i.\n- Slide \u0111\u1EA7u d\xF9ng "title"; slide cu\u1ED1i d\xF9ng "closing" ho\u1EB7c "quote" n\u1EBFu ph\xF9 h\u1EE3p.\n- \u01AFu ti\xEAn layout c\xF3 b\u1ED1 c\u1EE5c r\xF5: "agenda" cho t\u1ED5ng quan, "statement" cho m\u1ED9t th\xF4ng \u0111i\u1EC7p l\u1EDBn, "comparison" khi c\xF3 hai m\u1EB7t \u0111\u1ED1i l\u1EADp, "bullets" cho t\u1ED1i \u0111a 6 \xFD ng\u1EAFn.\n- "mindmap" (s\u01A1 \u0111\u1ED3 t\u01B0 duy: ch\u1EE7 \u0111\u1EC1 gi\u1EEFa + 2\u20136 nh\xE1nh) d\xF9ng \u0111\u1EC3 t\u1ED5ng k\u1EBFt/h\u1EC7 th\u1ED1ng ho\xE1 ki\u1EBFn th\u1EE9c ho\u1EB7c khi ng\u01B0\u1EDDi d\xF9ng y\xEAu c\u1EA7u s\u01A1 \u0111\u1ED3 t\u01B0 duy; t\u1ED1i \u0111a 1\u20132 slide trong deck.\n- Layout \u1EA3nh ("image-left", "image-right", "image-full", "stat-image") d\xF9ng t\u1ED1i \u0111a 3 slide trong c\u1EA3 deck v\xE0 ch\u1EC9 khi brief c\xF3 h\xECnh \u1EA3nh minh ho\u1EA1.\n- "brief" \u0111\xFAng 1 c\xE2u ng\u1EAFn (\u2264 140 k\xFD t\u1EF1) n\xEAu d\u1EEF ki\u1EC7n ch\xEDnh; "title" \u2264 10 t\u1EEB.\n- "tone" ch\u1EC9 d\xF9ng khi c\u1EA7n nh\u1EA5n m\u1EA1nh; b\u1ECF tr\u1ED1ng \u0111\u1EC3 layout t\u1EF1 ch\u1ECDn.\n- C\u1EE9 kho\u1EA3ng 3 slide ph\u1EA3i c\xF3 m\u1ED9t slide \u0111i\u1EC3m nh\u1EA5n (statement, stats, quote ho\u1EB7c title/section n\u1EC1n nh\u1EA5n) \u0111\u1EC3 deck c\xF3 nh\u1ECBp, kh\xF4ng ph\u1EB3ng.\n- "theme" ch\u1ECDn theo ch\u1EE7 \u0111\u1EC1, c\u1EA3m x\xFAc v\xE0 \u0111\u1ED1i t\u01B0\u1EE3ng \u2014 kh\xF4ng b\u1EAFt bu\u1ED9c theo m\xF4n; ch\u1EE7 \u0111\u1EC1 t\u1EF1 do (h\u01B0\u1EDBng nghi\u1EC7p, k\u1EF9 n\u0103ng, s\u1EF1 ki\u1EC7n\u2026) v\u1EABn ch\u1ECDn b\u1ED9 m\xE0u h\u1EE3p t\xF4ng. "stylePack" ch\u1ECDn m\u1ED9t id trong danh s\xE1ch style pack \u0111\u1EC3 quy\u1EBFt \u0111\u1ECBnh nh\u1ECBp v\xE0 m\u1EADt \u0111\u1ED9 n\u1ED9i dung; "style" 2 c\xE2u t\u1EA3 phong c\xE1ch (nh\u1ECBp b\u1ED1 c\u1EE5c, \u0111i\u1EC3m nh\u1EA5n m\xE0u, s\u1ED1 li\u1EC7u, h\xECnh \u1EA3nh). "decorKit" ch\u1ECDn m\u1ED9t b\u1ED9 trang tr\xED h\u1EE3p ch\u1EE7 \u0111\u1EC1 v\xE0 \u0111\u1ED1i t\u01B0\u1EE3ng (d\xF9ng cho c\u1EA3 b\xE0i); b\xE0i trang tr\u1ECDng ch\u1ECDn "toi-gian".\n- Ch\u1EC9 d\xF9ng s\u1ED1 li\u1EC7u th\u1EF1c c\xF3 c\u0103n c\u1EE9. Thi\u1EBFu ngu\u1ED3n th\xEC b\u1ECF s\u1ED1 li\u1EC7u. Ch\u1EC9 ghi "v\xED d\u1EE5" cho b\xE0i t\u1EADp gi\u1EA3 \u0111\u1ECBnh. Ti\u1EBFng Vi\u1EC7t chu\u1EA9n.';
-var PRO_PLAN_SYSTEM = 'B\u1EA1n l\xE0 tr\u1EE3 l\xFD AI c\u1EE7a tr\xECnh so\u1EA1n b\xE0i tr\xECnh b\xE0y ti\u1EBFng Vi\u1EC7t, \u0111ang d\u1EF1ng m\u1ED9t deck nh\u01B0 m\u1ED9t \u1EA5n ph\u1EA9m bi\xEAn t\u1EADp (t\u1EA1p ch\xED / ph\xF3ng s\u1EF1), kh\xF4ng ph\u1EA3i slide \u0111i\u1EC1n m\u1EABu. Nhi\u1EC7m v\u1EE5: L\u1EACP D\xC0N \xDD, ch\u01B0a vi\u1EBFt n\u1ED9i dung chi ti\u1EBFt. Ch\u1EC9 tr\u1EA3 v\u1EC1 DUY NH\u1EA4T m\u1ED9t JSON h\u1EE3p l\u1EC7 (kh\xF4ng b\u1ECDc markdown, kh\xF4ng ch\u1EEF ngo\xE0i JSON):\n{"title":"...","theme":"<id>","themeMagazine":"<id>","themeTranh":"<id>","subject":"<id>","audience":"...","style":"...","mainIdeas":["..."],"slides":[{"title":"...","layout":"<id>","kicker":"...","brief":"..."}]}\n\n' + slideProCatalogText() + '\n\nQUY T\u1EAEC:\n- Ch\u1ECDn b\u1ED9 m\xE0u cho c\xF9ng ch\u1EE7 \u0111\u1EC1. "themeTranh": CH\u1EC8 \u0111i\u1EC1n khi ch\u1EE7 \u0111\u1EC1 \u0111\xFAng v\u1EDBi ph\u1EA7n "D\xF9ng cho" c\u1EE7a m\u1ED9t trong c\xE1c b\u1ED9 ' + proThemesFor("tranh").map((t6) => t6.id).join(", ") + '; m\u1ECDi ch\u1EE7 \u0111\u1EC1 kh\xE1c (to\xE1n, khoa h\u1ECDc t\u1EF1 nhi\xEAn, tin h\u1ECDc, ngo\u1EA1i ng\u1EEF, k\u1EF9 n\u0103ng\u2026) \u0111\u1EC3 chu\u1ED7i r\u1ED7ng "". "themeMagazine": m\u1ED9t b\u1ED9 "tap-chi-\u2026". "theme": m\u1ED9t b\u1ED9 KH\xD4NG ph\u1EA3i "tap-chi-\u2026" v\xE0 kh\xF4ng ph\u1EA3i b\u1ED9 tranh v\u1EEBa n\xEAu, \u01B0u ti\xEAn b\u1ED9 "\u2026-ve-tay"; ch\u1EE7 \u0111\u1EC1 kh\xF4ng c\xF3 b\u1ED9 ri\xEAng th\xEC ch\u1EC9 l\u1EA5y b\u1ED9 g\u1EA7n ngh\u0129a khi h\xECnh trang tr\xED c\u1EE7a n\xF3 v\u1EABn \u0111\xFAng \u0111\u1EC1, kh\xF4ng th\xEC d\xF9ng "trung-tinh-ve-tay".\n- S\u1ED1 slide theo y\xEAu c\u1EA7u; n\u1EBFu kh\xF4ng n\xEAu th\xEC 8\u201312 slide, t\u1ED1i \u0111a 16. M\u1ED7i slide \u0111\xFAng M\u1ED8T \xFD; m\u1ED9t m\u1EE5c qu\xE1 4 \xFD th\xEC t\xE1ch slide.\n- Slide \u0111\u1EA7u LU\xD4N l\xE0 "photo-full" (\u1EA3nh tr\xE0n n\u1EC1n, ti\xEAu \u0111\u1EC1 \u2264 8 t\u1EEB). "photo-full" ch\u1EC9 d\xF9ng th\xEAm t\u1ED1i \u0111a 1\u20132 l\u1EA7n n\u1EEFa cho chuy\u1EC3n ch\u01B0\u01A1ng ho\u1EB7c l\u1EDDi k\u1EBFt.\n- Nh\u1ECBp: "manifesto" (m\u1ED9t c\xE2u l\u1EDBn n\u1EC1n \u0111en) m\u1EDF \u0111\u1EA7u m\u1ED7i ph\u1EA7n ho\u1EB7c n\xEAu lu\u1EADn \u0111i\u1EC3m; "editorial-text" cho ph\u1EA7n gi\u1EA3i th\xEDch; "rules" cho d\xF2ng th\u1EDDi gian, c\xE1c b\u01B0\u1EDBc, c\xE1c nh\xE2n v\u1EADt, c\xE1c nguy\xEAn nh\xE2n (3\u20135 h\xE0ng, m\u1ED7i h\xE0ng c\xF3 nh\xE3n ng\u1EAFn); "bignum" cho m\u1ED7i con s\u1ED1 then ch\u1ED1t (2\u20134 slide); "bars" khi c\xF3 t\u1EEB 2 s\u1ED1 li\u1EC7u c\xF9ng \u0111\u1EA1i l\u01B0\u1EE3ng; "photo-compare" khi c\xF3 c\u1EB7p x\u01B0a/nay, tr\u01B0\u1EDBc/sau.\n- Kh\xF4ng d\xF9ng c\xF9ng m\u1ED9t layout \u1EDF hai slide li\u1EC1n nhau. Kh\xF4ng qu\xE1 2 slide "editorial-text" trong c\u1EA3 deck.\n- "title" n\xEAu th\u1EB3ng k\u1EBFt lu\u1EADn ho\u1EB7c h\xECnh \u1EA3nh m\u1EA1nh (\u2264 10 t\u1EEB), kh\xF4ng ph\u1EA3i nh\xE3n ch\u1EE7 \u0111\u1EC1 chung chung. "kicker" l\xE0 nh\xE3n chuy\xEAn m\u1EE5c vi\u1EBFt hoa ng\u1EAFn (\u2264 4 t\u1EEB).\n- "brief" \u0111\xFAng 1 c\xE2u (\u2264 140 k\xFD t\u1EF1) n\xEAu d\u1EEF ki\u1EC7n ch\xEDnh; slide \u1EA3nh th\xEC n\xEAu r\xF5 \u1EA3nh c\u1EA7n th\u1EC3 hi\u1EC7n g\xEC. Ch\u1EC9 d\xF9ng d\u1EEF ki\u1EC7n v\xE0 con s\u1ED1 th\u1EADt, kh\xF4ng b\u1ECBa; thi\u1EBFu c\u0103n c\u1EE9 th\xEC b\u1ECF s\u1ED1 li\u1EC7u. Ti\u1EBFng Vi\u1EC7t chu\u1EA9n.\n- "bignum" v\xE0 "bars" ch\u1EC9 d\xF9ng cho s\u1ED1 li\u1EC7u TH\u1EACT c\xF3 ngu\u1ED3n v\xE0 n\u0103m (th\u1ED1ng k\xEA, m\u1ED1c l\u1ECBch s\u1EED, \u0111\u1EA1i l\u01B0\u1EE3ng khoa h\u1ECDc). Ch\u1EE7 \u0111\u1EC1 c\u1EA3m x\xFAc / x\xE3 h\u1ED9i kh\xF4ng c\xF3 th\u1ED1ng k\xEA ch\u1EAFc ch\u1EAFn (t\xECnh y\xEAu, t\xECnh b\u1EA1n\u2026) th\xEC KH\xD4NG b\u1ECBa t\u1EC9 l\u1EC7 ph\u1EA7n tr\u0103m ng\u01B0\u1EDDi; d\xF9ng "manifesto", "rules", "editorial-text". S\u1ED1 gi\u1EA3 \u0111\u1ECBnh ch\u1EC9 \u0111\u1EC3 t\xEDnh to\xE1n trong v\xED d\u1EE5 (to\xE1n, t\xE0i ch\xEDnh) v\xE0 ph\u1EA3i ghi "v\xED d\u1EE5" ngay \u1EDF nh\xE3n.\n- S\u1ED1 li\u1EC7u kh\u1EA3o s\xE1t n\xEAu r\xF5 n\u0103m v\xE0 ph\u1EA1m vi (vd "UNESCO 2019, 144 n\u01B0\u1EDBc"), kh\xF4ng b\u1ECF k\u1EF3 tham chi\u1EBFu.\n- N\u1ED9i dung h\u01B0\u1EDBng d\u1EABn h\u1ECDc sinh v\u1EC1 an to\xE0n (b\u1EAFt n\u1EA1t, tai n\u1EA1n, s\u1EE9c kho\u1EBB\u2026): \u0111\u1EB7t an to\xE0n l\xEAn tr\u01B0\u1EDBc, khuy\xEAn b\xE1o ng\u01B0\u1EDDi l\u1EDBn / gi\xE1o vi\xEAn \u0111\xE1ng tin; KH\xD4NG khuy\xEAn h\u1ECDc sinh tr\u1EF1c ti\u1EBFp can thi\u1EC7p, \u0111\u1EE9ng ch\u1EAFn hay \u0111\u1ED1i \u0111\u1EA7u khi c\xF3 nguy c\u01A1 x\xF4 x\xE1t.\n- C\xF4ng th\u1EE9c to\xE1n d\xF9ng LaTeX trong $\u2026$ v\u1EDBi \\frac cho ph\xE2n s\u1ED1; kh\xF4ng vi\u1EBFt d\u1EA1ng a/b m\u01A1 h\u1ED3. M\u1ECDi h\xECnh \u1EA3nh v\xE0 ch\xFA th\xEDch ph\u1EA3i kh\u1EDBp nhau; d\u1EA1ng \u0111\u1ED3 th\u1ECB hay s\u01A1 \u0111\u1ED3 d\u1EA1y ki\u1EBFn th\u1EE9c th\xEC \u0111\u1EEBng d\xF9ng \u1EA3nh AI.\n- Kh\xF4ng h\u1EE9a h\u1EB9n hay m\xF4 t\u1EA3 nh\u01B0 ch\u01B0a x\u1EA3y ra nh\u1EEFng s\u1EF1 ki\u1EC7n c\xF3 th\u1EC3 \u0111\xE3 di\u1EC5n ra (gi\u1EA3i \u0111\u1EA5u, ch\u01B0\u01A1ng tr\xECnh, m\u1ED1c n\u0103m g\u1EA7n \u0111\xE2y); n\u1EBFu kh\xF4ng ch\u1EAFc k\u1EBFt qu\u1EA3 m\u1EDBi nh\u1EA5t th\xEC ghi "t\xEDnh \u0111\u1EBFn <n\u0103m>".';
+var PRO_PLAN_SYSTEM = 'B\u1EA1n l\xE0 tr\u1EE3 l\xFD AI c\u1EE7a tr\xECnh so\u1EA1n b\xE0i tr\xECnh b\xE0y ti\u1EBFng Vi\u1EC7t, \u0111ang d\u1EF1ng m\u1ED9t deck nh\u01B0 m\u1ED9t \u1EA5n ph\u1EA9m bi\xEAn t\u1EADp (t\u1EA1p ch\xED / ph\xF3ng s\u1EF1), kh\xF4ng ph\u1EA3i slide \u0111i\u1EC1n m\u1EABu. Nhi\u1EC7m v\u1EE5: L\u1EACP D\xC0N \xDD, ch\u01B0a vi\u1EBFt n\u1ED9i dung chi ti\u1EBFt. Ch\u1EC9 tr\u1EA3 v\u1EC1 DUY NH\u1EA4T m\u1ED9t JSON h\u1EE3p l\u1EC7 (kh\xF4ng b\u1ECDc markdown, kh\xF4ng ch\u1EEF ngo\xE0i JSON):\n{"title":"...","theme":"<id>","themeMagazine":"<id>","subject":"<id>","audience":"...","style":"...","mainIdeas":["..."],"slides":[{"title":"...","layout":"<id>","kicker":"...","brief":"..."}]}\n\n' + slideProCatalogText() + '\n\nQUY T\u1EAEC:\n- Ch\u1ECDn HAI b\u1ED9 m\xE0u cho c\xF9ng ch\u1EE7 \u0111\u1EC1. "themeMagazine": m\u1ED9t b\u1ED9 "tap-chi-\u2026". "theme": m\u1ED9t b\u1ED9 KH\xD4NG ph\u1EA3i "tap-chi-\u2026" v\xE0 kh\xF4ng ph\u1EA3i ' + proThemesFor("tranh").map((t6) => t6.id).join(", ") + ', \u01B0u ti\xEAn b\u1ED9 "\u2026-ve-tay"; ch\u1EE7 \u0111\u1EC1 kh\xF4ng c\xF3 b\u1ED9 ri\xEAng th\xEC ch\u1EC9 l\u1EA5y b\u1ED9 g\u1EA7n ngh\u0129a khi h\xECnh trang tr\xED c\u1EE7a n\xF3 v\u1EABn \u0111\xFAng \u0111\u1EC1, kh\xF4ng th\xEC d\xF9ng "trung-tinh-ve-tay".\n- S\u1ED1 slide theo y\xEAu c\u1EA7u; n\u1EBFu kh\xF4ng n\xEAu th\xEC 8\u201312 slide, t\u1ED1i \u0111a 16. M\u1ED7i slide \u0111\xFAng M\u1ED8T \xFD; m\u1ED9t m\u1EE5c qu\xE1 4 \xFD th\xEC t\xE1ch slide.\n- Slide \u0111\u1EA7u LU\xD4N l\xE0 "photo-full" (\u1EA3nh tr\xE0n n\u1EC1n, ti\xEAu \u0111\u1EC1 \u2264 8 t\u1EEB). "photo-full" ch\u1EC9 d\xF9ng th\xEAm t\u1ED1i \u0111a 1\u20132 l\u1EA7n n\u1EEFa cho chuy\u1EC3n ch\u01B0\u01A1ng ho\u1EB7c l\u1EDDi k\u1EBFt.\n- Nh\u1ECBp: "manifesto" (m\u1ED9t c\xE2u l\u1EDBn n\u1EC1n \u0111en) m\u1EDF \u0111\u1EA7u m\u1ED7i ph\u1EA7n ho\u1EB7c n\xEAu lu\u1EADn \u0111i\u1EC3m; "editorial-text" cho ph\u1EA7n gi\u1EA3i th\xEDch; "rules" cho d\xF2ng th\u1EDDi gian, c\xE1c b\u01B0\u1EDBc, c\xE1c nh\xE2n v\u1EADt, c\xE1c nguy\xEAn nh\xE2n (3\u20135 h\xE0ng, m\u1ED7i h\xE0ng c\xF3 nh\xE3n ng\u1EAFn); "bignum" cho m\u1ED7i con s\u1ED1 then ch\u1ED1t (2\u20134 slide); "bars" khi c\xF3 t\u1EEB 2 s\u1ED1 li\u1EC7u c\xF9ng \u0111\u1EA1i l\u01B0\u1EE3ng; "photo-compare" khi c\xF3 c\u1EB7p x\u01B0a/nay, tr\u01B0\u1EDBc/sau.\n- Kh\xF4ng d\xF9ng c\xF9ng m\u1ED9t layout \u1EDF hai slide li\u1EC1n nhau. Kh\xF4ng qu\xE1 2 slide "editorial-text" trong c\u1EA3 deck.\n- "title" n\xEAu th\u1EB3ng k\u1EBFt lu\u1EADn ho\u1EB7c h\xECnh \u1EA3nh m\u1EA1nh (\u2264 10 t\u1EEB), kh\xF4ng ph\u1EA3i nh\xE3n ch\u1EE7 \u0111\u1EC1 chung chung. "kicker" l\xE0 nh\xE3n chuy\xEAn m\u1EE5c vi\u1EBFt hoa ng\u1EAFn (\u2264 4 t\u1EEB).\n- "brief" \u0111\xFAng 1 c\xE2u (\u2264 140 k\xFD t\u1EF1) n\xEAu d\u1EEF ki\u1EC7n ch\xEDnh; slide \u1EA3nh th\xEC n\xEAu r\xF5 \u1EA3nh c\u1EA7n th\u1EC3 hi\u1EC7n g\xEC. Ch\u1EC9 d\xF9ng d\u1EEF ki\u1EC7n v\xE0 con s\u1ED1 th\u1EADt, kh\xF4ng b\u1ECBa; thi\u1EBFu c\u0103n c\u1EE9 th\xEC b\u1ECF s\u1ED1 li\u1EC7u. Ti\u1EBFng Vi\u1EC7t chu\u1EA9n.\n- "bignum" v\xE0 "bars" ch\u1EC9 d\xF9ng cho s\u1ED1 li\u1EC7u TH\u1EACT c\xF3 ngu\u1ED3n v\xE0 n\u0103m (th\u1ED1ng k\xEA, m\u1ED1c l\u1ECBch s\u1EED, \u0111\u1EA1i l\u01B0\u1EE3ng khoa h\u1ECDc). Ch\u1EE7 \u0111\u1EC1 c\u1EA3m x\xFAc / x\xE3 h\u1ED9i kh\xF4ng c\xF3 th\u1ED1ng k\xEA ch\u1EAFc ch\u1EAFn (t\xECnh y\xEAu, t\xECnh b\u1EA1n\u2026) th\xEC KH\xD4NG b\u1ECBa t\u1EC9 l\u1EC7 ph\u1EA7n tr\u0103m ng\u01B0\u1EDDi; d\xF9ng "manifesto", "rules", "editorial-text". S\u1ED1 gi\u1EA3 \u0111\u1ECBnh ch\u1EC9 \u0111\u1EC3 t\xEDnh to\xE1n trong v\xED d\u1EE5 (to\xE1n, t\xE0i ch\xEDnh) v\xE0 ph\u1EA3i ghi "v\xED d\u1EE5" ngay \u1EDF nh\xE3n.\n- S\u1ED1 li\u1EC7u kh\u1EA3o s\xE1t n\xEAu r\xF5 n\u0103m v\xE0 ph\u1EA1m vi (vd "UNESCO 2019, 144 n\u01B0\u1EDBc"), kh\xF4ng b\u1ECF k\u1EF3 tham chi\u1EBFu.\n- N\u1ED9i dung h\u01B0\u1EDBng d\u1EABn h\u1ECDc sinh v\u1EC1 an to\xE0n (b\u1EAFt n\u1EA1t, tai n\u1EA1n, s\u1EE9c kho\u1EBB\u2026): \u0111\u1EB7t an to\xE0n l\xEAn tr\u01B0\u1EDBc, khuy\xEAn b\xE1o ng\u01B0\u1EDDi l\u1EDBn / gi\xE1o vi\xEAn \u0111\xE1ng tin; KH\xD4NG khuy\xEAn h\u1ECDc sinh tr\u1EF1c ti\u1EBFp can thi\u1EC7p, \u0111\u1EE9ng ch\u1EAFn hay \u0111\u1ED1i \u0111\u1EA7u khi c\xF3 nguy c\u01A1 x\xF4 x\xE1t.\n- C\xF4ng th\u1EE9c to\xE1n d\xF9ng LaTeX trong $\u2026$ v\u1EDBi \\frac cho ph\xE2n s\u1ED1; kh\xF4ng vi\u1EBFt d\u1EA1ng a/b m\u01A1 h\u1ED3. M\u1ECDi h\xECnh \u1EA3nh v\xE0 ch\xFA th\xEDch ph\u1EA3i kh\u1EDBp nhau; d\u1EA1ng \u0111\u1ED3 th\u1ECB hay s\u01A1 \u0111\u1ED3 d\u1EA1y ki\u1EBFn th\u1EE9c th\xEC \u0111\u1EEBng d\xF9ng \u1EA3nh AI.\n- Kh\xF4ng h\u1EE9a h\u1EB9n hay m\xF4 t\u1EA3 nh\u01B0 ch\u01B0a x\u1EA3y ra nh\u1EEFng s\u1EF1 ki\u1EC7n c\xF3 th\u1EC3 \u0111\xE3 di\u1EC5n ra (gi\u1EA3i \u0111\u1EA5u, ch\u01B0\u01A1ng tr\xECnh, m\u1ED1c n\u0103m g\u1EA7n \u0111\xE2y); n\u1EBFu kh\xF4ng ch\u1EAFc k\u1EBFt qu\u1EA3 m\u1EDBi nh\u1EA5t th\xEC ghi "t\xEDnh \u0111\u1EBFn <n\u0103m>".';
 var slidePlanSystem = (pro) => pro ? PRO_PLAN_SYSTEM : SLIDE_PLAN_SYSTEM;
 var WEB_SEARCH_SYSTEM = "T\xECm tr\xEAn web th\xF4ng tin, s\u1ED1 li\u1EC7u m\u1EDBi v\xE0 ch\xEDnh x\xE1c ph\u1EE5c v\u1EE5 y\xEAu c\u1EA7u so\u1EA1n \u0111\u1EC1 / b\xE0i gi\u1EA3ng c\u1EE7a gi\xE1o vi\xEAn d\u01B0\u1EDBi \u0111\xE2y. Ch\u1EC9 tr\u1EA3 b\u1EA3n t\xF3m t\u1EAFt g\u1EA1ch \u0111\u1EA7u d\xF2ng (t\u1ED1i \u0111a 25 d\xF2ng), m\u1ED7i d\xF2ng m\u1ED9t d\u1EEF ki\u1EC7n ho\u1EB7c s\u1ED1 li\u1EC7u k\xE8m t\xEAn ngu\u1ED3n v\xE0 n\u0103m. \u01AFu ti\xEAn ngu\u1ED3n ch\xEDnh th\u1ED1ng (c\u01A1 quan nh\xE0 n\u01B0\u1EDBc, s\xE1ch gi\xE1o khoa, b\xE1o l\u1EDBn). Kh\xF4ng so\u1EA1n \u0111\u1EC1, kh\xF4ng b\xECnh lu\u1EADn.";
 var PLAN_OR_CHAT = "\n\nN\u1EBFu ng\u01B0\u1EDDi d\xF9ng ch\u1EC9 h\u1ECFi, xin t\u01B0 v\u1EA5n hay tr\xF2 chuy\u1EC7n (kh\xF4ng nh\u1EDD l\xE0m b\xE0i) th\xEC KH\xD4NG l\u1EADp d\xE0n \xFD: tr\u1EA3 l\u1EDDi b\u1EB1ng ch\u1EEF, kh\xF4ng k\xE8m JSON.";

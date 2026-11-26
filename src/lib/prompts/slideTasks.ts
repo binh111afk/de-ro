@@ -80,13 +80,12 @@ const PRO_PLAN_SYSTEM =
   'Bạn là trợ lý AI của trình soạn bài trình bày tiếng Việt, đang dựng một deck như một ấn phẩm biên tập (tạp chí / phóng sự), ' +
   'không phải slide điền mẫu. Nhiệm vụ: LẬP DÀN Ý, chưa viết nội dung chi tiết. Chỉ trả về DUY NHẤT một JSON hợp lệ (không bọc markdown, ' +
   'không chữ ngoài JSON):\n' +
-  '{"title":"...","theme":"<id>","themeMagazine":"<id>","themeTranh":"<id>","subject":"<id>","audience":"...","style":"...","mainIdeas":["..."],' +
+  '{"title":"...","theme":"<id>","themeMagazine":"<id>","subject":"<id>","audience":"...","style":"...","mainIdeas":["..."],' +
   '"slides":[{"title":"...","layout":"<id>","kicker":"...","brief":"..."}]}\n\n' +
   slideProCatalogText() +
   '\n\nQUY TẮC:\n' +
-  '- Chọn bộ màu cho cùng chủ đề. "themeTranh": CHỈ điền khi chủ đề đúng với phần "Dùng cho" của một trong các bộ ' +
-  proThemesFor('tranh').map((t) => t.id).join(', ') + '; mọi chủ đề khác (toán, khoa học tự nhiên, tin học, ngoại ngữ, kỹ năng…) để chuỗi rỗng "". ' +
-  '"themeMagazine": một bộ "tap-chi-…". "theme": một bộ KHÔNG phải "tap-chi-…" và không phải bộ tranh vừa nêu, ưu tiên bộ "…-ve-tay"; chủ đề không có bộ riêng thì chỉ lấy bộ gần nghĩa khi hình trang trí của nó vẫn đúng đề, ' +
+  '- Chọn HAI bộ màu cho cùng chủ đề. "themeMagazine": một bộ "tap-chi-…". "theme": một bộ KHÔNG phải "tap-chi-…" và không phải ' +
+  proThemesFor('tranh').map((t) => t.id).join(', ') + ', ưu tiên bộ "…-ve-tay"; chủ đề không có bộ riêng thì chỉ lấy bộ gần nghĩa khi hình trang trí của nó vẫn đúng đề, ' +
   'không thì dùng "trung-tinh-ve-tay".\n' +
   '- Số slide theo yêu cầu; nếu không nêu thì 8–12 slide, tối đa 16. Mỗi slide đúng MỘT ý; một mục quá 4 ý thì tách slide.\n' +
   '- Slide đầu LUÔN là "photo-full" (ảnh tràn nền, tiêu đề ≤ 8 từ). "photo-full" chỉ dùng thêm tối đa 1–2 lần nữa cho chuyển chương hoặc lời kết.\n' +
