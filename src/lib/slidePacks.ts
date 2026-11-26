@@ -190,7 +190,8 @@ function kitOf(text: Text): Kit {
   return {
     text,
     title: (id, value, b, px, color, extra) =>
-      text(id, value, b, { variant: 'title', fontWeight: 800, lineHeight: 1.15, valign: 'top', fontSize: fs(px), textColor: color, ...extra }, 0.4),
+      // tiêu đề slide của mọi bộ doodle đều in hoa
+      text(id, value, b, { variant: 'title', fontWeight: 800, lineHeight: 1.15, valign: 'top', fontSize: fs(px), textColor: color, caps: id === 'title', ...extra }, 0.4),
     body: (id, value, b, px, color, extra) =>
       text(id, value, b, { variant: 'body', lineHeight: 1.45, valign: 'top', fontSize: fs(px), textColor: color, ...extra }, 0.55),
   }

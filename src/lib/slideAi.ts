@@ -654,6 +654,8 @@ function proSpecBlock(id: SlideLayoutId): string {
     '\nCHẾ ĐỘ CHUYÊN NGHIỆP:\n' +
     '- "credit" — dòng ghi nguồn SỐ LIỆU / trích dẫn ở chân slide (≤ 140 ký tự, vd "Nguồn: IAEA, 2024"); ' +
     'số liệu không chắc chắn thì ghi "số liệu minh hoạ". KHÔNG ghi nguồn ảnh (app tự thêm). Đừng bỏ trống khi slide có số liệu.\n' +
+    '- KHÔNG BỊA NGUỒN: slide không có số liệu hay câu trích nguyên văn (lời khuyên, quy tắc, các bước, cam kết, định nghĩa do bạn viết) thì BỎ TRỐNG "credit". ' +
+    'KHÔNG viết "theo / dựa trên / khuyến nghị / hướng dẫn của <bộ, cơ quan, tổ chức>" trừ khi tài liệu đó nằm trong phần NGUỒN được cung cấp.\n' +
     (hasPhoto
       ? '- "imagePrompt" — mô tả ảnh cần vẽ (≤ 280 ký tự, tiếng Anh, một câu): chủ thể cụ thể, bối cảnh, ánh sáng, ống kính; ' +
         'phong cách ảnh chụp thật (documentary / editorial photograph), KHÔNG chữ, KHÔNG logo, KHÔNG người nổi tiếng có thật, ' +

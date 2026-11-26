@@ -3,6 +3,10 @@
 // Thêm &nguon=1 để có dòng nguồn (kiểm không đè nội dung).
 import { createRoot } from 'react-dom/client'
 import '@/index.css'
+// Lora nạp toàn cục ở src/main.tsx, trang này phải tự nạp (thiếu thì chữ hoa tiếng Việt bị tách dấu)
+import '@fontsource/lora/400.css'
+import '@fontsource/lora/600.css'
+import '@fontsource/lora/700.css'
 import { SlideThumb } from '@/examEditor/slideRender'
 import '@/examEditor/slide.css'
 import { composeLayout, defaultTone, toneBackground, type SlideLayoutContent } from '@/lib/slideLayouts'
