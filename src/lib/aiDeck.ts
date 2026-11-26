@@ -283,8 +283,9 @@ export function proPlan(plan: DeckPlan, style?: ProStyle): DeckPlan {
   const theme = pick('doodle', plan.theme, 'trung-tinh-ve-tay')
   const themeMagazine = pick('magazine', plan.themeMagazine ?? plan.theme, proThemesFor('magazine')[0].id!)
   // bộ tranh không có fallback: model bỏ trống nghĩa là chủ đề không hợp, câu hỏi kiểu sẽ ẩn lựa chọn này
-  const themeTranh = [plan.themeTranh, plan.theme].find((id) => proThemesFor('tranh').some((t) => t.id === id))
-    ?? (style === 'tranh' ? 'co-dien-do' : undefined)
+  const themeTranh = !TRANH_ENABLED ? undefined
+    : [plan.themeTranh, plan.theme].find((id) => proThemesFor('tranh').some((t) => t.id === id))
+      ?? (style === 'tranh' ? 'co-dien-do' : undefined)
   const both = { ...plan, theme, themeMagazine, themeTranh, design: undefined, stylePack: 'editorial', decorKit: 'toi-gian', slides }
   return style ? withProStyle(both, style) : both
 }
@@ -427,11 +428,14 @@ const styleOfTheme = (id = ''): ProStyle =>
 
 export const proThemesFor = (style: ProStyle) => PRO_THEMES.filter((t) => styleOfTheme(t.id) === style)
 
+/** tạm ẩn kiểu "Tranh truyền thống" tới khi có thêm bộ; bật lại thì đổi thành true */
+const TRANH_ENABLED: boolean = false
+
 /** đọc kiểu slide trong lời người dùng (câu yêu cầu hoặc câu trả lời panel hỏi) */
 export function proStyleOf(text: string): ProStyle | undefined {
   if (/doodle|vẽ tay/iu.test(text)) return 'doodle'
   if (/(?:kiểu|dạng|phong cách|mẫu|:)\s*tạp chí/iu.test(text)) return 'magazine'
-  if (/(?:kiểu|dạng|phong cách|mẫu|:)\s*tranh truyền thống/iu.test(text)) return 'tranh'
+  if (TRANH_ENABLED && /(?:kiểu|dạng|phong cách|mẫu|:)\s*tranh truyền thống/iu.test(text)) return 'tranh'
   return undefined
 }
 
