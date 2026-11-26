@@ -334,6 +334,27 @@ export const dedupeParagraphProps = (xml: string): string =>
     return para.replace(/<a:pPr\b[^>]*?(?:\/>|>[\s\S]*?<\/a:pPr>)/g, (m) => (seen ? '' : ((seen = true), m)))
   })
 
+/** PptxGenJS ghi một bản ảnh cho mỗi lần chèn — giữ một bản cho mỗi nội dung, trỏ các slide về bản đó. */
+export async function dedupeMedia(zip: import('jszip')): Promise<void> {
+  const kept = new Map<string, string>()
+  const moved = new Map<string, string>()
+  for (const path of Object.keys(zip.files).filter((p) => p.startsWith('ppt/media/') && !zip.files[p].dir)) {
+    const key = `${path.slice(path.lastIndexOf('.'))}:${await zip.file(path)!.async('base64')}`
+    const name = path.slice('ppt/media/'.length)
+    const first = kept.get(key)
+    if (first === undefined) kept.set(key, name)
+    else {
+      moved.set(name, first)
+      zip.remove(path)
+    }
+  }
+  if (!moved.size) return
+  for (const path of Object.keys(zip.files).filter((p) => p.endsWith('.rels'))) {
+    const xml = await zip.file(path)!.async('string')
+    zip.file(path, xml.replace(/(Target="[^"]*\/media\/)([^"]+)"/g, (_m, head: string, name: string) => `${head}${moved.get(name) ?? name}"`))
+  }
+}
+
 export async function exportDeckPptx(deck: Deck): Promise<void> {
   const data = await buildDeckPptx(deck)
   const name = deck.title.replace(/[\\/:*?"<>|]+/g, '-').trim() || 'bai-giang'
@@ -726,5 +747,6 @@ export async function buildDeckPptx(deck: Deck): Promise<ArrayBuffer> {
     const tableFills = xml.replace(/(<\/a:lnB>)(\s*<\/a:tcPr>)/g, '$1<a:noFill/>$2')
     zip.file(path, applyRunEffects(tableFills, textEffects))
   }
+  await dedupeMedia(zip)
   return zip.generateAsync({ type: 'arraybuffer' })
 }
