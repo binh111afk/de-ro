@@ -1,6 +1,7 @@
 import type { ExamBlock, ExamDoc, Span } from '@/data/docTypes'
 import type { Exam, Question } from '@/data/types'
 import { formatPoints } from '@/lib/mathText'
+import { trackExport } from '@/lib/exportProgress'
 
 /** Đề tương tác (`Exam`) → khối soạn (`ExamDoc`) để dùng chung bộ xuất .docx với trình soạn. */
 export function examToDoc(exam: Exam, opts: { withAnswers?: boolean } = {}): ExamDoc {
@@ -95,13 +96,16 @@ export function examToDoc(exam: Exam, opts: { withAnswers?: boolean } = {}): Exa
 
 /** Tải đề tương tác về máy dưới dạng .docx thật. */
 export async function exportDocx(exam: Exam): Promise<void> {
-  const { buildDocxBlob } = await import('@/examEditor/docxBlocks')
-  const url = URL.createObjectURL(await buildDocxBlob(examToDoc(exam)))
-  const a = document.createElement('a')
-  a.href = url
-  a.download = `${exam.title.replace(/[\\/:*?"<>|]/g, '-').trim() || 'de-thi'}.docx`
-  document.body.appendChild(a)
-  a.click()
-  document.body.removeChild(a)
-  setTimeout(() => URL.revokeObjectURL(url), 1500)
+  const name = `${exam.title.replace(/[\\/:*?"<>|]/g, '-').trim() || 'de-thi'}.docx`
+  await trackExport(name, async () => {
+    const { buildDocxBlob } = await import('@/examEditor/docxBlocks')
+    const url = URL.createObjectURL(await buildDocxBlob(examToDoc(exam)))
+    const a = document.createElement('a')
+    a.href = url
+    a.download = name
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    setTimeout(() => URL.revokeObjectURL(url), 1500)
+  })
 }

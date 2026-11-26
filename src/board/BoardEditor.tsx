@@ -25,6 +25,7 @@ import { useAnimatedPresence } from '@/lib/useAnimatedPresence'
 import { recognize } from './recognize'
 import { ExportDialog, FormulaDialog, PdfPagesDialog, type ExportChoice, type FormulaResult } from './BoardDialogs'
 import { canvasToA4Pdf, download, openPdf, pagesToPdf, pdfPageSize, readImageFile, renderPdfPage, renderRegion, savePng, type Picture } from './io'
+import { trackExport } from '@/lib/exportProgress'
 import { cachedSrc, IDB_PREFIX, stash, unstash } from './imgStore'
 import { pendingBoardSaves, useBoards, type BoardData } from '@/store/boards'
 import { texToSvg } from './formula'
@@ -1686,15 +1687,14 @@ export default function BoardEditor({ id }: { id: string }) {
   }
 
   const onExport = async (ch: ExportChoice) => {
-    const r = await buildExport(ch)
-    if (ch.format === 'pdf-pages') {
-      download(URL.createObjectURL(pagesToPdf(r.items)), `ghi-chu-${new Date().toISOString().slice(0, 10)}.pdf`)
-      return setDialog(null)
-    }
-    const out = r.items[0].c
-    const name = `bang-ve-${new Date().toISOString().slice(0, 10)}`
-    if (ch.format === 'png') await savePng(out, `${name}.png`)
-    else download(URL.createObjectURL(canvasToA4Pdf(out)), `${name}.pdf`)
+    const stem = ch.format === 'pdf-pages' ? 'ghi-chu' : 'bang-ve'
+    const name = `${stem}-${new Date().toISOString().slice(0, 10)}.${ch.format === 'png' ? 'png' : 'pdf'}`
+    await trackExport(name, async () => {
+      const r = await buildExport(ch)
+      if (ch.format === 'pdf-pages') download(URL.createObjectURL(pagesToPdf(r.items)), name)
+      else if (ch.format === 'png') await savePng(r.items[0].c, name)
+      else download(URL.createObjectURL(canvasToA4Pdf(r.items[0].c)), name)
+    })
     setDialog(null)
   }
 

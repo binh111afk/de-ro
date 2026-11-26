@@ -140,6 +140,35 @@ export function IconDocBoard({ size = 40, className }: DocIconProps) {
   )
 }
 
+const FILE_COLORS: Record<string, string> = {
+  docx: '#2B5FA8',
+  pptx: '#B4532A',
+  pdf: '#B3362F',
+  png: '#5B7A5E',
+  zip: '#B8862F',
+}
+
+/** Tệp tải xuống — tờ giấy gấp góc, nhãn phần mở rộng theo màu quen thuộc. */
+export function FileTypeIcon({ ext, size = 40, className }: DocIconProps & { ext: string }) {
+  const color = FILE_COLORS[ext.toLowerCase()] ?? '#6B757E'
+  return (
+    <Frame size={size} className={className}>
+      <path
+        d="M10 5.5C10 4.12 11.12 3 12.5 3H25L34 12V34.5C34 35.88 32.88 37 31.5 37H12.5C11.12 37 10 35.88 10 34.5V5.5Z"
+        fill="#fff"
+        stroke="#CDD3D2"
+        strokeWidth="1.5"
+        strokeLinejoin="round"
+      />
+      <path d="M25 3V9.5C25 10.88 26.12 12 27.5 12H34" fill="#EEF0EF" stroke="#CDD3D2" strokeWidth="1.5" strokeLinejoin="round" />
+      <rect x="4" y="21" width="27" height="12" rx="3" fill={color} />
+      <text x="17.5" y="29.7" textAnchor="middle" fontSize="8" fontWeight="700" fill="#fff" fontFamily="system-ui, sans-serif">
+        {ext.toUpperCase()}
+      </text>
+    </Frame>
+  )
+}
+
 /** Icon theo loại tài liệu — mặc định là đề thi. */
 export function DocIcon({
   kind = 'exam',

@@ -11,6 +11,7 @@ import { buildSummaryAnswers, makeCodes, shuffleExam } from '@/lib/shuffleExam'
 import { A4_HEIGHT, A4_WIDTH, extractAnswerSheetInfo, generateAnswerSheetSvg } from '@/lib/answerSheet'
 import { svgDataUrl, svgToPng } from '@/lib/plot'
 import { cn } from '@/lib/cn'
+import { trackExport } from '@/lib/exportProgress'
 import { Check, ToolShell, sectionTitle } from './ToolShell'
 
 type Format = 'docx' | 'pdf'
@@ -79,34 +80,38 @@ export function ShuffleModal({ doc, onClose }: { doc: ExamDoc; onClose: () => vo
           })
         }
       } else {
-        const [{ buildAnswerSheetDocxBlob, buildDocxBlob, buildSummaryDocxBlob }, { default: JSZip }] = await Promise.all([
-          import('../docxBlocks'),
-          import('jszip'),
-        ])
-        const zip = new JSZip()
-        for (const v of res.versions) {
-          zip.file(`${docFileName(v.doc.title)}.docx`, await buildDocxBlob(v.doc))
-          if (withSheets) {
-            const svg = generateAnswerSheetSvg({ ...sheetInfo, code: v.code })
-            const pngUrl = await svgToPng(svg, A4_WIDTH, A4_HEIGHT, 2.5)
-            zip.file(`phieu-tra-loi-${docFileName(v.code)}.docx`, await buildAnswerSheetDocxBlob(v.code, pngUrl))
+        const name = `${docFileName(doc.title)} - ${codes.length} ma de.zip`
+        await trackExport(name, async (report) => {
+          const [{ buildAnswerSheetDocxBlob, buildDocxBlob, buildSummaryDocxBlob }, { default: JSZip }] = await Promise.all([
+            import('../docxBlocks'),
+            import('jszip'),
+          ])
+          const zip = new JSZip()
+          for (const [i, v] of res.versions.entries()) {
+            report((i / res.versions.length) * 90)
+            zip.file(`${docFileName(v.doc.title)}.docx`, await buildDocxBlob(v.doc))
+            if (withSheets) {
+              const svg = generateAnswerSheetSvg({ ...sheetInfo, code: v.code })
+              const pngUrl = await svgToPng(svg, A4_WIDTH, A4_HEIGHT, 2.5)
+              zip.file(`phieu-tra-loi-${docFileName(v.code)}.docx`, await buildAnswerSheetDocxBlob(v.code, pngUrl))
+            }
           }
-        }
-        if (withAnswers) {
-          zip.file(`${docFileName(res.answerDoc.title)}.docx`, await buildDocxBlob(res.answerDoc))
-        }
-        if (withSummary && summaryData) {
-          zip.file('dap-an-tong-hop.docx', await buildSummaryDocxBlob(doc, summaryData))
-        }
-        const blob = await zip.generateAsync({ type: 'blob' })
-        const url = URL.createObjectURL(blob)
-        const a = document.createElement('a')
-        a.href = url
-        a.download = `${docFileName(doc.title)} - ${codes.length} ma de.zip`
-        document.body.appendChild(a)
-        a.click()
-        a.remove()
-        setTimeout(() => URL.revokeObjectURL(url), 1500)
+          if (withAnswers) {
+            zip.file(`${docFileName(res.answerDoc.title)}.docx`, await buildDocxBlob(res.answerDoc))
+          }
+          if (withSummary && summaryData) {
+            zip.file('dap-an-tong-hop.docx', await buildSummaryDocxBlob(doc, summaryData))
+          }
+          const blob = await zip.generateAsync({ type: 'blob' })
+          const url = URL.createObjectURL(blob)
+          const a = document.createElement('a')
+          a.href = url
+          a.download = name
+          document.body.appendChild(a)
+          a.click()
+          a.remove()
+          setTimeout(() => URL.revokeObjectURL(url), 1500)
+        })
       }
       onClose()
     } catch (e) {

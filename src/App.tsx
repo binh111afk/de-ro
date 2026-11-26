@@ -9,6 +9,7 @@ import { lazyPage } from '@/lib/lazyPage'
 import { PageErrorBoundary } from '@/components/PageErrorBoundary'
 
 const DialogHost = lazy(() => import('@/components/Dialog').then((m) => ({ default: m.DialogHost })))
+const ExportToastHost = lazy(() => import('@/components/ExportToast').then((m) => ({ default: m.ExportToastHost })))
 const TooltipLayer = lazy(() => import('@/components/Tooltip').then((m) => ({ default: m.TooltipLayer })))
 const Analytics = lazy(() => import('@vercel/analytics/react').then((m) => ({ default: m.Analytics })))
 
@@ -130,6 +131,7 @@ export default function App() {
       <Suspense fallback={null}>
         <DialogHost />
         <TooltipLayer />
+        <ExportToastHost />
       </Suspense>
       {/* màn rất lớn (≥ 2200px, vd. 30 inch để 100%): phóng cả trang cho chữ khỏi lọt thỏm — xem .site-scale
           trong index.css. Không áp cho trình soạn (fullscreen: có thu phóng riêng, canvas cần toạ độ chuẩn)

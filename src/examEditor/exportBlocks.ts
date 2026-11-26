@@ -6,6 +6,7 @@
  */
 import { isCodeSpan, splitExamInline } from '@/lib/examCode'
 import katex from 'katex'
+import { trackExport } from '@/lib/exportProgress'
 import type { BandSetup, PageNumberSetup } from './pageSetup'
 import 'katex/contrib/mhchem' // \ce{...}
 import type { ExamBlock, ExamDoc, FormatAttrs, RichText, Span } from '@/data/docTypes'
@@ -23,15 +24,18 @@ export async function exportDocBlocks(
   doc: ExamDoc,
   opts?: { landscape?: boolean; paper?: { w: number; h: number }; fileName?: string; margins?: { top: number; right: number; bottom: number; left: number }; pageNumber?: PageNumberSetup; header?: BandSetup; footer?: BandSetup },
 ): Promise<void> {
-  const { buildDocxBlob } = await import('./docxBlocks')
-  const url = URL.createObjectURL(await buildDocxBlob(doc, opts))
-  const a = document.createElement('a')
-  a.href = url
-  a.download = `${sanitize(opts?.fileName ?? doc.title)}.docx`
-  document.body.appendChild(a)
-  a.click()
-  document.body.removeChild(a)
-  setTimeout(() => URL.revokeObjectURL(url), 1500)
+  const name = `${sanitize(opts?.fileName ?? doc.title)}.docx`
+  await trackExport(name, async () => {
+    const { buildDocxBlob } = await import('./docxBlocks')
+    const url = URL.createObjectURL(await buildDocxBlob(doc, opts))
+    const a = document.createElement('a')
+    a.href = url
+    a.download = name
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    setTimeout(() => URL.revokeObjectURL(url), 1500)
+  })
 }
 
 function sanitize(s: string): string {

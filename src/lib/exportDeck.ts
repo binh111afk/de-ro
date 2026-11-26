@@ -21,6 +21,7 @@ import { firstColor, gradientSvg } from './slideBackground'
 import { isStrokeOnlyShape, prstOf } from './slidePresets'
 import { FRAME_PLACEHOLDER, photoFrameClip, photoFrameRadius } from './slideShapes'
 import { toDataUrl } from './mediaStore'
+import { trackExport } from './exportProgress'
 import { decorSvg } from './pptxDecor'
 
 function parseColor(value: string | undefined) {
@@ -356,13 +357,15 @@ export async function dedupeMedia(zip: import('jszip')): Promise<void> {
 }
 
 export async function exportDeckPptx(deck: Deck): Promise<void> {
-  const data = await buildDeckPptx(deck)
-  const name = deck.title.replace(/[\\/:*?"<>|]+/g, '-').trim() || 'bai-giang'
-  const a = document.createElement('a')
-  a.href = URL.createObjectURL(new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.presentationml.presentation' }))
-  a.download = `${name}.pptx`
-  a.click()
-  setTimeout(() => URL.revokeObjectURL(a.href), 1000)
+  const name = `${deck.title.replace(/[\\/:*?"<>|]+/g, '-').trim() || 'bai-giang'}.pptx`
+  await trackExport(name, async () => {
+    const data = await buildDeckPptx(deck)
+    const a = document.createElement('a')
+    a.href = URL.createObjectURL(new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.presentationml.presentation' }))
+    a.download = name
+    a.click()
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000)
+  })
 }
 
 export async function buildDeckPptx(deck: Deck): Promise<ArrayBuffer> {
