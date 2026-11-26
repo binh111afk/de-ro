@@ -1,0 +1,22 @@
+[
+  {
+    "key": "dong-vat",
+    "name": "Động vật",
+    "vibe": "doodle rừng xanh: voi, hươu cao cổ, cá, chim",
+    "tags": ["động vật", "thế giới loài vật", "bảo vệ động vật hoang dã", "vật nuôi", "sở thú"],
+    "bg": "#fbf9f4",
+    "ink": "#2f4a2e",
+    "fg": "#424a3a",
+    "accent": "#a8501f",
+    "muted": "#666c5c",
+    "cycle": ["#3f7a45", "#a8501f", "#2a6f91"],
+    "soft": "#e6f1de",
+    "softText": "#2f5a2c",
+    "frame": "#cfe3a8",
+    "tints": ["#e6f1de", "#fbeadd", "#e2f0f6"],
+    "dots": ["#efede7", "#e9e7e1", "#f1efea"],
+    "seed": 103,
+    "items": ["voi", "huou-cao-co", "vet", "ca", "ran", "rua"],
+    "cum": "cum-dau-chan"
+  }
+]
