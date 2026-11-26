@@ -574,6 +574,7 @@ export function SlideElView({ el, theme, revealStep, live, embedded, slideId }: 
           fontFamily: fontStack(el.fontFamily ?? (isBody ? theme.fonts.body : theme.fonts.heading)),
           fontWeight: el.fontWeight ?? (isBody ? 500 : 600),
           fontStyle: el.fontStyle,
+          textTransform: el.caps ? 'uppercase' : undefined,
           textDecoration: el.textDecoration,
           textAlign: el.align,
           lineHeight: el.lineHeight ?? 1.25,
@@ -882,6 +883,7 @@ export function AutoFitText({
   weight,
   fontFamily,
   fontStyle,
+  caps,
   textDecoration,
   align,
   color,
@@ -909,6 +911,7 @@ export function AutoFitText({
   weight: number
   fontFamily?: string
   fontStyle?: 'normal' | 'italic'
+  caps?: boolean
   textDecoration?: 'none' | 'underline' | 'line-through'
   align?: 'left' | 'center' | 'right' | 'justify'
   color?: string
@@ -980,7 +983,7 @@ export function AutoFitText({
       stopFonts()
       ro.disconnect()
     }
-  }, [value, baseSize, showFit, middle, fontFamily, fontStyle, weight, letterSpacing])
+  }, [value, baseSize, showFit, middle, fontFamily, fontStyle, weight, letterSpacing, caps])
 
   if (showFit) {
     return (
@@ -1006,6 +1009,7 @@ export function AutoFitText({
             fontFamily: fontFamily ?? 'Be Vietnam Pro, sans-serif',
             fontWeight: weight,
             fontStyle,
+            textTransform: caps ? 'uppercase' : undefined,
             textDecoration,
             textAlign: align,
             lineHeight: lineHeight ?? 1.25,
@@ -1040,6 +1044,7 @@ export function AutoFitText({
         fontSize: `${size}cqw`,
         fontWeight: weight,
         fontStyle,
+        textTransform: caps ? 'uppercase' : undefined,
         textDecoration,
         textAlign: align,
         lineHeight: lineHeight ?? 1.25,

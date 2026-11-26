@@ -668,6 +668,7 @@ export function EditableEl({
           align={el.align}
           color={el.textColor ?? theme.fg}
           lineHeight={el.lineHeight}
+          caps={el.caps}
           letterSpacing={el.letterSpacing}
           background={el.fill}
           highlight={el.highlight}

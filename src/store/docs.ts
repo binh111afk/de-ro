@@ -78,6 +78,8 @@ export interface SlideElement {
   textArc?: number
   textColor?: string
   fontStyle?: 'normal' | 'italic'
+  /** hiển thị in hoa; chữ lưu giữ nguyên như đã gõ */
+  caps?: boolean
   textDecoration?: 'none' | 'underline' | 'line-through'
   /** Màu tô sáng nền phía sau chữ (CSS color) */
   highlight?: string
@@ -190,7 +192,7 @@ export interface DeckTheme {
   /** theme riêng của chế độ Chuyên nghiệp (không nằm trong catalog thường) */
   pro?: boolean
   /** bộ phong cách có nền / hình trang trí riêng (lib/slidePacks.ts) */
-  pack?: 'co-dien' | 'dan-gian' | 'khoa-hoc' | 'toan' | 'vat-ly' | 'hoa-hoc' | 'tin-hoc' | 'tam-ly' | 'sinh-hoc' | 'ngu-van' | 'dia-li' | 'tieng-anh' | 'kinh-te-phap-luat'
+  pack?: 'co-dien' | 'dan-gian' | 'khoa-hoc' | 'toan' | 'vat-ly' | 'hoa-hoc' | 'tin-hoc' | 'tam-ly' | 'sinh-hoc' | 'ngu-van' | 'dia-li' | 'tieng-anh' | 'kinh-te-phap-luat' | 'lich-su' | 'cong-nghe' | 'nghe-thuat' | 'the-duc'
   /** màu mực của tông tối trong theme Chuyên nghiệp (nền slide nhấn) */
   ink?: string
   /** viền mặc định cho thẻ/panel (px) */

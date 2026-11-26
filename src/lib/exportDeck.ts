@@ -468,7 +468,7 @@ export async function buildDeckPptx(deck: Deck): Promise<ArrayBuffer> {
           }
         }[] = []
         for (const run of hasBold(el.text) ? boldRuns(el.text ?? '') : [{ text: el.text ?? '', bold: false }]) {
-          mathToPlain(run.text)
+          (el.caps ? mathToPlain(run.text).toLocaleUpperCase('vi') : mathToPlain(run.text))
             .split('\n')
             .forEach((part, i) => {
               if (i > 0 && runs.length) runs[runs.length - 1].options.breakLine = true

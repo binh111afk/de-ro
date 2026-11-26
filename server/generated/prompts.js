@@ -3214,13 +3214,13 @@ var packTheme = (id, name, vibe, pack, tags, paper, ink, accent, secondary, head
   fonts: { ...PRO_FONTS, heading, body }
 });
 var PRO_THEMES = [
-  proTheme("tap-chi-do", "T\u1EA1p ch\xED \u0111\u1ECF", "gi\u1EA5y kem, m\u1EF1c \u0111en, \u0111\u1ECF g\u1EA1ch", "#a32c1d", "#2f6a5e", ["l\u1ECBch s\u1EED", "chi\u1EBFn tranh", "s\u1EF1 ki\u1EC7n x\xE3 h\u1ED9i", "b\xE1o ch\xED"]),
+  proTheme("tap-chi-do", "T\u1EA1p ch\xED \u0111\u1ECF", "gi\u1EA5y kem, m\u1EF1c \u0111en, \u0111\u1ECF g\u1EA1ch", "#a32c1d", "#2f6a5e", ["chi\u1EBFn tranh", "s\u1EF1 ki\u1EC7n x\xE3 h\u1ED9i", "b\xE1o ch\xED"]),
   proTheme("tap-chi-xanh", "T\u1EA1p ch\xED xanh", "gi\u1EA5y ng\xE0 h\u01A1i xanh, m\u1EF1c \u0111en, xanh l\xE1", "#3f632c", "#648446", ["r\u1EEBng", "h\u1EC7 sinh th\xE1i tr\xEAn c\u1EA1n", "m\xF4i tr\u01B0\u1EDDng"], { bg: "#edf0e5", ink: "#151a13" }),
   proTheme("tap-chi-vang", "T\u1EA1p ch\xED v\xE0ng", "gi\u1EA5y kem, m\u1EF1c \u0111en, v\xE0ng \u0111\u1EA5t", "#875108", "#1f4e79", ["h\u01B0\u1EDBng nghi\u1EC7p", "k\u1EF9 n\u0103ng s\u1ED1ng", "qu\u1EA3n l\xED th\u1EDDi gian"]),
   proTheme("tap-chi-lam", "T\u1EA1p ch\xED lam", "gi\u1EA5y kem, m\u1EF1c \u0111en, lam ch\xE0m", "#2a4d86", "#a2492e", ["tri\u1EBFt h\u1ECDc", "t\u01B0 duy", "nghi\xEAn c\u1EE9u khoa h\u1ECDc"]),
   proTheme("tap-chi-bien", "T\u1EA1p ch\xED lam ng\u1ECDc", "gi\u1EA5y m\xE0u s\u01B0\u01A1ng, m\u1EF1c xanh s\xE2u, lam ng\u1ECDc", "#146273", "#367b86", ["\u0111\u1ECBa l\xFD bi\u1EC3n", "V\u1ECBnh H\u1EA1 Long", "\u0111\u1EA1i d\u01B0\u01A1ng", "\u0111\u1EA3o", "s\xF4ng n\u01B0\u1EDBc", "sinh th\xE1i bi\u1EC3n"], { bg: "#e6efed", ink: "#102027" }),
-  proTheme("tap-chi-dem", "T\u1EA1p ch\xED t\xEDm than", "gi\u1EA5y x\xE1m t\xEDm nh\u1EA1t, m\u1EF1c \u0111\xEAm, t\xEDm ch\xE0m", "#534782", "#74619e", ["thi\xEAn v\u0103n", "v\u1EADt l\xFD", "tin h\u1ECDc", "l\u1EADp tr\xECnh", "c\xF4ng ngh\u1EC7"], { bg: "#eceaf3", ink: "#191626" }),
-  proTheme("tap-chi-dat", "T\u1EA1p ch\xED cam \u0111\u1EA5t", "gi\u1EA5y h\u1ED3ng ng\xE0, m\u1EF1c n\xE2u, cam \u0111\u1EA5t", "#98432f", "#ad664f", ["th\u1EC3 thao", "m\u1EF9 thu\u1EADt", "\xE2m nh\u1EA1c", "th\u1EE7 c\xF4ng", "v\u0103n h\xF3a"], { bg: "#f2e8df", ink: "#211713" }),
+  proTheme("tap-chi-dem", "T\u1EA1p ch\xED t\xEDm than", "gi\u1EA5y x\xE1m t\xEDm nh\u1EA1t, m\u1EF1c \u0111\xEAm, t\xEDm ch\xE0m", "#534782", "#74619e", ["khoa h\u1ECDc vi\u1EC5n t\u01B0\u1EDFng", "t\u01B0\u01A1ng lai", "\u0111\u1ED5i m\u1EDBi s\xE1ng t\u1EA1o"], { bg: "#eceaf3", ink: "#191626" }),
+  proTheme("tap-chi-dat", "T\u1EA1p ch\xED cam \u0111\u1EA5t", "gi\u1EA5y h\u1ED3ng ng\xE0, m\u1EF1c n\xE2u, cam \u0111\u1EA5t", "#98432f", "#ad664f", ["th\u1EE7 c\xF4ng", "v\u0103n h\xF3a", "\u1EA9m th\u1EF1c"], { bg: "#f2e8df", ink: "#211713" }),
   packTheme(
     "co-dien-do",
     "C\u1ED5 \u0111i\u1EC3n \u0111\u1ECF kem",
@@ -3361,6 +3361,58 @@ var PRO_THEMES = [
     "#233a5c",
     "#8a5a12",
     "#2f6a57",
+    "Barlow Condensed",
+    "Nunito"
+  ),
+  packTheme(
+    "lich-su-ve-tay",
+    "L\u1ECBch s\u1EED v\u1EBD tay",
+    "doodle n\xE2u \u0111\u1EA5t: tr\u1ED1ng \u0111\u1ED3ng, c\u1ED9t \u0111\xE1, kim t\u1EF1 th\xE1p, \u0111\u1ED3ng h\u1ED3 c\xE1t",
+    "lich-su",
+    ["l\u1ECBch s\u1EED", "l\u1ECBch s\u1EED th\u1EBF gi\u1EDBi", "v\u0103n minh c\u1ED5 \u0111\u1EA1i", "kh\u1EA3o c\u1ED5", "tri\u1EC1u \u0111\u1EA1i", "di s\u1EA3n"],
+    "#fbf7ee",
+    "#5a3d24",
+    "#9a4a24",
+    "#2f5f6b",
+    "Barlow Condensed",
+    "Nunito"
+  ),
+  packTheme(
+    "cong-nghe-ve-tay",
+    "C\xF4ng ngh\u1EC7 v\u1EBD tay",
+    "doodle cam v\xE0 xanh th\xE9p: b\xE1nh r\u0103ng, robot, h\u1ED9p d\u1EE5ng c\u1EE5, b\u1EA3n v\u1EBD",
+    "cong-nghe",
+    ["c\xF4ng ngh\u1EC7", "c\u01A1 kh\xED", "k\u0129 thu\u1EADt \u0111i\u1EC7n", "thi\u1EBFt k\u1EBF k\u0129 thu\u1EADt", "STEM", "robot"],
+    "#f8f9fa",
+    "#243a52",
+    "#b0541a",
+    "#2d5f8a",
+    "Barlow Condensed",
+    "Nunito"
+  ),
+  packTheme(
+    "nghe-thuat-ve-tay",
+    "Ngh\u1EC7 thu\u1EADt v\u1EBD tay",
+    "doodle h\u1ED3ng v\xE0 t\xEDm: b\u1EA3ng m\xE0u, \u0111\xE0n, gi\xE1 v\u1EBD, n\u1ED1t nh\u1EA1c",
+    "nghe-thuat",
+    ["\xE2m nh\u1EA1c", "m\u0129 thu\u1EADt", "m\u1EF9 thu\u1EADt", "h\u1ED9i ho\u1EA1", "nh\u1EA1c c\u1EE5", "ngh\u1EC7 thu\u1EADt"],
+    "#fdf9f7",
+    "#4a2f66",
+    "#b0386a",
+    "#5a3f8a",
+    "Barlow Condensed",
+    "Nunito"
+  ),
+  packTheme(
+    "the-duc-ve-tay",
+    "Th\u1EC3 thao v\u1EBD tay",
+    "doodle xanh l\xE1 v\xE0 cam: b\xF3ng, gi\xE0y ch\u1EA1y, c\xFAp, huy ch\u01B0\u01A1ng",
+    "the-duc",
+    ["th\u1EC3 d\u1EE5c", "th\u1EC3 thao", "gi\xE1o d\u1EE5c th\u1EC3 ch\u1EA5t", "s\u1EE9c kh\u1ECFe", "dinh d\u01B0\u1EE1ng", "r\xE8n luy\u1EC7n th\xE2n th\u1EC3"],
+    "#f8faf6",
+    "#1f4a38",
+    "#b34a1e",
+    "#2f7043",
     "Barlow Condensed",
     "Nunito"
   ),
@@ -6106,6 +6158,10 @@ var PACK_COLORS = {
   "dia-li": { background: "#f8faf8", fg: "#35495a", ink: "#1f4e66", accent: "#2c6e63", muted: "#586a74", surface: "#ffffff", panel: "#e1f0ee", onAccent: "#ffffff" },
   "tieng-anh": { background: "#fcfaf7", fg: "#3c4260", ink: "#2d3a6b", accent: "#b23a48", muted: "#646a86", surface: "#ffffff", panel: "#fbe8ea", onAccent: "#ffffff" },
   "kinh-te-phap-luat": { background: "#faf9f5", fg: "#3b475a", ink: "#233a5c", accent: "#8a5a12", muted: "#626b78", surface: "#ffffff", panel: "#f5eddc", onAccent: "#ffffff" },
+  "lich-su": { background: "#fbf7ee", fg: "#54432f", ink: "#5a3d24", accent: "#9a4a24", muted: "#74654f", surface: "#ffffff", panel: "#f4e8d2", onAccent: "#ffffff" },
+  "cong-nghe": { background: "#f8f9fa", fg: "#39485a", ink: "#243a52", accent: "#b0541a", muted: "#5f6b79", surface: "#ffffff", panel: "#fbeadc", onAccent: "#ffffff" },
+  "nghe-thuat": { background: "#fdf9f7", fg: "#4c3d58", ink: "#4a2f66", accent: "#b0386a", muted: "#74647c", surface: "#ffffff", panel: "#fbe6ee", onAccent: "#ffffff" },
+  "the-duc": { background: "#f8faf6", fg: "#34493e", ink: "#1f4a38", accent: "#b34a1e", muted: "#5c6d63", surface: "#ffffff", panel: "#e5f2e4", onAccent: "#ffffff" },
   "tin-hoc": { background: "#f8f7fc", fg: "#3a3560", ink: "#241d4d", accent: "#5a3ee0", muted: "#635d85", surface: "#ffffff", panel: "#ece8fd", onAccent: "#ffffff" },
   "tam-ly": { background: "#fbf4ec", fg: "#53392f", ink: "#5a2c1c", accent: "#a8532f", muted: "#7d6257", surface: "#fffaf5", panel: "#f8e4da", onAccent: "#ffffff" }
 };
@@ -6151,24 +6207,22 @@ var ART = {
   "toan/thuoc-ke": [539, 540],
   // dot 2
   "vat-ly/con-lac": [488, 540],
-  "vat-ly/cum-sao": [502, 540],
-  "vat-ly/dai-song": [540, 110],
   "vat-ly/hanh-tinh": [540, 363],
+  "vat-ly/hat-1": [300, 322],
+  "vat-ly/hat-2": [218, 227],
+  "vat-ly/hat-3": [216, 215],
   "vat-ly/kinh-thien-van": [489, 540],
-  "vat-ly/lang-kinh": [540, 196],
   "vat-ly/lo-xo": [331, 540],
-  "vat-ly/mach-dien": [540, 469],
+  "vat-ly/mang": [540, 229],
   "vat-ly/nam-cham": [540, 455],
   "vat-ly/nguyen-tu": [509, 540],
-  "vat-ly/ten-lua": [489, 540],
   "hoa-hoc/binh-cau": [358, 540],
   "hoa-hoc/binh-tam-giac": [416, 540],
-  "hoa-hoc/coc-dong": [506, 540],
-  "hoa-hoc/cum-vi-khuan": [522, 540],
   "hoa-hoc/dai-te-bao": [540, 229],
   "hoa-hoc/dna": [252, 540],
-  "hoa-hoc/gia-ong-nghiem": [540, 387],
-  "hoa-hoc/kinh-hien-vi": [324, 540],
+  "hoa-hoc/hat-1": [297, 278],
+  "hoa-hoc/hat-2": [272, 250],
+  "hoa-hoc/hat-3": [221, 207],
   "hoa-hoc/nguyen-tu": [540, 430],
   "hoa-hoc/ong-nghiem-doi": [494, 540],
   "hoa-hoc/phan-tu": [540, 471],
@@ -6192,61 +6246,94 @@ var ART = {
   "tam-ly/thien": [484, 540],
   "tam-ly/trai-tim": [470, 540],
   "tam-ly/tro-chuyen": [540, 435],
-  "sinh-hoc/buom": [540, 412],
-  "sinh-hoc/cum-vi-khuan": [536, 540],
   "sinh-hoc/dai-te-bao": [540, 409],
   "sinh-hoc/dna": [250, 540],
+  "sinh-hoc/hat-1": [269, 250],
+  "sinh-hoc/hat-2": [312, 164],
+  "sinh-hoc/hat-3": [290, 178],
   "sinh-hoc/kinh-hien-vi": [338, 540],
-  "sinh-hoc/la-cay": [468, 540],
   "sinh-hoc/mam-cay": [264, 540],
   "sinh-hoc/no-ron": [528, 540],
   "sinh-hoc/te-bao-dong-vat": [540, 536],
   "sinh-hoc/te-bao-thuc-vat": [540, 532],
-  "sinh-hoc/trai-tim": [357, 540],
   "ngu-van/but-long": [109, 540],
   "ngu-van/chong-sach": [540, 460],
-  "ngu-van/cum-la": [540, 365],
-  "ngu-van/cuon-thu": [540, 252],
-  "ngu-van/dai-lua": [540, 132],
   "ngu-van/den-dau": [196, 540],
+  "ngu-van/hat-1": [232, 112],
+  "ngu-van/hat-2": [166, 136],
+  "ngu-van/hat-3": [176, 112],
   "ngu-van/hoa-sen": [519, 540],
-  "ngu-van/kinh-tron": [540, 170],
   "ngu-van/lo-muc": [362, 540],
-  "ngu-van/long-vu": [540, 352],
+  "ngu-van/mang": [540, 229],
   "ngu-van/sach-mo": [540, 263],
   "dia-li/ban-do": [540, 249],
-  "dia-li/cum-may": [540, 260],
-  "dia-li/dai-bien": [540, 69],
   "dia-li/hai-dang": [265, 540],
+  "dia-li/hat-1": [241, 125],
+  "dia-li/hat-2": [191, 112],
+  "dia-li/hat-3": [129, 125],
   "dia-li/khinh-khi-cau": [396, 540],
   "dia-li/la-ban": [418, 540],
-  "dia-li/may-bay-giay": [540, 223],
-  "dia-li/nui-lua": [540, 334],
-  "dia-li/nui": [540, 238],
+  "dia-li/mang": [540, 229],
   "dia-li/qua-dia-cau": [440, 540],
   "dia-li/thuyen-buom": [528, 540],
   "tieng-anh/bong-thoai": [540, 482],
   "tieng-anh/bot-dien-thoai": [253, 540],
   "tieng-anh/but-chi": [188, 540],
-  "tieng-anh/cum-tim": [474, 540],
-  "tieng-anh/day-co": [540, 91],
-  "tieng-anh/micro": [297, 540],
-  "tieng-anh/so-tay": [540, 362],
+  "tieng-anh/hat-1": [298, 272],
+  "tieng-anh/hat-2": [222, 209],
+  "tieng-anh/hat-3": [146, 142],
+  "tieng-anh/mang": [540, 229],
   "tieng-anh/tach-tra": [454, 540],
   "tieng-anh/tai-nghe": [540, 482],
   "tieng-anh/thap-dong-ho": [125, 540],
-  "tieng-anh/xe-buyt": [540, 298],
-  "kinh-te-phap-luat/bat-tay": [540, 222],
   "kinh-te-phap-luat/bieu-do": [540, 424],
   "kinh-te-phap-luat/bua": [540, 389],
   "kinh-te-phap-luat/can-cong-ly": [540, 407],
   "kinh-te-phap-luat/cay-tien": [237, 540],
-  "kinh-te-phap-luat/chong-xu": [540, 212],
-  "kinh-te-phap-luat/cum-xu": [540, 411],
-  "kinh-te-phap-luat/dai-ruy-bang": [540, 120],
+  "kinh-te-phap-luat/hat-1": [291, 200],
+  "kinh-te-phap-luat/hat-2": [243, 172],
+  "kinh-te-phap-luat/hat-3": [219, 147],
   "kinh-te-phap-luat/heo-dat": [540, 480],
   "kinh-te-phap-luat/khien": [482, 540],
-  "kinh-te-phap-luat/toa-nha": [540, 482]
+  "kinh-te-phap-luat/mang": [540, 229],
+  "lich-su/binh-gom": [505, 540],
+  "lich-su/cot-da": [227, 540],
+  "lich-su/dong-ho-cat": [279, 540],
+  "lich-su/hat-1": [275, 232],
+  "lich-su/hat-2": [269, 200],
+  "lich-su/hat-3": [203, 202],
+  "lich-su/kim-tu-thap": [540, 226],
+  "lich-su/mang": [540, 229],
+  "lich-su/trong-dong": [539, 540],
+  "cong-nghe/banh-rang": [540, 382],
+  "cong-nghe/co-le": [319, 540],
+  "cong-nghe/den-ban": [298, 540],
+  "cong-nghe/drone": [540, 492],
+  "cong-nghe/hat-1": [192, 247],
+  "cong-nghe/hat-2": [173, 158],
+  "cong-nghe/hat-3": [203, 147],
+  "cong-nghe/hop-dung-cu": [489, 540],
+  "cong-nghe/mang": [540, 229],
+  "cong-nghe/robot": [467, 540],
+  "nghe-thuat/bang-mau": [540, 421],
+  "nghe-thuat/co-ve": [114, 540],
+  "nghe-thuat/dan-guitar": [238, 540],
+  "nghe-thuat/gia-ve": [277, 540],
+  "nghe-thuat/hat-1": [151, 291],
+  "nghe-thuat/hat-2": [169, 274],
+  "nghe-thuat/hat-3": [208, 225],
+  "nghe-thuat/khung-tranh": [540, 431],
+  "nghe-thuat/mang": [540, 229],
+  "nghe-thuat/trong": [540, 426],
+  "the-duc/bong-da": [539, 540],
+  "the-duc/cup-vang": [540, 501],
+  "the-duc/hat-1": [253, 258],
+  "the-duc/hat-2": [247, 253],
+  "the-duc/hat-3": [150, 149],
+  "the-duc/huy-chuong": [351, 540],
+  "the-duc/mang": [540, 229],
+  "the-duc/vot-cau-long": [304, 540],
+  "the-duc/xe-dap": [540, 305]
   // het dot 2
 };
 var box = (x, y, w, h) => ({ x: x / 12.8, y: y / 7.2, w: w / 12.8, h: h / 7.2 });
@@ -6443,7 +6530,7 @@ function danGian(id, c8, { title, body }) {
   }
 }
 function veTay(o23) {
-  const a34 = o23.art;
+  const blob = o23.blob ?? "mang";
   return {
     cycle: o23.cycle,
     onCycle: ["#ffffff", "#ffffff", "#ffffff"],
@@ -6459,14 +6546,14 @@ function veTay(o23) {
     formula: o23.cycle[0],
     halo: o23.soft,
     frame: o23.frame,
-    centered: true,
-    cover: [[a34.tl, 16, 16, 250, 340], [a34.band, 890, 0, 390, 230], [a34.br, 985, 300, 285, 415], [a34.bl, 24, 440, 260, 270]],
-    quote: [[a34.side, 0, 300, 240, 420], [a34.side2, 1040, 0, 240, 420]],
-    list: [[a34.a, 24, 20, 190, 160], [a34.b, 1100, 20, 150, 180], [a34.d, 1110, 545, 160, 160]],
-    corner: o23.wide ? [a34.corner, 1060, 36, 200, 150] : [a34.corner, 1085, 30, 150, 180],
-    extra: [a34.extra, 40, 28, 180, 180],
-    bignum: o23.wide ? [[a34.n1, 760, 50, 340, 290], [a34.n2, 800, 390, 400, 290], [a34.d, 1140, 40, 110, 120]] : [[a34.n1, 760, 50, 340, 290], [a34.band, 880, 400, 400, 320], [a34.n2, 740, 350, 220, 320]],
-    backdrop: [a34.a, 1150, 14, 110, 100]
+    // bìa, câu trích, danh sách và số liệu không ảnh do khung mẫu vẽ; các ô này chỉ dùng khi slide có ảnh
+    cover: [],
+    quote: [],
+    list: [],
+    bignum: [],
+    corner: [o23.atom, 1085, 30, 150, 180],
+    backdrop: [o23.mol, 1150, 14, 110, 100],
+    sample: { tallA: o23.tallA, tallB: o23.tallB, blob, pair: o23.pair, atom: o23.atom, long: o23.long, mol: o23.mol, big: blob, bit1: "hat-1", bit2: "hat-2", bit3: "hat-3" }
   };
 }
 var STUDY = {
@@ -6522,8 +6609,12 @@ var STUDY = {
     softText: "#2f4a73",
     frame: "#a9cdee",
     tints: ["#e4eef8", "#fbe7e2", "#faf0d4"],
-    art: { tl: "nguyen-tu", band: "dai-song", br: "kinh-thien-van", bl: "nam-cham", side: "con-lac", side2: "lo-xo", a: "nguyen-tu", b: "ten-lua", d: "cum-sao", corner: "lang-kinh", extra: "hanh-tinh", n1: "hanh-tinh", n2: "mach-dien" },
-    wide: true
+    tallA: "nam-cham",
+    tallB: "kinh-thien-van",
+    pair: "con-lac",
+    atom: "nguyen-tu",
+    long: "lo-xo",
+    mol: "hanh-tinh"
   }),
   "hoa-hoc": veTay({
     cycle: ["#4a7573", "#a5566a", "#7a6520"],
@@ -6531,7 +6622,13 @@ var STUDY = {
     softText: "#37605e",
     frame: "#a9d3c0",
     tints: ["#e3efec", "#f4e5e8", "#f7f1d6"],
-    art: { tl: "binh-cau", band: "dai-te-bao", br: "binh-tam-giac", bl: "cum-vi-khuan", side: "dna", side2: "dna", a: "phan-tu", b: "ong-nghiem-doi", d: "nguyen-tu", corner: "coc-dong", extra: "gia-ong-nghiem", n1: "phan-tu", n2: "kinh-hien-vi" }
+    tallA: "binh-cau",
+    tallB: "binh-tam-giac",
+    pair: "ong-nghiem-doi",
+    atom: "nguyen-tu",
+    long: "dna",
+    mol: "phan-tu",
+    blob: "dai-te-bao"
   }),
   "tin-hoc": {
     cycle: ["#5a3ee0", "#0b7d6d", "#c93a63"],
@@ -6562,7 +6659,13 @@ var STUDY = {
     softText: "#34603a",
     frame: "#a9cf8e",
     tints: ["#e6f1dd", "#fbe9e5", "#faf1d6"],
-    art: { tl: "la-cay", band: "dai-te-bao", br: "kinh-hien-vi", bl: "cum-vi-khuan", side: "dna", side2: "dna", a: "te-bao-dong-vat", b: "mam-cay", d: "buom", corner: "te-bao-thuc-vat", extra: "no-ron", n1: "trai-tim", n2: "te-bao-thuc-vat" }
+    tallA: "te-bao-thuc-vat",
+    tallB: "kinh-hien-vi",
+    pair: "mam-cay",
+    atom: "te-bao-dong-vat",
+    long: "dna",
+    mol: "no-ron",
+    blob: "dai-te-bao"
   }),
   "ngu-van": veTay({
     cycle: ["#a04a32", "#6d3b4f", "#5b6b3a"],
@@ -6570,8 +6673,12 @@ var STUDY = {
     softText: "#7c3a28",
     frame: "#efb7a0",
     tints: ["#f6e9e0", "#f1e6ec", "#edf0e0"],
-    art: { tl: "hoa-sen", band: "dai-lua", br: "chong-sach", bl: "lo-muc", side: "den-dau", side2: "but-long", a: "sach-mo", b: "long-vu", d: "cum-la", corner: "cuon-thu", extra: "kinh-tron", n1: "sach-mo", n2: "den-dau" },
-    wide: true
+    tallA: "chong-sach",
+    tallB: "den-dau",
+    pair: "lo-muc",
+    atom: "sach-mo",
+    long: "but-long",
+    mol: "hoa-sen"
   }),
   "dia-li": veTay({
     cycle: ["#2c6e63", "#a5503f", "#2f5f86"],
@@ -6579,8 +6686,12 @@ var STUDY = {
     softText: "#22594f",
     frame: "#bfe0e4",
     tints: ["#e1f0ee", "#fbeae2", "#e5eef6"],
-    art: { tl: "la-ban", band: "dai-bien", br: "qua-dia-cau", bl: "nui", side: "khinh-khi-cau", side2: "hai-dang", a: "la-ban", b: "may-bay-giay", d: "cum-may", corner: "ban-do", extra: "nui-lua", n1: "khinh-khi-cau", n2: "thuyen-buom" },
-    wide: true
+    tallA: "qua-dia-cau",
+    tallB: "hai-dang",
+    pair: "thuyen-buom",
+    atom: "la-ban",
+    long: "khinh-khi-cau",
+    mol: "ban-do"
   }),
   "tieng-anh": veTay({
     cycle: ["#b23a48", "#35518f", "#7a6118"],
@@ -6588,8 +6699,12 @@ var STUDY = {
     softText: "#93303c",
     frame: "#a9c8ee",
     tints: ["#fbe8ea", "#e6edf9", "#faf1d6"],
-    art: { tl: "bong-thoai", band: "day-co", br: "thap-dong-ho", bl: "xe-buyt", side: "bot-dien-thoai", side2: "but-chi", a: "bong-thoai", b: "tach-tra", d: "cum-tim", corner: "so-tay", extra: "tai-nghe", n1: "micro", n2: "bot-dien-thoai" },
-    wide: true
+    tallA: "bong-thoai",
+    tallB: "thap-dong-ho",
+    pair: "bot-dien-thoai",
+    atom: "tach-tra",
+    long: "but-chi",
+    mol: "tai-nghe"
   }),
   "kinh-te-phap-luat": veTay({
     cycle: ["#8a5a12", "#233a5c", "#2f6a57"],
@@ -6597,8 +6712,64 @@ var STUDY = {
     softText: "#6e470d",
     frame: "#c5d8ee",
     tints: ["#f5eddc", "#e5ebf4", "#e4efe9"],
-    art: { tl: "khien", band: "dai-ruy-bang", br: "can-cong-ly", bl: "heo-dat", side: "toa-nha", side2: "cay-tien", a: "bua", b: "bieu-do", d: "cum-xu", corner: "bat-tay", extra: "chong-xu", n1: "bieu-do", n2: "cay-tien" },
-    wide: true
+    tallA: "heo-dat",
+    tallB: "cay-tien",
+    pair: "can-cong-ly",
+    atom: "khien",
+    long: "bua",
+    mol: "bieu-do"
+  }),
+  "lich-su": veTay({
+    cycle: ["#9a4a24", "#2f5f6b", "#7a5c10"],
+    soft: "#f4e8d2",
+    softText: "#6e3a1c",
+    frame: "#e8cfa0",
+    tints: ["#f4e8d2", "#e4eef0", "#f6e3da"],
+    tallA: "binh-gom",
+    tallB: "cot-da",
+    pair: "dong-ho-cat",
+    atom: "trong-dong",
+    long: "cot-da",
+    mol: "kim-tu-thap"
+  }),
+  "cong-nghe": veTay({
+    cycle: ["#b0541a", "#2d5f8a", "#2c6e63"],
+    soft: "#fbeadc",
+    softText: "#8c4112",
+    frame: "#f6c79c",
+    tints: ["#fbeadc", "#e4eef7", "#e2f1ee"],
+    tallA: "robot",
+    tallB: "den-ban",
+    pair: "hop-dung-cu",
+    atom: "banh-rang",
+    long: "co-le",
+    mol: "drone"
+  }),
+  "nghe-thuat": veTay({
+    cycle: ["#b0386a", "#5a3f8a", "#1f6f6a"],
+    soft: "#fbe6ee",
+    softText: "#8f2a55",
+    frame: "#f4b6cd",
+    tints: ["#fbe6ee", "#eee8f7", "#e2f2f0"],
+    tallA: "bang-mau",
+    tallB: "dan-guitar",
+    pair: "gia-ve",
+    atom: "trong",
+    long: "co-ve",
+    mol: "khung-tranh"
+  }),
+  "the-duc": veTay({
+    cycle: ["#2f7043", "#b34a1e", "#2b5f8c"],
+    soft: "#e5f2e4",
+    softText: "#245834",
+    frame: "#b5dbb0",
+    tints: ["#e5f2e4", "#fbe9e0", "#e4eef7"],
+    tallA: "bong-da",
+    tallB: "vot-cau-long",
+    pair: "cup-vang",
+    atom: "huy-chuong",
+    long: "vot-cau-long",
+    mol: "xe-dap"
   }),
   "tam-ly": {
     cycle: ["#a8532f", "#4f7350", "#4c5c92"],
@@ -6644,38 +6815,107 @@ function tag(value, x, y, { body }, look, center = false) {
     body("kicker", label, box(left, y + 2, w, 48), 22, look.text, { fontWeight: 700, align: "center", valign: "middle", lineHeight: 1.2 })
   ];
 }
-var studyHead = (pack, c8, kit) => STUDY[pack].centered ? [
-  ...tag(c8.kicker, 640, 52, kit, STUDY[pack].tag, true),
-  kit.title("title", c8.title, box(230, 112, 820, 136), 66, PACK_COLORS[pack].ink, { align: "center", valign: "middle" })
-] : [
+var studyHead = (pack, c8, kit) => STUDY[pack].sample ? sampleTitle(pack, c8, kit) : [
   ...tag(c8.kicker, 106, 58, kit, STUDY[pack].tag),
   kit.title("title", c8.title, box(106, 118, 760, 132), 54, PACK_COLORS[pack].ink, { valign: "middle" })
 ];
-function centeredStudy(pack, id, c8, kit) {
+var SAMPLE = {
+  // slide có ảnh: chỉ viền góc, không che ảnh bên phải
+  photo: [["blob", -62, -78, 210, 210, 22], ["blob", -80, 566, 230, 230, -115], ["bit1", 626, 40, 90, 90, -16], ["bit3", 1178, 28, 92, 92, 16], ["bit2", 1180, 610, 104, 104, 16]],
+  cover: [
+    ["tallA", 24, 60, 296, 348, 4],
+    ["blob", 891, -27, 438, 379, 55],
+    ["blob", -57, 412, 438, 379, -115],
+    ["tallB", 1016, 335, 195, 339, -7],
+    ["bit1", 815, 37, 96, 94, -16],
+    ["bit2", 918, 589, 96, 94, 16],
+    ["bit1", 214, 570, 100, 98, 7],
+    ["bit3", 263, 126, 83, 81, 16]
+  ],
+  intro: [["pair", 996, 263, 258, 417, 13], ["atom", 46, 444, 237, 221], ["bit2", 1067, 72, 141, 134], ["blob", -54, -24, 438, 379, -27]],
+  goals: [["long", -60, 233, 320, 548, -38], ["long", 1018, -89, 340, 574, -38]],
+  four: [
+    ["mol", 1067, 26, 164, 170],
+    ["bit1", 1137, 587, 165, 161],
+    ["bit2", -36, 567, 200, 200],
+    ["bit3", 33, 35, 124, 136],
+    ["bit1", 128, 84, 70, 70, -22],
+    ["bit2", 81, 161, 62, 62, -14]
+  ],
+  columns: [
+    ["blob", -62, -78, 210, 210, 22],
+    ["blob", 1110, -48, 220, 220, -67],
+    ["bit1", 1013, 32, 99, 94],
+    ["bit3", 1086, 134, 90, 98],
+    ["bit2", 49, 176, 99, 94, -85],
+    ["bit1", 135, 62, 90, 98, -85]
+  ],
+  rules: [
+    ["atom", 972, 313, 226, 211],
+    ["atom", 1118, -101, 324, 302, -38],
+    ["bit1", 1184, 261, 72, 72],
+    ["bit2", 1117, 544, 186, 176],
+    ["bit1", 1013, 576, 72, 72],
+    ["bit1", 995, 87, 61, 61],
+    ["bit3", 57, 70, 91, 86, 14],
+    ["bit1", 182, 42, 61, 61, 14]
+  ],
+  section: [
+    ["mol", 776, 69, 323, 241, -4],
+    ["big", 700, 330, 720, 560, -32],
+    ["bit1", 690, 95, 94, 94],
+    ["bit3", 1077, 363, 136, 134, 16],
+    ["bit2", 891, 552, 87, 85, 11],
+    ["bit2", 892, 380, 60, 59],
+    ["bit1", 1176, 20, 105, 105]
+  ]
+};
+function sampleArt(pack, set) {
+  const names = STUDY[pack].sample;
+  return SAMPLE[set].map(([role, x, y, w, h, rotation, flipX], i) => ({ ...fit(pack, i + 1, [names[role], x, y, w, h]), rotation, flipX }));
+}
+var sampleTitle = (pack, c8, { title }, b = box(200, 96, 880, 124)) => [
+  title("title", c8.title, b, 84, PACK_COLORS[pack].ink, { align: "center", valign: "middle", caps: true, lineHeight: 1.15 })
+];
+function sampleFrame(pack, id, c8, kit) {
   const { title, body } = kit;
   const { ink, fg } = PACK_COLORS[pack];
   const style = STUDY[pack];
   const paper = full(`${pack}/giay`);
-  const arts = (slots) => slots.map((slot, i) => fit(pack, i + 1, slot));
-  const middle = { align: "center", valign: "middle" };
+  const head = { align: "center", valign: "middle", caps: true, lineHeight: 1.2 };
+  const small = { align: "center", caps: true, fontWeight: 700, letterSpacing: 0.12 };
+  const photo = image("image-1", c8.image, box(730, 120, 450, 480), {
+    imagePosition: { x: c8.focusX ?? 50, y: c8.focusY ?? 40 },
+    crop: c8.imageCrop,
+    ...rounded(style.radius),
+    border: 6,
+    borderColor: style.frame
+  });
   switch (id) {
     case "photo-full":
-      if (c8.image) return null;
+      if (c8.image) return [
+        paper,
+        ...sampleArt(pack, "photo"),
+        photo,
+        body("kicker", c8.kicker, box(110, 132, 580, 56), 26, style.big, { caps: true, fontWeight: 700, letterSpacing: 0.12 }),
+        title("title", c8.title, box(106, 200, 590, 300), 96, ink, { caps: true, valign: "middle", lineHeight: 1.15 }),
+        body("subtitle", c8.subtitle, box(110, 516, 560, 110), 30, fg)
+      ];
       return [
         paper,
-        ...arts(style.cover),
-        ...tag(c8.kicker, 640, 112, kit, style.tag, true),
-        title("title", c8.title, box(270, 176, 740, 290), 104, ink, { ...middle, lineHeight: 1.05 }),
-        body("subtitle", c8.subtitle, box(320, 490, 640, 110), 30, style.big, { align: "center", fontWeight: 700 })
+        ...sampleArt(pack, "cover"),
+        body("kicker", c8.kicker, box(340, 150, 600, 56), 28, style.big, small),
+        title("title", c8.title, box(322, 204, 676, 340), 136, ink, { ...head, lineHeight: 1.12 }),
+        body("subtitle", c8.subtitle, box(330, 556, 620, 80), 32, style.big, small)
       ];
     case "manifesto": {
       const text = statement(c8);
       return [
         paper,
-        ...arts(style.quote),
-        title("kicker", upper(c8.kicker), box(290, 110, 700, 90), 50, ink, middle),
-        title("body", text, box(250, 220, 780, 270), text.length > 150 ? 42 : text.length > 90 ? 50 : 60, fg, { ...middle, fontWeight: 600, lineHeight: 1.25 }),
-        body("author", c8.author, box(300, 520, 680, 80), 28, style.big, { align: "center", fontWeight: 700 })
+        ...sampleArt(pack, "goals"),
+        title("kicker", c8.kicker, box(240, 150, 800, 120), 84, ink, head),
+        body("body", text, box(330, 290, 620, 290), text.length > 150 ? 36 : 42, fg, { align: "center", valign: "middle", lineHeight: 1.45 }),
+        body("author", c8.author, box(340, 580, 600, 56), 26, style.big, small)
       ];
     }
     case "editorial-text":
@@ -6683,54 +6923,73 @@ function centeredStudy(pack, id, c8, kit) {
       const bullets = list(c8.bullets);
       const items = bullets.length ? bullets : list(c8.body?.split("\n"));
       if (id === "bullets" && !items.length) return [];
-      let content;
-      if (items.length < 2 || items.length > 4) {
-        const text = items.length > 1 ? items.map((item) => `\u2022 ${item}`).join("\n") : items[0];
-        content = [body(bullets.length ? "bullets" : "body", text, box(210, 272, 860, 390), (text?.length ?? 0) > 320 ? 26 : 32, fg, { ...middle, lineHeight: 1.6 })];
-      } else {
-        const grid = items.length === 4;
-        const per = grid ? 2 : items.length;
-        const w = (920 - (per - 1) * 40) / per;
-        content = items.flatMap((item, i) => {
-          const x = 180 + i % per * (w + 40);
-          const y = grid ? 262 + Math.floor(i / per) * 205 : 282;
-          const color = style.cycle[i % style.cycle.length];
-          return [
-            title(`decor-kit-${70 + i}`, `0${i + 1}`, box(x, y - (grid ? 12 : 0), w, grid ? 92 : 90), grid ? 56 : 76, color, { ...middle, decor: true, lineHeight: 1 }),
-            body(`bullet-${i + 1}`, item, box(x, y + (grid ? 80 : 108), w, grid ? 118 : 250), grid ? 29 : 30, fg, { align: "center", lineHeight: 1.45 })
-          ];
-        });
+      const number = (i, b, px) => title(`decor-kit-${70 + i}`, `0${i + 1}`, b, px, style.cycle[i % style.cycle.length], { align: "center", valign: "middle", decor: true, lineHeight: 1 });
+      if (items.length === 4) {
+        return [
+          paper,
+          ...sampleArt(pack, "four"),
+          ...sampleTitle(pack, c8, kit, box(220, 90, 840, 124)),
+          ...items.flatMap((item, i) => {
+            const x = i % 2 ? 668 : 197;
+            const y = 236 + Math.floor(i / 2) * 226;
+            return [number(i, box(x, y, 416, 66), 54), body(`bullet-${i + 1}`, item, box(x, y + 70, 416, 148), 30, fg, { align: "center", lineHeight: 1.4 })];
+          })
+        ];
       }
-      return [paper, ...arts(style.list), ...studyHead(pack, c8, kit), ...content];
+      if (items.length === 2 || items.length === 3) {
+        const w = items.length === 3 ? 320 : 420;
+        const gap = items.length === 3 ? 60 : 70;
+        const left = 640 - (items.length * w + (items.length - 1) * gap) / 2;
+        return [
+          paper,
+          ...sampleArt(pack, "columns"),
+          ...sampleTitle(pack, c8, kit, box(220, 128, 840, 128)),
+          ...items.flatMap((item, i) => {
+            const x = left + i * (w + gap);
+            return [number(i, box(x, 280, w, 88), 68), body(`bullet-${i + 1}`, item, box(x, 380, w, 270), 32, fg, { align: "center", lineHeight: 1.4 })];
+          })
+        ];
+      }
+      const text = items.length > 1 ? items.map((item) => `\u2022 ${item}`).join("\n") : items[0];
+      return [
+        paper,
+        ...sampleArt(pack, "intro"),
+        ...sampleTitle(pack, c8, kit, box(240, 140, 800, 130)),
+        body(bullets.length ? "bullets" : "body", text, box(320, 296, 640, 360), (text?.length ?? 0) > 260 ? 29 : 35, fg, { align: "center", lineHeight: 1.5 })
+      ];
     }
     case "rules": {
       const rows = rowsOf(c8);
       if (!rows.length) return [];
-      const w = (960 - (Math.min(rows.length, 3) - 1) * 50) / Math.min(rows.length, 3);
-      const left = 640 - (rows.length * w + (rows.length - 1) * 50) / 2;
+      const h = Math.min(158, 480 / rows.length);
       return [
         paper,
-        fit(pack, 1, style.corner),
-        style.extra ? fit(pack, 2, style.extra) : null,
-        ...studyHead(pack, c8, kit),
-        ...rows.length > 3 ? cards(pack, rows, kit) : rows.flatMap((row, i) => {
-          const x = left + i * (w + 50);
+        ...sampleArt(pack, "rules"),
+        ...sampleTitle(pack, c8, kit, box(180, 84, 920, 120)),
+        ...rows.flatMap((row, i) => {
+          const y = 214 + i * h;
           return [
-            title(`item-${i + 1}-value`, row.value, box(x, 296, w, 96), 44, style.cycle[i % style.cycle.length], middle),
-            body(`item-${i + 1}-label`, row.label, box(x, 410, w, 220), 28, fg, { align: "center" })
+            title(`item-${i + 1}-value`, row.value, box(126, y, 820, rows.length > 3 ? 48 : 78), rows.length > 3 ? 30 : 42, ink, { caps: true, valign: "middle", lineHeight: 1.15 }),
+            body(`item-${i + 1}-label`, row.label, box(126, y + (rows.length > 3 ? 48 : 78), 820, h - (rows.length > 3 ? 50 : 80)), rows.length > 3 ? 23 : 29, fg, { lineHeight: 1.3 })
           ];
         })
       ];
     }
     case "bignum":
-      if (c8.image) return null;
+      if (c8.image) return [
+        paper,
+        ...sampleArt(pack, "photo"),
+        photo,
+        title("bignum-value", c8.value, box(106, 130, 590, 240), 190, style.big, { valign: "middle", lineHeight: 1 }),
+        title("bignum-label", c8.label, box(110, 386, 590, 180), 72, ink, { caps: true, valign: "middle", lineHeight: 1.15 }),
+        body("subtitle", c8.subtitle, box(110, 580, 570, 100), 28, fg)
+      ];
       return [
         paper,
-        ...arts(style.bignum),
-        ...tag(c8.kicker, 130, 100, kit, style.tag),
-        title("bignum-value", c8.value, box(124, 160, 580, 250), 230, style.big, { valign: "middle", lineHeight: 1 }),
-        title("bignum-label", c8.label, box(130, 420, 580, 130), 64, ink),
-        body("subtitle", c8.subtitle, box(130, 566, 560, 90), 28, fg)
+        ...sampleArt(pack, "section"),
+        title("bignum-value", c8.value, box(150, 96, 560, 224), 200, style.big, { valign: "middle", lineHeight: 1 }),
+        title("bignum-label", c8.label, box(154, 326, 620, 250), 112, ink, { caps: true, valign: "middle", lineHeight: 1.15 }),
+        body("subtitle", c8.subtitle, box(158, 584, 520, 100), 30, fg)
       ];
     default:
       return null;
@@ -6799,8 +7058,8 @@ function study(pack, id, c8, kit) {
   const { title, body } = kit;
   const { ink, fg, accent } = PACK_COLORS[pack];
   const style = STUDY[pack];
-  if (style.centered) {
-    const built = centeredStudy(pack, id, c8, kit);
+  if (style.sample) {
+    const built = sampleFrame(pack, id, c8, kit);
     if (built) return built;
   }
   const paper = full(`${pack}/giay`);

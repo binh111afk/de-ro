@@ -76,6 +76,22 @@ def kinh_te_phap_luat():
     hat_giay('kinh-te-phap-luat', '#faf9f5', ['#edebe4', '#e7e5de', '#f0eee8'], 23)
 
 
+def lich_su():
+    hat_giay('lich-su', '#fbf7ee', ['#efe9dc', '#e9e2d2', '#f2ede2'], 29)
+
+
+def cong_nghe():
+    hat_giay('cong-nghe', '#f8f9fa', ['#ecedef', '#e6e8ea', '#eff0f2'], 31)
+
+
+def nghe_thuat():
+    hat_giay('nghe-thuat', '#fdf9f7', ['#f1ecea', '#ebe6e4', '#f3efed'], 37)
+
+
+def the_duc():
+    hat_giay('the-duc', '#f8faf6', ['#ecefea', '#e6eae4', '#eef1ec'], 41)
+
+
 def tin_hoc():
     im = Image.new('RGB', (W * S, H * S), '#f8f7fc')
     d = ImageDraw.Draw(im)
@@ -114,3 +130,7 @@ ngu_van()
 dia_li()
 tieng_anh()
 kinh_te_phap_luat()
+lich_su()
+cong_nghe()
+nghe_thuat()
+the_duc()
