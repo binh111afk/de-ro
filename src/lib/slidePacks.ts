@@ -7,7 +7,7 @@
 import type { SlideElement } from '@/store/docs'
 import type { SlideLayoutContent } from './slideLayouts'
 
-export type SlidePackId = 'co-dien' | 'dan-gian' | 'khoa-hoc' | 'toan' | 'vat-ly' | 'hoa-hoc' | 'tin-hoc' | 'tam-ly' | 'sinh-hoc' | 'ngu-van' | 'dia-li' | 'tieng-anh' | 'kinh-te-phap-luat' | 'lich-su' | 'cong-nghe' | 'nghe-thuat' | 'the-duc' | 'mam-non' | 'sinh-hoat-lop' | 'moi-truong' | 'kinh-doanh' | 'le-hoi' | 'quoc-phong' | 'huong-nghiep' | 'ngoai-ngu' | 'du-lich' | 'dinh-duong' | 'y-te' | 'giao-thong' | 'gia-dinh'
+export type SlidePackId = 'co-dien' | 'dan-gian' | 'khoa-hoc' | 'toan' | 'vat-ly' | 'hoa-hoc' | 'tin-hoc' | 'tam-ly' | 'sinh-hoc' | 'ngu-van' | 'dia-li' | 'tieng-anh' | 'kinh-te-phap-luat' | 'lich-su' | 'cong-nghe' | 'nghe-thuat' | 'the-duc' | 'mam-non' | 'sinh-hoat-lop' | 'moi-truong' | 'kinh-doanh' | 'le-hoi' | 'quoc-phong' | 'huong-nghiep' | 'ngoai-ngu' | 'du-lich' | 'dinh-duong' | 'y-te' | 'giao-thong' | 'gia-dinh' | 'trung-tinh'
 
 export const PACK_COLORS = {
   'co-dien': { background: '#8b0000', fg: '#8b0000', ink: '#8b0000', accent: '#8b0000', muted: '#7a3b2e', surface: '#fdeed3', panel: '#f7e2bd', onAccent: '#fdeed3' },
@@ -38,6 +38,7 @@ export const PACK_COLORS = {
   'y-te': { background: '#f7faf9', fg: '#394a4a', ink: '#1d4f4d', accent: '#b83a2c', muted: '#5f6f6f', surface: '#ffffff', panel: '#e0f1ef', onAccent: '#ffffff' },
   'giao-thong': { background: '#fafaf7', fg: '#40465a', ink: '#27406b', accent: '#b83a2c', muted: '#656b7a', surface: '#ffffff', panel: '#e6eefa', onAccent: '#ffffff' },
   'gia-dinh': { background: '#fcf8f5', fg: '#51403f', ink: '#6e3340', accent: '#a8403c', muted: '#77696a', surface: '#ffffff', panel: '#fbe8e6', onAccent: '#ffffff' },
+  'trung-tinh': { background: '#fbf9f4', fg: '#3b4a58', ink: '#27405a', accent: '#a84e2c', muted: '#5f6c77', surface: '#ffffff', panel: '#e4eef0', onAccent: '#ffffff' },
   'tin-hoc': { background: '#f8f7fc', fg: '#3a3560', ink: '#241d4d', accent: '#5a3ee0', muted: '#635d85', surface: '#ffffff', panel: '#ece8fd', onAccent: '#ffffff' },
   'tam-ly': { background: '#fbf4ec', fg: '#53392f', ink: '#5a2c1c', accent: '#a8532f', muted: '#7d6257', surface: '#fffaf5', panel: '#f8e4da', onAccent: '#ffffff' },
 } as const
@@ -108,6 +109,8 @@ const ART: Record<string, [number, number]> = {
   'giao-thong/mang': [540, 229], 'giao-thong/mu-bao-hiem': [501, 540], 'giao-thong/rao-chan': [190, 540], 'giao-thong/xe-buyt': [540, 321], 'giao-thong/xe-dap': [540, 367],
   'gia-dinh/am-tra': [540, 381], 'gia-dinh/cay-gia-dinh': [297, 540], 'gia-dinh/den-cay': [384, 540], 'gia-dinh/hat-1': [235, 223], 'gia-dinh/hat-2': [213, 189],
   'gia-dinh/hat-3': [184, 184], 'gia-dinh/khan-len': [326, 540], 'gia-dinh/khung-anh': [540, 406], 'gia-dinh/mang': [540, 229], 'gia-dinh/ngoi-nha': [540, 458],
+  'trung-tinh/bong-den': [506, 540], 'trung-tinh/bong-thoai': [540, 512], 'trung-tinh/but-chi': [144, 540], 'trung-tinh/hat-1': [254, 161], 'trung-tinh/hat-2': [158, 204],
+  'trung-tinh/hat-3': [208, 207], 'trung-tinh/kinh-lup': [306, 540], 'trung-tinh/mang': [540, 229], 'trung-tinh/may-bay-giay': [540, 275], 'trung-tinh/ngoi-sao': [540, 523],
   // het dot 2
 }
 
@@ -377,7 +380,7 @@ function danGian(id: string, c: SlideLayoutContent, { title, body }: Kit): Built
  * Các bộ theo môn: chung một khung bố cục, mỗi bộ chỉ khai báo màu,
  * kiểu thẻ và chỗ đặt hình. Thêm bộ mới = thêm một mục vào STUDY.
  * ------------------------------------------------------------------ */
-type StudyId = 'khoa-hoc' | 'toan' | 'vat-ly' | 'hoa-hoc' | 'tin-hoc' | 'tam-ly' | 'sinh-hoc' | 'ngu-van' | 'dia-li' | 'tieng-anh' | 'kinh-te-phap-luat' | 'lich-su' | 'cong-nghe' | 'nghe-thuat' | 'the-duc' | 'mam-non' | 'sinh-hoat-lop' | 'moi-truong' | 'kinh-doanh' | 'le-hoi' | 'quoc-phong' | 'huong-nghiep' | 'ngoai-ngu' | 'du-lich' | 'dinh-duong' | 'y-te' | 'giao-thong' | 'gia-dinh'
+type StudyId = 'khoa-hoc' | 'toan' | 'vat-ly' | 'hoa-hoc' | 'tin-hoc' | 'tam-ly' | 'sinh-hoc' | 'ngu-van' | 'dia-li' | 'tieng-anh' | 'kinh-te-phap-luat' | 'lich-su' | 'cong-nghe' | 'nghe-thuat' | 'the-duc' | 'mam-non' | 'sinh-hoat-lop' | 'moi-truong' | 'kinh-doanh' | 'le-hoi' | 'quoc-phong' | 'huong-nghiep' | 'ngoai-ngu' | 'du-lich' | 'dinh-duong' | 'y-te' | 'giao-thong' | 'gia-dinh' | 'trung-tinh'
 
 /** hình đặt gọn trong một ô: [tên, x, y, rộng, cao] (px trên slide 1280×720) */
 type Slot = [string, number, number, number, number]
@@ -522,6 +525,8 @@ const STUDY: Record<StudyId, StudyStyle> = {
     tallA: 'mu-bao-hiem', tallB: 'den-giao-thong', pair: 'bien-bao', atom: 'xe-dap', long: 'rao-chan', mol: 'xe-buyt' }),
   'gia-dinh': veTay({ cycle: ['#a8403c', '#9a5a12', '#3f704a'], soft: '#fbe8e6', softText: '#8c3532', frame: '#f6c3bd', tints: ['#fbe8e6', '#faeeda', '#e6f1e5'],
     tallA: 'ngoi-nha', tallB: 'cay-gia-dinh', pair: 'den-cay', atom: 'am-tra', long: 'khan-len', mol: 'khung-anh' }),
+  'trung-tinh': veTay({ cycle: ['#3f6e80', '#a84e2c', '#27405a'], soft: '#e4eef0', softText: '#27405a', frame: '#e9d9c0', tints: ['#e4eef0', '#fbeadf', '#eef1e6'],
+    tallA: 'bong-den', tallB: 'kinh-lup', pair: 'bong-thoai', atom: 'ngoi-sao', long: 'but-chi', mol: 'may-bay-giay' }),
   'tam-ly': {
     cycle: ['#a8532f', '#4f7350', '#4c5c92'], onCycle: ['#ffffff', '#ffffff', '#ffffff'],
     cards: 'tint', tints: ['#f8e4da', '#e6eee3', '#fbefd3'], card: '#fffaf5', line: '#f0ddd0', radius: 40, rowCards: true, round: true,

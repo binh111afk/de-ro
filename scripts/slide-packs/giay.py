@@ -144,6 +144,10 @@ def gia_dinh():
     hat_giay('gia-dinh', '#fcf8f5', ['#f0ece8', '#eae6e2', '#f2eeeb'], 101)
 
 
+def trung_tinh():
+    hat_giay('trung-tinh', '#fbf9f4', ['#efede7', '#e9e7e1', '#f1efea'], 107)
+
+
 def tin_hoc():
     im = Image.new('RGB', (W * S, H * S), '#f8f7fc')
     d = ImageDraw.Draw(im)
@@ -199,3 +203,4 @@ dinh_duong()
 y_te()
 giao_thong()
 gia_dinh()
+trung_tinh()

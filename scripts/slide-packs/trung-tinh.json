@@ -1,0 +1,22 @@
+[
+  {
+    "key": "trung-tinh",
+    "name": "Ý tưởng chung",
+    "vibe": "doodle trung tính: bóng đèn, kính lúp, bong bóng thoại, máy bay giấy",
+    "tags": ["chủ đề không có bộ riêng", "chủ đề tổng hợp", "thời sự", "đạo đức", "kỹ năng sống", "phòng chống tệ nạn", "ý tưởng"],
+    "bg": "#fbf9f4",
+    "ink": "#27405a",
+    "fg": "#3b4a58",
+    "accent": "#a84e2c",
+    "muted": "#5f6c77",
+    "cycle": ["#3f6e80", "#a84e2c", "#27405a"],
+    "soft": "#e4eef0",
+    "softText": "#27405a",
+    "frame": "#e9d9c0",
+    "tints": ["#e4eef0", "#fbeadf", "#eef1e6"],
+    "dots": ["#efede7", "#e9e7e1", "#f1efea"],
+    "seed": 107,
+    "items": ["bong-den", "kinh-lup", "bong-thoai", "ngoi-sao", "but-chi", "may-bay-giay"],
+    "cum": "cum-vat-nho"
+  }
+]

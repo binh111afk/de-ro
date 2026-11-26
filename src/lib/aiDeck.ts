@@ -275,10 +275,10 @@ export function proPlan(plan: DeckPlan, style?: ProStyle): DeckPlan {
     if (!PRO_LIGHT_LAYOUTS.has(slide.layout)) { light = 0; continue }
     if (++light > 2) { slide.tone = 'accent'; light = 0 }
   }
-  // model chọn lạc: bộ vẽ tay rơi về bộ trường lớp (trung tính), không phải bộ của một môn
+  // model chọn lạc: bộ vẽ tay rơi về bộ trung tính, không phải bộ của một môn
   const pick = (kind: ProStyle, id: string | undefined, fallback: string) =>
     proThemesFor(kind).some((t) => t.id === id) ? id : fallback
-  const theme = pick('doodle', plan.theme, 'sinh-hoat-lop-ve-tay')
+  const theme = pick('doodle', plan.theme, 'trung-tinh-ve-tay')
   const themeMagazine = pick('magazine', plan.themeMagazine ?? plan.theme, proThemesFor('magazine')[0].id!)
   const both = { ...plan, theme, themeMagazine, design: undefined, stylePack: 'editorial', decorKit: 'toi-gian', slides }
   return style ? withProStyle(both, style) : both
