@@ -7,7 +7,8 @@
  * Model mặc định `sensenova/sensenova-u1.5-lite` (image generation, không phải
  * chat model).
  *
- * Ưu tiên Agnes (`AGNES_API_KEY`, `AGNES_BASE_URL`, `AGNES_IMAGE_MODEL`), lỗi thì
+ * Ảnh slide (/api/image) ưu tiên GLM chính hãng (`GLM_API_KEY`, `GLM_BASE_URL`,
+ * `GLM_IMAGE_MODEL`), rồi tới Agnes (`AGNES_API_KEY`, `AGNES_BASE_URL`, `AGNES_IMAGE_MODEL`), lỗi thì
  * quay về Xkiro: `IMAGE_BASE_URL`, `IMAGE_API_KEY`, `IMAGE_MODEL` trong `.env`.
  * Không có env thì đọc provider Xkiro trong config ZCode của máy
  * (`~/.zcode/v2/provider_config.json`) — app chạy cục bộ, key không vào bundle.
@@ -65,11 +66,19 @@ function xkiroFromZcode(): Partial<ImageConfig> {
 }
 
 /**
- * Thứ tự thử: Agnes (`AGNES_API_KEY`, trả ảnh ngay, ~12–17 s, chữ tiếng Việt
- * đúng) → Xkiro/sensenova (job + poll). Provider thiếu key bị bỏ qua.
+ * Thứ tự thử: CogView-4 của Z.ai (chỉ ảnh slide, ~10 s, trả URL ngay) → Agnes (`AGNES_API_KEY`, trả ảnh ngay, ~12–17 s,
+ * chữ tiếng Việt đúng) → Xkiro/sensenova (job + poll). Provider thiếu key bị bỏ qua.
  */
-function resolveConfigs(): ImageConfig[] {
+function resolveConfigs(slide = false): ImageConfig[] {
   const configs: ImageConfig[] = []
+  const glmKey = process.env.GLM_API_KEY?.trim()
+  if (slide && glmKey) {
+    configs.push({
+      baseUrl: (process.env.GLM_BASE_URL?.trim() || 'https://api.z.ai/api/paas/v4').replace(/\/+$/, ''),
+      apiKey: glmKey,
+      model: process.env.GLM_IMAGE_MODEL?.trim() || 'cogview-4-250304',
+    })
+  }
   const agnesKey = process.env.AGNES_API_KEY?.trim()
   if (agnesKey) {
     configs.push({
@@ -119,13 +128,21 @@ function upstreamError(status: number, body: Record<string, unknown>): string {
 async function imageToDataUrl(url: string): Promise<string> {
   // URL do nhà cung cấp trả về: chỉ https tới địa chỉ công khai, không theo chuyển hướng (khỏi bị dẫn vào mạng nội bộ)
   const safe = await assertPublicHttpsUrl(url)
-  const res = await fetch(safe, { signal: AbortSignal.timeout(30_000), redirect: 'error' })
-  if (!res.ok) throw new Error(`Không tải được ảnh (${res.status})`)
-  const buf = Buffer.from(await res.arrayBuffer())
-  if (buf.length === 0) throw new Error('Ảnh trả về rỗng')
-  if (buf.length > MAX_IMAGE_BYTES) throw new Error('Ảnh quá lớn (tối đa 8 MB)')
-  const mime = res.headers.get('content-type')?.split(';')[0] || 'image/png'
-  return `data:${mime};base64,${buf.toString('base64')}`
+  // CDN của Z.ai đôi khi chưa có file ngay khi trả link (JSON "file not exist") → đợi rồi tải lại
+  let failure = ''
+  for (let attempt = 0; attempt < 4; attempt++) {
+    if (attempt) await sleep(2500)
+    const res = await fetch(safe, { signal: AbortSignal.timeout(30_000), redirect: 'error' })
+    const buf = Buffer.from(await res.arrayBuffer())
+    const mime = res.headers.get('content-type')?.split(';')[0] || 'image/png'
+    if (!res.ok) failure = `Không tải được ảnh (${res.status})`
+    else if (buf.length === 0 || buf[0] === 0x7b /* '{': lỗi dạng JSON */ || mime.includes('json')) failure = 'Ảnh trả về rỗng'
+    else {
+      if (buf.length > MAX_IMAGE_BYTES) throw new Error('Ảnh quá lớn (tối đa 8 MB)')
+      return `data:${mime};base64,${buf.toString('base64')}`
+    }
+  }
+  throw new Error(failure)
 }
 
 type ImageItem = { url?: string; b64_json?: string }
@@ -187,8 +204,8 @@ export async function chargeAndGenerate(
   req: IncomingMessage,
   res: ServerResponse,
   getPrompt: () => Promise<string>,
-  /** getPrompt có thể đặt `kind` (nhãn log) sau khi đọc body */
-  tag: { kind?: string } = {},
+  /** getPrompt có thể đặt `kind` (nhãn log) sau khi đọc body; `slide` bật nhà cung cấp riêng cho ảnh slide */
+  tag: { kind?: string; slide?: boolean } = {},
 ): Promise<{ dataUrl: string; quota: unknown } | null> {
   // vẽ ảnh AI chỉ cho người đã đăng nhập (máy dev không cần)
   const ip = clientIp(req)
@@ -217,7 +234,7 @@ export async function chargeAndGenerate(
       json(res, 400, { error: 'prompt là bắt buộc' })
       return null
     }
-    const configs = resolveConfigs()
+    const configs = resolveConfigs(tag.slide)
     if (!configs.length) {
       await release()
       json(res, 503, { error: 'Chưa cấu hình AGNES_API_KEY hoặc IMAGE_API_KEY.' })
@@ -264,7 +281,7 @@ export async function handleImageRequest(
   if (!(await guard(req, res, 'image'))) return
   if (req.method === 'OPTIONS') return json(res, 204, {})
   if (req.method !== 'POST') return json(res, 405, { error: 'Method not allowed' })
-  const tag: { kind?: string } = {}
+  const tag: { kind?: string; slide?: boolean } = { slide: true }
   const got = await chargeAndGenerate(req, res, async () => {
     const body = JSON.parse(await readBody(req)) as { prompt?: unknown; pro?: unknown }
     if (body.pro === true) tag.kind = 'image-pro'
