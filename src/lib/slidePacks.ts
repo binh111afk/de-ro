@@ -139,6 +139,36 @@ const rowsOf = (c: SlideLayoutContent) => (c.stats ?? [])
   .filter((s) => s.value || s.label)
   .slice(0, 5)
 
+/** mép dưới an toàn (px trên khung 720) khi slide có dòng nguồn */
+const FLOOR = 650
+
+/**
+ * Nhiều ý "tên + mô tả" chia lưới cột (3 → một hàng, 4 → 2×2, 5 → 3 + 2) để chữ luôn đủ to,
+ * thay cho danh sách hàng ngang bị ép nhỏ.
+ */
+function gridRows(
+  rows: Array<{ value: string; label: string }>,
+  { title, body }: Kit,
+  o: { top: number; bottom: number; color: (i: number) => string; text: string },
+): Built {
+  const perRow = rows.length === 4 ? 2 : Math.min(rows.length, 3)
+  const many = rows.length > 3
+  const w = perRow === 3 ? 366 : 420
+  const gap = perRow === 3 ? 26 : 56
+  const rowH = (o.bottom - o.top) / (many ? 2 : 1)
+  const headH = many ? 66 : 96
+  return rows.flatMap((row, i) => {
+    const line = Math.floor(i / perRow)
+    const inLine = Math.min(perRow, rows.length - line * perRow)
+    const x = 640 - (inLine * w + (inLine - 1) * gap) / 2 + (i % perRow) * (w + gap)
+    const y = o.top + line * rowH
+    return [
+      title(`item-${i + 1}-value`, row.value, box(x, y, w, headH), many ? 36 : 52, o.color(i), { align: 'center', valign: 'middle', caps: true, lineHeight: 1.1 }),
+      body(`item-${i + 1}-label`, row.label, box(x, y + headH + (many ? 0 : 8), w, rowH - headH - (many ? 2 : 8)), rows.length === 4 ? 30 : many ? 28 : 34, o.text, { align: 'center', lineHeight: 1.3 }),
+    ]
+  })
+}
+
 const paragraphs = (c: SlideLayoutContent) => {
   const bullets = list(c.bullets)
   return (bullets.length ? bullets : list(c.body?.split('\n'))).join('\n\n')
@@ -214,6 +244,12 @@ function coDien(id: string, c: SlideLayoutContent, { title, body }: Kit): Built 
       const rows = rowsOf(c)
       if (!rows.length) return []
       const h = Math.min(130, 390 / rows.length)
+      if (rows.length > 3) return [
+        full('co-dien/tem-day'),
+        body('kicker', upper(c.kicker), box(96, 57, 700, 54), 22, red, { fontWeight: 700 }),
+        title('title', c.title, box(96, 104, 1000, 130), 52, red, { valign: 'middle' }),
+        ...gridRows(rows, { title, body } as Kit, { top: 244, bottom: FLOOR, color: () => red, text: red }),
+      ]
       return [
         full('co-dien/tem-day'),
         art(1, 'co-dien/canh-tung', 860, 36, 360),
@@ -238,8 +274,8 @@ function coDien(id: string, c: SlideLayoutContent, { title, body }: Kit): Built 
         art(2, 'co-dien/chim-en', c.image ? 620 : 990, 50, 150),
         body('kicker', upper(c.kicker), box(100, 81, 560, 58), 24, red, { fontWeight: 700 }),
         title('bignum-value', c.value, box(96, 140, 600, 270), 190, red, { valign: 'middle', lineHeight: 1 }),
-        title('bignum-label', c.label, box(100, 430, 580, 100), 40, red),
-        body('subtitle', c.subtitle, box(100, 545, 580, 80), 24, red),
+        title('bignum-label', c.label, box(100, 418, 580, 104), 40, red),
+        body('subtitle', c.subtitle, box(100, 526, 590, FLOOR - 526), 28, red, { lineHeight: 1.3 }),
       ]
     default:
       return null
@@ -292,7 +328,8 @@ function danGian(id: string, c: SlideLayoutContent, { title, body }: Kit): Built
           : [art(1, 'dan-gian/den-long', 880, -10, 290), art(2, 'dan-gian/non-la', 850, 420, 360)]),
         body('kicker', upper(c.kicker), box(96, 61, 640, 54), 24, fg, { fontWeight: 800 }),
         title('title', c.title, box(96, 112, 640, 170), 56, ink, { valign: 'middle' }),
-        body('body', paragraphs(c), box(100, 310, 610, 350), 27, fg),
+        // bốn ý trở lên thì bỏ dòng trống giữa các ý để chữ không bị thu nhỏ
+        body('body', list(c.bullets).length > 3 ? list(c.bullets).join('\n') : paragraphs(c), box(100, 296, 640, FLOOR - 296), 28, fg, { lineHeight: 1.35 }),
       ]
     }
     case 'rules': {
@@ -318,15 +355,7 @@ function danGian(id: string, c: SlideLayoutContent, { title, body }: Kit): Built
           ]
         })]
       }
-      const h = Math.min(110, 400 / rows.length)
-      return [...head, ...rows.flatMap((row, i) => {
-        const y = 262 + i * h
-        return [
-          { id: `divider-${i + 1}`, type: 'shape', shape: 'rect', fill: ink, opacity: 0.3, border: 0, shadowLevel: 0, ...box(100, y, 1080, 2) } as SlideElement,
-          title(`item-${i + 1}-value`, row.value, box(96, y + 4, 240, h - 8), 34, ink, { valign: 'middle' }),
-          body(`item-${i + 1}-label`, row.label, box(360, y + 4, 820, h - 8), 25, fg, { valign: 'middle', lineHeight: 1.3 }),
-        ]
-      })]
+      return [...head, ...gridRows(rows, { title, body } as Kit, { top: 244, bottom: FLOOR, color: () => ink, text: fg })]
     }
     case 'bignum':
       return [
@@ -336,8 +365,8 @@ function danGian(id: string, c: SlideLayoutContent, { title, body }: Kit): Built
         art(2, 'dan-gian/chuon-chuon', 620, 40, 140),
         body('kicker', upper(c.kicker), box(100, 81, 560, 58), 24, fg, { fontWeight: 800 }),
         title('bignum-value', c.value, box(96, 140, 600, 270), 180, ink, { valign: 'middle', lineHeight: 1 }),
-        title('bignum-label', c.label, box(100, 430, 580, 100), 40, fg),
-        body('subtitle', c.subtitle, box(100, 545, 580, 80), 24, fg),
+        title('bignum-label', c.label, box(100, 418, 580, 104), 40, fg),
+        body('subtitle', c.subtitle, box(100, 526, 590, FLOOR - 526), 28, fg, { lineHeight: 1.3 }),
       ]
     default:
       return null
@@ -573,9 +602,13 @@ const SAMPLE: Record<'cover' | 'photo' | 'intro' | 'goals' | 'four' | 'columns' 
   ],
 }
 
-function sampleArt(pack: StudyId, set: keyof typeof SAMPLE): Built {
+function sampleArt(pack: StudyId, set: keyof typeof SAMPLE, credit = false): Built {
   const names = STUDY[pack].sample!
-  return SAMPLE[set].map(([role, x, y, w, h, rotation, flipX], i) => ({ ...fit(pack, i + 1, [names[role], x, y, w, h]), rotation, flipX }))
+  return SAMPLE[set].map(([role, x, y, w, h, rotation, flipX], i) => {
+    // có dòng nguồn thì hạt đậm ở góc dưới trái nhích lên, khỏi nằm sau chữ
+    const top = credit && role.startsWith('bit') && x < 100 && y + h > 660 ? 430 : y
+    return { ...fit(pack, i + 1, [names[role], x, top, w, h]), rotation, flipX }
+  })
 }
 
 /** tiêu đề giữa, in hoa, như bộ mẫu */
@@ -590,6 +623,8 @@ function sampleFrame(pack: StudyId, id: string, c: SlideLayoutContent, kit: Kit)
   const paper = full(`${pack}/giay`)
   const head = { align: 'center' as const, valign: 'middle' as const, caps: true, lineHeight: 1.2 }
   const small = { align: 'center' as const, caps: true, fontWeight: 700, letterSpacing: 0.12 }
+  // mép dưới của nội dung: có dòng nguồn thì chừa chỗ cho nó
+  const floor = c.credit ? 650 : 690
   const photo = image('image-1', c.image, box(730, 120, 450, 480), {
     imagePosition: { x: c.focusX ?? 50, y: c.focusY ?? 40 }, crop: c.imageCrop, ...rounded(style.radius), border: 6, borderColor: style.frame,
   })
@@ -601,14 +636,14 @@ function sampleFrame(pack: StudyId, id: string, c: SlideLayoutContent, kit: Kit)
         photo,
         body('kicker', c.kicker, box(110, 132, 580, 56), 26, style.big, { caps: true, fontWeight: 700, letterSpacing: 0.12 }),
         title('title', c.title, box(106, 200, 590, 300), 96, ink, { caps: true, valign: 'middle', lineHeight: 1.15 }),
-        body('subtitle', c.subtitle, box(110, 516, 560, 110), 30, fg),
+        body('subtitle', c.subtitle, box(110, 508, 590, floor - 508), 30, fg, { lineHeight: 1.3 }),
       ]
       return [
         paper,
         ...sampleArt(pack, 'cover'),
         body('kicker', c.kicker, box(340, 150, 600, 56), 28, style.big, small),
         title('title', c.title, box(322, 204, 676, 340), 136, ink, { ...head, lineHeight: 1.12 }),
-        body('subtitle', c.subtitle, box(330, 556, 620, 80), 32, style.big, small),
+        body('subtitle', c.subtitle, box(320, 550, 640, floor - 550), 28, style.big, { ...small, letterSpacing: 0.08, lineHeight: 1.2 }),
       ]
     case 'manifesto': {
       const text = statement(c)
@@ -630,12 +665,13 @@ function sampleFrame(pack: StudyId, id: string, c: SlideLayoutContent, kit: Kit)
       if (items.length === 4) {
         return [
           paper,
-          ...sampleArt(pack, 'four'),
+          ...sampleArt(pack, 'four', Boolean(c.credit)),
           ...sampleTitle(pack, c, kit, box(220, 90, 840, 124)),
           ...items.flatMap((item, i) => {
             const x = i % 2 ? 668 : 197
-            const y = 236 + Math.floor(i / 2) * 226
-            return [number(i, box(x, y, 416, 66), 54), body(`bullet-${i + 1}`, item, box(x, y + 70, 416, 148), 30, fg, { align: 'center', lineHeight: 1.4 })]
+            const rowH = (floor - 222) / 2
+            const y = 222 + Math.floor(i / 2) * rowH
+            return [number(i, box(x, y, 416, 62), 50), body(`bullet-${i + 1}`, item, box(x, y + 62, 416, rowH - 64), 30, fg, { align: 'center', lineHeight: 1.35 })]
           }),
         ]
       }
@@ -649,7 +685,7 @@ function sampleFrame(pack: StudyId, id: string, c: SlideLayoutContent, kit: Kit)
           ...sampleTitle(pack, c, kit, box(220, 128, 840, 128)),
           ...items.flatMap((item, i) => {
             const x = left + i * (w + gap)
-            return [number(i, box(x, 280, w, 88), 68), body(`bullet-${i + 1}`, item, box(x, 380, w, 270), 32, fg, { align: 'center', lineHeight: 1.4 })]
+            return [number(i, box(x, 272, w, 88), 68), body(`bullet-${i + 1}`, item, box(x, 368, w, floor - 368), 32, fg, { align: 'center', lineHeight: 1.4 })]
           }),
         ]
       }
@@ -658,24 +694,18 @@ function sampleFrame(pack: StudyId, id: string, c: SlideLayoutContent, kit: Kit)
         paper,
         ...sampleArt(pack, 'intro'),
         ...sampleTitle(pack, c, kit, box(240, 140, 800, 130)),
-        body(bullets.length ? 'bullets' : 'body', text, box(320, 296, 640, 360), (text?.length ?? 0) > 260 ? 29 : 35, fg, { align: 'center', lineHeight: 1.5 }),
+        body(bullets.length ? 'bullets' : 'body', text, box(320, 286, 640, floor - 286), (text?.length ?? 0) > 260 ? 29 : 35, fg, { align: 'center', lineHeight: 1.5 }),
       ]
     }
     case 'rules': {
       const rows = rowsOf(c)
       if (!rows.length) return []
-      const h = Math.min(158, 480 / rows.length)
+      const many = rows.length > 3
       return [
         paper,
-        ...sampleArt(pack, 'rules'),
-        ...sampleTitle(pack, c, kit, box(180, 84, 920, 120)),
-        ...rows.flatMap((row, i) => {
-          const y = 214 + i * h
-          return [
-            title(`item-${i + 1}-value`, row.value, box(126, y, 820, rows.length > 3 ? 48 : 78), rows.length > 3 ? 30 : 42, ink, { caps: true, valign: 'middle', lineHeight: 1.15 }),
-            body(`item-${i + 1}-label`, row.label, box(126, y + (rows.length > 3 ? 48 : 78), 820, h - (rows.length > 3 ? 50 : 80)), rows.length > 3 ? 23 : 29, fg, { lineHeight: 1.3 }),
-          ]
-        }),
+        ...sampleArt(pack, many ? 'four' : 'columns', Boolean(c.credit)),
+        ...sampleTitle(pack, c, kit, box(220, many ? 90 : 128, 840, many ? 118 : 128)),
+        ...gridRows(rows, kit, { top: many ? 214 : 270, bottom: floor, color: (i) => style.cycle[i % style.cycle.length], text: fg }),
       ]
     }
     case 'bignum':
@@ -683,16 +713,16 @@ function sampleFrame(pack: StudyId, id: string, c: SlideLayoutContent, kit: Kit)
         paper,
         ...sampleArt(pack, 'photo'),
         photo,
-        title('bignum-value', c.value, box(106, 130, 590, 240), 190, style.big, { valign: 'middle', lineHeight: 1 }),
-        title('bignum-label', c.label, box(110, 386, 590, 180), 72, ink, { caps: true, valign: 'middle', lineHeight: 1.15 }),
-        body('subtitle', c.subtitle, box(110, 580, 570, 100), 28, fg),
+        title('bignum-value', c.value, box(106, 104, 590, 226), 190, style.big, { valign: 'middle', lineHeight: 1 }),
+        title('bignum-label', c.label, box(110, 338, 590, 174), 72, ink, { caps: true, valign: 'middle', lineHeight: 1.15 }),
+        body('subtitle', c.subtitle, box(110, 518, 590, floor - 518), 30, fg, { lineHeight: 1.35 }),
       ]
       return [
         paper,
         ...sampleArt(pack, 'section'),
-        title('bignum-value', c.value, box(150, 96, 560, 224), 200, style.big, { valign: 'middle', lineHeight: 1 }),
-        title('bignum-label', c.label, box(154, 326, 620, 250), 112, ink, { caps: true, valign: 'middle', lineHeight: 1.15 }),
-        body('subtitle', c.subtitle, box(158, 584, 520, 100), 30, fg),
+        title('bignum-value', c.value, box(150, 84, 560, 224), 200, style.big, { valign: 'middle', lineHeight: 1 }),
+        title('bignum-label', c.label, box(154, 310, 620, 204), 112, ink, { caps: true, valign: 'middle', lineHeight: 1.15 }),
+        body('subtitle', c.subtitle, box(158, 518, 600, floor - 518), 30, fg, { lineHeight: 1.35 }),
       ]
     default:
       return null
@@ -710,18 +740,18 @@ function steps(pack: StudyId, c: SlideLayoutContent, { title, body }: Kit): Buil
     const text = items.length > 1 ? items.map((item) => `• ${item}`).join('\n') : items[0]
     return [body(bullets.length ? 'bullets' : 'body', text, box(110, 276, 690, 390), text.length > 320 ? 24 : 28, fg, { valign: 'middle', lineHeight: 1.6 })]
   }
-  const h = Math.min(126, 390 / items.length)
+  const h = Math.min(126, (FLOOR + 10 - 262) / items.length)
   return items.flatMap((item, i) => {
-    const y = 272 + i * h
+    const y = 262 + i * h
     const k = i % style.cycle.length
-    const at = box(128, y + (h - 18 - 56) / 2, 56, 56)
+    const at = box(128, y + (h - 10 - 56) / 2, 56, 56)
     return [
       style.rowCards
-        ? deco(50 + i, box(106, y, 710, h - 18), style.card, { ...rounded(Math.min(style.radius, 28)), border: 3, borderColor: style.line })
+        ? deco(50 + i, box(106, y, 710, h - 10), style.card, { ...rounded(Math.min(style.radius, 28)), border: 3, borderColor: style.line })
         : null,
       deco(60 + i, at, style.cycle[k], style.round ? { shape: 'ellipse' } : rounded(14)),
       title(`decor-kit-${70 + i}`, String(i + 1), at, 26, style.onCycle[k], { align: 'center', valign: 'middle', decor: true, lineHeight: 1.1 }),
-      body(`bullet-${i + 1}`, item, box(206, y, 590, h - 18), 27, fg, { valign: 'middle', lineHeight: 1.35 }),
+      body(`bullet-${i + 1}`, item, box(200, y, 610, h - 10), 26, fg, { valign: 'middle', lineHeight: 1.25 }),
     ]
   })
 }
@@ -730,17 +760,7 @@ function steps(pack: StudyId, c: SlideLayoutContent, { title, body }: Kit): Buil
 function cards(pack: StudyId, rows: Array<{ value: string; label: string }>, { title, body }: Kit): Built {
   const { ink, fg } = PACK_COLORS[pack]
   const style = STUDY[pack]
-  if (rows.length > 3) {
-    const h = Math.min(104, 400 / rows.length)
-    return rows.flatMap((row, i) => {
-      const y = 272 + i * h
-      return [
-        shape(`divider-${i + 1}`, box(106, y, 1070, 2), ink, { opacity: 0.25 }),
-        title(`item-${i + 1}-value`, row.value, box(106, y + 4, 250, h - 8), 32, ink, { valign: 'middle' }),
-        body(`item-${i + 1}-label`, row.label, box(376, y + 4, 800, h - 8), 25, fg, { valign: 'middle', lineHeight: 1.3 }),
-      ]
-    })
-  }
+  if (rows.length > 3) return gridRows(rows, { title, body } as Kit, { top: 256, bottom: FLOOR, color: () => ink, text: fg })
   const left = 664 - (rows.length * 336 + (rows.length - 1) * 36) / 2
   return rows.flatMap((row, i) => {
     const x = left + i * 372
@@ -848,8 +868,8 @@ function study(pack: StudyId, id: string, c: SlideLayoutContent, kit: Kit): Buil
           : [style.bignumHalo ? halo(780, 130, 440) : null, ...arts(style.bignum)]),
         ...tag(c.kicker, 110, 100, kit, style.tag),
         title('bignum-value', c.value, box(106, 168, 600, 250), 200, style.big, { valign: 'middle', lineHeight: 1 }),
-        title('bignum-label', c.label, box(110, 436, 590, 100), 40, ink),
-        body('subtitle', c.subtitle, box(110, 556, 570, 90), 25, fg),
+        title('bignum-label', c.label, box(110, 420, 590, 104), 40, ink),
+        body('subtitle', c.subtitle, box(110, 528, 590, FLOOR - 528), 28, fg, { lineHeight: 1.3 }),
       ]
     default:
       return null
@@ -899,7 +919,7 @@ function shared(pack: SlidePackId, id: string, c: SlideLayoutContent, kit: Kit, 
 
   if (id === 'photo-compare') {
     const captions = Boolean(c.caption || c.caption2)
-    const h = captions ? 300 : 370
+    const h = captions ? 270 : 370
     const frame = red ? { border: 6, borderColor: ink }
       : learn
         ? { ...rounded(STUDY[learn].radius), border: 6, borderColor: STUDY[learn].frame, ...(STUDY[learn].tape ? { shadowLevel: 2 as const } : {}) }
@@ -910,8 +930,8 @@ function shared(pack: SlidePackId, id: string, c: SlideLayoutContent, kit: Kit, 
       ...head(),
       image('image-1', c.image, box(100, 280, 525, h), { crop: c.imageCrop, ...frame }),
       image('image-2', c.image2, box(655, 280, 525, h), { crop: c.image2Crop, ...frame }),
-      body('photo-caption', c.caption, box(100, 594, 525, 66), 22, fg, { align: 'center' }),
-      body('photo-caption-2', c.caption2, box(655, 594, 525, 66), 22, fg, { align: 'center' }),
+      body('photo-caption', c.caption, box(100, 556, 525, c.credit ? 98 : 124), 28, fg, { align: 'center', lineHeight: 1.3 }),
+      body('photo-caption-2', c.caption2, box(655, 556, 525, c.credit ? 98 : 124), 28, fg, { align: 'center', lineHeight: 1.3 }),
     ]
   }
 
