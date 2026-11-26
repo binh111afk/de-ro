@@ -52,7 +52,7 @@ const SPLIT_ASK = {
 
 /** câu của app (không tốn lượt AI) sau khi duyệt dàn ý Chuyên nghiệp; không trả lời thì dùng bộ vẽ tay */
 const STYLE_ASK = {
-  questions: [{ q: 'Bạn muốn slide kiểu nào?', options: ['Doodle (vẽ tay)', 'Tạp chí'] }],
+  questions: [{ q: 'Bạn muốn slide kiểu nào?', options: ['Doodle (vẽ tay)', 'Tạp chí', 'Tranh truyền thống'] }],
   noFigure: true as const,
   noCustom: true as const,
 }

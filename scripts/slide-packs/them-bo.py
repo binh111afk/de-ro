@@ -51,6 +51,11 @@ class Src:
 q = lambda xs: '[' + ', '.join(f"'{x}'" for x in xs) + ']'
 
 
+def theme_id(p):
+    """tiền tố quyết định bộ thuộc lựa chọn nào (proThemesFor)"""
+    return f"tranh-{p['key']}" if p.get('kieu') == 'tranh' else f"{p['key']}-ve-tay"
+
+
 def them(packs):
     ids = ''.join(f" | '{p['key']}'" for p in packs)
     layout = Src('src/lib/slidePacks.ts')
@@ -74,7 +79,7 @@ def them(packs):
 
     theme = Src('src/lib/slideTheme.ts')
     theme.before("  packTheme('tin-hoc-3d'", ''.join(
-        f"  packTheme('{p['key']}-ve-tay', '{p['name']}', '{p['vibe']}', '{p['key']}',\n    {q(p['tags'])},\n"
+        f"  packTheme('{theme_id(p)}','{p['name']}', '{p['vibe']}', '{p['key']}',\n    {q(p['tags'])},\n"
         f"    '{p['bg']}', '{p['ink']}', '{p['accent']}', '{p['cycle'][1]}', 'Barlow Condensed', 'Nunito'),\n" for p in packs))
 
     paper = Src('scripts/slide-packs/giay.py')
