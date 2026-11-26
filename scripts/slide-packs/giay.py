@@ -112,6 +112,18 @@ def le_hoi():
     hat_giay('le-hoi', '#fffaf4', ['#f2ede7', '#ece7e1', '#f4f0eb'], 61)
 
 
+def quoc_phong():
+    hat_giay('quoc-phong', '#f9f8f1', ['#eeede4', '#e8e7de', '#f1f0e8'], 67)
+
+
+def huong_nghiep():
+    hat_giay('huong-nghiep', '#fbf9f5', ['#efede8', '#e9e7e2', '#f1efeb'], 71)
+
+
+def ngoai_ngu():
+    hat_giay('ngoai-ngu', '#fbf8f6', ['#efece9', '#e9e6e3', '#f2efec'], 73)
+
+
 def tin_hoc():
     im = Image.new('RGB', (W * S, H * S), '#f8f7fc')
     d = ImageDraw.Draw(im)
@@ -159,3 +171,6 @@ sinh_hoat_lop()
 moi_truong()
 kinh_doanh()
 le_hoi()
+quoc_phong()
+huong_nghiep()
+ngoai_ngu()
