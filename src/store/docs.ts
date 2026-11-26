@@ -192,7 +192,7 @@ export interface DeckTheme {
   /** theme riêng của chế độ Chuyên nghiệp (không nằm trong catalog thường) */
   pro?: boolean
   /** bộ phong cách có nền / hình trang trí riêng (lib/slidePacks.ts) */
-  pack?: 'co-dien' | 'dan-gian' | 'khoa-hoc' | 'toan' | 'vat-ly' | 'hoa-hoc' | 'tin-hoc' | 'tam-ly' | 'sinh-hoc' | 'ngu-van' | 'dia-li' | 'tieng-anh' | 'kinh-te-phap-luat' | 'lich-su' | 'cong-nghe' | 'nghe-thuat' | 'the-duc' | 'quoc-phong' | 'huong-nghiep' | 'ngoai-ngu' | 'mam-non' | 'sinh-hoat-lop' | 'moi-truong' | 'kinh-doanh' | 'le-hoi'
+  pack?: 'co-dien' | 'dan-gian' | 'khoa-hoc' | 'toan' | 'vat-ly' | 'hoa-hoc' | 'tin-hoc' | 'tam-ly' | 'sinh-hoc' | 'ngu-van' | 'dia-li' | 'tieng-anh' | 'kinh-te-phap-luat' | 'lich-su' | 'cong-nghe' | 'nghe-thuat' | 'the-duc' | 'du-lich' | 'dinh-duong' | 'y-te' | 'giao-thong' | 'gia-dinh' | 'quoc-phong' | 'huong-nghiep' | 'ngoai-ngu' | 'mam-non' | 'sinh-hoat-lop' | 'moi-truong' | 'kinh-doanh' | 'le-hoi'
   /** màu mực của tông tối trong theme Chuyên nghiệp (nền slide nhấn) */
   ink?: string
   /** viền mặc định cho thẻ/panel (px) */

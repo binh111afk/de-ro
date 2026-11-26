@@ -124,6 +124,26 @@ def ngoai_ngu():
     hat_giay('ngoai-ngu', '#fbf8f6', ['#efece9', '#e9e6e3', '#f2efec'], 73)
 
 
+def du_lich():
+    hat_giay('du-lich', '#fbf9f4', ['#efede7', '#e9e7e1', '#f1efea'], 79)
+
+
+def dinh_duong():
+    hat_giay('dinh-duong', '#fcf9f3', ['#f0ede6', '#eae7e0', '#f2efe9'], 83)
+
+
+def y_te():
+    hat_giay('y-te', '#f7faf9', ['#ebefed', '#e5e9e7', '#edf1ef'], 89)
+
+
+def giao_thong():
+    hat_giay('giao-thong', '#fafaf7', ['#ededea', '#e7e7e4', '#efefec'], 97)
+
+
+def gia_dinh():
+    hat_giay('gia-dinh', '#fcf8f5', ['#f0ece8', '#eae6e2', '#f2eeeb'], 101)
+
+
 def tin_hoc():
     im = Image.new('RGB', (W * S, H * S), '#f8f7fc')
     d = ImageDraw.Draw(im)
@@ -174,3 +194,8 @@ le_hoi()
 quoc_phong()
 huong_nghiep()
 ngoai_ngu()
+du_lich()
+dinh_duong()
+y_te()
+giao_thong()
+gia_dinh()
