@@ -1,8 +1,12 @@
 /** Thẻ tiến độ xuất file ở góc dưới phải. `<ExportToastHost />` gắn một lần ở App. */
 import { useEffect, useState } from 'react'
-import { FileTypeIcon } from '@/components/docIcons'
+import { DocIcon } from '@/components/docIcons'
 import { Portal } from '@/components/Portal'
+import type { DocKind } from '@/data/docTypes'
 import { dismissExport, useExportJobs, type ExportJob } from '@/lib/exportProgress'
+
+/** đuôi tệp → loại tài liệu sinh ra nó; còn lại (docx, zip xáo đề) là đề */
+const KIND_BY_EXT: Record<string, DocKind> = { pptx: 'slide', png: 'board', pdf: 'board' }
 
 export function ExportToastHost() {
   const jobs = useExportJobs((s) => s.jobs)
@@ -26,6 +30,7 @@ function ExportCard({ job }: { job: ExportJob }) {
   const done = status === 'done'
   const error = status === 'error'
   const pct = done ? 100 : Math.round(Math.max(creep, job.pct))
+  const dot = name.lastIndexOf('.')
 
   // không đo được tiến độ bên trong thư viện xuất: nhích chậm dần, dừng ở 92% tới khi xong
   useEffect(() => {
@@ -56,7 +61,7 @@ function ExportCard({ job }: { job: ExportJob }) {
     >
       <div className="relative shrink-0">
         <div className={status === 'running' ? 'export-icon-bob' : undefined}>
-          <FileTypeIcon ext={name.slice(name.lastIndexOf('.') + 1)} size={40} />
+          <DocIcon kind={KIND_BY_EXT[name.slice(dot + 1)]} size={40} />
         </div>
         {done && (
           <span className="anim-pop absolute -bottom-1 -right-1 flex size-[18px] items-center justify-center rounded-full border-2 border-surface bg-sage text-white">
@@ -68,8 +73,10 @@ function ExportCard({ job }: { job: ExportJob }) {
       </div>
 
       <div className="min-w-0 flex-1">
-        <div className="truncate text-[13.5px] font-medium text-ink" data-tip={name}>
-          {name}
+        {/* tên dài thì cắt phần tên, đuôi tệp luôn thấy */}
+        <div className="flex text-[13.5px] font-medium text-ink" data-tip={name}>
+          <span className="truncate">{name.slice(0, dot)}</span>
+          <span className="shrink-0">{name.slice(dot)}</span>
         </div>
         {error ? (
           <div className="mt-1 text-[12.5px] text-clay-deep">Không xuất được file</div>
