@@ -35,6 +35,7 @@ export async function runSlideEdit(ctx: TurnCtx): Promise<boolean> {
   // bài khác từ đầu: đi tiếp xuống luồng lập dàn ý
   if (!/"action"\s*:\s*"new_deck"/.test(first.content)) {
     let result = read(first.content)
+    let reply = first.content
     // nội dung quá dài / thiếu field: xin viết lại một lần trước khi áp, thay vì báo không sửa được
     const rejected = result.ops.length ? ctx.onCheckEdits?.(result.ops) ?? [] : []
     if (rejected.length || (!result.ops.length && !result.needsData && !result.say)) {
@@ -46,7 +47,10 @@ export async function runSlideEdit(ctx: TurnCtx): Promise<boolean> {
         first,
         { signal: controller.signal, reasoningEffort: AI_EFFORT.slide, task: editTask })
       const next = read(again.content)
-      if (next.ops.length || !result.ops.length) result = next
+      if (next.ops.length || !result.ops.length) {
+        result = next
+        reply = again.content
+      }
     }
     controller.signal.throwIfAborted()
     const lines = result.ops.length ? await onApplyEdits(result.ops, controller.signal) : []
@@ -54,6 +58,7 @@ export async function runSlideEdit(ctx: TurnCtx): Promise<boolean> {
       : lines.join('\n\n') || result.say || 'Mình chưa sửa được slide. Bạn thử gửi lại yêu cầu nhé.'
     patchTurn(() => ({
       text: notice,
+      ...(lines.length ? { sent: reply } : {}),
       pending: false,
       intent: 'doc',
       log: undefined,

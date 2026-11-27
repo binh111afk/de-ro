@@ -65,7 +65,7 @@
     "test:return-rate": "tsx scripts/test-return-rate.ts",
     "test:ai-abuse": "tsx scripts/test-ai-abuse.ts",
     "test:ai-stream": "tsx scripts/test-ai-stream.ts",
-    "test:ai-chat-history": "tsx scripts/test-ai-chat-history.ts",
+    "test:ai-chat-history": "tsx --tsconfig tsconfig.app.json scripts/test-ai-chat-history.ts",
     "test:ai-history": "tsx scripts/test-ai-history.ts",
     "test:ai-prompts": "tsx scripts/test-ai-prompts.ts",
     "test:ai-prompts-slide": "tsx scripts/test-ai-prompts-slide.ts",

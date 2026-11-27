@@ -13,6 +13,8 @@ export interface ChatTurn {
   id: string
   role: 'user' | 'assistant'
   text: string
+  /** nội dung gửi lại cho model thay cho `text`: lượt sửa slide giữ đúng lệnh model đã trả */
+  sent?: string
   /** tệp đính kèm của lượt người dùng (để hiển thị lại trong chat) */
   files?: Attachment[]
   fileNames?: string[]
@@ -94,13 +96,17 @@ export function detectIntent(text: string, mode: AiMode): 'doc' | 'chat' {
 
 /** Lịch sử hội thoại gửi kèm mỗi lượt gọi model. */
 export function historyOf(turns: ChatTurn[]): LlmMessage[] {
-  return turns.flatMap((t) => {
+  // yêu cầu đã bấm Dừng thì bỏ cả cặp, không thì model làm luôn nó ở lượt sau
+  const stopped = (t?: ChatTurn) => t?.role === 'assistant' && t.error === 'Đã dừng.' && !t.text.trim()
+  return turns.flatMap((t, i) => {
+    if (stopped(t) || (t.role === 'user' && stopped(turns[i + 1]))) return []
     const names = t.files?.map((f) => f.name) ?? t.fileNames
     const pickedNames = t.pickedSources?.map((p) => p.name)
     if (!t.text.trim() && !names?.length && !pickedNames?.length && !t.refs?.length) return []
     return [{
       role: t.role,
-      content: t.text +
+      // model bắt chước lượt trước của chính nó: thấy câu báo của app thì lần sau trả chữ mà không kèm lệnh
+      content: (t.sent ?? t.text) +
         (t.ask ? `\n${askHistoryText(t.ask)}` : '') +
         (names?.length ? `\n[Tệp đính kèm: ${names.join(', ')}]` : '') +
         (pickedNames?.length ? `\n[Nguồn đính kèm: ${pickedNames.join(', ')}]` : '') +

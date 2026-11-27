@@ -36,4 +36,17 @@ assert.doesNotMatch(encoded, /blob:|"(pending|progress|log|retry|vote|planState|
 assert.deepEqual(decodeChatHistory('{hỏng'), [])
 assert.deepEqual(decodeChatHistory('[null, {"text": 2}]'), [])
 assert.notEqual(chatHistoryKey('exam', 'same-id'), chatHistoryKey('slide', 'same-id'))
+/* Lịch sử gửi model: lượt sửa gửi đúng lệnh, yêu cầu đã dừng bị bỏ. */
+const { historyOf } = await import('../src/examEditor/ai/turns')
+const edit = '{"action":"edit","commands":[{"op":"delete_slides","slides":[6]}]}'
+const chat: ChatTurn[] = [
+  { id: '1', role: 'user', text: 'xoá slide 6' },
+  { id: '2', role: 'assistant', text: 'Xoá slide 6.', sent: edit, intent: 'doc' },
+  { id: '3', role: 'user', text: 'viết lại cả bài' },
+  { id: '4', role: 'assistant', text: '', error: 'Đã dừng.' },
+  { id: '5', role: 'user', text: 'sửa tiêu đề' },
+]
+assert.deepEqual(historyOf(chat).map((m) => m.content), ['xoá slide 6', edit, 'sửa tiêu đề'])
+assert.equal(decodeChatHistory(encodeChatHistory(chat))[1].sent, edit)
+
 console.log('Lịch sử chat AI: tất cả đều qua')
