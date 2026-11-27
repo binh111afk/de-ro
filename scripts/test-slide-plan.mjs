@@ -153,6 +153,12 @@ assert.equal(deck.slides[0].bullets?.length, 1)
     'Phân tích nhân vật Chí Phèo': 'van',
     'Chiến thắng Điện Biên Phủ năm 1954': 'lich-su',
     'Văn minh Ai Cập cổ đại': 'lich-su',
+    'Tư tưởng Hồ Chí Minh về đại đoàn kết': 'chinh-tri',
+    'Triết học Mác - Lênin: vật chất và ý thức': 'chinh-tri',
+    'Kinh tế chính trị: giá trị thặng dư': 'chinh-tri',
+    'Lịch sử Đảng Cộng sản Việt Nam': 'chinh-tri',
+    'Chủ nghĩa xã hội khoa học': 'chinh-tri',
+    'Chiến dịch Hồ Chí Minh năm 1975': 'lich-su',
     'Khí hậu và sông ngòi Việt Nam': 'dia-li',
     'Thì hiện tại hoàn thành trong tiếng Anh': 'ngoai-ngu',
     'Vòng lặp for trong Python': 'tin',
@@ -181,6 +187,7 @@ assert.equal(deck.slides[0].bullets?.length, 1)
   assert.equal(tranh('Vùng Đồng bằng sông Hồng', 'dia-li'), 'tranh-dia-li')
   assert.equal(tranh('Phân tích bài thơ Tây Tiến', 'van'), 'co-dien-do')
   assert.equal(tranh('Chiến dịch Điện Biên Phủ', 'lich-su'), 'tranh-su-do')
+  assert.equal(tranh('Phép biện chứng duy vật', 'chinh-tri'), 'tranh-chinh-tri')
 }
 
 console.log('test-slide-plan: 10 nhóm kiểm tra đạt')

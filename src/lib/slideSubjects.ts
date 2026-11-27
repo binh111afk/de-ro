@@ -49,6 +49,28 @@ export const SUBJECT_PACKS: SubjectPack[] = [
     ],
   },
   {
+    id: 'chinh-tri',
+    name: 'Lí luận chính trị',
+    // đứng trước Văn, Sử, Địa để thắng khi bằng điểm ("lịch sử Đảng", "kinh tế chính trị")
+    keywords: ['triet hoc', 'tu tuong ho chi minh', 'chu tich ho chi minh', 'mac lenin', 'mac - lenin', 'mac-lenin', 'marx', 'lenin', 'duy vat', 'bien chung', 'kinh te chinh tri', 'gia tri thang du', 'chu nghia xa hoi', 'chu nghia tu ban', 'giai cap cong nhan', 'lich su dang', 'dang cong san', 'thoi ky qua do', 'ly luan chinh tri', 'phuong thuc san xuat', 'hinh thai kinh te'],
+    graphicGroups: ['his', 'people', 'class', 'sym', 'geo'],
+    themeHint: 'giay-am',
+    structure: [
+      'Khái niệm, cơ sở hình thành',
+      'Nội dung cơ bản, các luận điểm',
+      'Phân tích kèm ví dụ thực tiễn',
+      'So sánh, đối chiếu',
+      'Ý nghĩa và vận dụng ở Việt Nam',
+      'Câu hỏi thảo luận và tổng kết',
+    ],
+    layouts: ['statement', 'cards', 'comparison', 'timeline', 'mindmap', 'quiz'],
+    rules: [
+      'Dùng đúng thuật ngữ của giáo trình; chỉ trích nguyên văn khi chắc chắn và ghi rõ tác giả, không bịa câu trích.',
+      'Mốc thời gian, tên văn kiện, đại hội phải chính xác; không chắc thì nêu khái quát.',
+      'Trình bày khách quan theo giáo trình; mỗi luận điểm kèm một ví dụ thực tiễn.',
+    ],
+  },
+  {
     id: 'van',
     name: 'Ngữ văn',
     keywords: ['van', 'ngu van', 'truyen', 'tho', 'tac pham', 'tac gia', 'nhan vat', 'phan tich', 'nghi luan', 'doan trich', 'chi pheo', 'kieu', 'bai tho', 'van hoc'],

@@ -30,3 +30,15 @@ Không chép nguyên file nào; phần tham khảo:
 | `src/board/BoardEditor.tsx` | luồng chuột / phím tắt của `packages/excalidraw/components/App.tsx`, `resizeElements.ts`, `history.ts` |
 
 Thư viện dùng trực tiếp: `roughjs` (MIT), `perfect-freehand` (MIT).
+
+## Ảnh chân dung ở bộ slide "Đỏ son" (`public/slide-packs/chinh-tri/`)
+
+Ảnh tư liệu lấy từ Wikimedia Commons (ghi public domain, tải 27/11/2026), chỉ cắt khung và nhuộm hai tông:
+
+- `mac.png`: [Karl Marx 001.jpg](https://commons.wikimedia.org/wiki/File:Karl_Marx_001.jpg), John Jabez Edwin Mayall, trước 1875.
+- `le-nin.png`: [Vladimir Lenin in July 1920](https://commons.wikimedia.org/wiki/File:Vladimir_Lenin_in_July_1920_by_Pavel_Zhukov.jpg), Pavel Zhukov, 1920.
+- `bac-ho.png`: [Ho Chi Minh 1946.jpg](https://commons.wikimedia.org/wiki/File:Ho_Chi_Minh_1946.jpg), không rõ tác giả, khoảng 1946.
+
+- `bua-liem.png`: [Communist Party of Vietnam flag logo.svg](https://commons.wikimedia.org/wiki/File:Communist_Party_of_Vietnam_flag_logo.svg), public domain.
+
+Các hình còn lại trong thư mục: hai khung tem do app tự dựng, phần minh hoạ do AI tạo ảnh vẽ.
