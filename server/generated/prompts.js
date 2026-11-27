@@ -3248,19 +3248,6 @@ var PRO_THEMES = [
     "Inter"
   ),
   packTheme(
-    "tranh-sinh-hoc",
-    "Sinh h\u1ECDc xanh",
-    "n\u1EC1n kem, m\u1EA3ng xanh l\xE1, th\u1EBB \u0111\xE1nh s\u1ED1, h\xECnh t\u1EBF b\xE0o minh ho\u1EA1 ph\u1EB3ng",
-    "sinh-hoc-ht",
-    ["sinh h\u1ECDc", "t\u1EBF b\xE0o", "di truy\u1EC1n", "vi sinh v\u1EADt", "sinh th\xE1i", "quang h\u1EE3p"],
-    "#fbf6f2",
-    "#27401f",
-    "#4f7a3a",
-    "#349a80",
-    "Montserrat",
-    "Be Vietnam Pro"
-  ),
-  packTheme(
     "dan-gian",
     "D\xE2n gian",
     "gi\u1EA5y k\u1EBB \xF4, m\xE0u n\u01B0\u1EDBc t\u01B0\u01A1i, tre, chu\u1ED3n chu\u1ED3n, \u0111\xECnh l\xE0ng",
@@ -6385,7 +6372,6 @@ var PACK_COLORS = {
   "gia-dinh": { background: "#fcf8f5", fg: "#51403f", ink: "#6e3340", accent: "#a8403c", muted: "#77696a", surface: "#ffffff", panel: "#fbe8e6", onAccent: "#ffffff" },
   "trung-tinh": { background: "#fbf9f4", fg: "#3b4a58", ink: "#27405a", accent: "#a84e2c", muted: "#5f6c77", surface: "#ffffff", panel: "#e4eef0", onAccent: "#ffffff" },
   "su-do": { background: "#f1efea", fg: "#6b1a24", ink: "#760015", accent: "#760015", muted: "#7d4a50", surface: "#ffffff", panel: "#eadfdc", onAccent: "#ffffff" },
-  "sinh-hoc-ht": { background: "#fbf6f2", fg: "#34402f", ink: "#27401f", accent: "#4f7a3a", muted: "#5f6b58", surface: "#ffffff", panel: "#c8d89a", onAccent: "#ffffff" },
   "tin-hoc": { background: "#f8f7fc", fg: "#3a3560", ink: "#241d4d", accent: "#5a3ee0", muted: "#635d85", surface: "#ffffff", panel: "#ece8fd", onAccent: "#ffffff" },
   "tam-ly": { background: "#fbf4ec", fg: "#53392f", ink: "#5a2c1c", accent: "#a8532f", muted: "#7d6257", surface: "#fffaf5", panel: "#f8e4da", onAccent: "#ffffff" }
 };
@@ -6702,11 +6688,7 @@ var ART = {
   "su-do/dai-song": [1600, 70],
   "su-do/cuon-thu": [840, 449],
   "su-do/sach-but": [840, 529],
-  "su-do/ban-tac-chien": [1600, 437],
-  "sinh-hoc-ht/cum-bia": [571, 1e3],
-  "sinh-hoc-ht/dai-chan": [1400, 175],
-  "sinh-hoc-ht/kinh-hien-vi": [353, 560],
-  "sinh-hoc-ht/te-bao": [840, 542]
+  "su-do/ban-tac-chien": [1600, 437]
   // het dot 2
 };
 var box = (x, y, w, h) => ({ x: x / 12.8, y: y / 7.2, w: w / 12.8, h: h / 7.2 });
@@ -7814,155 +7796,6 @@ function suDo(id, c8, { title, body }, standard) {
     }
   }
 }
-var BIO_ART = {
-  microscope: "sinh-hoc-ht/kinh-hien-vi",
-  dna: "sinh-hoc/dna",
-  cell: "sinh-hoc-ht/te-bao",
-  sprout: "sinh-hoc/mam-cay"
-};
-function bioScene(title = "") {
-  const t6 = ` ${title} `.normalize("NFC").toLocaleLowerCase("vi");
-  if (/adn|dna| gen |di truyền|nhiễm sắc|đột biến|tiến ho|tiến hó/.test(t6)) return { name: BIO_ART.dna, w: 190 };
-  if (/thực vật|quang hợp| cây | rễ | lá |nảy mầm|sinh trưởng/.test(t6)) return { name: BIO_ART.sprout, w: 220 };
-  if (/kính hiển vi|thực hành|thí nghiệm|quan sát|vi khuẩn|vi sinh|virus|virut/.test(t6)) return { name: BIO_ART.microscope, w: 300 };
-  return { name: BIO_ART.cell, w: 460 };
-}
-function bioSide(title) {
-  const { name, w } = bioScene(title);
-  const [aw, ah] = ART[name];
-  const wide = Math.min(w, 520 * aw / ah);
-  return art(1, name, 1010 - wide / 2, 360 - wide * ah / aw / 2, wide);
-}
-function sinhHocHt(id, c8, { title, body }, standard) {
-  const { background: cream, ink, fg, panel: sage, accent: leaf } = PACK_COLORS["sinh-hoc-ht"];
-  const head = { fontWeight: 800, caps: false, lineHeight: 1.12 };
-  const long = (c8.title?.length ?? 0) > 34;
-  const shape2 = (n10, x, y, w, h, fill, extra = {}) => ({ id: n10, type: "shape", shape: "rect", fill, border: 0, shadowLevel: 0, decor: true, ...box(x, y, w, h), ...extra });
-  const card = (n10, x, y, w, h, fill = sage) => shape2(n10, x, y, w, h, fill, { shape: "round", radius: 14 });
-  const dot = (n10, x, y, d, fill = sage) => shape2(n10, x, y, d, d, fill, { shape: "ellipse" });
-  const paper = shape2("decor-kit-0", 0, 0, 1280, 720, cream, { locked: true });
-  const green = shape2("decor-kit-0", 0, 0, 1280, 720, sage, { locked: true });
-  const photo = (b) => image("image-1", c8.image, b, { imagePosition: { x: c8.focusX ?? 50, y: c8.focusY ?? 40 }, crop: c8.imageCrop });
-  const cover = () => art(1, "sinh-hoc-ht/cum-bia", 856, 30, 660 * ART["sinh-hoc-ht/cum-bia"][0] / ART["sinh-hoc-ht/cum-bia"][1]);
-  const strip = () => c8.credit ? null : art(7, "sinh-hoc-ht/dai-chan", 180, 604, 920);
-  const scallop = () => [
-    card("decor-kit-1", 130, 110, 1020, 500, cream),
-    ...Array.from({ length: 11 }, (_, i) => [dot(`decor-kit-${30 + i}`, 128 + i * 92, 70, 104, cream), dot(`decor-kit-${50 + i}`, 128 + i * 92, 546, 104, cream)]).flat(),
-    ...Array.from({ length: 5 }, (_, i) => [dot(`decor-kit-${70 + i}`, 84, 128 + i * 90, 104, cream), dot(`decor-kit-${80 + i}`, 1092, 128 + i * 90, 104, cream)]).flat()
-  ];
-  switch (id) {
-    case "photo-full":
-      return [
-        paper,
-        c8.image ? photo(box(760, 0, 520, 720)) : cover(),
-        body("kicker", upper(c8.kicker), box(84, 96, 640, 60), 28, leaf, { fontWeight: 800 }),
-        title("title", c8.title, box(80, 168, 690, 340), long ? 72 : 104, ink, { ...head, valign: "middle" }),
-        c8.subtitle ? card("decor-kit-9", 80, 532, 680, 96) : null,
-        body("subtitle", c8.subtitle, box(104, 540, 634, 80), 30, fg, { valign: "middle", fontWeight: 600, lineHeight: 1.3 })
-      ];
-    case "manifesto": {
-      const text = statement(c8);
-      return [
-        green,
-        ...scallop(),
-        body("kicker", upper(c8.kicker), box(220, 138, 840, 58), 28, leaf, { fontWeight: 800, align: "center" }),
-        title("body", text, box(210, 208, 860, 300), text.length > 150 ? 42 : text.length > 80 ? 54 : 68, ink, { ...head, align: "center", valign: "middle", lineHeight: 1.3 }),
-        body("author", c8.author, box(220, 522, 840, 60), 30, fg, { align: "center" })
-      ];
-    }
-    case "editorial-text":
-      return [
-        paper,
-        c8.image ? photo(box(760, 0, 520, 720)) : bioSide(c8.title),
-        body("kicker", upper(c8.kicker), box(84, 48, 640, 66), 28, leaf, { fontWeight: 800 }),
-        title("title", c8.title, box(80, 112, 660, 180), long ? 60 : 80, ink, { ...head, valign: "middle" }),
-        shape2("divider-1", 84, 308, 140, 8, sage),
-        body("body", paragraphs(c8), box(84, 340, 660, c8.credit ? 308 : 340), 34, fg)
-      ];
-    case "rules": {
-      const rows = rowsOf(c8);
-      if (!rows.length) return [];
-      const n10 = rows.length;
-      const gap = n10 > 4 ? 18 : 28;
-      const w = (1140 - gap * (n10 - 1)) / n10;
-      const size = n10 > 4 ? 28 : n10 > 3 ? 34 : n10 > 2 ? 36 : 40;
-      const short = rows.every((row) => row.value.length <= 4);
-      return [
-        paper,
-        title("title", c8.title, box(60, 28, 1160, 130), long ? 56 : 72, ink, { ...head, align: "center", valign: "middle" }),
-        body("kicker", upper(c8.kicker), box(240, 152, 800, 58), 26, leaf, { fontWeight: 800, align: "center" }),
-        ...rows.flatMap((row, i) => {
-          const x = 70 + i * (w + gap);
-          const tone = i % 2 ? leaf : sage;
-          const on = i % 2 ? "#ffffff" : ink;
-          return [
-            short ? dot(`divider-${i * 2 + 1}`, x + w / 2 - 46, 214, 92, tone) : card(`divider-${i * 2 + 1}`, x, 214, w, 92, tone),
-            title(`item-${i + 1}-value`, row.value, box(x + 6, 218, w - 12, 84), short ? 42 : n10 > 3 ? 28 : 36, on, { ...head, align: "center", valign: "middle" }),
-            card(`divider-${i * 2 + 2}`, x, 322, w, 276),
-            body(`item-${i + 1}-label`, row.label, box(x + 16, 340, w - 32, 244), size, fg, { align: "center", valign: "middle", lineHeight: 1.35 })
-          ];
-        }),
-        strip()
-      ];
-    }
-    case "bignum":
-      return [
-        green,
-        ...c8.image ? [] : scallop(),
-        ...c8.image ? [photo(box(760, 0, 520, 720))] : [],
-        ...c8.image ? [
-          body("kicker", upper(c8.kicker), box(70, 66, 640, 60), 28, ink, { fontWeight: 800 }),
-          title("bignum-value", c8.value, box(64, 130, 660, 260), 190, ink, { ...head, valign: "middle", lineHeight: 1 }),
-          title("bignum-label", c8.label, box(70, 400, 640, 110), 52, ink, head),
-          body("subtitle", c8.subtitle, box(70, 526, 660, FLOOR - 526), 30, fg, { lineHeight: 1.35 })
-        ] : [
-          body("kicker", upper(c8.kicker), box(220, 118, 840, 66), 30, leaf, { fontWeight: 800, align: "center" }),
-          title("bignum-value", c8.value, box(220, 180, 840, 210), 170, ink, { ...head, align: "center", valign: "middle", lineHeight: 1 }),
-          title("bignum-label", c8.label, box(220, 396, 840, 96), 48, ink, { ...head, align: "center", valign: "middle" }),
-          body("subtitle", c8.subtitle, box(240, 500, 800, 90), 30, fg, { align: "center", lineHeight: 1.35 })
-        ]
-      ];
-    case "bullets": {
-      const items = list(c8.bullets).length ? list(c8.bullets) : list(c8.body?.split("\n"));
-      if (!items.length) return [];
-      const numbered = items.every((item) => /^\d+[.)]\s/.test(item));
-      const text = items.map((item) => numbered ? item : `\u2022 ${item}`).join("\n");
-      return [
-        green,
-        card("decor-kit-8", 556, 50, 674, c8.credit ? 596 : 620, cream),
-        title("title", c8.title, box(60, 90, 456, 410), long ? 56 : 72, ink, { ...head, valign: "middle" }),
-        art(1, BIO_ART.microscope, 70, 500, 120),
-        body("bullets", text, box(590, 76, 606, c8.credit ? 544 : 568), text.length > 320 ? 29 : text.length > 180 ? 34 : 40, fg, { valign: "middle", lineHeight: 1.65 })
-      ];
-    }
-    case "photo-compare": {
-      const h = c8.caption || c8.caption2 ? 310 : 410;
-      return [
-        paper,
-        title("title", c8.title, box(60, 30, 1160, 170), long ? 52 : 68, ink, { ...head, align: "center", valign: "middle" }),
-        image("image-1", c8.image, box(70, 220, 555, h), { crop: c8.imageCrop, shape: "round", radius: 18, border: 8, borderColor: sage }),
-        image("image-2", c8.image2, box(655, 220, 555, h), { crop: c8.image2Crop, shape: "round", radius: 18, border: 8, borderColor: sage }),
-        body("photo-caption", c8.caption, box(70, 546, 555, c8.credit ? 104 : 130), 27, fg, { align: "center", lineHeight: 1.3 }),
-        body("photo-caption-2", c8.caption2, box(655, 546, 555, c8.credit ? 104 : 130), 27, fg, { align: "center", lineHeight: 1.3 })
-      ];
-    }
-    case "bars": {
-      const chart = standard().filter((el) => el.id.startsWith("bar"));
-      if (!chart.length) return [];
-      for (const el of chart) {
-        el.x = 8 + (el.x - 5) * 0.93;
-        el.y = 36 + (el.y - 26) * 0.86;
-        el.w *= 0.93;
-        el.h *= 0.86;
-      }
-      return [paper, title("title", c8.title, box(60, 30, 1160, 190), long ? 52 : 68, ink, { ...head, align: "center", valign: "middle" }), ...chart];
-    }
-    default: {
-      const elements = standard();
-      return elements.length ? [paper, ...elements] : [];
-    }
-  }
-}
 function shared(pack, id, c8, kit, standard) {
   if (id !== "bullets" && id !== "photo-compare" && id !== "bars") return null;
   const { title, body } = kit;
@@ -8032,13 +7865,11 @@ function backdrop(pack) {
       return [full("dan-gian/giay-o"), art(1, "dan-gian/chuon-chuon", 1130, 6, 110)];
     case "su-do":
       return [full("su-do/giay")];
-    case "sinh-hoc-ht":
-      return [];
   }
 }
 function composePack(pack, layoutId, content, text, standard) {
   const kit = kitOf(text);
-  const own = pack === "co-dien" ? coDien(layoutId, content, kit) : pack === "dan-gian" ? danGian(layoutId, content, kit) : pack === "su-do" ? suDo(layoutId, content, kit, standard) : pack === "sinh-hoc-ht" ? sinhHocHt(layoutId, content, kit, standard) : study(pack, layoutId, content, kit);
+  const own = pack === "co-dien" ? coDien(layoutId, content, kit) : pack === "dan-gian" ? danGian(layoutId, content, kit) : pack === "su-do" ? suDo(layoutId, content, kit, standard) : study(pack, layoutId, content, kit);
   const built = own ?? shared(pack, layoutId, content, kit, standard);
   if (built) return built.filter((el) => Boolean(el));
   const elements = standard();

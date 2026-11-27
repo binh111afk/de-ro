@@ -5,7 +5,7 @@ Ba kiểu, người dùng chọn sau khi duyệt dàn ý:
 | Kiểu | Id | Cần gì |
 |---|---|---|
 | **Doodle (vẽ tay)** | mọi id không thuộc hai nhóm dưới (các bộ `*-ve-tay` + bộ minh hoạ cũ) | 7 ảnh AI mỗi bộ |
-| **Học thuật** (trong mã là `tranh`) | `tranh-*`, cùng `co-dien-do`, `dan-gian` | ảnh AI; JSON ghi `"kieu": "tranh"`. Chỉ hiện ở môn khai trong `TRANH_BY_SUBJECT` (`src/lib/aiDeck.ts`): Văn dùng `co-dien-do`, Lịch sử dùng `tranh-su-do`, bài Sinh (nhận theo tên bài, `isBiology`) dùng `tranh-sinh-hoc` |
+| **Học thuật** (trong mã là `tranh`) | `tranh-*`, cùng `co-dien-do`, `dan-gian` | ảnh AI; JSON ghi `"kieu": "tranh"`. Chỉ hiện ở môn khai trong `TRANH_BY_SUBJECT` (`src/lib/aiDeck.ts`): Văn dùng `co-dien-do`, Lịch sử dùng `tranh-su-do` |
 | **Tạp chí** | `tap-chi-*` (8 bộ) | chỉ màu, không cần ảnh |
 
 Việc phân nhóm theo tiền tố là tự động (`proThemesFor` trong `src/lib/aiDeck.ts`). Thêm bộ không phải sửa prompt bằng tay, nhưng **phải chạy `npm run build:prompts`** vì catalog bộ màu nằm trong prompt.

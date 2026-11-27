@@ -7,7 +7,7 @@
 import type { SlideElement } from '@/store/docs'
 import type { SlideLayoutContent } from './slideLayouts'
 
-export type SlidePackId = 'co-dien' | 'dan-gian' | 'khoa-hoc' | 'toan' | 'vat-ly' | 'hoa-hoc' | 'tin-hoc' | 'tam-ly' | 'sinh-hoc' | 'ngu-van' | 'dia-li' | 'tieng-anh' | 'kinh-te-phap-luat' | 'lich-su' | 'cong-nghe' | 'nghe-thuat' | 'the-duc' | 'mam-non' | 'sinh-hoat-lop' | 'moi-truong' | 'kinh-doanh' | 'le-hoi' | 'quoc-phong' | 'huong-nghiep' | 'ngoai-ngu' | 'du-lich' | 'dinh-duong' | 'y-te' | 'giao-thong' | 'gia-dinh' | 'trung-tinh' | 'su-do' | 'sinh-hoc-ht'
+export type SlidePackId = 'co-dien' | 'dan-gian' | 'khoa-hoc' | 'toan' | 'vat-ly' | 'hoa-hoc' | 'tin-hoc' | 'tam-ly' | 'sinh-hoc' | 'ngu-van' | 'dia-li' | 'tieng-anh' | 'kinh-te-phap-luat' | 'lich-su' | 'cong-nghe' | 'nghe-thuat' | 'the-duc' | 'mam-non' | 'sinh-hoat-lop' | 'moi-truong' | 'kinh-doanh' | 'le-hoi' | 'quoc-phong' | 'huong-nghiep' | 'ngoai-ngu' | 'du-lich' | 'dinh-duong' | 'y-te' | 'giao-thong' | 'gia-dinh' | 'trung-tinh' | 'su-do'
 
 export const PACK_COLORS = {
   'co-dien': { background: '#8b0000', fg: '#8b0000', ink: '#8b0000', accent: '#8b0000', muted: '#7a3b2e', surface: '#fdeed3', panel: '#f7e2bd', onAccent: '#fdeed3' },
@@ -40,7 +40,6 @@ export const PACK_COLORS = {
   'gia-dinh': { background: '#fcf8f5', fg: '#51403f', ink: '#6e3340', accent: '#a8403c', muted: '#77696a', surface: '#ffffff', panel: '#fbe8e6', onAccent: '#ffffff' },
   'trung-tinh': { background: '#fbf9f4', fg: '#3b4a58', ink: '#27405a', accent: '#a84e2c', muted: '#5f6c77', surface: '#ffffff', panel: '#e4eef0', onAccent: '#ffffff' },
   'su-do': { background: '#f1efea', fg: '#6b1a24', ink: '#760015', accent: '#760015', muted: '#7d4a50', surface: '#ffffff', panel: '#eadfdc', onAccent: '#ffffff' },
-  'sinh-hoc-ht': { background: '#fbf6f2', fg: '#34402f', ink: '#27401f', accent: '#4f7a3a', muted: '#5f6b58', surface: '#ffffff', panel: '#c8d89a', onAccent: '#ffffff' },
   'tin-hoc': { background: '#f8f7fc', fg: '#3a3560', ink: '#241d4d', accent: '#5a3ee0', muted: '#635d85', surface: '#ffffff', panel: '#ece8fd', onAccent: '#ffffff' },
   'tam-ly': { background: '#fbf4ec', fg: '#53392f', ink: '#5a2c1c', accent: '#a8532f', muted: '#7d6257', surface: '#fffaf5', panel: '#f8e4da', onAccent: '#ffffff' },
 } as const
@@ -114,7 +113,7 @@ const ART: Record<string, [number, number]> = {
   'trung-tinh/bong-den': [506, 540], 'trung-tinh/bong-thoai': [540, 512], 'trung-tinh/but-chi': [144, 540], 'trung-tinh/hat-1': [254, 161], 'trung-tinh/hat-2': [158, 204],
   'trung-tinh/hat-3': [208, 207], 'trung-tinh/kinh-lup': [306, 540], 'trung-tinh/mang': [540, 229], 'trung-tinh/may-bay-giay': [540, 275], 'trung-tinh/ngoi-sao': [540, 523],
   'su-do/nui-song': [1600, 388], 'su-do/dai-song': [1600, 70], 'su-do/cuon-thu': [840, 449], 'su-do/sach-but': [840, 529], 'su-do/ban-tac-chien': [1600, 437],
-  'sinh-hoc-ht/kinh-hien-vi': [353, 560], 'sinh-hoc-ht/te-bao': [840, 542],
+ 
   // het dot 2
 }
 
@@ -1016,150 +1015,6 @@ function suDo(id: string, c: SlideLayoutContent, { title, body }: Kit, standard:
 }
 
 /* ------------------------------------------------------------------ *
- * Sinh học (Học thuật): nền kem, mảng xanh lá, thẻ đánh số, hình minh hoạ phẳng
- * ------------------------------------------------------------------ */
-// mỗi slide nhiều nhất một hình, đặt trong vòng tròn kem hoặc xanh
-const BIO_ART = { microscope: 'sinh-hoc-ht/kinh-hien-vi', cell: 'sinh-hoc-ht/te-bao' }
-
-/** đặt hình vào giữa điểm (cx, cy) */
-function bioPut(name: string, cx: number, cy: number, w: number): SlideElement {
-  const [aw, ah] = ART[name]
-  return art(1, name, cx - w / 2, cy - (w * ah) / aw / 2, w)
-}
-
-function sinhHocHt(id: string, c: SlideLayoutContent, { title, body }: Kit, standard: () => SlideElement[]): Built {
-  const { background: cream, ink, fg, panel: sage, accent: leaf } = PACK_COLORS['sinh-hoc-ht']
-  const head = { fontWeight: 800, caps: false, lineHeight: 1.12 }
-  const long = (c.title?.length ?? 0) > 34
-  const shape = (n: string, x: number, y: number, w: number, h: number, fill: string, extra: Partial<SlideElement> = {}): SlideElement =>
-    ({ id: n, type: 'shape', shape: 'rect', fill, border: 0, shadowLevel: 0, decor: true, ...box(x, y, w, h), ...extra })
-  const card = (n: string, x: number, y: number, w: number, h: number, fill: string = sage) =>
-    shape(n, x, y, w, h, fill, { shape: 'round', radius: 14 })
-  const dot = (n: string, x: number, y: number, d: number, fill: string = sage) => shape(n, x, y, d, d, fill, { shape: 'ellipse' })
-  const paper = shape('decor-kit-0', 0, 0, 1280, 720, cream, { locked: true })
-  const green = shape('decor-kit-0', 0, 0, 1280, 720, sage, { locked: true })
-  const photo = (b: Box) =>
-    image('image-1', c.image, b, { imagePosition: { x: c.focusX ?? 50, y: c.focusY ?? 40 }, crop: c.imageCrop })
-  switch (id) {
-    case 'photo-full':
-      return [
-        paper,
-        ...(c.image ? [photo(box(760, 0, 520, 720))] : [
-          shape('decor-kit-2', 820, 0, 460, 720, sage),
-          dot('decor-kit-3', 860, 170, 380, cream),
-          bioPut(BIO_ART.microscope, 1050, 360, 190),
-        ]),
-        body('kicker', upper(c.kicker), box(84, 110, 640, 66), 28, leaf, { fontWeight: 800 }),
-        title('title', c.title, box(80, 190, 690, 320), long ? 72 : 104, ink, { ...head, valign: 'middle' }),
-        shape('divider-1', 84, 528, 140, 8, sage),
-        body('subtitle', c.subtitle, box(84, 560, 660, 90), 30, fg, { fontWeight: 600, lineHeight: 1.3 }),
-      ]
-    case 'manifesto': {
-      const text = statement(c)
-      return [
-        green,
-        card('decor-kit-1', 100, 80, 1080, 560, cream),
-        body('kicker', upper(c.kicker), box(220, 138, 840, 58), 28, leaf, { fontWeight: 800, align: 'center' }),
-        title('body', text, box(210, 208, 860, 300), text.length > 150 ? 42 : text.length > 80 ? 54 : 68, ink, { ...head, align: 'center', valign: 'middle', lineHeight: 1.3 }),
-        body('author', c.author, box(220, 522, 840, 60), 30, fg, { align: 'center' }),
-      ]
-    }
-    case 'editorial-text':
-      return [
-        paper,
-        ...(c.image ? [photo(box(760, 0, 520, 720))] : [
-          dot('decor-kit-2', 810, 150, 420),
-          // bài thực hành dùng kính hiển vi, còn lại dùng hai tế bào
-          /kính hiển vi|thực hành|thí nghiệm|quan sát/i.test((c.title ?? '').normalize('NFC'))
-            ? bioPut(BIO_ART.microscope, 1020, 360, 200)
-            : bioPut(BIO_ART.cell, 1020, 360, 330),
-        ]),
-        body('kicker', upper(c.kicker), box(84, 48, 640, 66), 28, leaf, { fontWeight: 800 }),
-        title('title', c.title, box(80, 112, 660, 180), long ? 60 : 80, ink, { ...head, valign: 'middle' }),
-        shape('divider-1', 84, 308, 140, 8, sage),
-        body('body', paragraphs(c), box(84, 340, 660, c.credit ? 308 : 340), 34, fg),
-      ]
-    case 'rules': {
-      const rows = rowsOf(c)
-      if (!rows.length) return []
-      const n = rows.length
-      const gap = n > 4 ? 18 : 28
-      const w = (1140 - gap * (n - 1)) / n
-      const size = n > 4 ? 28 : n > 3 ? 34 : n > 2 ? 36 : 40
-      const short = rows.every((row) => row.value.length <= 4)
-      return [
-        paper,
-        title('title', c.title, box(60, 40, 1160, 130), long ? 56 : 72, ink, { ...head, align: 'center', valign: 'middle' }),
-        body('kicker', upper(c.kicker), box(240, 172, 800, 58), 26, leaf, { fontWeight: 800, align: 'center' }),
-        ...rows.flatMap((row, i) => {
-          const x = 70 + i * (w + gap)
-          return [
-            card(`divider-${i * 2 + 1}`, x, 250, w, 390),
-            title(`item-${i + 1}-value`, row.value, box(x + 12, 270, w - 24, 100), short ? 56 : n > 3 ? 30 : 40, ink, { ...head, align: 'center', valign: 'middle' }),
-            shape(`divider-${i * 2 + 2}`, x + w / 2 - 36, 382, 72, 6, leaf),
-            body(`item-${i + 1}-label`, row.label, box(x + 18, 406, w - 36, 214), size, fg, { align: 'center', valign: 'middle', lineHeight: 1.35 }),
-          ]
-        }),
-      ]
-    }
-    case 'bignum':
-      return [
-        green,
-        c.image ? photo(box(760, 0, 520, 720)) : card('decor-kit-1', 100, 80, 1080, 560, cream),
-        ...(c.image ? [
-          body('kicker', upper(c.kicker), box(70, 66, 640, 60), 28, ink, { fontWeight: 800 }),
-          title('bignum-value', c.value, box(64, 130, 660, 260), 190, ink, { ...head, valign: 'middle', lineHeight: 1 }),
-          title('bignum-label', c.label, box(70, 400, 640, 110), 52, ink, head),
-          body('subtitle', c.subtitle, box(70, 526, 660, FLOOR - 526), 30, fg, { lineHeight: 1.35 }),
-        ] : [
-          body('kicker', upper(c.kicker), box(220, 118, 840, 66), 30, leaf, { fontWeight: 800, align: 'center' }),
-          title('bignum-value', c.value, box(220, 180, 840, 210), 170, ink, { ...head, align: 'center', valign: 'middle', lineHeight: 1 }),
-          title('bignum-label', c.label, box(220, 396, 840, 96), 48, ink, { ...head, align: 'center', valign: 'middle' }),
-          body('subtitle', c.subtitle, box(240, 500, 800, 90), 30, fg, { align: 'center', lineHeight: 1.35 }),
-        ]),
-      ]
-    case 'bullets': {
-      const items = list(c.bullets).length ? list(c.bullets) : list(c.body?.split('\n'))
-      if (!items.length) return []
-      const numbered = items.every((item) => /^\d+[.)]\s/.test(item))
-      const text = items.map((item) => (numbered ? item : `• ${item}`)).join('\n')
-      return [
-        green,
-        card('decor-kit-8', 556, 50, 674, c.credit ? 596 : 620, cream),
-        title('title', c.title, box(60, 90, 456, 410), long ? 56 : 72, ink, { ...head, valign: 'middle' }),
-        body('bullets', text, box(590, 76, 606, c.credit ? 544 : 568), text.length > 320 ? 29 : text.length > 180 ? 34 : 40, fg, { valign: 'middle', lineHeight: 1.65 }),
-      ]
-    }
-    case 'photo-compare': {
-      const h = c.caption || c.caption2 ? 310 : 410
-      return [
-        paper,
-        title('title', c.title, box(60, 30, 1160, 170), long ? 52 : 68, ink, { ...head, align: 'center', valign: 'middle' }),
-        image('image-1', c.image, box(70, 220, 555, h), { crop: c.imageCrop, shape: 'round', radius: 18, border: 8, borderColor: sage }),
-        image('image-2', c.image2, box(655, 220, 555, h), { crop: c.image2Crop, shape: 'round', radius: 18, border: 8, borderColor: sage }),
-        body('photo-caption', c.caption, box(70, 546, 555, c.credit ? 104 : 130), 27, fg, { align: 'center', lineHeight: 1.3 }),
-        body('photo-caption-2', c.caption2, box(655, 546, 555, c.credit ? 104 : 130), 27, fg, { align: 'center', lineHeight: 1.3 }),
-      ]
-    }
-    case 'bars': {
-      const chart = standard().filter((el) => el.id.startsWith('bar'))
-      if (!chart.length) return []
-      for (const el of chart) {
-        el.x = 8 + (el.x - 5) * 0.93
-        el.y = 36 + (el.y - 26) * 0.86
-        el.w *= 0.93
-        el.h *= 0.86
-      }
-      return [paper, title('title', c.title, box(60, 30, 1160, 190), long ? 52 : 68, ink, { ...head, align: 'center', valign: 'middle' }), ...chart]
-    }
-    default: {
-      const elements = standard()
-      return elements.length ? [paper, ...elements] : []
-    }
-  }
-}
-
-/* ------------------------------------------------------------------ *
  * Gạch đầu dòng, so sánh ảnh, biểu đồ cột: cùng khung và hình của bộ
  * ------------------------------------------------------------------ */
 function shared(pack: SlidePackId, id: string, c: SlideLayoutContent, kit: Kit, standard: () => SlideElement[]): Built | null {
@@ -1242,7 +1097,6 @@ function backdrop(pack: SlidePackId): SlideElement[] {
     case 'co-dien': return [full('co-dien/tem-day'), art(1, 'co-dien/goc-hoa-van', 44, 36, 110)]
     case 'dan-gian': return [full('dan-gian/giay-o'), art(1, 'dan-gian/chuon-chuon', 1130, 6, 110)]
     case 'su-do': return [full('su-do/giay')]
-    case 'sinh-hoc-ht': return []
   }
 }
 
@@ -1257,7 +1111,6 @@ export function composePack(
   const own = pack === 'co-dien' ? coDien(layoutId, content, kit)
     : pack === 'dan-gian' ? danGian(layoutId, content, kit)
       : pack === 'su-do' ? suDo(layoutId, content, kit, standard)
-      : pack === 'sinh-hoc-ht' ? sinhHocHt(layoutId, content, kit, standard)
       : study(pack, layoutId, content, kit)
   const built = own ?? shared(pack, layoutId, content, kit, standard)
   if (built) return built.filter((el): el is SlideElement => Boolean(el))

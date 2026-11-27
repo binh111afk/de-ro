@@ -283,8 +283,7 @@ export function proPlan(plan: DeckPlan, style?: ProStyle): DeckPlan {
   const theme = pick('doodle', plan.theme, 'trung-tinh-ve-tay')
   const themeMagazine = pick('magazine', plan.themeMagazine ?? plan.theme, proThemesFor('magazine')[0].id!)
   // môn chưa có bộ tranh thì để trống, câu hỏi kiểu ẩn lựa chọn đó; người dùng gõ thẳng kiểu thì vẫn dùng bộ đang có
-  const themeTranh = (isBiology(plan) ? 'tranh-sinh-hoc' : TRANH_BY_SUBJECT[plan.subject ?? ''])
-    ?? (style === 'tranh' ? 'co-dien-do' : undefined)
+  const themeTranh = TRANH_BY_SUBJECT[plan.subject ?? ''] ?? (style === 'tranh' ? 'co-dien-do' : undefined)
   const both = { ...plan, theme, themeMagazine, themeTranh, design: undefined, stylePack: 'editorial', decorKit: 'toi-gian', slides }
   return style ? withProStyle(both, style) : both
 }
@@ -427,12 +426,6 @@ export const proThemesFor = (style: ProStyle) => PRO_THEMES.filter((t) => styleO
 
 /** kiểu "Học thuật" (id nội bộ 'tranh') chỉ mở cho môn đã có bộ (id môn ở slideSubjects.ts); thêm bộ thì khai ở đây */
 const TRANH_BY_SUBJECT: Record<string, string> = { van: 'co-dien-do', 'lich-su': 'tranh-su-do' }
-
-/** Lí, Hoá, Sinh chung một môn nên bộ Sinh nhận riêng theo tên bài ("tế bào quang điện" là bài Lí) */
-const BIOLOGY = /sinh học|tế bào(?! quang điện)|di truyền|\badn\b|\bdna\b|nhiễm sắc|nguyên phân|giảm phân|quang hợp|vi sinh|vi khuẩn|thực vật|động vật|sinh thái|tiến ho[áa]|cơ thể người|hệ tuần hoàn|hệ tiêu ho|hệ hô hấp|hệ thần kinh/iu
-
-const isBiology = (plan: DeckPlan) =>
-  ['khtn', 'khac', undefined].includes(plan.subject) && BIOLOGY.test(`${plan.title ?? ''} ${plan.audience ?? ''}`.normalize('NFC'))
 
 /** đọc kiểu slide trong lời người dùng (câu yêu cầu hoặc câu trả lời panel hỏi) */
 export function proStyleOf(text: string): ProStyle | undefined {
