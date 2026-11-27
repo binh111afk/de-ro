@@ -1,21 +1,12 @@
 /**
  * Proxy tạo ảnh AI — API key chỉ nằm server-side.
  *
- * Xkiro dùng API ảnh bất đồng bộ (OpenAI-style):
- *   POST /images/generations        → job {id, status}
- *   GET  /images/generations/:id    → {status, data:[{url}]}
- * Model mặc định `sensenova/sensenova-u1.5-lite` (image generation, không phải
- * chat model).
- *
- * Ưu tiên Agnes (`AGNES_API_KEY`, `AGNES_BASE_URL`, `AGNES_IMAGE_MODEL`; miễn phí nhưng có giới hạn).
- * Ảnh chụp của bài Chuyên nghiệp lỗi thì sang CogView-4 trả tiền (`GLM_API_KEY`, `GLM_BASE_URL`, `GLM_IMAGE_MODEL`),
- * cuối cùng là Xkiro: `IMAGE_BASE_URL`, `IMAGE_API_KEY`, `IMAGE_MODEL` trong `.env`.
- * Không có env thì đọc provider Xkiro trong config ZCode của máy
- * (`~/.zcode/v2/provider_config.json`) — app chạy cục bộ, key không vào bundle.
+ * Thứ tự thử (đều gọi chuẩn OpenAI `POST /images/generations` trả ảnh trực tiếp):
+ *   1. SenseNova chính hãng (`SENSENOVA_API_KEY`, `SENSENOVA_BASE_URL`, `SENSENOVA_IMAGE_MODEL`)
+ *   2. Agnes (`AGNES_API_KEY`, `AGNES_BASE_URL`, `AGNES_IMAGE_MODEL`; miễn phí có giới hạn)
+ *   3. CogView-4 của Z.ai (`GLM_API_KEY`, `GLM_BASE_URL`, `GLM_IMAGE_MODEL`; trả tiền từng ảnh)
+ * Provider thiếu key bị bỏ qua.
  */
-import { readFileSync } from 'node:fs'
-import { homedir } from 'node:os'
-import path from 'node:path'
 import type { IncomingMessage, ServerResponse } from 'node:http'
 import { json, readBody } from './http.js'
 import { LOGIN_REQUIRED, clientIp, guard, isLocal, userFromToken } from './guard.js'
@@ -26,11 +17,6 @@ import { logAiCall } from './ops.js'
 /** điểm AI trừ cho mỗi ảnh vẽ thành công (ảnh tốn tiền nhà cung cấp như chữ) */
 const IMAGE_TOKENS = () => Math.max(0, Number(process.env.AI_IMAGE_POINTS ?? 5) || 0) * TOKENS_PER_POINT
 
-const DEFAULT_BASE_URL = 'https://api.xkiro.com/v1'
-const DEFAULT_MODEL = 'sensenova/sensenova-u1.5-lite'
-const POLL_MS = 1500
-/** model ảnh thường 20–75 giây; để 4 phút cho lúc gateway chậm */
-const DEADLINE_MS = 240_000
 const MAX_PROMPT = 2000
 const MAX_IMAGE_BYTES = 8 * 1024 * 1024
 
@@ -40,37 +26,20 @@ interface ImageConfig {
   model: string
 }
 
-/** Đọc key Xkiro từ config ZCode (chỉ đọc, không log). */
-function xkiroFromZcode(): Partial<ImageConfig> {
-  try {
-    const file = path.join(homedir(), '.zcode', 'v2', 'provider_config.json')
-    const parsed = JSON.parse(readFileSync(file, 'utf8')) as {
-      config?: {
-        providerConfigRules?: {
-          providerRules?: Array<{
-            providerName?: string
-            config?: { access?: { apiKey?: string }; api?: { baseUrl?: string } }
-          }>
-        }
-      }
-    }
-    const rules = parsed.config?.providerConfigRules?.providerRules ?? []
-    const xkiro = rules.find((rule) => /xkiro/i.test(rule.providerName ?? ''))
-    const baseUrl = xkiro?.config?.api?.baseUrl
-    const apiKey = xkiro?.config?.access?.apiKey
-    if (typeof baseUrl === 'string' && typeof apiKey === 'string') return { baseUrl, apiKey }
-  } catch {
-    // máy không có config ZCode → dùng env
-  }
-  return {}
-}
-
 /**
- * Thứ tự thử: Agnes (trả ảnh ngay, miễn phí có giới hạn) → CogView-4 của Z.ai (chỉ ảnh chụp của bài Chuyên nghiệp,
- * trả tiền từng ảnh; với tranh minh hoạ nó vẫn vẽ chữ và hay lạc đề) → Xkiro/sensenova (job + poll). Provider thiếu key bị bỏ qua.
+ * Thứ tự thử: SenseNova chính hãng → Agnes (miễn phí có giới hạn) → CogView-4 của Z.ai (trả tiền từng ảnh).
+ * Provider thiếu key bị bỏ qua.
  */
-function resolveConfigs(photo = false): ImageConfig[] {
+function resolveConfigs(): ImageConfig[] {
   const configs: ImageConfig[] = []
+  const sensenovaKey = process.env.SENSENOVA_API_KEY?.trim()
+  if (sensenovaKey) {
+    configs.push({
+      baseUrl: (process.env.SENSENOVA_BASE_URL?.trim() || 'https://token.sensenova.ai/v1').replace(/\/+$/, ''),
+      apiKey: sensenovaKey,
+      model: process.env.SENSENOVA_IMAGE_MODEL?.trim() || 'sensenova-u1.6-lite',
+    })
+  }
   const agnesKey = process.env.AGNES_API_KEY?.trim()
   if (agnesKey) {
     configs.push({
@@ -80,20 +49,11 @@ function resolveConfigs(photo = false): ImageConfig[] {
     })
   }
   const glmKey = process.env.GLM_API_KEY?.trim()
-  if (photo && glmKey) {
+  if (glmKey) {
     configs.push({
       baseUrl: (process.env.GLM_BASE_URL?.trim() || 'https://api.z.ai/api/paas/v4').replace(/\/+$/, ''),
       apiKey: glmKey,
       model: process.env.GLM_IMAGE_MODEL?.trim() || 'cogview-4-250304',
-    })
-  }
-  const fallback = xkiroFromZcode()
-  const apiKey = process.env.IMAGE_API_KEY || fallback.apiKey || ''
-  if (apiKey) {
-    configs.push({
-      baseUrl: (process.env.IMAGE_BASE_URL || fallback.baseUrl || DEFAULT_BASE_URL).replace(/\/+$/, ''),
-      apiKey,
-      model: process.env.IMAGE_MODEL || DEFAULT_MODEL,
     })
   }
   return configs
@@ -164,7 +124,7 @@ async function generate(config: ImageConfig, prompt: string): Promise<string> {
   const fullPrompt = /\bno text\b/i.test(prompt)
     ? prompt
     : `${prompt}\n\nMọi chữ xuất hiện trong ảnh phải viết bằng tiếng Việt có dấu chính xác; không dùng chữ Trung, Nhật, Hàn.`
-  // Agnes trả ảnh ngay trong request này (~12–17 s) → chờ lâu hơn mặc định 15 s.
+  // SenseNova / Agnes / CogView-4 đều trả ảnh trực tiếp trong request này (~15–30 s).
   const start = await upstreamJson(
     `${config.baseUrl}/images/generations`,
     { method: 'POST', headers, body: JSON.stringify({ model: config.model, prompt: fullPrompt, n: 1, size: '1024x1024' }) },
@@ -172,27 +132,9 @@ async function generate(config: ImageConfig, prompt: string): Promise<string> {
   )
   if (!start.ok) throw new ImageError(502, upstreamError(start.status, start.body))
 
-  // Agnes trả ảnh ngay; Xkiro trả job id để poll.
   const direct = await itemToDataUrl((start.body.data as ImageItem[] | undefined)?.[0])
   if (direct) return direct
-
-  const jobId = typeof start.body.id === 'string' ? start.body.id : ''
-  if (!jobId) throw new ImageError(502, 'Dịch vụ ảnh không trả về job id')
-
-  const deadline = Date.now() + DEADLINE_MS
-  while (Date.now() < deadline) {
-    await sleep(POLL_MS)
-    const job = await upstreamJson(`${config.baseUrl}/images/generations/${encodeURIComponent(jobId)}`, { headers })
-    if (!job.ok) throw new ImageError(502, upstreamError(job.status, job.body))
-    const status = String(job.body.status ?? '')
-    if (status === 'failed' || status === 'error') throw new ImageError(502, upstreamError(job.status, job.body))
-    if (status === 'succeeded' || status === 'completed') {
-      const url = await itemToDataUrl((job.body.data as ImageItem[] | undefined)?.[0])
-      if (url) return url
-      throw new ImageError(502, 'Job ảnh xong nhưng không có dữ liệu ảnh')
-    }
-  }
-  throw new ImageError(504, 'Tạo ảnh quá lâu (quá 4 phút)')
+  throw new ImageError(502, 'Dịch vụ ảnh không trả về dữ liệu ảnh')
 }
 
 /**
@@ -234,10 +176,10 @@ export async function chargeAndGenerate(
       json(res, 400, { error: 'prompt là bắt buộc' })
       return null
     }
-    const configs = resolveConfigs(tag.photo)
+    const configs = resolveConfigs()
     if (!configs.length) {
       await release()
-      json(res, 503, { error: 'Chưa cấu hình AGNES_API_KEY hoặc IMAGE_API_KEY.' })
+      json(res, 503, { error: 'Chưa cấu hình SENSENOVA_API_KEY, AGNES_API_KEY hoặc GLM_API_KEY.' })
       return null
     }
     const errors: string[] = []
