@@ -119,7 +119,10 @@ export interface Slide {
   bgImage?: string
   elements: SlideElement[]
   notes?: string
-  transition?: 'none' | 'fade' | 'slide' | 'zoom'
+  /** hiệu ứng khi sang slide này; `morph`: phần giống slide trước trượt từ chỗ cũ tới (lib/slideMorph.ts) */
+  transition?: 'none' | 'fade' | 'slide' | 'zoom' | 'morph'
+  /** hiệu ứng cả trang, tự chạy khi sang slide (lib/slideAnim.ts); chỉ có khi trình chiếu trên web */
+  pageAnim?: { anim: NonNullable<SlideElement['anim']>; ms?: number }
   /** id layout đã dựng slide (lib/slideLayouts.ts); deck cũ không có vẫn đọc được */
   layout?: string
   /** tông nền do layout/AI chọn; thiếu thì theo mặc định của layout */

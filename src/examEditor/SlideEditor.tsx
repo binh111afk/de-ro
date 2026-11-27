@@ -23,7 +23,10 @@ import { alignBoxes, type AlignMode } from '@/lib/slideAlign'
 import { graphicMainColor } from '@/lib/slideGraphics'
 import { hasRich } from '@/lib/slideMath'
 import { renderMath } from '@/lib/math'
-import { autoAnimate, clearAnimation, slideSteps, applyElementAnim, startOf } from '@/lib/slideAnim'
+import { HIDDEN_POSE, slideSteps, applyElementAnim, clearSlideAnim, keepAnim, pageDelays, pageState, setPageAnim, startOf, type ElementAnimAction } from '@/lib/slideAnim'
+import { AnimLayer, EffectsPreview, SlideEffectsContext, type EffectsPreviewSpec, type SlideEffectsApi } from './SlideEffects'
+import { settleDeck } from '@/lib/slideMorph'
+import { MORPH_MS, MorphGhosts, MorphIn, morphPlan } from './SlideMorph'
 import { EmptyState } from '@/components/ui'
 import { cn } from '@/lib/cn'
 import type { Deck, DeckFooter, Slide, SlideElement, SlideTone } from '@/store/docs'
@@ -51,17 +54,6 @@ import { SlideImageContext } from './slideImageContext'
 import { SlideImageJobs, type SlideImageSlot } from './slideImageStatus'
 import { InkLayer, PresentToolbar, PresenterWindow, usePresentTools } from './PresentTools'
 import { GroupToolbar, SnapGuides, EditableEl, setSnapEnabled, SlideChromeContext } from './slideEditParts'
-
-/** Trạng thái ẩn/hiện của hiệu ứng bấm-chuột: mờ dần + trượt/phóng nhẹ (translate/scale tách khỏi transform xoay của phần tử). */
-const HIDDEN_POSE: Record<NonNullable<SlideElement['anim']>, React.CSSProperties> = {
-  fade: {},
-  rise: { translate: '0 2.4cqw' },
-  drop: { translate: '0 -2.4cqw' },
-  left: { translate: '-6cqw 0' },
-  right: { translate: '6cqw 0' },
-  zoom: { scale: '0.8' },
-  spin: { rotate: '-90deg', scale: '0.6' },
-}
 
 /** cài đặt nhỏ theo trình duyệt (lưới, đường gióng); localStorage hỏng thì dùng mặc định */
 function readPref(key: string, fallback: boolean): boolean {
@@ -277,6 +269,12 @@ export function SlideEditor({
   /** phần tử đang chạy thử hiệu ứng (nonce để chọn lại cùng hiệu ứng vẫn chạy lại) */
   const [animPreview, setAnimPreview] = useState<{ id: string; nonce: number } | null>(null)
   const endAnimPreview = useCallback(() => setAnimPreview(null), [])
+  /** bảng Hiệu ứng ở cột trái: đang mở thì khung soạn hiện số lần bấm */
+  const [effectsOpen, setEffectsOpen] = useState(false)
+  const [openEffectsSignal, setOpenEffectsSignal] = useState(0)
+  const onPanelChange = useCallback((id: string | null) => setEffectsOpen(id === 'effects'), [])
+  const [effectsPreview, setEffectsPreview] = useState<(EffectsPreviewSpec & { nonce: number }) | null>(null)
+  const endEffectsPreview = useCallback(() => setEffectsPreview(null), [])
   /** phần tử đã sao chép (một mục hoặc cả nhóm) */
   const [clipboard, setClipboard] = useState<SlideElement[]>([])
   const [ctxMenu, setCtxMenu] = useState<MenuState>(null)
@@ -301,6 +299,10 @@ export function SlideEditor({
   const swipeRef = useRef<{ x: number; y: number; didSwipe: boolean } | null>(null)
 
   const slides = deck.slides
+  /** bản dùng khi chiếu (slide Morph bỏ lần bấm của phần đã hiện từ trước) */
+  const showSlides = useMemo(() => settleDeck(deck.slides), [deck.slides])
+  /** slide vừa rời khi bấm tiến: có nó thì slide kế diễn Morph (lùi / nhảy trang thì không) */
+  const [morphIndex, setMorphIndex] = useState<number | null>(null)
   /** số ô skeleton còn chờ trong cột thumbnail (trang bị bỏ cũng tính là xong) */
   const pendingCount = pendingSlides
     ? Math.max(0, pendingSlides.total - pendingSlides.done)
@@ -505,7 +507,8 @@ export function SlideEditor({
     const copy: Slide = {
       ...deck.slides[idx],
       id: uid(),
-      elements: deck.slides[idx].elements.map((e) => ({ ...e, id: uid() })),
+      // giữ id phần tử: Morph nhận ra cùng một vật giữa slide gốc và bản sao
+      elements: deck.slides[idx].elements.map((e) => ({ ...e })),
     }
     const next = [...deck.slides]
     next.splice(idx + 1, 0, copy)
@@ -689,9 +692,8 @@ export function SlideEditor({
       chart: 'chartDesign',
     }
     const next = selectedElement && auto[selectedElement.type]
-    // đang ở Hoạt ảnh thì giữ nguyên tab để chọn lần lượt từng đối tượng gắn hiệu ứng
     if (next) {
-      if (ribbonTab !== 'animations') setRibbonTab(next)
+      setRibbonTab(next)
     } else if (['elementFormat', 'pictureFormat', 'tableDesign', 'chartDesign'].includes(ribbonTab)) {
       // chữ, công thức, video và bỏ chọn không có tab riêng: tab đang mở đã biến mất nên về Trang chủ
       setRibbonTab('home')
@@ -1084,8 +1086,35 @@ export function SlideEditor({
       customBg: undefined,
       bgImage: undefined,
       background: toneBackground(deck.theme, tone),
-      elements,
+      elements: keepAnim(currentSlide, elements),
     })
+  }
+
+  /* ---------- hiệu ứng (bảng ở cột trái) ---------- */
+  const mapSlides = (allSlides: boolean, fn: (s: Slide) => Slide) =>
+    commitDeck({ ...deck, slides: deck.slides.map((s) => (s.html || (!allSlides && s.id !== currentSlide?.id) ? s : fn(s))) })
+
+  const effectsApi: SlideEffectsApi = {
+    slide: currentSlide ?? null,
+    selected: selectedElement,
+    previous: currentSlide ? (deck.slides[deck.slides.indexOf(currentSlide) - 1] ?? null) : null,
+    onElement: (action: ElementAnimAction) => {
+      if (!selectedElement) return
+      mapSlides(false, (s) => ({ ...s, elements: applyElementAnim(s.elements, selectedElement.id, action) }))
+      if (action.type === 'set' || action.type === 'speed' || action.type === 'byLine') setAnimPreview({ id: selectedElement.id, nonce: Date.now() })
+    },
+    onPage: (anim, mode, ms) => mapSlides(false, (s) => setPageAnim(s, anim, mode, ms)),
+    onPageAll: () => {
+      if (!currentSlide) return
+      const { anim, mode, ms } = pageState(currentSlide)
+      mapSlides(true, (s) => (s.id === currentSlide.id ? s : setPageAnim(s, anim, mode ?? 'auto', ms)))
+    },
+    onTransition: (transition, allSlides) => mapSlides(allSlides, (s) => ({ ...s, transition })),
+    onClear: (allSlides) => {
+      setEffectsPreview(null)
+      mapSlides(allSlides, clearSlideAnim)
+    },
+    onPreview: (preview) => setEffectsPreview(preview && { ...preview, nonce: Date.now() }),
   }
 
   const onUpdateSelected = (patch: Partial<SlideElement>) => {
@@ -1107,7 +1136,9 @@ export function SlideEditor({
       { ...currentSlide, layout: layoutId, tone, background: toneBackground(deck.theme, tone), elements },
       deck.theme.fg,
     )
-    patchSlide(currentSlide.id, { layout: next.layout, tone: next.tone, background: next.background, elements: next.elements })
+    const { pageAnim } = currentSlide
+    const laidOut = pageAnim ? setPageAnim(next, pageAnim.anim, 'auto', pageAnim.ms).elements : next.elements
+    patchSlide(currentSlide.id, { layout: next.layout, tone: next.tone, background: next.background, elements: laidOut })
   }
 
   /**
@@ -1140,8 +1171,9 @@ export function SlideEditor({
 
   // Bấm/→ hiện phần tử kế tiếp của slide; hết hiệu ứng mới sang slide sau; hết slide thì thoát. Lùi: ẩn bớt, rồi về slide trước (đã hiện đủ).
   const goNext = () => {
-    if (presentStep < slideSteps(slides[presentIndex]?.elements ?? [])) setPresentStep(presentStep + 1)
+    if (presentStep < slideSteps(showSlides[presentIndex]?.elements ?? [])) setPresentStep(presentStep + 1)
     else if (presentIndex < slides.length - 1) {
+      setMorphIndex(presentIndex)
       setPresentIndex(presentIndex + 1)
       setPresentStep(0)
     } else setPresenting(false) // đã ở bước cuối của slide cuối: tiến thêm thì thoát trình chiếu
@@ -1149,13 +1181,15 @@ export function SlideEditor({
   const goPrev = () => {
     if (presentStep > 0) setPresentStep(presentStep - 1)
     else if (presentIndex > 0) {
+      setMorphIndex(null)
       setPresentIndex(presentIndex - 1)
-      setPresentStep(slideSteps(slides[presentIndex - 1]?.elements ?? []))
+      setPresentStep(slideSteps(showSlides[presentIndex - 1]?.elements ?? []))
     }
   }
 
   useEffect(() => {
     if (presenting) setPresentStep(0)
+    else setMorphIndex(null)
   }, [presenting])
 
   // Chiếu toàn màn hình; Esc của trình duyệt thoát toàn màn hình thì thoát luôn trình chiếu.
@@ -1366,11 +1400,17 @@ export function SlideEditor({
    * Trình chiếu
    * ---------------------------------------------------------------- */
   if (presenting) {
-    const slide = deck.slides[presentIndex]
+    const slide = showSlides[presentIndex]
     if (!slide) {
       setPresenting(false)
       return null
     }
+    const pageMoves = slide.pageAnim ? pageDelays(slide.elements) : null
+    const from = slide.transition === 'morph' && morphIndex === presentIndex - 1 ? showSlides[morphIndex] : null
+    const elements = readableElements(slide, theme)
+    const morph = from && !from.html && !slide.html ? morphPlan(readableElements(from, theme), elements) : null
+    // chờ chuyển trang xong rồi các phần mới vào
+    const pageWait = slide.transition && slide.transition !== 'none' ? 350 : 80
     const canPrev = presentIndex > 0 || presentStep > 0
     // tiến luôn được: hết slide thì goNext thoát trình chiếu
     const canNext = true
@@ -1449,7 +1489,8 @@ export function SlideEditor({
                 data-decor={theme.decor}
                 style={{ ...slideBgStyle(slide), ...decorStyle(theme) }}
               >
-                {readableElements(slide, theme).map((el) => {
+                {morph && <MorphGhosts plan={morph} from={from!} to={slide} theme={theme} />}
+                {elements.map((el) => {
                   // kiểm lại link lúc vẽ: bài chia sẻ/nhập tệp có thể chứa sẵn `javascript:`…
                   const safeHref = el.href ? normalizeSlideHref(el.href) : null
                   const linkHitbox =
@@ -1479,11 +1520,25 @@ export function SlideEditor({
                         }}
                       />
                     ) : null
+                  const delay = pageMoves?.get(el.id)
+                  const pair = morph?.pairs.get(el.id)
+                  // phần mới xuất hiện giữa chừng chuyển động Morph (video để nguyên cho bấm được)
+                  const enter = morph ? (el.type === 'video' ? undefined : MORPH_MS / 2 + (delay ?? 0)) : delay === undefined ? undefined : pageWait + delay
                   return el.step ? (
                     <RevealLayer key={el.id} el={el} shown={el.step <= presentStep}>
                       <SlideElView el={el} theme={theme} slideId={slide.id} live />
                       {linkHitbox}
                     </RevealLayer>
+                  ) : pair ? (
+                    <MorphIn key={el.id} el={el} from={pair.from} changed={pair.changed}>
+                      <SlideElView el={el} theme={theme} slideId={slide.id} live />
+                      {linkHitbox}
+                    </MorphIn>
+                  ) : enter !== undefined ? (
+                    <AnimLayer key={el.id} el={el} anim={slide.pageAnim?.anim ?? 'fade'} ms={slide.pageAnim ? slide.pageAnim.ms : 400} delay={enter}>
+                      <SlideElView el={el} theme={theme} slideId={slide.id} revealStep={presentStep} live />
+                      {linkHitbox}
+                    </AnimLayer>
                   ) : (
                     <div key={el.id} style={{ display: 'contents' }}>
                       <SlideElView el={el} theme={theme} slideId={slide.id} revealStep={presentStep} live />
@@ -1569,7 +1624,7 @@ export function SlideEditor({
         slideIndex={currentSlide ? deck.slides.indexOf(currentSlide) : 0}
         selected={selectedElement}
         activeTab={ribbonTab}
-        onTabChange={setRibbonTab}
+        onTabChange={(tab) => (tab === 'effects' ? setOpenEffectsSignal((n) => n + 1) : setRibbonTab(tab))}
         onNewDeck={onNewDeck}
         onImportFile={onImportFile}
         onDownload={() => import('@/lib/exportDeck').then((m) => m.exportDeckPptx(deck))}
@@ -1607,10 +1662,6 @@ export function SlideEditor({
         onToggleSnap={() => setSnapOn((v) => writePref('slide-snap', !v))}
         onApplyLayout={applyLayout}
         onTone={applyTone}
-        onTransition={(transition, allSlides) => {
-          if (allSlides) commitDeck({ ...deck, slides: deck.slides.map((s) => ({ ...s, transition })) })
-          else if (currentSlide) patchSlide(currentSlide.id, { transition })
-        }}
         onBackground={(background, allSlides, image) =>
           commitDeck({
             ...deck,
@@ -1620,27 +1671,6 @@ export function SlideEditor({
                 : background
                   ? withBackground({ ...s, bgImage: image }, background, deck.theme.fg)
                   : recomposeSlide(deck.theme, { ...s, customBg: undefined, bgImage: undefined }),
-            ),
-          })
-        }
-        onElementAnim={(action) => {
-          if (!currentSlide || !selectedElement) return
-          commitDeck({
-            ...deck,
-            slides: deck.slides.map((s) =>
-              s.id === currentSlide.id ? { ...s, elements: applyElementAnim(s.elements, selectedElement.id, action) } : s,
-            ),
-          })
-          if (action.type === 'set' || action.type === 'speed' || action.type === 'byLine')
-            setAnimPreview({ id: selectedElement.id, nonce: Date.now() })
-        }}
-        onAnimate={(mode, allSlides) =>
-          commitDeck({
-            ...deck,
-            slides: deck.slides.map((s) =>
-              s.html || (!allSlides && s.id !== currentSlide?.id)
-                ? s
-                : { ...s, elements: mode === 'auto' ? autoAnimate(s.elements, s.layout ?? 'bullets') : clearAnimation(s.elements) },
             ),
           })
         }
@@ -1672,20 +1702,24 @@ export function SlideEditor({
       )}
       <div className="flex min-h-0 min-w-0 flex-1">
       {/* ---------------- thư viện (cột trái, kiểu Canva): panel trượt đẩy sân giấy ---------------- */}
-      <SlideSidePanel
-        theme={theme}
-        accent={theme.accent}
-        canInsert={Boolean(currentSlide) && !currentSlide?.html}
-        hint={`${deck.title} ${(currentSlide?.elements ?? []).map((e) => e.text ?? '').join(' ').replace(/<[^>]+>/g, ' ')}`}
-        onAddLayoutSlide={addLayoutFromPanel}
-        activeDesignId={deck.design}
-        designDisabled={deck.format === 'html'}
-        onApplyDesign={applyDesignFromPanel}
-        openDesignsSignal={openDesignsSignal}
-        openIconsSignal={openIconsSignal}
-        onInsert={insertFromPanel}
-        onOpenAi={() => setAiOpen(true)}
-      />
+      <SlideEffectsContext.Provider value={effectsApi}>
+        <SlideSidePanel
+          theme={theme}
+          accent={theme.accent}
+          canInsert={Boolean(currentSlide) && !currentSlide?.html}
+          hint={`${deck.title} ${(currentSlide?.elements ?? []).map((e) => e.text ?? '').join(' ').replace(/<[^>]+>/g, ' ')}`}
+          onAddLayoutSlide={addLayoutFromPanel}
+          activeDesignId={deck.design}
+          designDisabled={deck.format === 'html'}
+          onApplyDesign={applyDesignFromPanel}
+          openDesignsSignal={openDesignsSignal}
+          openIconsSignal={openIconsSignal}
+          openEffectsSignal={openEffectsSignal}
+          onActiveChange={onPanelChange}
+          onInsert={insertFromPanel}
+          onOpenAi={() => setAiOpen(true)}
+        />
+      </SlideEffectsContext.Provider>
 
       {/* ---------------- sân soạn (giữa) ---------------- */}
       <div className="flex min-h-0 min-w-0 flex-1 flex-col">
@@ -1801,7 +1835,7 @@ export function SlideEditor({
                 }}
               >
                 {gridOn ? <div className="slide-grid-overlay" aria-hidden /> : null}
-                {ribbonTab === 'animations'
+                {effectsOpen
                   ? currentSlide.elements
                       .filter((el) => startOf(el) !== undefined)
                       .map((el) => (
@@ -1816,6 +1850,9 @@ export function SlideEditor({
                       ))
                   : null}
                 <SnapGuides />
+                {effectsPreview && effectsPreview.slide.id === currentSlide.id ? (
+                  <EffectsPreview key={effectsPreview.nonce} preview={effectsPreview} theme={theme} decor={decorStyle(theme)} onDone={endEffectsPreview} />
+                ) : null}
                 {animPreview
                   ? (() => {
                       const el = currentSlide.elements.find((e) => e.id === animPreview.id)

@@ -3,9 +3,20 @@
  * (`card-2-heading`, `step-3`, `answer`…) nên nhóm bấm-chuột suy ra thẳng từ id — AI không phải sinh gì thêm.
  * Phần tử không thuộc nhóm nào (tiêu đề, nền, họa tiết) hiện sẵn.
  */
-import type { SlideElement } from '@/store/docs'
+import type { Slide, SlideElement } from '@/store/docs'
 
 type Anim = NonNullable<SlideElement['anim']>
+
+/** tư thế lúc còn ẩn của từng hiệu ứng (translate / scale / rotate tách khỏi transform xoay của phần tử) */
+export const HIDDEN_POSE: Record<Anim, { translate?: string; scale?: string; rotate?: string }> = {
+  fade: {},
+  rise: { translate: '0 2.4cqw' },
+  drop: { translate: '0 -2.4cqw' },
+  left: { translate: '-6cqw 0' },
+  right: { translate: '6cqw 0' },
+  zoom: { scale: '0.8' },
+  spin: { rotate: '-90deg', scale: '0.6' },
+}
 
 const NUMBERED = /^(card|stat|step|item|node|pill|link|divider|left|right)-(\d+)/
 const ANSWER = new Set(['answer-bar', 'answer-stripe', 'answer'])
@@ -71,7 +82,99 @@ export function slideSteps(elements: SlideElement[]): number {
   )
 }
 
-/* ---------- hiệu ứng cho từng đối tượng (ribbon Hoạt ảnh) ---------- */
+/* ---------- hiệu ứng cả trang (bảng Hiệu ứng) ---------- */
+
+/** `auto`: tự chạy khi sang slide (`Slide.pageAnim`); `click`: bấm từng phần (`step` trên phần tử) */
+export type PageMode = 'auto' | 'click'
+type PageSlide = Pick<Slide, 'elements' | 'layout' | 'pageAnim' | 'transition'>
+
+const DEFAULT_MS = 450
+const hasClicks = (elements: SlideElement[]) => elements.some((el) => startOf(el) !== undefined)
+export const withoutAnim = (el: SlideElement) => clearAnimation([el])[0]
+/** phần phải bấm mới hiện kể cả khi cả trang tự chạy: đáp án và kết luận */
+export const isHeld = (el: SlideElement) => ANSWER.has(el.id) || CONCLUSION.has(el.id)
+/** các mảnh của cùng một thẻ / nhóm vào cùng lúc */
+function unitKey(el: SlideElement): string {
+  if (el.groupId) return el.groupId
+  const m = NUMBERED.exec(el.id)
+  return m ? (m[1] === 'left' || m[1] === 'right' ? m[1] : '') + m[2] : el.id
+}
+
+export function pageState(slide: PageSlide): { mode: PageMode | null; anim: Anim | 'none' | null; ms: number } {
+  if (slide.pageAnim) return { mode: 'auto', anim: slide.pageAnim.anim, ms: slide.pageAnim.ms ?? DEFAULT_MS }
+  const stepped = slide.elements.filter((el) => startOf(el) !== undefined)
+  if (!stepped.length) return { mode: null, anim: 'none', ms: DEFAULT_MS }
+  const first = stepped[0].anim ?? 'fade'
+  // `anim: null` = mỗi phần một kiểu
+  return { mode: 'click', anim: stepped.every((el) => (el.anim ?? 'fade') === first) ? first : null, ms: stepped[0].animMs ?? DEFAULT_MS }
+}
+
+/** bấm từng phần: bài dựng theo bố cục dùng thứ tự của bố cục; slide tự làm thì mỗi khối một lần bấm */
+function clickEach(slide: PageSlide): SlideElement[] {
+  if (slide.layout) {
+    const auto = autoAnimate(slide.elements, slide.layout)
+    if (hasClicks(auto)) return auto
+  }
+  const ranks = new Map<string, number>()
+  return clearAnimation(slide.elements).map((el) => {
+    if (el.decor || el.variant === 'title' || el.id === 'title' || el.id === 'question') return el
+    const key = unitKey(el)
+    if (!ranks.has(key)) ranks.set(key, ranks.size + 1)
+    return { ...el, step: ranks.get(key), anim: 'fade' as const }
+  })
+}
+
+/** Đặt hiệu ứng cho cả trang. `anim: null` (chỉ ở chế độ bấm) = giữ kiểu mặc định của từng phần. */
+export function setPageAnim<S extends PageSlide>(slide: S, anim: Anim | 'none' | null, mode: PageMode, ms = DEFAULT_MS): S {
+  if (anim === 'none') return { ...slide, pageAnim: undefined, elements: clearAnimation(slide.elements) }
+  const time = ms === DEFAULT_MS ? undefined : ms
+  if (mode === 'auto') {
+    const answers = autoAnimate(slide.elements, slide.layout ?? 'bullets').map((el) => (isHeld(el) ? el : withoutAnim(el)))
+    return { ...slide, pageAnim: { anim: anim ?? 'rise', ms: time }, elements: renumber(answers) }
+  }
+  const elements = clickEach(slide).map((el) =>
+    startOf(el) === undefined ? el : { ...el, ...(anim ? { anim } : {}), ...(time ? { animMs: time } : {}) },
+  )
+  return { ...slide, pageAnim: undefined, elements }
+}
+
+export const clearSlideAnim = <S extends PageSlide>(slide: S): S => ({
+  ...slide,
+  pageAnim: undefined,
+  transition: 'none' as const,
+  elements: clearAnimation(slide.elements),
+})
+
+/** Dựng lại phần tử (đổi bộ màu, tông, nội dung) mà giữ lựa chọn hiệu ứng đang có. */
+export function keepAnim(before: PageSlide, next: SlideElement[]): SlideElement[] {
+  const old = new Map(before.elements.map((el) => [el.id, el]))
+  // phần tử mới chỉ nhận hiệu ứng mặc định khi slide đang chạy kiểu bấm
+  const fresh = hasClicks(before.elements) && !before.pageAnim
+  return renumber(
+    next.map((el) => {
+      const prev = old.get(el.id)
+      if (!prev) return fresh ? el : withoutAnim(el)
+      const { step, lineStep, anim, animMs } = prev
+      return {
+        ...withoutAnim(el),
+        ...(step !== undefined ? { step } : {}),
+        ...(lineStep !== undefined ? { lineStep } : {}),
+        ...(anim ? { anim } : {}),
+        ...(animMs ? { animMs } : {}),
+      }
+    }),
+  )
+}
+
+/** Độ trễ vào của từng phần tử khi cả trang tự chạy; họa tiết, video và phần chờ bấm không có trong danh sách. */
+export function pageDelays(elements: SlideElement[]): Map<string, number> {
+  const moving = elements.filter((el) => !el.decor && el.type !== 'video' && startOf(el) === undefined)
+  const keys = [...new Set(moving.map(unitKey))]
+  const gap = Math.min(110, 700 / Math.max(1, keys.length - 1))
+  return new Map(moving.map((el) => [el.id, Math.round(keys.indexOf(unitKey(el)) * gap)]))
+}
+
+/* ---------- hiệu ứng cho từng đối tượng ---------- */
 
 export const ANIM_EFFECTS: Array<{ id: Anim; label: string }> = [
   { id: 'fade', label: 'Hiện dần' },
@@ -97,7 +200,7 @@ export const startOf = (el: SlideElement): number | undefined => el.step ?? el.l
  * Đánh số lại các lần bấm liên tiếp từ 1, giữ thứ tự hiện có. Phần tử cùng lần bấm vẫn đi cùng nhau;
  * hộp chữ hiện từng dòng chiếm một lần bấm cho mỗi dòng.
  */
-function renumber(elements: SlideElement[], order?: number[]): SlideElement[] {
+export function renumber(elements: SlideElement[], order?: number[]): SlideElement[] {
   const starts = [...new Set(elements.map(startOf).filter((s): s is number => s !== undefined))].sort((a, b) => a - b)
   const ordered = order ?? starts
   const span = (start: number) =>

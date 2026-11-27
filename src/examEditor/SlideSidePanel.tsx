@@ -7,7 +7,7 @@
  * nhóm) và Tải lên (ảnh của giáo viên). Ô tìm kiếm ở Đồ hoạ và Icon lọc theo tên.
  */
 import { memo, useMemo, useRef, useState, useEffect } from 'react'
-import { ChevronLeft, ChevronRight, LayoutTemplate, Shapes, Smile, Sparkles, Upload, Wrench, X } from 'lucide-react'
+import { ChevronLeft, ChevronRight, LayoutTemplate, Orbit, Shapes, Smile, Sparkles, Upload, Wrench, X } from 'lucide-react'
 import { cn } from '@/lib/cn'
 import { useAnimatedPresence } from '@/lib/useAnimatedPresence'
 import {
@@ -40,13 +40,15 @@ import { ShapeGallery, ShapePreview, visibleGroups } from './ShapeGallery'
 import { useSlideViewport } from './useSlideViewport'
 import { ToolsPanel } from './tools/ToolsPanel'
 import { svgDataUrl } from '@/lib/plot'
+import { SlideEffectsPanel } from './SlideEffects'
 
-type PanelId = 'templates' | 'elements' | 'icons' | 'uploads' | 'tools'
+type PanelId = 'templates' | 'elements' | 'effects' | 'icons' | 'uploads' | 'tools'
 
 const PANELS: Array<{ id: PanelId; label: string; title: string; Icon: typeof Shapes }> = [
   { id: 'templates', label: 'Mẫu', title: 'Mẫu slide', Icon: LayoutTemplate },
   { id: 'elements', label: 'Đồ hoạ', title: 'Đồ hoạ', Icon: Shapes },
   { id: 'icons', label: 'Icon', title: 'Icon', Icon: Smile },
+  { id: 'effects', label: 'Hiệu ứng', title: 'Hiệu ứng', Icon: Orbit },
   { id: 'uploads', label: 'Tải lên', title: 'Tải ảnh lên', Icon: Upload },
   { id: 'tools', label: 'Công cụ', title: 'Công cụ', Icon: Wrench },
 ]
@@ -73,6 +75,10 @@ interface SlideSidePanelProps {
   openDesignsSignal?: number
   /** tăng lên → mở panel Icon (nút Chèn → Icon trên ribbon) */
   openIconsSignal?: number
+  /** tăng lên → mở panel Hiệu ứng (tab Hiệu ứng trên ribbon) */
+  openEffectsSignal?: number
+  /** báo panel đang mở (null = đóng) để khung soạn hiện số lần bấm */
+  onActiveChange?: (id: string | null) => void
   onInsert: (el: SlideElement) => void
   /** điện thoại: mục "Trợ lý AI" ở thanh đáy mở AI toàn màn hình */
   onOpenAi?: () => void
@@ -89,6 +95,8 @@ function SlideSidePanelImpl({
   onApplyDesign,
   openDesignsSignal = 0,
   openIconsSignal = 0,
+  openEffectsSignal = 0,
+  onActiveChange,
   onInsert,
   onOpenAi,
 }: SlideSidePanelProps) {
@@ -105,6 +113,12 @@ function SlideSidePanelImpl({
     setActive('icons')
     setLast('icons')
   }, [openIconsSignal])
+  useEffect(() => {
+    if (!openEffectsSignal) return
+    setActive('effects')
+    setLast('effects')
+  }, [openEffectsSignal])
+  useEffect(() => onActiveChange?.(active), [active, onActiveChange])
   const shown = active ?? last
   const current = PANELS.find((p) => p.id === shown) ?? null
   const { isPhone, isTablet } = useSlideViewport()
@@ -130,6 +144,7 @@ function SlideSidePanelImpl({
         )}
         {tabId === 'elements' && <ElementsPanel accent={accent} canInsert={canInsert} hint={hint} onInsert={isMobileSheet ? insertAndClose : onInsert} />}
         {tabId === 'icons' && <IconsPanel canInsert={canInsert} onInsert={isMobileSheet ? insertAndClose : onInsert} />}
+        {tabId === 'effects' && <SlideEffectsPanel />}
         {tabId === 'tools' && (
           <Scroll>
             <ToolsPanel

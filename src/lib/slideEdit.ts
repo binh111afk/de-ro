@@ -22,6 +22,7 @@ import {
 } from './slideLayouts'
 import { checkSlide, slideFromAi } from './slideAi'
 import { keepCustomBg, withBackground } from './slideBackground'
+import { keepAnim, setPageAnim } from './slideAnim'
 import { DECK_THEMES, contrastRatio, mixHex, normalizeTheme, resolveThemeId, themeById } from './slideTheme'
 import { SLIDE_DESIGNS, designById, designTheme, type SlideDesign } from './slideDesigns'
 import { applySkin } from './slideSkins'
@@ -305,7 +306,7 @@ export function recomposeSlide(theme: DeckTheme, slide: Slide, tone?: SlideTone)
         if (el.type === 'graphic' && elements.some((e) => e.type === 'graphic' && e.graphicId === el.graphicId)) return false
         return true
       })
-      return keepCustomBg(slide, { ...slide, tone: t, background: toneBackground(theme, t), elements: [...elements, ...userAdded] }, theme.fg)
+      return keepCustomBg(slide, { ...slide, tone: t, background: toneBackground(theme, t), elements: keepAnim(slide, [...elements, ...userAdded]) }, theme.fg)
     }
   }
   const kept = slide.elements.filter((el) => !isDecorElement(el))
@@ -711,7 +712,7 @@ export function applyEdits(deck: Deck, ops: SlideEditOp[]): EditResult {
           const skinned = next.design ? applySkin(built, next.design, theme, next.slides.indexOf(slide), next.slides.length, true) : built
           updated = keepCustomBg(slide, { ...skinned, elements: [...skinned.elements, ...userAddedOf(slide, skinned.elements)] }, theme.fg)
         }
-        replaceSlide(slide, updated)
+        replaceSlide(slide, { ...updated, elements: keepAnim(slide, updated.elements) })
         const fields = Object.keys(patch).map((k) => fieldLabel(k, layout)).join(', ')
         const message = converted ? `Mình đã chuyển slide ${op.slide} sang bố cục thẻ.` : `Mình đã cập nhật ${fields} ở slide ${op.slide}.`
         summary.push(message + (checkSlide(content, layout, tone).readability.length ? ' Chữ có thể hơi nhỏ.' : ''))
@@ -757,7 +758,9 @@ export function applyEdits(deck: Deck, ops: SlideEditOp[]): EditResult {
         }
         const rawUpdated: Slide = keepCustomBg(slide, { ...slide, layout: op.layout, tone, background: toneBackground(theme, tone), elements }, theme.fg)
         const skinned = next.design ? applySkin(rawUpdated, next.design, theme, next.slides.indexOf(slide), next.slides.length, true) : rawUpdated
-        replaceSlide(slide, { ...skinned, elements: [...skinned.elements, ...userAddedOf(slide, skinned.elements)] })
+        const laidOut = [...skinned.elements, ...userAddedOf(slide, skinned.elements)]
+        // đang để cả trang tự chạy thì bố cục mới không kéo theo hiệu ứng bấm
+        replaceSlide(slide, slide.pageAnim ? setPageAnim({ ...skinned, elements: laidOut }, slide.pageAnim.anim, 'auto', slide.pageAnim.ms) : { ...skinned, elements: laidOut })
         summary.push(`Mình đã đổi slide ${op.slide} sang dạng ${layoutName}.`)
         break
       }

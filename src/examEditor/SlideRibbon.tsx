@@ -59,7 +59,6 @@ import {
   IconZoomOut,
 } from './icons'
 import {
-  IconApplyAll,
   IconFillColor,
   IconNewSlide,
   IconObjAlignCenterH,
@@ -73,10 +72,6 @@ import {
   IconPlayCurrent,
   IconPlayFromStart,
   IconSlideLayout,
-  IconTransFade,
-  IconTransNone,
-  IconTransPush,
-  IconTransZoom,
 } from './slideIcons'
 import { cn } from '@/lib/cn'
 import { Dropdown } from './Dropdown'
@@ -107,7 +102,6 @@ import {
 import { graphicMainColor } from '@/lib/slideGraphics'
 import { FRAME_PLACEHOLDER, PHOTO_FRAMES, photoFrameClip } from '@/lib/slideShapes'
 import { uploadImage } from '@/lib/mediaStore'
-import { ANIM_EFFECTS, ANIM_SPEEDS, startOf, type ElementAnimAction } from '@/lib/slideAnim'
 import {
   SLIDE_LAYOUTS,
   defaultTone,
@@ -120,8 +114,7 @@ export type SlideRibbonTab =
   | 'home'
   | 'insert'
   | 'design'
-  | 'transitions'
-  | 'animations'
+  | 'effects'
   | 'slideShow'
   | 'view'
   | 'elementFormat'
@@ -176,11 +169,6 @@ export interface SlideRibbonProps {
   onApplyLayout: (layout: SlideLayoutId) => void
   /** đổi tông nền cho slide đã có layout */
   onTone: (tone: SlideTone) => void
-  onTransition: (transition: NonNullable<Slide['transition']>, allSlides: boolean) => void
-  /** hiệu ứng bấm-chuột-rồi-hiện: tự thêm theo bố cục hoặc xoá, cho slide này hoặc cả bài */
-  onAnimate: (mode: 'auto' | 'clear', allSlides: boolean) => void
-  /** hiệu ứng cho đối tượng đang chọn: chọn kiểu, bỏ, đổi thứ tự, hiện từng dòng, tốc độ */
-  onElementAnim: (action: ElementAnimAction) => void
   /** tô nền slide (màu/gradient CSS) cho slide này hoặc cả bài; `null` = theo bộ màu */
   onBackground: (background: string | null, allSlides: boolean, image?: string) => void
   onPresent: () => void
@@ -204,8 +192,8 @@ const TABS: RibbonTabDef[] = [
   { id: 'home', label: 'Trang chủ' },
   { id: 'insert', label: 'Chèn' },
   { id: 'design', label: 'Thiết kế' },
-  { id: 'transitions', label: 'Chuyển tiếp' },
-  { id: 'animations', label: 'Hoạt ảnh' },
+  // không có dải nút riêng: bấm là mở bảng Hiệu ứng ở cột trái
+  { id: 'effects', label: 'Hiệu ứng' },
   { id: 'slideShow', label: 'Trình chiếu' },
   { id: 'view', label: 'Xem' },
 ]
@@ -224,13 +212,6 @@ const CONTEXT_LABELS: Record<SlideElType, { id: SlideRibbonTab; label: string } 
   // đổi link video: bấm lại nút Video ở tab Chèn khi video đang chọn
   video: null,
 }
-
-const TRANSITIONS: Array<{ id: NonNullable<Slide['transition']>; label: string }> = [
-  { id: 'none', label: 'Không' },
-  { id: 'fade', label: 'Mờ dần' },
-  { id: 'slide', label: 'Trượt' },
-  { id: 'zoom', label: 'Thu phóng' },
-]
 
 const FONT_OPTIONS = ['Tiêu đề đậm', 'Serif', 'Sans', 'Viết tay', 'Mono', 'Hệ thống'].flatMap(group =>
   SLIDE_FONTS.filter(font => font.group === group).map(font => ({
@@ -357,9 +338,6 @@ export function SlideRibbon(props: SlideRibbonProps) {
     onToggleGrid,
     onApplyLayout,
     onTone,
-    onTransition,
-    onAnimate,
-    onElementAnim,
     onBackground,
     onPresent,
     onPresentFromStart,
@@ -1309,105 +1287,6 @@ export function SlideRibbon(props: SlideRibbonProps) {
     )
   }
 
-  const renderTransitions = () => (
-    <>
-      <RibbonGroup label="Chuyển tiếp cho slide này">
-        {TRANSITIONS.map((transition) => (
-          <RibbonButton
-            key={transition.id}
-            icon={
-              transition.id === 'fade' ? <IconTransFade size={28} />
-                : transition.id === 'slide' ? <IconTransPush size={28} />
-                  : transition.id === 'zoom' ? <IconTransZoom size={28} />
-                    : <IconTransNone size={28} />
-            }
-            label={transition.label}
-            onClick={() => onTransition(transition.id, false)}
-            active={(slide?.transition ?? 'none') === transition.id}
-          />
-        ))}
-      </RibbonGroup>
-      <div className="ribbon-sep" />
-      <RibbonGroup label="Thời gian">
-        <RibbonButton icon={<IconApplyAll size={28} />} label="Áp dụng tất cả" onClick={() => onTransition(slide?.transition ?? 'none', true)} disabled={!slide} />
-      </RibbonGroup>
-    </>
-  )
-
-  const renderAnimations = () => {
-    const start = selected ? startOf(selected) : undefined
-    const has = start !== undefined
-    const multiLine = selected?.type === 'text' && (selected.text ?? '').split('\n').length > 1
-    const speed = selected?.animMs ?? 450
-    return (
-    <>
-      <RibbonGroup label={selected ? (has ? `Hiệu ứng · lần bấm ${start}` : 'Hiệu ứng cho đối tượng') : 'Chọn một đối tượng để thêm hiệu ứng'}>
-        <div className="slide-anim-gallery">
-          <button
-            type="button"
-            className={cn('slide-anim-chip', selected && !has && 'is-active')}
-            onClick={() => onElementAnim({ type: 'none' })}
-            disabled={!selected}
-            data-tip="Hiện sẵn, không có hiệu ứng"
-          >
-            <span className="slide-anim-chip__stage"><span className="slide-anim-chip__demo" data-anim="none" /></span>
-            <span className="slide-anim-chip__label">Không</span>
-          </button>
-          {ANIM_EFFECTS.map((fx) => (
-            <button
-              key={fx.id}
-              type="button"
-              className={cn('slide-anim-chip', has && (selected?.anim ?? 'fade') === fx.id && 'is-active')}
-              onClick={() => onElementAnim({ type: 'set', anim: fx.id })}
-              disabled={!selected}
-              data-tip={`${fx.label} khi bấm chuột lúc trình chiếu`}
-            >
-              <span className="slide-anim-chip__stage"><span className="slide-anim-chip__demo" data-anim={fx.id} /></span>
-              <span className="slide-anim-chip__label">{fx.label}</span>
-            </button>
-          ))}
-        </div>
-      </RibbonGroup>
-      <div className="ribbon-sep" />
-      <RibbonGroup label="Thứ tự & thời gian">
-        <div className="rb-row">
-          <RibbonIconButton icon={<span className="slide-anim-arrow">↑</span>} title="Hiện sớm hơn (lên một lần bấm)" onClick={() => onElementAnim({ type: 'move', dir: -1 })} disabled={!has || start === 1} />
-          <RibbonIconButton icon={<span className="slide-anim-arrow">↓</span>} title="Hiện muộn hơn (lùi một lần bấm)" onClick={() => onElementAnim({ type: 'move', dir: 1 })} disabled={!has} />
-          <Dropdown
-            width={150}
-            ariaLabel="Tốc độ hiệu ứng"
-            value={String(speed)}
-            disabled={!has}
-            options={ANIM_SPEEDS.map((s) => ({ value: String(s.ms), label: s.label }))}
-            onPick={(ms) => onElementAnim({ type: 'speed', ms: Number(ms) })}
-          />
-        </div>
-        <div className="rb-row">
-          <label className={cn('rb-inline-label slide-anim-byline', (!has || !multiLine) && 'is-disabled')} data-tip="Mỗi lần bấm hiện thêm một dòng của hộp chữ">
-            <input
-              type="checkbox"
-              checked={selected?.lineStep !== undefined}
-              disabled={!has || !multiLine}
-              onChange={(e) => onElementAnim({ type: 'byLine', on: e.target.checked })}
-            />
-            Hiện từng dòng
-          </label>
-        </div>
-      </RibbonGroup>
-      <div className="ribbon-sep" />
-      <RibbonGroup label="Bấm chuột rồi hiện (khi trình chiếu)">
-        <RibbonButton icon={<IconTransFade size={28} />} label="Tự thêm: slide này" onClick={() => onAnimate('auto', false)} disabled={!slide} />
-        <RibbonButton icon={<IconApplyAll size={28} />} label="Tự thêm: cả bài" onClick={() => onAnimate('auto', true)} />
-      </RibbonGroup>
-      <div className="ribbon-sep" />
-      <RibbonGroup label="Xoá hiệu ứng">
-        <RibbonButton icon={<IconTransNone size={28} />} label="Slide này" onClick={() => onAnimate('clear', false)} disabled={!slide} />
-        <RibbonButton icon={<IconTrash size={28} />} label="Cả bài" onClick={() => onAnimate('clear', true)} />
-      </RibbonGroup>
-    </>
-    )
-  }
-
   const renderSlideShow = () => (
     <RibbonGroup label="Bắt đầu trình chiếu">
       <RibbonButton icon={<IconPlayCurrent size={28} />} label="Từ slide hiện tại" onClick={onPresent} />
@@ -1972,11 +1851,7 @@ export function SlideRibbon(props: SlideRibbonProps) {
         ? renderInsert()
         : activeTab === 'design'
           ? renderDesign()
-          : activeTab === 'transitions'
-            ? renderTransitions()
-            : activeTab === 'animations'
-              ? renderAnimations()
-            : activeTab === 'slideShow'
+          : activeTab === 'slideShow'
               ? renderSlideShow()
               : activeTab === 'view'
                 ? renderView()
@@ -2303,7 +2178,10 @@ export function SlideRibbon(props: SlideRibbonProps) {
                     type="button"
                     role="tab"
                     aria-selected={activeTab === t.id}
-                    onClick={() => onTabChange(t.id as SlideRibbonTab)}
+                    onClick={() => {
+                      if (t.id === 'effects') setPhoneSheetOpen(false)
+                      onTabChange(t.id as SlideRibbonTab)
+                    }}
                     className={cn(
                       'min-h-[36px] rounded-full px-3 text-[12px] font-medium transition-colors',
                       activeTab === t.id ? 'bg-clay text-white' : 'bg-paper-2 text-ink-2 hover:text-ink',
