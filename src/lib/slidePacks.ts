@@ -7,7 +7,7 @@
 import type { SlideElement } from '@/store/docs'
 import type { SlideLayoutContent } from './slideLayouts'
 
-export type SlidePackId = 'co-dien' | 'dan-gian' | 'khoa-hoc' | 'toan' | 'vat-ly' | 'hoa-hoc' | 'tin-hoc' | 'tam-ly' | 'sinh-hoc' | 'ngu-van' | 'dia-li' | 'tieng-anh' | 'kinh-te-phap-luat' | 'lich-su' | 'cong-nghe' | 'nghe-thuat' | 'the-duc' | 'mam-non' | 'sinh-hoat-lop' | 'moi-truong' | 'kinh-doanh' | 'le-hoi' | 'quoc-phong' | 'huong-nghiep' | 'ngoai-ngu' | 'du-lich' | 'dinh-duong' | 'y-te' | 'giao-thong' | 'gia-dinh' | 'trung-tinh' | 'su-do'
+export type SlidePackId = 'co-dien' | 'dan-gian' | 'khoa-hoc' | 'toan' | 'vat-ly' | 'hoa-hoc' | 'tin-hoc' | 'tam-ly' | 'sinh-hoc' | 'ngu-van' | 'dia-li' | 'tieng-anh' | 'kinh-te-phap-luat' | 'lich-su' | 'cong-nghe' | 'nghe-thuat' | 'the-duc' | 'mam-non' | 'sinh-hoat-lop' | 'moi-truong' | 'kinh-doanh' | 'le-hoi' | 'quoc-phong' | 'huong-nghiep' | 'ngoai-ngu' | 'du-lich' | 'dinh-duong' | 'y-te' | 'giao-thong' | 'gia-dinh' | 'trung-tinh' | 'su-do' | 'dia-li-ht'
 
 export const PACK_COLORS = {
   'co-dien': { background: '#8b0000', fg: '#8b0000', ink: '#8b0000', accent: '#8b0000', muted: '#7a3b2e', surface: '#fdeed3', panel: '#f7e2bd', onAccent: '#fdeed3' },
@@ -40,6 +40,7 @@ export const PACK_COLORS = {
   'gia-dinh': { background: '#fcf8f5', fg: '#51403f', ink: '#6e3340', accent: '#a8403c', muted: '#77696a', surface: '#ffffff', panel: '#fbe8e6', onAccent: '#ffffff' },
   'trung-tinh': { background: '#fbf9f4', fg: '#3b4a58', ink: '#27405a', accent: '#a84e2c', muted: '#5f6c77', surface: '#ffffff', panel: '#e4eef0', onAccent: '#ffffff' },
   'su-do': { background: '#f1efea', fg: '#6b1a24', ink: '#760015', accent: '#760015', muted: '#7d4a50', surface: '#ffffff', panel: '#eadfdc', onAccent: '#ffffff' },
+  'dia-li-ht': { background: '#fef8ee', fg: '#2f3a1c', ink: '#546826', accent: '#e3bf27', muted: '#5d6648', surface: '#ffffff', panel: '#ece7d2', onAccent: '#2f3a1c' },
   'tin-hoc': { background: '#f8f7fc', fg: '#3a3560', ink: '#241d4d', accent: '#5a3ee0', muted: '#635d85', surface: '#ffffff', panel: '#ece8fd', onAccent: '#ffffff' },
   'tam-ly': { background: '#fbf4ec', fg: '#53392f', ink: '#5a2c1c', accent: '#a8532f', muted: '#7d6257', surface: '#fffaf5', panel: '#f8e4da', onAccent: '#ffffff' },
 } as const
@@ -1015,6 +1016,129 @@ function suDo(id: string, c: SlideLayoutContent, { title, body }: Kit, standard:
 }
 
 /* ------------------------------------------------------------------ *
+ * Địa lí (Học thuật): xanh rêu và kem, ảnh khung cổng vòm, tiêu đề in hoa đậm
+ * ------------------------------------------------------------------ */
+function diaLiHt(id: string, c: SlideLayoutContent, { title, body }: Kit, standard: () => SlideElement[]): Built {
+  const { background: cream, ink: olive, fg, accent: gold } = PACK_COLORS['dia-li-ht']
+  const head = { fontWeight: 800, caps: true, lineHeight: 1.12 }
+  const long = (c.title?.length ?? 0) > 34
+  const block = (n: string, x: number, y: number, w: number, h: number, fill: string, extra: Partial<SlideElement> = {}): SlideElement =>
+    ({ id: n, type: 'shape', shape: 'rect', fill, border: 0, shadowLevel: 0, decor: true, ...box(x, y, w, h), ...extra })
+  const paper = block('decor-kit-0', 0, 0, 1280, 720, cream, { locked: true })
+  const moss = block('decor-kit-0', 0, 0, 1280, 720, olive, { locked: true })
+  const photo = (b: Box, shape?: string, src = c.image) =>
+    image('image-1', src, b, { shape, imagePosition: { x: c.focusX ?? 50, y: c.focusY ?? 40 }, crop: c.imageCrop })
+
+  switch (id) {
+    case 'photo-full':
+      if (c.image) return [
+        moss,
+        block('decor-kit-1', 0, 0, 1280, 240, cream),
+        photo(box(450, 36, 380, 420), 'arch'),
+        body('kicker', upper(c.kicker), box(40, 150, 390, 66), 28, olive, { fontWeight: 700 }),
+        title('title', c.title, box(70, 474, 1140, 150), long ? 54 : 72, cream, { ...head, align: 'center', valign: 'middle' }),
+        body('subtitle', c.subtitle, box(190, 628, 900, c.credit ? 44 : 66), 28, cream, { align: 'center', lineHeight: 1.3 }),
+      ]
+      return [
+        moss,
+        block('decor-kit-1', 0, 0, 1280, 170, cream),
+        body('kicker', upper(c.kicker), box(140, 56, 1000, 66), 30, olive, { fontWeight: 700, align: 'center' }),
+        title('title', c.title, box(80, 220, 1120, 300), long ? 76 : 112, cream, { ...head, align: 'center', valign: 'middle' }),
+        block('divider-1', 580, 540, 120, 8, gold),
+        body('subtitle', c.subtitle, box(190, 570, 900, 90), 32, cream, { align: 'center', lineHeight: 1.3 }),
+      ]
+    case 'manifesto': {
+      const text = statement(c)
+      return [
+        moss,
+        body('kicker', upper(c.kicker), box(190, 100, 900, 66), 28, gold, { fontWeight: 700, align: 'center' }),
+        title('body', text, box(140, 190, 1000, 340), text.length > 150 ? 44 : text.length > 80 ? 56 : 70, cream, { ...head, caps: false, align: 'center', valign: 'middle', lineHeight: 1.3 }),
+        block('divider-1', 580, 556, 120, 8, gold),
+        body('author', c.author, box(190, 584, 900, 66), 30, cream, { align: 'center' }),
+      ]
+    }
+    case 'editorial-text':
+      return [
+        paper,
+        ...(c.image ? [block('decor-kit-1', 940, 0, 340, 720, olive), photo(box(760, 70, 440, 580), 'arch')] : []),
+        body('kicker', upper(c.kicker), box(80, 60, 620, 66), 28, olive, { fontWeight: 700 }),
+        title('title', c.title, box(76, 132, c.image ? 640 : 1080, 200), long ? 54 : 72, olive, { ...head, valign: 'middle' }),
+        block('divider-1', 80, 350, 120, 8, gold),
+        body('body', paragraphs(c), box(80, 384, c.image ? 620 : 1080, c.credit ? 266 : 296), 32, fg),
+      ]
+    case 'rules': {
+      const rows = rowsOf(c)
+      if (!rows.length) return []
+      const n = rows.length
+      const w = 1140 / n
+      const size = n > 4 ? 26 : n > 3 ? 30 : n > 2 ? 34 : 38
+      const short = rows.every((row) => row.value.length <= 4)
+      return [
+        paper,
+        block('decor-kit-1', 0, 364, 1280, 356, olive),
+        title('title', c.title, box(60, 36, 1160, 130), long ? 52 : 68, olive, { ...head, align: 'center', valign: 'middle' }),
+        body('kicker', upper(c.kicker), box(240, 168, 800, 58), 26, olive, { fontWeight: 700, align: 'center' }),
+        ...rows.flatMap((row, i) => {
+          const x = 70 + i * w
+          return [
+            title(`item-${i + 1}-value`, row.value, box(x + 10, 236, w - 20, 96), short ? 64 : n > 3 ? 30 : 40, olive, { ...head, caps: false, align: 'center', valign: 'middle' }),
+            block(`divider-${i + 1}`, x + w / 2 - 22, 342, 44, 44, gold, { shape: 'ellipse' }),
+            body(`item-${i + 1}-label`, row.label, box(x + 18, 414, w - 36, c.credit ? 236 : 260), size, cream, { align: 'center', lineHeight: 1.35 }),
+          ]
+        }),
+      ]
+    }
+    case 'bignum':
+      return [
+        moss,
+        c.image ? photo(box(790, 70, 420, 650), 'arch') : null,
+        body('kicker', upper(c.kicker), box(80, 70, 660, 66), 28, gold, { fontWeight: 700 }),
+        title('bignum-value', c.value, box(74, 146, c.image ? 680 : 1100, 260), 200, cream, { ...head, valign: 'middle', lineHeight: 1 }),
+        title('bignum-label', c.label, box(80, 420, c.image ? 660 : 1080, 110), 52, cream, head),
+        body('subtitle', c.subtitle, box(80, 546, c.image ? 660 : 1080, FLOOR - 546), 30, cream, { lineHeight: 1.35 }),
+      ]
+    case 'bullets': {
+      const items = list(c.bullets).length ? list(c.bullets) : list(c.body?.split('\n'))
+      if (!items.length) return []
+      const numbered = items.every((item) => /^\d+[.)]\s/.test(item))
+      const text = items.map((item) => (numbered ? item : `• ${item}`)).join('\n')
+      return [
+        paper,
+        block('decor-kit-1', 0, 0, 520, 720, olive),
+        title('title', c.title, box(50, 100, 430, 520), long ? 52 : 66, cream, { ...head, valign: 'middle' }),
+        body('bullets', text, box(580, 76, 630, c.credit ? 560 : 580), text.length > 320 ? 29 : text.length > 180 ? 34 : 40, fg, { valign: 'middle', lineHeight: 1.65 }),
+      ]
+    }
+    case 'photo-compare': {
+      const h = c.caption || c.caption2 ? 320 : 430
+      return [
+        moss,
+        title('title', c.title, box(60, 30, 1160, 150), long ? 52 : 68, cream, { ...head, align: 'center', valign: 'middle' }),
+        image('image-1', c.image, box(70, 210, 555, h), { crop: c.imageCrop }),
+        image('image-2', c.image2, box(655, 210, 555, h), { crop: c.image2Crop }),
+        body('photo-caption', c.caption, box(70, 546, 555, c.credit ? 104 : 130), 28, cream, { align: 'center', lineHeight: 1.3 }),
+        body('photo-caption-2', c.caption2, box(655, 546, 555, c.credit ? 104 : 130), 28, cream, { align: 'center', lineHeight: 1.3 }),
+      ]
+    }
+    case 'bars': {
+      const chart = standard().filter((el) => el.id.startsWith('bar'))
+      if (!chart.length) return []
+      for (const el of chart) {
+        el.x = 8 + (el.x - 5) * 0.93
+        el.y = 36 + (el.y - 26) * 0.86
+        el.w *= 0.93
+        el.h *= 0.86
+      }
+      return [paper, title('title', c.title, box(60, 30, 1160, 190), long ? 52 : 68, olive, { ...head, align: 'center', valign: 'middle' }), ...chart]
+    }
+    default: {
+      const elements = standard()
+      return elements.length ? [paper, ...elements] : []
+    }
+  }
+}
+
+/* ------------------------------------------------------------------ *
  * Gạch đầu dòng, so sánh ảnh, biểu đồ cột: cùng khung và hình của bộ
  * ------------------------------------------------------------------ */
 function shared(pack: SlidePackId, id: string, c: SlideLayoutContent, kit: Kit, standard: () => SlideElement[]): Built | null {
@@ -1097,6 +1221,7 @@ function backdrop(pack: SlidePackId): SlideElement[] {
     case 'co-dien': return [full('co-dien/tem-day'), art(1, 'co-dien/goc-hoa-van', 44, 36, 110)]
     case 'dan-gian': return [full('dan-gian/giay-o'), art(1, 'dan-gian/chuon-chuon', 1130, 6, 110)]
     case 'su-do': return [full('su-do/giay')]
+    case 'dia-li-ht': return []
   }
 }
 
@@ -1111,6 +1236,7 @@ export function composePack(
   const own = pack === 'co-dien' ? coDien(layoutId, content, kit)
     : pack === 'dan-gian' ? danGian(layoutId, content, kit)
       : pack === 'su-do' ? suDo(layoutId, content, kit, standard)
+      : pack === 'dia-li-ht' ? diaLiHt(layoutId, content, kit, standard)
       : study(pack, layoutId, content, kit)
   const built = own ?? shared(pack, layoutId, content, kit, standard)
   if (built) return built.filter((el): el is SlideElement => Boolean(el))

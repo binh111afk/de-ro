@@ -178,6 +178,7 @@ assert.equal(deck.slides[0].bullets?.length, 1)
   const slides = [{ title: 'Mở đầu', layout: 'title' }, { title: 'Hết', layout: 'closing' }]
   const tranh = (title, subject = 'khtn') => proPlan({ ...parseDeckPlan(JSON.stringify({ title, slides })), subject }).themeTranh
   assert.equal(tranh('Cấu trúc tế bào'), undefined)
+  assert.equal(tranh('Vùng Đồng bằng sông Hồng', 'dia-li'), 'tranh-dia-li')
   assert.equal(tranh('Phân tích bài thơ Tây Tiến', 'van'), 'co-dien-do')
   assert.equal(tranh('Chiến dịch Điện Biên Phủ', 'lich-su'), 'tranh-su-do')
 }

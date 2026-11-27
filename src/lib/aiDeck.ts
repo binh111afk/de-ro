@@ -425,7 +425,7 @@ const styleOfTheme = (id = ''): ProStyle =>
 export const proThemesFor = (style: ProStyle) => PRO_THEMES.filter((t) => styleOfTheme(t.id) === style)
 
 /** kiểu "Học thuật" (id nội bộ 'tranh') chỉ mở cho môn đã có bộ (id môn ở slideSubjects.ts); thêm bộ thì khai ở đây */
-const TRANH_BY_SUBJECT: Record<string, string> = { van: 'co-dien-do', 'lich-su': 'tranh-su-do' }
+const TRANH_BY_SUBJECT: Record<string, string> = { van: 'co-dien-do', 'lich-su': 'tranh-su-do', 'dia-li': 'tranh-dia-li' }
 
 /** đọc kiểu slide trong lời người dùng (câu yêu cầu hoặc câu trả lời panel hỏi) */
 export function proStyleOf(text: string): ProStyle | undefined {
