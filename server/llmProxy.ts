@@ -7,15 +7,12 @@
  *   LLM_MODEL     mặc định deepseek-v4.1-flash
  *
  * Dev: Vite mount `llmMiddleware` ở `/api/llm` (xem `vite.config.ts`).
- * Prod: `node server/llmProxy.ts` phục vụ API + static `dist/`.
+ * Chạy cục bộ không qua Vite: `node server/appServer.ts` (API + static `dist/`).
  */
 import os from 'node:os'
 import { readFileSync, existsSync, writeFileSync, mkdirSync } from 'node:fs'
-import { createServer, type IncomingMessage, type ServerResponse } from 'node:http'
-import { readFile } from 'node:fs/promises'
+import type { IncomingMessage, ServerResponse } from 'node:http'
 import { randomUUID } from 'node:crypto'
-import { isIP } from 'node:net'
-import { lookup } from 'node:dns/promises'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { json, readBody, safeError } from './http.js'
@@ -24,12 +21,14 @@ import { addUsage, checkReceipt, estimatePromptTokens, hasQuotaStore, issueRecei
 import { buildTaskSystem } from './aiTasks.js'
 import { EMPTY_FREE_PER_DAY, costFromUsage, logAiCall, maintenanceBlock, recentFreeFails, aiKind } from './ops.js'
 import { readAiOverrides } from './aiSettings.js'
+import { assertAllowedUrl, assertPublicHttpsUrl, assertSafeEndpoint } from './urlGuard.js'
 import { callAnthropic } from './anthropic.js'
-import { handleExtractRequest } from './extract.js'
-import { handleImageRequest } from './imageProxy.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const ROOT = path.resolve(__dirname, '..')
+
+// giữ đường nhập cũ cho script / test
+export { assertPublicHttpsUrl, assertSafeEndpoint }
 
 const DEFAULT_BASE_URL = 'https://opencode.ai/inference/go/openai/v1'
 const DEFAULT_MODEL = 'deepseek-v4.1-flash'
@@ -80,83 +79,6 @@ export function loadDotEnv(file = path.join(ROOT, '.env')): void {
     const value = m?.[2].replace(/^["']|["']$/g, '')
     if (m && value) process.env[m[1]] = value
   }
-}
-
-/** Dải IPv4 không được phép gọi tới (riêng / loopback / link-local / reserved). */
-const BLOCKED_V4: Array<[RegExp, string]> = [
-  [/^0\./, 'dải 0/8'],
-  [/^10\./, 'dải riêng 10/8'],
-  [/^127\./, 'loopback'],
-  [/^169\.254\./, 'link-local'],
-  [/^172\.(1[6-9]|2\d|3[01])\./, 'dải riêng 172.16/12'],
-  [/^192\.168\./, 'dải riêng 192.168/16'],
-  [/^100\.(6[4-9]|[7-9]\d|1[01]\d|12[0-7])\./, 'CGNAT 100.64/10'],
-  [/^198\.1[89]\./, 'benchmark 198.18/15'],
-  [/^192\.0\.[02]\./, 'dải đặc biệt 192.0.0/24, 192.0.2/24'],
-  [/^198\.51\.100\./, 'dải tài liệu'],
-  [/^203\.0\.113\./, 'dải tài liệu'],
-  [/^(22[4-9]|2[3-5]\d)\./, 'multicast/reserved'],
-]
-
-/**
- * Chỉ cho phép http/https và chặn host nội bộ. URL lấy từ env do người vận hành
- * đặt, nhưng vẫn kiểm tra để một lần cấu hình nhầm không biến server thành cầu
- * nối vào mạng nội bộ.
- */
-function assertAllowedUrl(raw: string): URL {
-  let url: URL
-  try {
-    url = new URL(raw)
-  } catch {
-    throw new Error(`LLM_BASE_URL không hợp lệ: ${raw}`)
-  }
-  if (url.protocol !== 'https:' && url.protocol !== 'http:') {
-    throw new Error('LLM_BASE_URL chỉ chấp nhận http/https')
-  }
-  const host = url.hostname.toLowerCase().replace(/^\[|\]$/g, '')
-  if (host === 'localhost' || host.endsWith('.localhost')) {
-    throw new Error('LLM_BASE_URL không được trỏ tới localhost')
-  }
-  if (isIP(host) === 4) {
-    const blocked = BLOCKED_V4.find(([re]) => re.test(host))
-    if (blocked) throw new Error(`LLM_BASE_URL trỏ tới địa chỉ nội bộ (${blocked[1]})`)
-  }
-  if (isIP(host) === 6) {
-    // URL đã chuẩn hoá về dạng rút gọn chữ thường. ::ffff:, 64:ff9b::, 2002:, 2001:0: là các dạng bọc IPv4 bên trong
-    if (host === '::1' || host === '::' || /^(::ffff:|64:ff9b:|2002:|2001:0:|2001:db8:|f[cdf]|fe[89ab])/.test(host)) {
-      throw new Error('LLM_BASE_URL trỏ tới địa chỉ IPv6 nội bộ')
-    }
-  }
-  return url
-}
-
-/** URL bên ngoài server sắp tải (vd. ảnh nhà cung cấp trả về): chỉ https, không kèm tài khoản, mọi địa chỉ DNS đều công khai. */
-export async function assertPublicHttpsUrl(raw: string): Promise<URL> {
-  const url = assertAllowedUrl(raw)
-  if (url.protocol !== 'https:') throw new Error('Địa chỉ phải dùng https.')
-  if (url.username || url.password) throw new Error('Địa chỉ không được chứa tài khoản.')
-  let addrs: Array<{ address: string; family: number }>
-  try {
-    addrs = await lookup(url.hostname.replace(/^\[|\]$/g, ''), { all: true })
-  } catch {
-    throw new Error('Không tìm thấy máy chủ.')
-  }
-  for (const a of addrs) assertAllowedUrl(a.family === 6 ? `https://[${a.address}]/` : `https://${a.address}/`)
-  return url
-}
-
-/** Endpoint admin nhập trên giao diện: chỉ https, không kèm tài khoản/query, tên miền không trỏ vào mạng nội bộ. */
-export async function assertSafeEndpoint(raw: string): Promise<void> {
-  const url = assertAllowedUrl(raw)
-  if (url.protocol !== 'https:') throw new Error('Endpoint phải dùng https.')
-  if (url.username || url.password || url.search || url.hash) throw new Error('Endpoint không được chứa tài khoản hoặc tham số.')
-  let addrs: Array<{ address: string; family: number }>
-  try {
-    addrs = await lookup(url.hostname.replace(/^\[|\]$/g, ''), { all: true })
-  } catch {
-    throw new Error('Không tìm thấy máy chủ của endpoint.')
-  }
-  for (const a of addrs) assertAllowedUrl(a.family === 6 ? `https://[${a.address}]/` : `https://${a.address}/`)
 }
 
 function providerConfig() {
@@ -855,81 +777,5 @@ export function llmMiddleware(
   handleLlmRequest(req, res).catch((err: unknown) => {
     if (res.headersSent) return res.end()
     json(res, 500, { error: safeError(err, isLocal(clientIp(req))) })
-  })
-}
-
-/** Server production: API LLM + static build của Vite. */
-export function createAppServer() {
-  return createServer(async (req, res) => {
-    const url = new URL(req.url ?? '/', 'http://localhost')
-
-    if (url.pathname === '/api/llm') {
-      await handleLlmRequest(req, res)
-      return
-    }
-    if (url.pathname === '/api/extract') {
-      await handleExtractRequest(req, res)
-      return
-    }
-    if (url.pathname === '/api/image') {
-      await handleImageRequest(req, res)
-      return
-    }
-
-    // Static: mọi đường dẫn phải nằm trong `dist/` (chặn `../` thoát thư mục).
-    const dist = path.resolve(ROOT, 'dist')
-    let rel = 'index.html'
-    if (url.pathname !== '/') {
-      try {
-        rel = decodeURIComponent(url.pathname).replace(/^\/+/, '')
-      } catch {
-        res.writeHead(400, { 'Content-Type': 'text/plain' })
-        return res.end('Bad request')
-      }
-    }
-    const filePath = path.resolve(dist, rel)
-    const insideDist = filePath.startsWith(dist + path.sep)
-    if (!insideDist) {
-      res.writeHead(404, { 'Content-Type': 'text/plain' })
-      return res.end('Not found')
-    }
-
-    if (existsSync(filePath)) {
-      const ext = path.extname(filePath)
-      const types: Record<string, string> = {
-        '.html': 'text/html; charset=utf-8',
-        '.js': 'text/javascript; charset=utf-8',
-        '.css': 'text/css; charset=utf-8',
-        '.svg': 'image/svg+xml',
-        '.json': 'application/json',
-        '.woff2': 'font/woff2',
-        '.png': 'image/png',
-      }
-      res.writeHead(200, { 'Content-Type': types[ext] ?? 'application/octet-stream' })
-      return res.end(await readFile(filePath))
-    }
-
-    // SPA fallback — chỉ cho điều hướng HTML, không nuốt asset thiếu.
-    if (!path.extname(rel)) {
-      const index = path.join(dist, 'index.html')
-      if (existsSync(index)) {
-        const html = await readFile(index, 'utf8')
-        res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' })
-        return res.end(html)
-      }
-    }
-
-    res.writeHead(404, { 'Content-Type': 'text/plain' })
-    res.end('Not found')
-  })
-}
-
-const isMain = process.argv[1] && import.meta.url.endsWith(path.basename(process.argv[1]))
-if (isMain) {
-  // Production: nạp .env nếu có (dev đã do Vite lo).
-  loadDotEnv()
-  const port = Number(process.env.PORT ?? 8787)
-  createAppServer().listen(port, () => {
-    console.log(`[soandethi] http://localhost:${port}`)
   })
 }

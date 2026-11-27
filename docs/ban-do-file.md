@@ -69,6 +69,8 @@ src/
   lib/slideAi.ts           26b: sanitize/validate một slide + prompt trang/repair + chèn vào deck
   lib/imageGen.ts          prompt ảnh từ slide + gọi /api/image + thu nhỏ JPEG
 server/llmProxy.ts         proxy LLM (env LLM_*, header x-opencode-session, middleware cho Vite)
+server/urlGuard.ts         chặn URL nội bộ (assertPublicHttpsUrl, assertSafeEndpoint); tách riêng để function ảnh / admin không kéo proxy LLM
+server/appServer.ts        server chạy cục bộ `node server/appServer.ts` (API + dist/); KHÔNG import từ llmProxy ngược lại, kẻo mọi function Vercel phình +35 MB (pdfjs + canvas)
 server/extract.ts          trích text docx/pdf/xlsx/csv/pptx — endpoint /api/extract
 server/searchProxy.ts      adapter Tavily cho /api/search (env TAVILY_API_KEY)
 server/imageProxy.ts       tạo ảnh Xkiro (sensenova-u1.5-lite) cho /api/image, key server-side
