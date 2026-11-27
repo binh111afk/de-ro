@@ -114,7 +114,7 @@ const ART: Record<string, [number, number]> = {
   'trung-tinh/bong-den': [506, 540], 'trung-tinh/bong-thoai': [540, 512], 'trung-tinh/but-chi': [144, 540], 'trung-tinh/hat-1': [254, 161], 'trung-tinh/hat-2': [158, 204],
   'trung-tinh/hat-3': [208, 207], 'trung-tinh/kinh-lup': [306, 540], 'trung-tinh/mang': [540, 229], 'trung-tinh/may-bay-giay': [540, 275], 'trung-tinh/ngoi-sao': [540, 523],
   'su-do/nui-song': [1600, 388], 'su-do/dai-song': [1600, 70], 'su-do/cuon-thu': [840, 449], 'su-do/sach-but': [840, 529], 'su-do/ban-tac-chien': [1600, 437],
-  'sinh-hoc-ht/cum-bia': [571, 1000], 'sinh-hoc-ht/dai-chan': [1400, 175], 'sinh-hoc-ht/kinh-hien-vi': [353, 560], 'sinh-hoc-ht/te-bao': [840, 542],
+  'sinh-hoc-ht/kinh-hien-vi': [353, 560], 'sinh-hoc-ht/te-bao': [840, 542],
   // het dot 2
 }
 
@@ -1018,29 +1018,13 @@ function suDo(id: string, c: SlideLayoutContent, { title, body }: Kit, standard:
 /* ------------------------------------------------------------------ *
  * Sinh học (Học thuật): nền kem, mảng xanh lá, thẻ đánh số, hình minh hoạ phẳng
  * ------------------------------------------------------------------ */
-// dna, cây non còn mượn hình của bộ vẽ tay vì ảnh vẽ riêng chưa đạt
-const BIO_ART = {
-  microscope: 'sinh-hoc-ht/kinh-hien-vi',
-  dna: 'sinh-hoc/dna',
-  cell: 'sinh-hoc-ht/te-bao',
-  sprout: 'sinh-hoc/mam-cay',
-}
+// mỗi slide nhiều nhất một hình, đặt trong vòng tròn kem hoặc xanh
+const BIO_ART = { microscope: 'sinh-hoc-ht/kinh-hien-vi', cell: 'sinh-hoc-ht/te-bao' }
 
-/** hình bên cạnh phần chữ, chọn theo tiêu đề; không khớp mảng nào thì dùng tế bào */
-function bioScene(title = ''): { name: string; w: number } {
-  const t = ` ${title} `.normalize('NFC').toLocaleLowerCase('vi')
-  if (/adn|dna| gen |di truyền|nhiễm sắc|đột biến|tiến ho|tiến hó/.test(t)) return { name: BIO_ART.dna, w: 190 }
-  if (/thực vật|quang hợp| cây | rễ | lá |nảy mầm|sinh trưởng/.test(t)) return { name: BIO_ART.sprout, w: 220 }
-  if (/kính hiển vi|thực hành|thí nghiệm|quan sát|vi khuẩn|vi sinh|virus|virut/.test(t)) return { name: BIO_ART.microscope, w: 300 }
-  return { name: BIO_ART.cell, w: 460 }
-}
-
-/** đặt hình vào giữa khung bên phải, cao tối đa 520 */
-function bioSide(title: string | undefined): SlideElement {
-  const { name, w } = bioScene(title)
+/** đặt hình vào giữa điểm (cx, cy) */
+function bioPut(name: string, cx: number, cy: number, w: number): SlideElement {
   const [aw, ah] = ART[name]
-  const wide = Math.min(w, (520 * aw) / ah)
-  return art(1, name, 1010 - wide / 2, 360 - (wide * ah) / aw / 2, wide)
+  return art(1, name, cx - w / 2, cy - (w * ah) / aw / 2, w)
 }
 
 function sinhHocHt(id: string, c: SlideLayoutContent, { title, body }: Kit, standard: () => SlideElement[]): Built {
@@ -1056,32 +1040,25 @@ function sinhHocHt(id: string, c: SlideLayoutContent, { title, body }: Kit, stan
   const green = shape('decor-kit-0', 0, 0, 1280, 720, sage, { locked: true })
   const photo = (b: Box) =>
     image('image-1', c.image, b, { imagePosition: { x: c.focusX ?? 50, y: c.focusY ?? 40 }, crop: c.imageCrop })
-  // cụm hình bên phải của bìa
-  const cover = () => art(1, 'sinh-hoc-ht/cum-bia', 856, 30, (660 * ART['sinh-hoc-ht/cum-bia'][0]) / ART['sinh-hoc-ht/cum-bia'][1])
-  // dải hình chân trang
-  const strip = () => c.credit ? null : art(7, 'sinh-hoc-ht/dai-chan', 180, 604, 920)
-  // khung mép tròn như thành tế bào
-  const scallop = () => [
-    card('decor-kit-1', 130, 110, 1020, 500, cream),
-    ...Array.from({ length: 11 }, (_, i) => [dot(`decor-kit-${30 + i}`, 128 + i * 92, 70, 104, cream), dot(`decor-kit-${50 + i}`, 128 + i * 92, 546, 104, cream)]).flat(),
-    ...Array.from({ length: 5 }, (_, i) => [dot(`decor-kit-${70 + i}`, 84, 128 + i * 90, 104, cream), dot(`decor-kit-${80 + i}`, 1092, 128 + i * 90, 104, cream)]).flat(),
-  ]
-
   switch (id) {
     case 'photo-full':
       return [
         paper,
-        c.image ? photo(box(760, 0, 520, 720)) : cover(),
-        body('kicker', upper(c.kicker), box(84, 96, 640, 60), 28, leaf, { fontWeight: 800 }),
-        title('title', c.title, box(80, 168, 690, 340), long ? 72 : 104, ink, { ...head, valign: 'middle' }),
-        c.subtitle ? card('decor-kit-9', 80, 532, 680, 96) : null,
-        body('subtitle', c.subtitle, box(104, 540, 634, 80), 30, fg, { valign: 'middle', fontWeight: 600, lineHeight: 1.3 }),
+        ...(c.image ? [photo(box(760, 0, 520, 720))] : [
+          shape('decor-kit-2', 820, 0, 460, 720, sage),
+          dot('decor-kit-3', 860, 170, 380, cream),
+          bioPut(BIO_ART.microscope, 1050, 360, 190),
+        ]),
+        body('kicker', upper(c.kicker), box(84, 110, 640, 66), 28, leaf, { fontWeight: 800 }),
+        title('title', c.title, box(80, 190, 690, 320), long ? 72 : 104, ink, { ...head, valign: 'middle' }),
+        shape('divider-1', 84, 528, 140, 8, sage),
+        body('subtitle', c.subtitle, box(84, 560, 660, 90), 30, fg, { fontWeight: 600, lineHeight: 1.3 }),
       ]
     case 'manifesto': {
       const text = statement(c)
       return [
         green,
-        ...scallop(),
+        card('decor-kit-1', 100, 80, 1080, 560, cream),
         body('kicker', upper(c.kicker), box(220, 138, 840, 58), 28, leaf, { fontWeight: 800, align: 'center' }),
         title('body', text, box(210, 208, 860, 300), text.length > 150 ? 42 : text.length > 80 ? 54 : 68, ink, { ...head, align: 'center', valign: 'middle', lineHeight: 1.3 }),
         body('author', c.author, box(220, 522, 840, 60), 30, fg, { align: 'center' }),
@@ -1090,7 +1067,13 @@ function sinhHocHt(id: string, c: SlideLayoutContent, { title, body }: Kit, stan
     case 'editorial-text':
       return [
         paper,
-        c.image ? photo(box(760, 0, 520, 720)) : bioSide(c.title),
+        ...(c.image ? [photo(box(760, 0, 520, 720))] : [
+          dot('decor-kit-2', 810, 150, 420),
+          // bài thực hành dùng kính hiển vi, còn lại dùng hai tế bào
+          /kính hiển vi|thực hành|thí nghiệm|quan sát/i.test((c.title ?? '').normalize('NFC'))
+            ? bioPut(BIO_ART.microscope, 1020, 360, 200)
+            : bioPut(BIO_ART.cell, 1020, 360, 330),
+        ]),
         body('kicker', upper(c.kicker), box(84, 48, 640, 66), 28, leaf, { fontWeight: 800 }),
         title('title', c.title, box(80, 112, 660, 180), long ? 60 : 80, ink, { ...head, valign: 'middle' }),
         shape('divider-1', 84, 308, 140, 8, sage),
@@ -1106,27 +1089,23 @@ function sinhHocHt(id: string, c: SlideLayoutContent, { title, body }: Kit, stan
       const short = rows.every((row) => row.value.length <= 4)
       return [
         paper,
-        title('title', c.title, box(60, 28, 1160, 130), long ? 56 : 72, ink, { ...head, align: 'center', valign: 'middle' }),
-        body('kicker', upper(c.kicker), box(240, 152, 800, 58), 26, leaf, { fontWeight: 800, align: 'center' }),
+        title('title', c.title, box(60, 40, 1160, 130), long ? 56 : 72, ink, { ...head, align: 'center', valign: 'middle' }),
+        body('kicker', upper(c.kicker), box(240, 172, 800, 58), 26, leaf, { fontWeight: 800, align: 'center' }),
         ...rows.flatMap((row, i) => {
           const x = 70 + i * (w + gap)
-          const tone = i % 2 ? leaf : sage
-          const on = i % 2 ? '#ffffff' : ink
           return [
-            short ? dot(`divider-${i * 2 + 1}`, x + w / 2 - 46, 214, 92, tone) : card(`divider-${i * 2 + 1}`, x, 214, w, 92, tone),
-            title(`item-${i + 1}-value`, row.value, box(x + 6, 218, w - 12, 84), short ? 42 : n > 3 ? 28 : 36, on, { ...head, align: 'center', valign: 'middle' }),
-            card(`divider-${i * 2 + 2}`, x, 322, w, 276),
-            body(`item-${i + 1}-label`, row.label, box(x + 16, 340, w - 32, 244), size, fg, { align: 'center', valign: 'middle', lineHeight: 1.35 }),
+            card(`divider-${i * 2 + 1}`, x, 250, w, 390),
+            title(`item-${i + 1}-value`, row.value, box(x + 12, 270, w - 24, 100), short ? 56 : n > 3 ? 30 : 40, ink, { ...head, align: 'center', valign: 'middle' }),
+            shape(`divider-${i * 2 + 2}`, x + w / 2 - 36, 382, 72, 6, leaf),
+            body(`item-${i + 1}-label`, row.label, box(x + 18, 406, w - 36, 214), size, fg, { align: 'center', valign: 'middle', lineHeight: 1.35 }),
           ]
         }),
-        strip(),
       ]
     }
     case 'bignum':
       return [
         green,
-        ...(c.image ? [] : scallop()),
-        ...(c.image ? [photo(box(760, 0, 520, 720))] : []),
+        c.image ? photo(box(760, 0, 520, 720)) : card('decor-kit-1', 100, 80, 1080, 560, cream),
         ...(c.image ? [
           body('kicker', upper(c.kicker), box(70, 66, 640, 60), 28, ink, { fontWeight: 800 }),
           title('bignum-value', c.value, box(64, 130, 660, 260), 190, ink, { ...head, valign: 'middle', lineHeight: 1 }),
@@ -1148,7 +1127,6 @@ function sinhHocHt(id: string, c: SlideLayoutContent, { title, body }: Kit, stan
         green,
         card('decor-kit-8', 556, 50, 674, c.credit ? 596 : 620, cream),
         title('title', c.title, box(60, 90, 456, 410), long ? 56 : 72, ink, { ...head, valign: 'middle' }),
-        art(1, BIO_ART.microscope, 70, 500, 120),
         body('bullets', text, box(590, 76, 606, c.credit ? 544 : 568), text.length > 320 ? 29 : text.length > 180 ? 34 : 40, fg, { valign: 'middle', lineHeight: 1.65 }),
       ]
     }
