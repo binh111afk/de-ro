@@ -1260,6 +1260,22 @@ export function SlideEditor({
     return true
   }
 
+  /** dựng slide theo bố cục có ảnh nhưng để khung trống; không thêm bước hoàn tác */
+  const setSlideImageFrames = (slideId: string, slots: SlideImageSlot[]) => {
+    const latest = deckRef.current
+    const slide = latest.slides.find((s) => s.id === slideId)
+    if (!slide) return
+    const theme = normalizeTheme(latest.theme)
+    const framed = slots.reduce((next, slot) => withImage(next, theme, 'pending', slot), slide)
+    if (framed === slide) return
+    const elements = framed.elements.map((el) => (el.type === 'image' && el.src === 'pending' ? { ...el, src: undefined } : el))
+    // bố cục không có chỗ đặt ảnh thì giữ nguyên
+    if (!framed.elements.some((el) => el.type === 'image' && el.src === 'pending')) return
+    const slides = latest.slides.map((s) => (s.id === slideId ? { ...framed, elements } : s))
+    deckRef.current = { ...latest, slides }
+    updateDeck({ slides })
+  }
+
   /**
    * Đường 26b: mỗi trang xong được chèn NGAY (đúng thứ tự); ảnh AI mất 45–90 giây
    * nên xếp hàng vẽ ảnh sau cho bìa và bố cục ảnh.
@@ -1272,12 +1288,14 @@ export function SlideEditor({
     if (page.imagePrompt || page.image2Prompt) {
       // bộ phong cách: bìa đã có hình vẽ sẵn, không tốn điểm vẽ thêm ảnh
       if (deckRef.current.theme.pack && slide.layout === 'photo-full' && deckRef.current.slides[0]?.id === slide.id) return
-      const jobs: Array<[SlideImageSlot, string | undefined]> = [
+      const requests: Array<[SlideImageSlot, string | undefined]> = [
         ['image', page.image ? undefined : page.imagePrompt],
         ['image2', page.image2 ? undefined : page.image2Prompt],
       ]
+      const jobs = requests.filter(([, text]) => text?.trim()) as Array<[SlideImageSlot, string]>
+      // bộ phong cách có hình dựng sẵn ở chỗ đặt ảnh: đổi sang khung chờ ngay, kẻo ảnh về trông như vẽ đè lên hình
+      if (deckRef.current.theme.pack) setSlideImageFrames(slide.id, jobs.map(([slot]) => slot))
       for (const [slot, text] of jobs) {
-        if (!text?.trim()) continue
         void imageJobs.start(slide.id, slot, async () => {
           const photo = await loadProPhoto(text)
           if (!photo) throw new Error('Thiếu mô tả ảnh')
