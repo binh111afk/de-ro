@@ -178,12 +178,12 @@ assert.equal(deck.slides[0].bullets?.length, 1)
   assert.ok(pageSystemPrompt(mk({ subject: 'van' }), slides[1], 1).includes('Ngữ văn'), 'prompt từng slide có luật môn')
 }
 
-/* Kiểu "Học thuật" chỉ mở cho môn đã có bộ. */
+/* Kiểu "Học thuật": môn có bộ riêng dùng bộ đó, môn khác dùng bộ Đại học. */
 {
   const { proPlan } = await import('../src/lib/aiDeck.ts')
   const slides = [{ title: 'Mở đầu', layout: 'title' }, { title: 'Hết', layout: 'closing' }]
   const tranh = (title, subject = 'khtn') => proPlan({ ...parseDeckPlan(JSON.stringify({ title, slides })), subject }).themeTranh
-  assert.equal(tranh('Cấu trúc tế bào'), undefined)
+  assert.equal(tranh('Cấu trúc tế bào'), 'tranh-dai-hoc')
   assert.equal(tranh('Vùng Đồng bằng sông Hồng', 'dia-li'), 'tranh-dia-li')
   assert.equal(tranh('Phân tích bài thơ Tây Tiến', 'van'), 'co-dien-do')
   assert.equal(tranh('Chiến dịch Điện Biên Phủ', 'lich-su'), 'tranh-su-do')

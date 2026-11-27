@@ -56,9 +56,7 @@ const styleAskOf = (options: string[]) => ({
   noFigure: true as const,
   noCustom: true as const,
 })
-const STYLE_ASK = styleAskOf(['Doodle (vẽ tay)', 'Tạp chí'])
-/** chỉ dùng khi dàn ý có bộ tranh hợp chủ đề (themeTranh) */
-const STYLE_ASK_TRANH = styleAskOf(['Doodle (vẽ tay)', 'Tạp chí', 'Học thuật'])
+const STYLE_ASK = styleAskOf(['Doodle (vẽ tay)', 'Tạp chí', 'Học thuật'])
 
 export type { AiMode, ChatTurn } from './ai/turns'
 
@@ -795,7 +793,7 @@ function AiConversation({
         </div>
       ) : styleAsk && !busy ? (
         // bỏ qua / hết giờ: câu trả lời không nêu kiểu → bộ vẽ tay
-        <AiAskPanel ask={styleAsk.plan.themeTranh ? STYLE_ASK_TRANH : STYLE_ASK} figure={false} onSubmit={chooseStyle} onSkip={() => chooseStyle('')} />
+        <AiAskPanel ask={STYLE_ASK} figure={false} onSubmit={chooseStyle} onSkip={() => chooseStyle('')} />
       ) : openAsk?.ask ? (
         <AiAskPanel
           key={openAsk.id}

@@ -745,6 +745,10 @@ export const PRO_THEMES: DeckTheme[] = [
   packTheme('tranh-chinh-tri', 'Đỏ son', 'đỏ và kem, khung tem thư, sao chìm, hình cắt khuôn', 'chinh-tri',
     ['triết học', 'tư tưởng Hồ Chí Minh', 'kinh tế chính trị', 'chủ nghĩa xã hội khoa học', 'lịch sử Đảng'],
     '#fffef6', '#a92f31', '#a92f31', '#6e5a1c', 'Barlow Condensed', 'Be Vietnam Pro'),
+  packTheme('tranh-dai-hoc', 'Đại học', 'nền trắng, xanh navy và vàng, hình phẳng, dải chân trang', 'dai-hoc',
+    ['bài giảng đại học', 'khoá luận', 'đồ án', 'nghiên cứu', 'thuyết trình trang trọng'],
+    // không dùng #ffffff: normalizeTheme nhận bộ theo màu nền, bài cũ nền trắng sẽ thành bộ này
+    '#fefeff', '#0c1d4b', '#0c1d4b', '#8a5a12', 'Montserrat', 'Be Vietnam Pro'),
   packTheme('dan-gian', 'Dân gian', 'giấy kẻ ô, màu nước tươi, tre, chuồn chuồn, đình làng', 'dan-gian',
     ['trò chơi dân gian', 'văn hoá Việt', 'làng quê', 'truyện cổ tích', 'phong tục'],
     '#faf3e6', '#4a2c1d', '#b4461a', '#3f7a3a', 'Nunito', 'Nunito'),

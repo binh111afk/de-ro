@@ -86,7 +86,7 @@ export interface DeckPlan {
   theme?: string
   /** chế độ Chuyên nghiệp: bộ tạp chí dự phòng; còn trường này nghĩa là chưa chọn kiểu */
   themeMagazine?: string
-  /** chế độ Chuyên nghiệp: bộ tranh truyền thống, chỉ có ở môn đã có bộ (proPlan đặt) */
+  /** chế độ Chuyên nghiệp: bộ Học thuật (proPlan đặt) */
   themeTranh?: string
   audience?: string
   /** phong cách trình bày, đưa vào prompt sinh từng slide */
@@ -282,8 +282,7 @@ export function proPlan(plan: DeckPlan, style?: ProStyle): DeckPlan {
     proThemesFor(kind).some((t) => t.id === id) ? id : fallback
   const theme = pick('doodle', plan.theme, 'trung-tinh-ve-tay')
   const themeMagazine = pick('magazine', plan.themeMagazine ?? plan.theme, proThemesFor('magazine')[0].id!)
-  // môn chưa có bộ tranh thì để trống, câu hỏi kiểu ẩn lựa chọn đó; người dùng gõ thẳng kiểu thì vẫn dùng bộ đang có
-  const themeTranh = TRANH_BY_SUBJECT[plan.subject ?? ''] ?? (style === 'tranh' ? 'co-dien-do' : undefined)
+  const themeTranh = TRANH_BY_SUBJECT[plan.subject ?? ''] ?? 'tranh-dai-hoc'
   const both = { ...plan, theme, themeMagazine, themeTranh, design: undefined, stylePack: 'editorial', decorKit: 'toi-gian', slides }
   return style ? withProStyle(both, style) : both
 }
@@ -424,7 +423,7 @@ const styleOfTheme = (id = ''): ProStyle =>
 
 export const proThemesFor = (style: ProStyle) => PRO_THEMES.filter((t) => styleOfTheme(t.id) === style)
 
-/** kiểu "Học thuật" (id nội bộ 'tranh') chỉ mở cho môn đã có bộ (id môn ở slideSubjects.ts); thêm bộ thì khai ở đây */
+/** kiểu "Học thuật" (id nội bộ 'tranh'): môn có bộ riêng (id môn ở slideSubjects.ts) khai ở đây, môn khác dùng bộ Đại học */
 const TRANH_BY_SUBJECT: Record<string, string> = { van: 'co-dien-do', 'lich-su': 'tranh-su-do', 'dia-li': 'tranh-dia-li', 'chinh-tri': 'tranh-chinh-tri' }
 
 /** đọc kiểu slide trong lời người dùng (câu yêu cầu hoặc câu trả lời panel hỏi) */

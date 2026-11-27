@@ -3274,6 +3274,20 @@ var PRO_THEMES = [
     "Be Vietnam Pro"
   ),
   packTheme(
+    "tranh-dai-hoc",
+    "\u0110\u1EA1i h\u1ECDc",
+    "n\u1EC1n tr\u1EAFng, xanh navy v\xE0 v\xE0ng, h\xECnh ph\u1EB3ng, d\u1EA3i ch\xE2n trang",
+    "dai-hoc",
+    ["b\xE0i gi\u1EA3ng \u0111\u1EA1i h\u1ECDc", "kho\xE1 lu\u1EADn", "\u0111\u1ED3 \xE1n", "nghi\xEAn c\u1EE9u", "thuy\u1EBFt tr\xECnh trang tr\u1ECDng"],
+    // không dùng #ffffff: normalizeTheme nhận bộ theo màu nền, bài cũ nền trắng sẽ thành bộ này
+    "#fefeff",
+    "#0c1d4b",
+    "#0c1d4b",
+    "#8a5a12",
+    "Montserrat",
+    "Be Vietnam Pro"
+  ),
+  packTheme(
     "dan-gian",
     "D\xE2n gian",
     "gi\u1EA5y k\u1EBB \xF4, m\xE0u n\u01B0\u1EDBc t\u01B0\u01A1i, tre, chu\u1ED3n chu\u1ED3n, \u0111\xECnh l\xE0ng",
@@ -6400,6 +6414,7 @@ var PACK_COLORS = {
   "su-do": { background: "#f1efea", fg: "#6b1a24", ink: "#760015", accent: "#760015", muted: "#7d4a50", surface: "#ffffff", panel: "#eadfdc", onAccent: "#ffffff" },
   "dia-li-ht": { background: "#fef8ee", fg: "#2f3a1c", ink: "#546826", accent: "#e3bf27", muted: "#5d6648", surface: "#ffffff", panel: "#ece7d2", onAccent: "#2f3a1c" },
   "chinh-tri": { background: "#fffef6", fg: "#3a2a2a", ink: "#a92f31", accent: "#a92f31", muted: "#7a4a48", surface: "#ffffff", panel: "#f8ebe4", onAccent: "#fffef6" },
+  "dai-hoc": { background: "#ffffff", fg: "#27324f", ink: "#0c1d4b", accent: "#0c1d4b", muted: "#5a647d", surface: "#ffffff", panel: "#eef0f6", onAccent: "#ffffff" },
   "tin-hoc": { background: "#f8f7fc", fg: "#3a3560", ink: "#241d4d", accent: "#5a3ee0", muted: "#635d85", surface: "#ffffff", panel: "#ece8fd", onAccent: "#ffffff" },
   "tam-ly": { background: "#fbf4ec", fg: "#53392f", ink: "#5a2c1c", accent: "#a8532f", muted: "#7d6257", surface: "#fffaf5", panel: "#f8e4da", onAccent: "#ffffff" }
 };
@@ -6718,6 +6733,14 @@ var ART = {
   "su-do/sach-but": [840, 529],
   "su-do/ban-tac-chien": [1600, 437],
   "chinh-tri/tem-kem": [820, 1016],
+  "dai-hoc/o-chon": [96, 96],
+  "dai-hoc/ban-lam-viec": [900, 842],
+  "dai-hoc/bang-kiem": [749, 900],
+  "dai-hoc/bong-den": [595, 900],
+  "dai-hoc/cu-nhan": [303, 900],
+  "dai-hoc/nhom-hoc": [900, 689],
+  "dai-hoc/phan-tich": [900, 658],
+  "dai-hoc/thao-luan": [825, 821],
   "chinh-tri/tem-do": [820, 1016],
   "chinh-tri/sen": [626, 900],
   "chinh-tri/sach-but": [900, 862],
@@ -8149,6 +8172,187 @@ function chinhTri(id, c8, { title, body }, standard) {
     }
   }
 }
+function daiHoc(id, c8, { title, body }, standard) {
+  const { ink: navy, fg, muted } = PACK_COLORS["dai-hoc"];
+  const slate = "#3c4f75";
+  const gold = "#f2b01e";
+  const head = { fontWeight: 800, lineHeight: 1.12 };
+  const long = (c8.title?.length ?? 0) > 30;
+  const block = (n10, x, y, w, h, fill, extra = {}) => ({ id: n10, type: "shape", shape: "rect", fill, border: 0, shadowLevel: 0, decor: true, ...box(x, y, w, h), ...extra });
+  const paper = block("decor-kit-0", 0, 0, 1280, 720, "#ffffff", { locked: true });
+  const band = block("decor-kit-1", 0, 650, 1280, 70, slate);
+  const dots = (x, y) => [0, 1, 2].map((i) => block(`decor-kit-${6 + i}`, x + i * 30, y, 18, 18, navy, { shape: "ellipse" }));
+  const tag2 = () => body("kicker", upper(c8.kicker), box(520, 18, 704, 60), 30, navy, { fontWeight: 700, align: "right" });
+  const fitArt = (n10, name, x, y, w, h) => {
+    const [aw, ah] = ART[name];
+    const width = Math.min(w, h * aw / ah);
+    return art(n10, name, x + (w - width) / 2, y + (h - width * ah / aw) / 2, width);
+  };
+  const picture = (x, y, w, h, name) => c8.image ? image("image-1", c8.image, box(x, y, w, h), { radius: 24, imagePosition: { x: c8.focusX ?? 50, y: c8.focusY ?? 40 }, crop: c8.imageCrop }) : fitArt(3, name, x, y, w, h);
+  const topic = (c8.title ?? "").normalize("NFC").toLocaleLowerCase("vi");
+  const pick = `dai-hoc/${/thảo luận|trao đổi|phỏng vấn|giao tiếp|hỏi đáp/.test(topic) ? "thao-luan" : /tóm tắt|giới thiệu|mở đầu/.test(topic) ? "ban-lam-viec" : /bối cảnh|lý thuyết|cơ sở|khái niệm/.test(topic) ? "nhom-hoc" : /phân tích|kết quả|số liệu|thống kê|đánh giá/.test(topic) ? "phan-tich" : /phương pháp|quy trình|kế hoạch|kết luận|yêu cầu|tiêu chí/.test(topic) ? "bang-kiem" : /ý tưởng|vấn đề|giải pháp|mục tiêu|câu hỏi/.test(topic) ? "bong-den" : ["ban-lam-viec", "nhom-hoc", "thao-luan", "bong-den"][[...topic].reduce((sum, ch) => sum + ch.charCodeAt(0), 0) % 4]}`;
+  const words = `${c8.kicker ?? ""} ${c8.title ?? ""} ${c8.subtitle ?? ""}`.normalize("NFC").toLocaleLowerCase("vi");
+  const check = (n10, x, y) => art(n10, "dai-hoc/o-chon", x, y, 40);
+  switch (id) {
+    case "photo-full": {
+      if (!c8.image && /cảm ơn|thank/.test(words)) return [
+        paper,
+        band,
+        ...dots(70, 60),
+        ...dots(1128, 590),
+        tag2(),
+        title("title", upper(c8.title), box(80, 160, 1120, 250), long ? 90 : 130, navy, { ...head, align: "center", valign: "middle" }),
+        c8.subtitle ? block("decor-kit-2", 290, 430, 700, 110, navy, { shape: "round", radius: 20 }) : null,
+        body("subtitle", c8.subtitle, box(310, 438, 660, 94), 36, "#ffffff", { align: "center", valign: "middle", lineHeight: 1.2 })
+      ];
+      const thesis = /khoá luận|khóa luận|đồ án|luận văn|luận án|tốt nghiệp|bảo vệ đề tài/.test(words);
+      return [
+        paper,
+        band,
+        tag2(),
+        picture(700, 80, 520, 540, thesis ? "dai-hoc/cu-nhan" : "dai-hoc/nhom-hoc"),
+        title("title", c8.title, box(76, 110, 600, 320), long ? 70 : 96, navy, { ...head, caps: true, valign: "middle" }),
+        body("subtitle", c8.subtitle, box(80, 450, 590, c8.credit ? 180 : 180), 36, fg, { lineHeight: 1.35 })
+      ];
+    }
+    case "manifesto": {
+      const text = statement(c8);
+      return [
+        paper,
+        band,
+        ...dots(70, 60),
+        tag2(),
+        title("body", text, box(120, 120, 1040, 380), text.length > 150 ? 52 : text.length > 80 ? 68 : 86, navy, { ...head, align: "center", valign: "middle", lineHeight: 1.25 }),
+        block("divider-1", 580, 520, 120, 8, gold),
+        body("author", c8.author, box(190, 548, 900, 70), 34, muted, { align: "center" })
+      ];
+    }
+    case "editorial-text":
+      return [
+        paper,
+        band,
+        tag2(),
+        picture(780, 120, 440, 500, pick),
+        title("title", c8.title, box(76, 76, 660, 180), long ? 60 : 84, navy, { ...head, valign: "middle" }),
+        body("body", paragraphs(c8), box(80, 274, 660, 364), 40, fg, { lineHeight: 1.45 })
+      ];
+    case "rules": {
+      const rows = rowsOf(c8);
+      if (!rows.length) return [];
+      const n10 = rows.length;
+      if (rows.every((row) => row.value.length <= 4)) {
+        const half = n10 > 3 ? Math.ceil(n10 / 2) : n10;
+        const step = Math.min(120, 360 / half);
+        return [
+          paper,
+          band,
+          tag2(),
+          ...dots(1128, 600),
+          title("title", upper(c8.title), box(80, 70, 1120, 140), long ? 60 : 80, navy, { ...head, align: "center", valign: "middle" }),
+          ...rows.flatMap((row, i) => {
+            const two = n10 > 3;
+            const x = two ? i < half ? 90 : 660 : 280;
+            const y = 240 + i % half * step;
+            return [
+              title(`item-${i + 1}-value`, row.value, box(x, y, 100, step - 8), 50, gold, { ...head, valign: "middle" }),
+              body(`item-${i + 1}-label`, row.label, box(x + 110, y, two ? 420 : 620, step - 8), n10 > 4 ? 40 : 44, navy, { fontWeight: 700, valign: "middle", lineHeight: 1.2 })
+            ];
+          })
+        ];
+      }
+      if (n10 <= 3) {
+        const step = 520 / n10;
+        return [
+          paper,
+          band,
+          tag2(),
+          title("title", c8.title, box(76, 80, 440, 220), long ? 54 : 72, navy, { ...head, valign: "middle" }),
+          fitArt(3, pick, 80, 310, 420, 320),
+          ...rows.flatMap((row, i) => {
+            const y = 100 + i * step;
+            return [
+              check(4 + i * 3, 570, y + 6),
+              title(`item-${i + 1}-value`, row.value, box(630, y, 600, 66), 44, navy, head),
+              body(`item-${i + 1}-label`, row.label, box(620, y + 64, 630, step - 62), 36, fg, { lineHeight: 1.2 })
+            ];
+          })
+        ];
+      }
+      return [
+        paper,
+        band,
+        tag2(),
+        title("title", c8.title, box(80, 70, 1120, 130), long ? 54 : 70, navy, { ...head, align: "center", valign: "middle" }),
+        ...rows.flatMap((row, i) => {
+          const columns = n10 > 4 ? 3 : 2;
+          const w = columns === 3 ? 380 : 560;
+          const x = 70 + i % columns * (w + 20);
+          const y = 220 + Math.floor(i / columns) * 212;
+          return [
+            check(10 + i, x, y + 4),
+            title(`item-${i + 1}-value`, row.value, box(x + 56, y - 6, w - 58, 66), columns === 3 ? 34 : 44, navy, head),
+            body(`item-${i + 1}-label`, row.label, box(x + 56, y + 64, w - 58, 140), columns === 3 ? 28 : 34, fg, { lineHeight: 1.35 })
+          ];
+        })
+      ];
+    }
+    case "bignum":
+      return [
+        paper,
+        band,
+        tag2(),
+        picture(780, 110, 440, 510, "dai-hoc/phan-tich"),
+        title("bignum-value", c8.value, box(74, 80, 680, 280), 220, navy, { ...head, valign: "middle", lineHeight: 1 }),
+        block("divider-1", 80, 372, 120, 8, gold),
+        title("bignum-label", c8.label, box(80, 396, 660, 116), 52, navy, head),
+        body("subtitle", c8.subtitle, box(80, 520, 660, 120), 40, fg, { lineHeight: 1.3 })
+      ];
+    case "bullets": {
+      const items = list(c8.bullets).length ? list(c8.bullets) : list(c8.body?.split("\n"));
+      if (!items.length) return [];
+      const numbered = items.every((item) => /^\d+[.)]\s/.test(item));
+      const text = items.map((item) => numbered ? item : `\u2022 ${item}`).join("\n");
+      return [
+        paper,
+        band,
+        tag2(),
+        title("title", c8.title, box(76, 80, 440, 220), long ? 54 : 72, navy, { ...head, valign: "middle" }),
+        fitArt(3, pick, 80, 310, 420, 320),
+        body("bullets", text, box(560, 90, 660, 540), text.length > 320 ? 30 : text.length > 180 ? 36 : 44, fg, { valign: "middle", lineHeight: 1.6 })
+      ];
+    }
+    case "photo-compare": {
+      const h = c8.caption || c8.caption2 ? 310 : 400;
+      return [
+        paper,
+        band,
+        tag2(),
+        title("title", c8.title, box(80, 70, 1120, 130), long ? 54 : 70, navy, { ...head, align: "center", valign: "middle" }),
+        image("image-1", c8.image, box(70, 220, 555, h), { radius: 20, crop: c8.imageCrop }),
+        image("image-2", c8.image2, box(655, 220, 555, h), { radius: 20, crop: c8.image2Crop }),
+        c8.caption ? check(4, 70, 552) : null,
+        c8.caption2 ? check(5, 655, 552) : null,
+        body("photo-caption", c8.caption, box(124, 544, 501, 98), 34, fg, { lineHeight: 1.25, fontWeight: 600 }),
+        body("photo-caption-2", c8.caption2, box(709, 544, 501, 98), 34, fg, { lineHeight: 1.25, fontWeight: 600 })
+      ];
+    }
+    case "bars": {
+      const chart = standard().filter((el) => el.id.startsWith("bar"));
+      if (!chart.length) return [];
+      for (const el of chart) {
+        el.x = 8 + (el.x - 5) * 0.93;
+        el.y = 33 + (el.y - 26) * 0.84;
+        el.w *= 0.93;
+        el.h *= 0.84;
+      }
+      return [paper, band, tag2(), title("title", c8.title, box(80, 70, 1120, 140), long ? 54 : 70, navy, { ...head, align: "center", valign: "middle" }), ...chart];
+    }
+    default: {
+      const elements = standard();
+      return elements.length ? [paper, ...elements] : [];
+    }
+  }
+}
 function shared(pack, id, c8, kit, standard) {
   if (id !== "bullets" && id !== "photo-compare" && id !== "bars") return null;
   const { title, body } = kit;
@@ -8222,11 +8426,13 @@ function backdrop(pack) {
       return [];
     case "chinh-tri":
       return [];
+    case "dai-hoc":
+      return [];
   }
 }
 function composePack(pack, layoutId, content, text, standard) {
   const kit = kitOf(text);
-  const own = pack === "co-dien" ? coDien(layoutId, content, kit) : pack === "dan-gian" ? danGian(layoutId, content, kit) : pack === "su-do" ? suDo(layoutId, content, kit, standard) : pack === "dia-li-ht" ? diaLiHt(layoutId, content, kit, standard) : pack === "chinh-tri" ? chinhTri(layoutId, content, kit, standard) : study(pack, layoutId, content, kit);
+  const own = pack === "co-dien" ? coDien(layoutId, content, kit) : pack === "dan-gian" ? danGian(layoutId, content, kit) : pack === "su-do" ? suDo(layoutId, content, kit, standard) : pack === "dia-li-ht" ? diaLiHt(layoutId, content, kit, standard) : pack === "chinh-tri" ? chinhTri(layoutId, content, kit, standard) : pack === "dai-hoc" ? daiHoc(layoutId, content, kit, standard) : study(pack, layoutId, content, kit);
   const built = own ?? shared(pack, layoutId, content, kit, standard);
   if (built) return built.filter((el) => Boolean(el));
   const elements = standard();
@@ -8249,6 +8455,7 @@ function packCreditColor(pack, layoutId, hasImage = false) {
     const onCream = ["manifesto", "bullets", "photo-compare"].includes(layoutId) || layoutId === "editorial-text" && hasImage;
     return onCream ? PACK_COLORS[pack].muted : "#fbe9e0";
   }
+  if (pack === "dai-hoc") return "#e6e9f2";
   return pack === "co-dien" && layoutId === "manifesto" ? CREAM : PACK_COLORS[pack].muted;
 }
 
