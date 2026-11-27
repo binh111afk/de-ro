@@ -328,8 +328,10 @@ export function EditableEl({
       onSelect()
       return
     }
-    e.stopPropagation()
     movedRef.current = false
+    // như Canva: kéo từ phần tử đã khoá là kéo vùng chọn (nền nhận sự kiện), bấm không kéo mới chọn nó
+    if (el.locked && mode === 'move' && e.button === 0 && !e.shiftKey) return
+    e.stopPropagation()
     if (e.shiftKey && mode === 'move' && onToggleSelect) {
       e.preventDefault()
       onToggleSelect()
@@ -542,6 +544,7 @@ export function EditableEl({
   const common = {
     style,
     'data-el-id': el.id,
+    'data-locked': el.locked || undefined,
     // Shift+bấm đã xử lý ở pointerdown; vừa kéo xong thì giữ nguyên vùng chọn (nhóm không bị thu về một)
     onClick: (e: React.MouseEvent) => {
       e.stopPropagation()

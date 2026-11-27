@@ -1717,8 +1717,10 @@ export function SlideEditor({
                 style={{ ...slideBgStyle(currentSlide), ...decorStyle(theme) }}
                 onContextMenu={openSlideMenu}
                 onPointerDown={(e) => {
-                  // chỉ bắt đầu khi bấm chuột trái lên nền trống (không phải phần tử, tay nắm)
-                  if (e.button !== 0 || e.target !== e.currentTarget || painter || croppingId || animPreview) return
+                  // chỉ bắt đầu khi bấm chuột trái lên nền trống hoặc phần tử đã khoá (không phải phần tử khác, tay nắm)
+                  const onLocked = !!(e.target as Element).closest('[data-locked]')
+                  if (e.button !== 0 || (e.target !== e.currentTarget && !onLocked) || painter || croppingId || animPreview) return
+                  if (onLocked) e.preventDefault()
                   const frame = e.currentTarget
                   const box = frame.getBoundingClientRect()
                   const at = (ev: PointerEvent) => ({
@@ -1744,7 +1746,7 @@ export function SlideEditor({
                     const [l, r] = [Math.min(rect.x0, rect.x1), Math.max(rect.x0, rect.x1)]
                     const [t, b] = [Math.min(rect.y0, rect.y1), Math.max(rect.y0, rect.y1)]
                     // chạm vào khung là tính, như Canva
-                    const hits = currentSlide.elements.filter((el) => el.x < r && el.x + el.w > l && el.y < b && el.y + heightOf(el) > t)
+                    const hits = currentSlide.elements.filter((el) => !el.locked && el.x < r && el.x + el.w > l && el.y < b && el.y + heightOf(el) > t)
                     setPainter(null)
                     if (hits.length >= 2) {
                       setSelectedElementId(null)
