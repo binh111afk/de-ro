@@ -57,7 +57,7 @@ function ExportCard({ job }: { job: ExportJob }) {
       role="status"
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
-      className={`${closing ? 'export-card-out' : 'export-card-in'} flex w-full max-w-[320px] items-center gap-3 rounded-[10px] border border-line bg-surface p-3 shadow-float`}
+      className={`${closing ? 'export-card-out' : 'export-card-in'} export-card--${status} flex w-full max-w-[320px] items-center gap-3 rounded-[10px] border-[1.5px] bg-surface p-3 shadow-float`}
     >
       <div className="relative shrink-0">
         <div className={status === 'running' ? 'export-icon-bob' : undefined}>

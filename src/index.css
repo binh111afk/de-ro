@@ -1415,6 +1415,16 @@
 @keyframes export-icon-bob { 0%, 100% { transform: translate3d(0, 0, 0); } 50% { transform: translate3d(0, -3px, 0); } }
 @keyframes export-sheen { from { transform: translateX(-100%); } to { transform: translateX(100%); } }
 .export-card-in { animation: export-card-in 380ms var(--ease-bounce) both; }
+/* viền màu theo trạng thái + vòng sóng lan ra, cho thẻ nổi trên trang trắng */
+@keyframes export-ring {
+  from { box-shadow: 0 0 0 0 color-mix(in srgb, var(--export-ring) 55%, transparent), var(--shadow-float); }
+  70%, to { box-shadow: 0 0 0 12px transparent, var(--shadow-float); }
+}
+.export-card--running { --export-ring: var(--color-clay); border-color: var(--export-ring); }
+.export-card--done { --export-ring: var(--color-sage); border-color: var(--export-ring); }
+.export-card--error { --export-ring: var(--color-clay-deep); border-color: var(--export-ring); }
+.export-card-in.export-card--running { animation: export-card-in 380ms var(--ease-bounce) both, export-ring 1.4s ease-out 380ms infinite; }
+.export-card-in.export-card--done { animation: export-ring 900ms ease-out; }
 .export-card-out { animation: export-card-out 220ms ease-in forwards; }
 .export-icon-bob { animation: export-icon-bob 900ms ease-in-out infinite; }
 .export-bar-run::after {
@@ -1425,6 +1435,6 @@
   animation: export-sheen 1.1s linear infinite;
 }
 @media (prefers-reduced-motion: reduce) {
-  .export-card-in, .export-card-out, .export-icon-bob { animation: none; }
+  .export-card-in, .export-card-in.export-card--running, .export-card-in.export-card--done, .export-card-out, .export-icon-bob { animation: none; }
   .export-bar-run::after { display: none; }
 }
