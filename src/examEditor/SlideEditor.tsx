@@ -50,7 +50,7 @@ import { SlideThumb, SlideElView, SlideFooterView, SlideImageStatuses, elTransfo
 import { SlideImageContext } from './slideImageContext'
 import { SlideImageJobs, type SlideImageSlot } from './slideImageStatus'
 import { InkLayer, PresentToolbar, PresenterWindow, usePresentTools } from './PresentTools'
-import { GroupToolbar, SnapGuides, EditableEl, setSnapEnabled } from './slideEditParts'
+import { GroupToolbar, SnapGuides, EditableEl, setSnapEnabled, SlideChromeContext } from './slideEditParts'
 
 /** Trạng thái ẩn/hiện của hiệu ứng bấm-chuột: mờ dần + trượt/phóng nhẹ (translate/scale tách khỏi transform xoay của phần tử). */
 const HIDDEN_POSE: Record<NonNullable<SlideElement['anim']>, React.CSSProperties> = {
@@ -295,6 +295,7 @@ export function SlideEditor({
   const activeImageJobs = useRef<SlideImageJobs | null>(null)
   /** vừa kéo/resize/xoay: bỏ qua cú click kế tiếp rơi ra ngoài phần tử */
   const didDragRef = useRef(false)
+  const [chromeLayer, setChromeLayer] = useState<HTMLDivElement | null>(null)
   /** kéo trên nền slide để quét chọn nhiều phần tử (giống Canva) — toạ độ % của slide */
   const [marquee, setMarquee] = useState<{ x0: number; y0: number; x1: number; y1: number } | null>(null)
   const swipeRef = useRef<{ x: number; y: number; didSwipe: boolean } | null>(null)
@@ -334,6 +335,51 @@ export function SlideEditor({
     return () => { alive = false }
   }, [currentSlide, theme])
   const heightOf = (el: SlideElement) => elementHeight(el, el.variant === 'body' ? theme.fonts.body : theme.fonts.heading)
+
+  /** Kéo khung quét chọn, được kéo ra ngoài mép slide (như Canva). `onTap`: bấm mà không kéo. */
+  const startMarquee = (e: React.PointerEvent, frame: HTMLElement, onTap?: () => void) => {
+    if (e.button !== 0 || !currentSlide || painter || croppingId || animPreview) return
+    const box = frame.getBoundingClientRect()
+    const at = (ev: PointerEvent) => ({
+      x: ((ev.clientX - box.left) / box.width) * 100,
+      y: ((ev.clientY - box.top) / box.height) * 100,
+    })
+    const p0 = at(e.nativeEvent)
+    let rect = { x0: p0.x, y0: p0.y, x1: p0.x, y1: p0.y }
+    let moved = false
+    const onMove = (ev: PointerEvent) => {
+      const p = at(ev)
+      rect = { ...rect, x1: p.x, y1: p.y }
+      if (!moved && Math.hypot(p.x - p0.x, p.y - p0.y) < 0.6) return
+      moved = true
+      setMarquee(rect)
+    }
+    const onUp = () => {
+      window.removeEventListener('pointermove', onMove)
+      window.removeEventListener('pointerup', onUp)
+      setMarquee(null)
+      if (!moved) return onTap?.()
+      // nhả ngoài khung thì không có click để dọn cờ, nên tự dọn ở nhịp sau
+      didDragRef.current = true
+      window.setTimeout(() => {
+        didDragRef.current = false
+      }, 0)
+      const [l, r] = [Math.min(rect.x0, rect.x1), Math.max(rect.x0, rect.x1)]
+      const [t, b] = [Math.min(rect.y0, rect.y1), Math.max(rect.y0, rect.y1)]
+      // chạm vào khung là tính, như Canva
+      const hits = currentSlide.elements.filter((el) => !el.locked && el.x < r && el.x + el.w > l && el.y < b && el.y + heightOf(el) > t)
+      setPainter(null)
+      if (hits.length >= 2) {
+        setSelectedElementId(null)
+        setGroupIds(hits.map((el) => el.id))
+      } else {
+        setGroupIds([])
+        setSelectedElementId(hits[0]?.id ?? null)
+      }
+    }
+    window.addEventListener('pointermove', onMove)
+    window.addEventListener('pointerup', onUp)
+  }
   const selectedElement = currentSlide?.elements.find((el) => el.id === selectedElementId) ?? null
   const groupEls = currentSlide?.elements.filter((el) => groupIds.includes(el.id)) ?? []
   /** đang chọn đúng một nhóm cố định (đã bấm Nhóm): vẽ một khung bao chung như Canva */
@@ -633,12 +679,6 @@ export function SlideEditor({
   }, [deck])
 
   useEffect(() => {
-    if (!selectedElement) {
-      if (['elementFormat', 'pictureFormat', 'tableDesign', 'chartDesign'].includes(ribbonTab)) {
-        setRibbonTab('home')
-      }
-      return
-    }
     const auto: Partial<Record<SlideElement['type'], SlideRibbonTab>> = {
       image: 'pictureFormat',
       shape: 'elementFormat',
@@ -648,9 +688,14 @@ export function SlideEditor({
       table: 'tableDesign',
       chart: 'chartDesign',
     }
-    const next = auto[selectedElement.type]
+    const next = selectedElement && auto[selectedElement.type]
     // đang ở Hoạt ảnh thì giữ nguyên tab để chọn lần lượt từng đối tượng gắn hiệu ứng
-    if (next && ribbonTab !== 'animations') setRibbonTab(next)
+    if (next) {
+      if (ribbonTab !== 'animations') setRibbonTab(next)
+    } else if (['elementFormat', 'pictureFormat', 'tableDesign', 'chartDesign'].includes(ribbonTab)) {
+      // chữ, công thức, video và bỏ chọn không có tab riêng: tab đang mở đã biến mất nên về Trang chủ
+      setRibbonTab('home')
+    }
   }, [selectedElement?.id])
 
   const confirmCrop = useCallback(() => {
@@ -745,7 +790,7 @@ export function SlideEditor({
     const onDown = (e: PointerEvent) => {
       const t = e.target as HTMLElement | null
       if (!t) return
-      if (t.closest(`[data-el-id="${croppingId}"]`) || t.closest('.slide-ribbon') || t.closest('.slide-ribbon-menu')) return
+      if (t.closest(`[data-el-id="${croppingId}"], [data-el-chrome="${croppingId}"]`) || t.closest('.slide-ribbon') || t.closest('.slide-ribbon-menu')) return
       confirmCrop()
     }
     window.addEventListener('pointerdown', onDown, true)
@@ -1645,7 +1690,25 @@ export function SlideEditor({
       {/* ---------------- sân soạn (giữa) ---------------- */}
       <div className="flex min-h-0 min-w-0 flex-1 flex-col">
         {/* canvas */}
-        <div className="slide-stage group relative min-h-0 anim-tab-in" key={deck.id}>
+        <div
+          className="slide-stage group relative min-h-0 anim-tab-in"
+          key={deck.id}
+          onPointerDown={(e) => {
+            // kéo quét từ vùng xám quanh slide; chạm thì để cuộn, bấm lên thanh cuộn thì bỏ qua
+            const stage = e.currentTarget
+            const target = e.target as HTMLElement
+            if (e.pointerType === 'touch' || (target !== stage && !target.classList.contains('slide-stage__inner'))) return
+            if (target === stage && (e.nativeEvent.offsetX > stage.clientWidth || e.nativeEvent.offsetY > stage.clientHeight)) return
+            const frame = stage.querySelector<HTMLElement>(':scope > .slide-stage__inner > .slide-frame')
+            if (!frame) return
+            e.preventDefault()
+            startMarquee(e, frame, () => {
+              setPainter(null)
+              setSelectedElementId(null)
+              setGroupIds([])
+            })
+          }}
+        >
           {formatPaneOpen && selectedElement && currentSlide && (
             <aside className="slide-format-pane" aria-label="Bảng chọn định dạng">
               <div className="slide-format-pane__title">Định dạng</div>
@@ -1708,6 +1771,7 @@ export function SlideEditor({
             {currentSlide?.html ? (
               <HtmlSlideFrame html={currentSlide.html} interactive className="shadow-[0_2px_24px_-8px_rgba(35,32,28,0.35)]" />
             ) : currentSlide ? (
+              <SlideChromeContext.Provider value={chromeLayer}>
               <div
                 className={cn(
                   'slide-frame relative aspect-[16/9] w-full overflow-hidden bg-white shadow-[0_2px_24px_-8px_rgba(35,32,28,0.35)]',
@@ -1717,47 +1781,11 @@ export function SlideEditor({
                 style={{ ...slideBgStyle(currentSlide), ...decorStyle(theme) }}
                 onContextMenu={openSlideMenu}
                 onPointerDown={(e) => {
-                  // chỉ bắt đầu khi bấm chuột trái lên nền trống hoặc phần tử đã khoá (không phải phần tử khác, tay nắm)
+                  // chỉ bắt đầu khi bấm lên nền trống hoặc phần tử đã khoá (không phải phần tử khác, tay nắm)
                   const onLocked = !!(e.target as Element).closest('[data-locked]')
-                  if (e.button !== 0 || (e.target !== e.currentTarget && !onLocked) || painter || croppingId || animPreview) return
+                  if (e.target !== e.currentTarget && !onLocked) return
                   if (onLocked) e.preventDefault()
-                  const frame = e.currentTarget
-                  const box = frame.getBoundingClientRect()
-                  const at = (ev: PointerEvent) => ({
-                    x: Math.max(0, Math.min(100, ((ev.clientX - box.left) / box.width) * 100)),
-                    y: Math.max(0, Math.min(100, ((ev.clientY - box.top) / box.height) * 100)),
-                  })
-                  const p0 = at(e.nativeEvent)
-                  let rect = { x0: p0.x, y0: p0.y, x1: p0.x, y1: p0.y }
-                  let moved = false
-                  const onMove = (ev: PointerEvent) => {
-                    const p = at(ev)
-                    rect = { ...rect, x1: p.x, y1: p.y }
-                    if (!moved && Math.hypot(p.x - p0.x, p.y - p0.y) < 0.6) return
-                    moved = true
-                    setMarquee(rect)
-                  }
-                  const onUp = () => {
-                    window.removeEventListener('pointermove', onMove)
-                    window.removeEventListener('pointerup', onUp)
-                    setMarquee(null)
-                    if (!moved) return
-                    didDragRef.current = true
-                    const [l, r] = [Math.min(rect.x0, rect.x1), Math.max(rect.x0, rect.x1)]
-                    const [t, b] = [Math.min(rect.y0, rect.y1), Math.max(rect.y0, rect.y1)]
-                    // chạm vào khung là tính, như Canva
-                    const hits = currentSlide.elements.filter((el) => !el.locked && el.x < r && el.x + el.w > l && el.y < b && el.y + heightOf(el) > t)
-                    setPainter(null)
-                    if (hits.length >= 2) {
-                      setSelectedElementId(null)
-                      setGroupIds(hits.map((el) => el.id))
-                    } else {
-                      setGroupIds([])
-                      setSelectedElementId(hits[0]?.id ?? null)
-                    }
-                  }
-                  window.addEventListener('pointermove', onMove)
-                  window.addEventListener('pointerup', onUp)
+                  startMarquee(e, e.currentTarget)
                 }}
                 onClickCapture={(e) => {
                   // Kéo xoay/resize có thể nhả chuột ngoài phần tử; đừng để cú
@@ -1773,30 +1801,6 @@ export function SlideEditor({
                 }}
               >
                 {gridOn ? <div className="slide-grid-overlay" aria-hidden /> : null}
-                {fixedGroup && (
-                  <div
-                    className="slide-group-box"
-                    aria-hidden
-                    style={{
-                      left: `${Math.min(...groupEls.map((el) => el.x))}%`,
-                      top: `${Math.min(...groupEls.map((el) => el.y))}%`,
-                      width: `${Math.max(...groupEls.map((el) => el.x + el.w)) - Math.min(...groupEls.map((el) => el.x))}%`,
-                      height: `${Math.max(...groupEls.map((el) => el.y + heightOf(el))) - Math.min(...groupEls.map((el) => el.y))}%`,
-                    }}
-                  />
-                )}
-                {marquee && (
-                  <div
-                    className="slide-marquee"
-                    aria-hidden
-                    style={{
-                      left: `${Math.min(marquee.x0, marquee.x1)}%`,
-                      top: `${Math.min(marquee.y0, marquee.y1)}%`,
-                      width: `${Math.abs(marquee.x1 - marquee.x0)}%`,
-                      height: `${Math.abs(marquee.y1 - marquee.y0)}%`,
-                    }}
-                  />
-                )}
                 {ribbonTab === 'animations'
                   ? currentSlide.elements
                       .filter((el) => startOf(el) !== undefined)
@@ -1879,6 +1883,33 @@ export function SlideEditor({
                   theme={theme}
                 />
               </div>
+              <div className="slide-chrome" ref={setChromeLayer}>
+                {fixedGroup && (
+                  <div
+                    className="slide-group-box"
+                    aria-hidden
+                    style={{
+                      left: `${Math.min(...groupEls.map((el) => el.x))}%`,
+                      top: `${Math.min(...groupEls.map((el) => el.y))}%`,
+                      width: `${Math.max(...groupEls.map((el) => el.x + el.w)) - Math.min(...groupEls.map((el) => el.x))}%`,
+                      height: `${Math.max(...groupEls.map((el) => el.y + heightOf(el))) - Math.min(...groupEls.map((el) => el.y))}%`,
+                    }}
+                  />
+                )}
+                {marquee && (
+                  <div
+                    className="slide-marquee"
+                    aria-hidden
+                    style={{
+                      left: `${Math.min(marquee.x0, marquee.x1)}%`,
+                      top: `${Math.min(marquee.y0, marquee.y1)}%`,
+                      width: `${Math.abs(marquee.x1 - marquee.x0)}%`,
+                      height: `${Math.abs(marquee.y1 - marquee.y0)}%`,
+                    }}
+                  />
+                )}
+              </div>
+              </SlideChromeContext.Provider>
             ) : (
               <EmptyState
                 icon={<MonitorPlay className="size-7" strokeWidth={1.4} />}

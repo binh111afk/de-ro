@@ -1,5 +1,5 @@
 /** Slide — phần sửa trực tiếp trên khung: kéo / đổi cỡ / xoay, đường gióng bắt dính, thanh nhóm. */
-import { useEffect, useRef, useState } from 'react'
+import { createContext, useContext, useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { svgDataUrl } from '@/lib/plot'
 import { readToolDoc, type ToolDoc } from '@/lib/toolSpec'
@@ -216,6 +216,13 @@ export function SnapGuides() {
 export type ResizeDir = 'nw' | 'n' | 'ne' | 'e' | 'se' | 's' | 'sw' | 'w'
 export const HANDLE_DIRS: ResizeDir[] = ['nw', 'n', 'ne', 'e', 'se', 's', 'sw', 'w']
 
+/** lớp nằm ngoài khung slide: viền chọn, tay nắm, khung quét vẽ ở đây nên không bị mép slide cắt (như Canva) */
+export const SlideChromeContext = createContext<HTMLElement | null>(null)
+
+/** khung slide chứa nút bấm; tay nắm nằm ở lớp ngoài nên không tìm được bằng `closest` */
+const frameOf = (node: Element) =>
+  node.closest<HTMLElement>('.slide-frame') ?? node.closest('.slide-stage__inner')?.querySelector<HTMLElement>(':scope > .slide-frame') ?? null
+
 export function EditableEl({
   el,
   slideId,
@@ -273,6 +280,7 @@ export function EditableEl({
 }) {
   const { status, fadeOnLoad } = useSlideImagePresentation(slideId, el.id, el.type === 'image' ? el.src : undefined)
   const movedRef = useRef(false)
+  const chromeLayer = useContext(SlideChromeContext)
   const [imageBusy, setImageBusy] = useState(false)
   const [imageError, setImageError] = useState<string | null>(null)
   const [natSize, setNatSize] = useState<{ w: number; h: number } | null>(null)
@@ -341,7 +349,7 @@ export function EditableEl({
     if (!selected && !grouped) onSelect()
     e.preventDefault()
     if (el.locked) return
-    const frame = (e.currentTarget as HTMLElement).closest('.slide-frame') as HTMLElement | null
+    const frame = frameOf(e.currentTarget as HTMLElement)
     if (!frame) return
     const rect = frame.getBoundingClientRect()
     const base = { x: el.x, y: el.y, w: el.w, h: height }
@@ -451,11 +459,7 @@ export function EditableEl({
       let nextWPct = (nextW / rect.width) * 100
       let nextHPct = (nextH / rect.height) * 100
       if (!el.rotation) {
-        // phần tử chưa xoay: giữ hộp trong trang như trước
-        nextWPct = Math.min(nextWPct, 100)
-        nextHPct = Math.min(nextHPct, 100)
-        nextXPct = clamp(nextXPct, 0, 100 - nextWPct)
-        nextYPct = clamp(nextYPct, 0, 100 - nextHPct)
+        // được kéo cỡ tràn ra ngoài trang (như Canva)
         // hút cạnh đang kéo vào đường gióng (góc khoá tỉ lệ thì bỏ — hút một trục sẽ làm lệch trục kia)
         if (!ev.altKey && !ratio && !(el.type === 'text' && dir.length === 2)) {
           const tolX = (SNAP_PX / rect.width) * 100
@@ -559,32 +563,20 @@ export function EditableEl({
     onDoubleClickCapture: grouped === 'soft' ? () => onSelectSingle?.() : undefined,
   }
 
-  // sát mép dưới slide thì nút xoay không còn chỗ phía dưới (bị cắt) nên lật lên đỉnh;
-  // phần tử phủ gần kín slide (không còn chỗ trên lẫn dưới) thì đặt nút xoay vào trong, sát đáy
-  const bottomEdge = el.y + height > 88
-  const rotTop = bottomEdge && el.y > 10
-  const rotInside = bottomEdge && !(el.y > 10)
-  // khung slide cắt phần tràn ra ngoài: cạnh nào chạm mép slide thì tay nắm resize dời vào trong để còn kéo được
-  const edgeH = height
-  const atL = el.x < 1.5
-  const atR = el.x + el.w > 98.5
-  const atT = el.y < 1.5
-  const atB = el.y + edgeH > 98.5
-
   /** Xoay quanh tâm hộp; giữ Shift để bắt góc 15°. */
   const startRotate = (e: React.PointerEvent) => {
     e.stopPropagation()
     e.preventDefault()
     if (!selected) onSelect()
-    const frame = (e.currentTarget as HTMLElement).closest('.slide-frame') as HTMLElement | null
+    const frame = frameOf(e.currentTarget as HTMLElement)
     if (!frame) return
     const rect = frame.getBoundingClientRect()
     const cx = rect.left + ((el.x + el.w / 2) / 100) * rect.width
     const cy = rect.top + ((el.y + el.h / 2) / 100) * rect.height
     onBeginHistory()
     const move = (ev: PointerEvent) => {
-      // tay nắm dưới đáy: con trỏ ở chính giữa phía dưới = 0° (−90); sát mép dưới slide thì tay nắm lật lên đỉnh (+90).
-      const deg = (Math.atan2(ev.clientY - cy, ev.clientX - cx) * 180) / Math.PI + (rotTop ? 90 : -90)
+      // tay nắm dưới đáy: con trỏ ở chính giữa phía dưới = 0°
+      const deg = (Math.atan2(ev.clientY - cy, ev.clientX - cx) * 180) / Math.PI - 90
       const snapped = ev.shiftKey ? Math.round(deg / 15) * 15 : Math.round(deg)
       onPreview({ rotation: ((snapped % 360) + 360) % 360 })
     }
@@ -610,16 +602,10 @@ export function EditableEl({
         <span
           key={dir}
           className={`slide-el-handle slide-el-handle--${dir}`}
-          // tâm tay nắm nằm trên viền; sát mép slide (khung cắt overflow) thì đẩy hẳn vào trong
-          style={{
-            translate: `${dir.includes('w') ? (atL ? '0' : '-50%') : dir.includes('e') ? (atR ? '-100%' : '-50%') : '-50%'} ${
-              dir.includes('n') ? (atT ? '0' : '-50%') : dir.includes('s') ? (atB ? '-100%' : '-50%') : '-50%'
-            }`,
-          }}
           onPointerDown={(e) => startDrag(e, 'resize', dir)}
         />
       ))}
-      <span className={`slide-el-rotate${rotTop ? ' slide-el-rotate--top' : ''}${rotInside ? ' slide-el-rotate--in' : ''}`} data-tip="Xoay" onPointerDown={startRotate}>
+      <span className="slide-el-rotate" data-tip="Xoay" onPointerDown={startRotate}>
         <RotateCw size={13} strokeWidth={2} />
       </span>
     </>
@@ -640,10 +626,32 @@ export function EditableEl({
     </span>
   ) : null
 
+  // sự kiện của portal vẫn nổi lên phần tử này trong React, nên bấm/kéo tay nắm chạy như khi nằm bên trong
   const chrome = (
     <>
       {linkBadge}
-      {handle}
+      {chromeLayer && (selected || grouped)
+        ? createPortal(
+            <div
+              className="slide-chrome__box"
+              data-el-chrome={el.id}
+              style={{
+                left: style.left,
+                top: style.top,
+                width: style.width,
+                height: style.height,
+                rotate: style.rotate,
+                scale: style.scale,
+                transition: style.transition,
+                outline: style.outline,
+                outlineOffset: style.outlineOffset,
+              }}
+            >
+              {handle}
+            </div>,
+            chromeLayer,
+          )
+        : handle}
     </>
   )
 
@@ -821,7 +829,7 @@ export function EditableEl({
       e.stopPropagation()
       e.preventDefault()
       if (el.locked) return
-      const frame = (e.currentTarget as HTMLElement).closest('.slide-frame') as HTMLElement | null
+      const frame = frameOf(e.currentTarget as HTMLElement)
       if (!frame) return
       const rect = frame.getBoundingClientRect()
       const startX = e.clientX
@@ -879,7 +887,7 @@ export function EditableEl({
       if (e.button !== 0 || el.locked) return
       e.stopPropagation()
       e.preventDefault()
-      const frame = (e.currentTarget as HTMLElement).closest('.slide-frame') as HTMLElement | null
+      const frame = frameOf(e.currentTarget as HTMLElement)
       if (!frame) return
       const rect = frame.getBoundingClientRect()
       const startX = e.clientX

@@ -220,6 +220,24 @@
 .slide-el-handle--s { left: 50%; top: 100%; cursor: ns-resize; }
 .slide-el-handle--sw { left: 0; top: 100%; cursor: nesw-resize; }
 .slide-el-handle--w { left: 0; top: 50%; cursor: ew-resize; }
+.slide-el-handle { translate: -50% -50%; }
+
+/* lớp ngoài khung slide: không bị `overflow: hidden` của khung cắt mất */
+.slide-chrome {
+  position: absolute;
+  inset: 0;
+  /* phần tràn ra chỉ được vẽ, không làm vùng soạn sinh thanh cuộn */
+  contain: layout;
+  z-index: 50;
+  pointer-events: none;
+}
+.slide-chrome__box {
+  position: absolute;
+  pointer-events: none;
+}
+.slide-chrome__box > * {
+  pointer-events: auto;
+}
 
 /* tay nắm xoay phía trên, có dây nối xuống cạnh trên như bản gốc */
 .slide-el-rotate {
@@ -240,10 +258,6 @@
   touch-action: none;
   z-index: 11;
 }
-.slide-el-rotate--top {
-  bottom: auto;
-  top: -34px;
-}
 .layer-menu {
   transform-origin: top left;
   animation: layer-menu-in 120ms ease-out;
@@ -258,9 +272,6 @@
   .layer-menu {
     animation: none;
   }
-}
-.slide-el-rotate--in {
-  bottom: 14px;
 }
 .slide-el-rotate:active {
   cursor: grabbing;
