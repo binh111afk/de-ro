@@ -6721,8 +6721,7 @@ var ART = {
   "chinh-tri/tem-do": [820, 1016],
   "chinh-tri/sen": [626, 900],
   "chinh-tri/sach-but": [900, 862],
-  "chinh-tri/bo-cau": [900, 660],
-  "chinh-tri/lua-banh-rang": [843, 900],
+  "chinh-tri/sen-kem": [626, 900],
   "chinh-tri/bua-liem": [600, 524],
   "chinh-tri/sach-kem": [900, 862],
   "chinh-tri/bo-cau-do": [900, 660],
@@ -7970,105 +7969,121 @@ var chinhTriCover = (t6) => {
 function chinhTri(id, c8, { title, body }, standard) {
   const { background: cream, ink: red, fg, muted } = PACK_COLORS["chinh-tri"];
   const gold = "#f4dc71";
-  const head = { fontWeight: 800, caps: true, lineHeight: 1.1 };
+  const shade = "#4d0c10";
+  const head = { fontWeight: 700, caps: true, lineHeight: 1.1 };
   const long = (c8.title?.length ?? 0) > 34;
   const block = (n10, x, y, w, h, fill, extra = {}) => ({ id: n10, type: "shape", shape: "rect", fill, border: 0, shadowLevel: 0, decor: true, ...box(x, y, w, h), ...extra });
   const paper = block("decor-kit-0", 0, 0, 1280, 720, cream, { locked: true });
   const solid = block("decor-kit-0", 0, 0, 1280, 720, red, { locked: true });
   const star = (x, y, w, fill, opacity) => block("decor-kit-1", x, y, w, w * 0.951, fill, { shape: "star", opacity });
-  const band = (fill) => c8.credit ? null : block("decor-kit-2", 0, 680, 1280, 40, fill);
+  const band = (fill) => block("decor-kit-2", 0, 650, 1280, 70, fill);
+  const sub = (b, color, align = "left") => title("kicker", upper(c8.kicker), b, 46, color, { fontWeight: 600, align, valign: "top", lineHeight: 1.15 });
   const photo = (b, src = c8.image) => image("image-1", src, b, { imagePosition: { x: c8.focusX ?? 50, y: c8.focusY ?? 40 }, crop: c8.imageCrop });
-  const stamp = (name, x, y, w) => {
-    const h = w * ART[`chinh-tri/${name}`][1] / ART[`chinh-tri/${name}`][0];
-    return [art(3, `chinh-tri/${name}`, x, y, w), photo(box(x + 32, y + 32, w - 64, h - 64))];
-  };
-  const cover = (name, most = 420) => {
+  const stamp = (name) => art(3, `chinh-tri/${name}`, 48, -2, 560);
+  const fitArt = (n10, name, x, y, w, h) => {
     const [aw, ah] = ART[name];
-    const w = Math.min(most, 480 * aw / ah);
-    return art(4, name, 306 - w / 2, 358 - w * ah / aw / 2, w);
+    const width = Math.min(w, h * aw / ah);
+    return art(n10, name, x + (w - width) / 2, y + (h - width * ah / aw) / 2, width);
   };
   const words = `${c8.kicker ?? ""} ${c8.title ?? ""} ${c8.subtitle ?? ""}`.normalize("NFC").toLocaleLowerCase("vi");
-  const figures = chinhTriFigures(words);
-  const emblem = figures[0] === "bua-liem";
-  const frame = art(3, "chinh-tri/tem-kem", 56, 48, 500);
-  const coverArt = () => {
-    if (c8.image) return stamp("tem-kem", 56, 48, 500);
-    if (emblem) return [frame, cover("chinh-tri/bua-liem", 340)];
-    if (figures.length === 1) return [frame, art(4, `chinh-tri/${figures[0]}`, 88, 80, 436)];
-    if (figures.length) return figures.flatMap((name, i) => [
-      art(3 + i * 3, "chinh-tri/tem-kem", 40 + i * 230, 52 + i * 220, 300),
-      art(4 + i * 3, `chinh-tri/${name}`, 62 + i * 230, 74 + i * 220, 256)
-    ]);
-    return [frame, cover(`chinh-tri/${chinhTriCover(words)}`)];
-  };
   switch (id) {
-    case "photo-full":
+    case "photo-full": {
+      if (!c8.image && /cảm ơn|thank/.test(words)) return [
+        paper,
+        stamp("tem-do"),
+        fitArt(4, "chinh-tri/sen-kem", 118, 80, 420, 520),
+        body("kicker", upper(c8.kicker), box(640, 44, 580, 66), 30, muted, { fontWeight: 700, align: "right" }),
+        title("title", c8.title, box(640, 170, 584, 280), long ? 100 : 160, red, { ...head, align: "right", valign: "middle" }),
+        body("subtitle", c8.subtitle, box(660, 470, 564, 160), 40, fg, { align: "right", lineHeight: 1.3 }),
+        c8.credit ? band(red) : null
+      ];
+      const figures = chinhTriFigures(words);
+      const coverArt = () => {
+        if (c8.image) return [stamp("tem-kem"), photo(box(84, 34, 488, 622))];
+        if (figures[0] === "bua-liem") return [stamp("tem-kem"), fitArt(4, "chinh-tri/bua-liem", 128, 130, 400, 430)];
+        if (figures.length === 1) return [stamp("tem-kem"), art(4, `chinh-tri/${figures[0]}`, 86, 34, 484)];
+        if (figures.length) return figures.flatMap((name, i) => [
+          art(3 + i * 3, "chinh-tri/tem-kem", 40 + i * 248, 28 + i * 240, 320),
+          art(4 + i * 3, `chinh-tri/${name}`, 62 + i * 248, 50 + i * 240, 276)
+        ]);
+        return [stamp("tem-kem"), fitArt(4, `chinh-tri/${chinhTriCover(words)}`, 118, 90, 420, 510)];
+      };
       return [
         solid,
-        star(830, 40, 440, cream, 0.1),
+        star(760, 60, 500, shade, 0.2),
         ...coverArt(),
-        body("kicker", upper(c8.kicker), box(600, 76, 620, 72), 36, cream, { fontWeight: 700, align: "right" }),
-        title("title", c8.title, box(580, 160, 640, 350), long ? 94 : 128, gold, { ...head, align: "right", valign: "middle" }),
-        body("subtitle", c8.subtitle, box(620, 520, 600, c8.credit ? 128 : 150), 42, cream, { align: "right", lineHeight: 1.3 })
+        body("kicker", upper(c8.kicker), box(640, 44, 580, 66), 30, cream, { fontWeight: 700, align: "right" }),
+        title("title", c8.title, box(630, 150, 594, 360), long ? 94 : 132, gold, { ...head, align: "right", valign: "middle" }),
+        body("subtitle", c8.subtitle, box(640, 530, 584, c8.credit ? 118 : 150), 40, cream, { align: "right", lineHeight: 1.3 })
       ];
+    }
     case "manifesto": {
       const text = statement(c8);
       return [
         solid,
-        star(390, 100, 500, cream, 0.1),
-        body("kicker", upper(c8.kicker), box(190, 70, 900, 76), 38, gold, { fontWeight: 700, align: "center" }),
-        title("body", text, box(90, 160, 1100, 370), text.length > 150 ? 62 : text.length > 80 ? 82 : 104, cream, { ...head, caps: false, align: "center", valign: "middle", lineHeight: 1.2 }),
-        block("divider-1", 580, 546, 120, 6, gold),
-        body("author", c8.author, box(190, 566, 900, 76), 40, gold, { align: "center" }),
+        star(380, 40, 520, shade, 0.2),
+        body("kicker", upper(c8.kicker), box(190, 50, 900, 76), 38, gold, { fontWeight: 700, align: "center" }),
+        title("body", text, box(90, 140, 1100, 370), text.length > 150 ? 62 : text.length > 80 ? 82 : 104, cream, { ...head, caps: false, align: "center", valign: "middle", lineHeight: 1.2 }),
+        block("divider-1", 580, 524, 120, 6, gold),
+        body("author", c8.author, box(190, 550, 900, 76), 40, gold, { align: "center" }),
         band(cream)
       ];
     }
     case "editorial-text":
+      if (c8.image) return [
+        solid,
+        star(-60, 60, 520, shade, 0.2),
+        photo(box(750, 0, 530, 650)),
+        title("title", c8.title, box(60, 30, 660, 180), long ? 76 : 112, gold, { ...head, valign: "middle" }),
+        sub(box(64, 212, 650, 76), cream),
+        body("body", paragraphs(c8), box(64, 300, 650, 336), 40, cream, { lineHeight: 1.35 }),
+        band(cream)
+      ];
       return [
         paper,
-        ...c8.image ? stamp("tem-do", 780, 52, 460) : [star(770, 100, 470, gold, 0.5), art(3, "chinh-tri/sach-but", 800, 180, 430)],
-        title("title", c8.title, box(60, 24, 700, 190), long ? 78 : 112, red, { ...head, valign: "middle" }),
-        body("kicker", upper(c8.kicker), box(64, 214, 690, 66), 32, muted, { fontWeight: 700 }),
-        body("body", paragraphs(c8), box(64, 288, 690, c8.credit ? 362 : 380), 44, fg, { lineHeight: 1.35 }),
+        block("decor-kit-1", 810, 0, 470, 650, red),
+        art(3, "chinh-tri/sach-kem", 855, 150, 380),
+        title("title", c8.title, box(60, 20, 720, 170), long ? 72 : 108, red, { ...head, valign: "middle" }),
+        sub(box(64, 188, 710, 72), fg),
+        block("divider-1", 60, 268, 710, 362, cream, { border: 3, borderColor: red }),
+        body("body", paragraphs(c8), box(86, 284, 660, 334), 38, fg, { lineHeight: 1.35 }),
         band(red)
       ];
     case "rules": {
       const rows = rowsOf(c8);
       if (!rows.length) return [];
       const n10 = rows.length;
-      const w = 1160 / n10;
       if (rows.every((row) => row.value.length <= 4)) {
-        const top = c8.kicker ? 224 : 180;
-        const h = ((c8.credit ? 650 : 676) - top) / n10;
-        const chip = Math.min(84, h - 12);
+        const top = 236;
+        const h = (636 - top) / n10;
         return [
           paper,
-          block("decor-kit-1", 0, 0, 420, c8.credit ? 656 : 720, red),
-          art(3, "chinh-tri/sach-kem", 45, 195, 330),
-          title("title", c8.title, box(470, 20, 770, 144), long ? 70 : 104, red, { ...head, valign: "middle" }),
-          body("kicker", upper(c8.kicker), box(474, 156, 760, 64), 30, muted, { fontWeight: 700 }),
+          art(3, "chinh-tri/sen", 100, 60, 378),
+          title("title", c8.title, box(520, 24, 704, 150), long ? 70 : 112, red, { ...head, align: "right", valign: "middle" }),
+          sub(box(520, 162, 704, 70), fg, "right"),
           ...rows.flatMap((row, i) => {
             const y = top + i * h;
             return [
-              block(`divider-${i + 1}`, 474, y + (h - chip) / 2, 112, chip, gold),
-              title(`item-${i + 1}-value`, row.value, box(478, y + (h - chip) / 2, 104, chip), n10 > 4 ? 46 : 58, red, { ...head, caps: false, align: "center", valign: "middle" }),
-              body(`item-${i + 1}-label`, row.label, box(610, y + 2, 645, h - 4), n10 > 4 ? 36 : 44, fg, { valign: "middle", lineHeight: 1.2, fontWeight: 600 })
+              body(`item-${i + 1}-label`, row.label, box(500, y + 2, 600, h - 4), n10 > 4 ? 34 : 40, fg, { align: "right", valign: "middle", lineHeight: 1.2, fontWeight: 600 }),
+              title(`item-${i + 1}-value`, row.value, box(1112, y + 2, 112, h - 4), n10 > 4 ? 48 : 60, red, { ...head, caps: false, align: "right", valign: "middle" })
             ];
-          })
+          }),
+          band(red)
         ];
       }
-      const size = n10 > 4 ? 28 : n10 > 3 ? 34 : n10 > 2 ? 40 : 46;
+      const w = 1160 / n10;
+      const size = n10 > 4 ? 28 : n10 > 3 ? 34 : n10 > 2 ? 38 : 44;
       return [
         paper,
-        title("title", c8.title, box(60, 24, 1160, 160), long ? 76 : 104, red, { ...head, align: "center", valign: "middle" }),
-        body("kicker", upper(c8.kicker), box(240, 184, 800, 62), 32, muted, { fontWeight: 700, align: "center" }),
+        star(390, 80, 500, gold, 0.25),
+        title("title", c8.title, box(60, 20, 1160, 156), long ? 76 : 104, red, { ...head, align: "center", valign: "middle" }),
+        sub(box(240, 168, 800, 70), fg, "center"),
         ...rows.flatMap((row, i) => {
           const x = 60 + i * w;
           return [
-            block(`divider-${i * 2 + 1}`, x + 8, 256, w - 16, c8.credit ? 394 : 400, "#ffffff", { border: 3, borderColor: red }),
-            block(`divider-${i * 2 + 2}`, x + 8, 256, w - 16, 108, gold),
-            title(`item-${i + 1}-value`, row.value, box(x + 18, 260, w - 36, 100), n10 > 3 ? 38 : 52, red, { ...head, caps: false, align: "center", valign: "middle", lineHeight: 1.15 }),
-            body(`item-${i + 1}-label`, row.label, box(x + 18, 378, w - 36, c8.credit ? 262 : 270), size, fg, { align: "center", lineHeight: 1.3 })
+            block(`divider-${i + 1}`, x + 8, 244, w - 16, 388, cream, { border: 3, borderColor: red }),
+            title(`item-${i + 1}-value`, row.value, box(x + 14, 250, w - 28, 124), n10 > 3 ? 36 : 46, red, { ...head, caps: false, align: "center", valign: "middle", lineHeight: 1.15 }),
+            body(`item-${i + 1}-label`, row.label, box(x + 18, 376, w - 36, 244), size, fg, { align: "center", lineHeight: 1.3 })
           ];
         }),
         band(red)
@@ -8076,13 +8091,15 @@ function chinhTri(id, c8, { title, body }, standard) {
     }
     case "bignum":
       return [
-        solid,
-        ...c8.image ? stamp("tem-kem", 780, 52, 450) : [star(800, 40, 420, cream, 0.1), art(3, "chinh-tri/lua-banh-rang", 840, 56, 340)],
-        body("kicker", upper(c8.kicker), box(80, 36, 640, 74), 36, gold, { fontWeight: 700 }),
-        block("divider-1", 80, 118, 640, 302, cream),
-        title("bignum-value", c8.value, box(100, 128, 600, 282), 240, red, { ...head, align: "center", valign: "middle", lineHeight: 1 }),
-        title("bignum-label", c8.label, box(80, 436, c8.image ? 670 : 1140, 100), 68, gold, { ...head, lineHeight: 1.15 }),
-        body("subtitle", c8.subtitle, box(80, 544, c8.image ? 670 : 1140, 116), 42, cream, { lineHeight: 1.25 })
+        paper,
+        star(760, 70, 500, gold, 0.25),
+        c8.image ? photo(box(60, 0, 500, 560)) : fitArt(3, "chinh-tri/lua-banh-rang-do", 120, 24, 420, 380),
+        block("divider-1", 60, 400, 380, 232, cream, { border: 3, borderColor: red }),
+        title("bignum-value", c8.value, box(70, 410, 360, 212), 180, red, { ...head, caps: false, align: "center", valign: "middle", lineHeight: 1 }),
+        title("bignum-label", c8.label, box(600, 60, 624, 220), 112, red, { ...head, align: "right", valign: "middle" }),
+        sub(box(600, 290, 624, 116), fg, "right"),
+        body("subtitle", c8.subtitle, box(600, 424, 624, 210), 40, fg, { align: "right", lineHeight: 1.3 }),
+        band(red)
       ];
     case "bullets": {
       const items = list(c8.bullets).length ? list(c8.bullets) : list(c8.body?.split("\n"));
@@ -8090,24 +8107,29 @@ function chinhTri(id, c8, { title, body }, standard) {
       const numbered = items.every((item) => /^\d+[.)]\s/.test(item));
       const text = items.map((item) => numbered ? item : `\u2022 ${item}`).join("\n");
       return [
-        paper,
-        block("decor-kit-1", 0, 0, 500, c8.credit ? 656 : 720, red),
-        title("title", c8.title, box(30, 40, 440, 420), long ? 74 : 96, gold, { ...head, valign: "middle" }),
-        art(3, "chinh-tri/bo-cau", 110, 480, 270),
-        body("bullets", text, box(540, 40, 710, c8.credit ? 604 : 640), text.length > 320 ? 34 : text.length > 180 ? 42 : 50, fg, { valign: "middle", lineHeight: 1.4 })
+        solid,
+        star(380, 60, 520, shade, 0.2),
+        title("title", c8.title, box(60, 20, 1160, 156), long ? 70 : 104, gold, { ...head, align: "center", valign: "middle" }),
+        block("divider-1", 90, 192, 1100, 440, red, { border: 3, borderColor: gold, opacity: 0.92 }),
+        body("bullets", text, box(130, 208, 1020, 408), text.length > 320 ? 32 : text.length > 180 ? 40 : 48, cream, { valign: "middle", lineHeight: 1.6 }),
+        band(cream)
       ];
     }
     case "photo-compare": {
-      const h = c8.caption || c8.caption2 ? 320 : 430;
+      const captions = Boolean(c8.caption || c8.caption2);
+      const top = captions ? 300 : 206;
       return [
         solid,
-        title("title", c8.title, box(60, 24, 1160, 160), long ? 72 : 100, gold, { ...head, align: "center", valign: "middle" }),
-        block("divider-1", 60, 200, 570, h + 28, cream),
-        block("divider-2", 650, 200, 570, h + 28, cream),
-        image("image-1", c8.image, box(74, 214, 542, h), { crop: c8.imageCrop }),
-        image("image-2", c8.image2, box(664, 214, 542, h), { crop: c8.image2Crop }),
-        body("photo-caption", c8.caption, box(60, 556, 570, c8.credit ? 96 : 132), 36, cream, { align: "center", lineHeight: 1.2 }),
-        body("photo-caption-2", c8.caption2, box(650, 556, 570, c8.credit ? 96 : 132), 36, cream, { align: "center", lineHeight: 1.2 })
+        title("title", c8.title, box(60, 20, 1160, 156), long ? 70 : 104, gold, { ...head, align: "center", valign: "middle" }),
+        ...[60, 650].flatMap((x, i) => [
+          block(`divider-${i * 2 + 1}`, x, 200, 570, 434, red, { border: 3, borderColor: gold }),
+          captions ? block(`divider-${i * 2 + 2}`, x, 200, 570, 90, gold) : null
+        ]),
+        image("image-1", c8.image, box(74, top, 542, 624 - top), { crop: c8.imageCrop }),
+        image("image-2", c8.image2, box(664, top, 542, 624 - top), { crop: c8.image2Crop }),
+        body("photo-caption", c8.caption, box(70, 204, 550, 84), 34, shade, { align: "center", valign: "middle", lineHeight: 1.15, fontWeight: 700 }),
+        body("photo-caption-2", c8.caption2, box(660, 204, 550, 84), 34, shade, { align: "center", valign: "middle", lineHeight: 1.15, fontWeight: 700 }),
+        band(cream)
       ];
     }
     case "bars": {
@@ -8115,11 +8137,11 @@ function chinhTri(id, c8, { title, body }, standard) {
       if (!chart.length) return [];
       for (const el of chart) {
         el.x = 8 + (el.x - 5) * 0.93;
-        el.y = 36 + (el.y - 26) * 0.86;
+        el.y = 33 + (el.y - 26) * 0.84;
         el.w *= 0.93;
-        el.h *= 0.86;
+        el.h *= 0.84;
       }
-      return [paper, title("title", c8.title, box(60, 30, 1160, 190), long ? 62 : 84, red, { ...head, align: "center", valign: "middle" }), ...chart];
+      return [paper, title("title", c8.title, box(60, 20, 1160, 180), long ? 70 : 96, red, { ...head, align: "center", valign: "middle" }), ...chart, band(red)];
     }
     default: {
       const elements = standard();
@@ -8222,8 +8244,11 @@ function composePack(pack, layoutId, content, text, standard) {
   }
   return [...backdrop(pack), ...elements];
 }
-function packCreditColor(pack, layoutId) {
-  if (pack === "chinh-tri" && ["photo-full", "manifesto", "bignum", "photo-compare"].includes(layoutId)) return "#fbe9e0";
+function packCreditColor(pack, layoutId, hasImage = false) {
+  if (pack === "chinh-tri") {
+    const onCream = ["manifesto", "bullets", "photo-compare"].includes(layoutId) || layoutId === "editorial-text" && hasImage;
+    return onCream ? PACK_COLORS[pack].muted : "#fbe9e0";
+  }
   return pack === "co-dien" && layoutId === "manifesto" ? CREAM : PACK_COLORS[pack].muted;
 }
 
@@ -9977,7 +10002,7 @@ function composeStatic(theme, layoutId, content, tone) {
   const pack = palette2.pack;
   const elements = pack ? composePack(pack, id, content, palette2.text, () => composeById(id, palette2, content)) : withKitDecor(id, composeById(id, palette2, content), content, palette2);
   if (!elements.length) return elements;
-  const creditColor = pack ? packCreditColor(pack, id) : id === "photo-full" ? PHOTO_MUTED : palette2.muted;
+  const creditColor = pack ? packCreditColor(pack, id, Boolean(content.image)) : id === "photo-full" ? PHOTO_MUTED : palette2.muted;
   const credit = creditElement(content.credit, creditColor, palette2.pro ? 1.45 : void 0);
   if (pack) return credit ? [...elements, { ...credit, y: 92.5 }] : elements;
   return withSlideCredit(elements, credit);

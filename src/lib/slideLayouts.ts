@@ -1957,7 +1957,7 @@ function composeStatic(
     ? composePack(pack, id, content, palette.text, () => composeById(id, palette, content))
     : withKitDecor(id, composeById(id, palette, content), content, palette)
   if (!elements.length) return elements
-  const creditColor = pack ? packCreditColor(pack, id) : id === 'photo-full' ? PHOTO_MUTED : palette.muted
+  const creditColor = pack ? packCreditColor(pack, id, Boolean(content.image)) : id === 'photo-full' ? PHOTO_MUTED : palette.muted
   const credit = creditElement(content.credit, creditColor, palette.pro ? 1.45 : undefined)
   // bộ phong cách: hình trang trí nằm sát đáy nên không co cả slide; bố cục tự chừa chỗ, dòng nguồn đặt sát mép dưới
   if (pack) return credit ? [...elements, { ...credit, y: 92.5 }] : elements
