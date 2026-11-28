@@ -2,6 +2,7 @@
 
 Chỉ mở phiên liên quan đến việc đang làm. Mới nhất ở trên.
 
+- [phiên 61](phien-61.md): **chế độ slide Giữ nguyên chữ** (`slidePreserve.ts`, `slide-giu-chu`, nút icon `FileText`), **bảng Hiệu ứng kiểu Canva & chuyển trang Morph**, ảnh AI **SenseNova chính hãng `sensenova-u1.6-lite`** (bỏ Xkiro), giảm dung lượng function Vercel ~75% (`appServer.ts`, `urlGuard.ts`), sửa prompt `slide-sua` phân biệt `new_deck` vs `add_slide`, **vá bảo mật 28/11** (XSS SVG/In, `ai_request_holds` migration `20261225`, `payments.credit`, OOM/DoS `extract.ts`, JWT `exp` cache)
 - [phiên 60](phien-60.md): **kiểu "Học thuật"** (Đỏ son, Đại học, Địa lí), khung chờ ảnh, **khung chọn slide tràn mép / quét từ phần khoá**, thẻ xuất file; chưa thử trên bản chạy thật
 - [phiên 59](phien-59.md): **slide Chuyên nghiệp** thêm các bộ vẽ tay (38 bộ), chữ to hơn, **chọn doodle / tạp chí sau khi duyệt dàn ý**; [cách thêm template](../huong-dan-them-bo-slide.md)
 - [phiên 58](phien-58.md): **AI sửa slide** (đánh số trước khi áp, giữ phần tự chỉnh, lệnh `set_background` / `edit_element`), **đồ thị đường đen, chữ to** + hình lăng trụ; đã push; việc phiên sau: thử trên bản chạy thật
