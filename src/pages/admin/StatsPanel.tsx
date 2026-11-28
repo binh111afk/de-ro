@@ -7,6 +7,7 @@ import {
   Activity,
   ArrowUpRight,
   Calendar,
+  Coins,
   Radio,
   RefreshCw,
   UserPlus,
@@ -296,7 +297,7 @@ export function StatsPanel({ me: _me }: StatsPanelProps) {
       </div>
 
       {/* Hàng thẻ số liệu chính */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:max-lg:[&>*:nth-child(3)]:col-span-2 lg:grid-cols-6 lg:*:col-span-2 lg:[&>*:nth-child(n+4)]:col-span-3">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {/* Thẻ 1: Tổng người dùng */}
         <Card className="flex flex-col justify-between border border-line p-5 shadow-soft transition-all hover:border-line-2">
           <div>
@@ -423,6 +424,32 @@ export function StatsPanel({ me: _me }: StatsPanelProps) {
               )}
             </div>
           </div>
+        </Card>
+
+        {/* Thẻ 6: Tổng điểm AI đã dùng của tất cả người dùng */}
+        <Card className="flex flex-col justify-between border border-line p-5 shadow-soft transition-all hover:border-line-2">
+          <div>
+            <div className="flex items-center justify-between">
+              <span className="text-[12.5px] font-medium text-ink-3">Tổng điểm đã dùng</span>
+              <div className="flex size-8 items-center justify-center rounded-[6px] bg-sunken text-ink-2">
+                <Coins className="size-4" />
+              </div>
+            </div>
+            <div className="mt-2.5">
+              {loading ? (
+                <div className="flex h-9 items-center">
+                  <Spinner className="text-ink-3" />
+                </div>
+              ) : (
+                <div className="tnum text-[26px] font-bold tracking-tight text-ink sm:text-[28px]">
+                  {formatNumber(stats?.totalPointsUsed)}
+                </div>
+              )}
+            </div>
+          </div>
+          <p className="mt-3 border-t border-line-2 pt-2.5 text-[11.5px] text-ink-4">
+            Trong {days} ngày qua: {loading ? '…' : formatNumber(stats?.pointsUsedInPeriod)}
+          </p>
         </Card>
       </div>
 

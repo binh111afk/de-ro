@@ -7,6 +7,7 @@
 import type { ActionMap } from './admin.js'
 import { call } from './admin.js'
 import { mapAdminFunnel, type AdminFunnelRaw } from './adminFunnel.js'
+import { TOKENS_PER_POINT } from './aiQuota.js'
 
 interface DailyStatsRaw {
   day: string
@@ -82,12 +83,56 @@ export async function readStatsOverview(s: Parameters<typeof call>[0], days: num
   }
 }
 
+interface PointsUsedGroupRaw {
+  billed?: number | string | null
+  in_window?: boolean
+}
+
+/** Tổng điểm AI đã dùng của tất cả người dùng (toàn thời gian và trong `days` ngày gần nhất). */
+async function readPointsUsed(
+  s: Parameters<typeof call>[0],
+  days: number,
+): Promise<{ totalPointsUsed: number; pointsUsedInPeriod: number }> {
+  const now = Date.now()
+  const vnToday = new Date(now + 7 * 3_600_000)
+  vnToday.setUTCHours(0, 0, 0, 0)
+  const periodStart = new Date(vnToday.getTime() - (days - 1) * 86_400_000 - 7 * 3_600_000).toISOString()
+
+  const { data } = await call<PointsUsedGroupRaw[]>(s, '/rest/v1/rpc/admin_ai_margin_groups', {
+    method: 'POST',
+    body: JSON.stringify({
+      p_since: periodStart,
+      p_month_start: '1970-01-01T00:00:00.000Z',
+      p_until: new Date(now).toISOString(),
+    }),
+  })
+
+  let totalBilled = 0
+  let periodBilled = 0
+  for (const row of data ?? []) {
+    const billed = Number(row?.billed ?? 0)
+    if (!Number.isFinite(billed) || billed <= 0) continue
+    totalBilled += billed
+    if (row.in_window) periodBilled += billed
+  }
+
+  return {
+    totalPointsUsed: Math.round(totalBilled / TOKENS_PER_POINT),
+    pointsUsedInPeriod: Math.round(periodBilled / TOKENS_PER_POINT),
+  }
+}
+
 export const STATS_ACTIONS: ActionMap = {
   /** Thống kê số liệu người dùng, tài liệu theo ngày và các tổng; days 1..90 (mặc định 7) */
   'stats.overview': {
     need: 'admin',
     run: async (ctx, b) => {
-      return readStatsOverview(ctx.s, Math.min(90, Math.max(1, Math.floor(Number(b.days) || 7))))
+      const days = Math.min(90, Math.max(1, Math.floor(Number(b.days) || 7)))
+      const [overview, points] = await Promise.all([
+        readStatsOverview(ctx.s, days),
+        readPointsUsed(ctx.s, days).catch(() => ({ totalPointsUsed: 0, pointsUsedInPeriod: 0 })),
+      ])
+      return { ...overview, ...points }
     },
   },
 

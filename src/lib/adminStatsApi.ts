@@ -19,6 +19,8 @@ export interface StatsOverview {
   active7d: number
   active30d: number
   onlineCount: number
+  totalPointsUsed: number
+  pointsUsedInPeriod: number
   chartDays: DailyStat[]
   daily?: DailyStat[]
 }
@@ -81,6 +83,8 @@ function mockStatsOverview(days: number): StatsOverview {
     active7d: 46,
     active30d: 92,
     onlineCount: 4,
+    totalPointsUsed: 4280,
+    pointsUsedInPeriod: days === 7 ? 385 : days === 30 ? 1420 : 3190,
     chartDays,
     daily: chartDays,
   }

@@ -61,6 +61,12 @@ globalThis.fetch = (async (input: string | URL, init: RequestInit = {}) => {
       ],
     })
   }
+  if (url.includes('/rpc/admin_ai_margin_groups')) {
+    return ok([
+      { billed: '15000', in_window: true },
+      { billed: 35000, in_window: false },
+    ])
+  }
   if (url.includes('/rest/v1/presence')) {
     return ok(
       [
@@ -137,6 +143,10 @@ const r = defRes.data
 check(
   'stats.overview đổi tên các tổng sang camelCase',
   r.totalUsers === 120 && r.active7d === 45 && r.active30d === 90 && r.onlineCount === 3,
+)
+check(
+  'stats.overview tính tổng điểm đã dùng và điểm trong kỳ',
+  r.totalPointsUsed === 50 && r.pointsUsedInPeriod === 15,
 )
 
 const d = ((r.chartDays ?? r.daily) as Array<Record<string, unknown>>)?.[0]
