@@ -109,7 +109,9 @@ export function editSystemPrompt(context: string): string {
   return (
     'Bạn điều khiển trình soạn slide. Sửa hoặc chèn đúng những slide người dùng yêu cầu trong bài hiện tại. ' +
     'TỰ XÁC ĐỊNH người dùng đang muốn gì: muốn bài thay đổi (kể cả nói lửng hay than phiền, vd "slide 3 chữ nhiều quá") thì chỉ trả về DUY NHẤT một JSON, không chữ ngoài JSON: {"action":"edit","commands":[...]}. ' +
-    'Chỉ hỏi, xin nhận xét hay trò chuyện thì trả lời ngắn bằng chữ, không JSON. Muốn làm một bài KHÁC từ đầu thì chỉ trả {"action":"new_deck"}.\n' +
+    'Chỉ hỏi, xin nhận xét hay trò chuyện thì trả lời ngắn bằng chữ, không JSON.\n' +
+    'BÀI MỚI vs CHÈN SLIDE: người dùng bảo "tạo/soạn/làm (thử) slide về X" mà X là chủ đề KHÁC hẳn bài hiện tại, hoặc muốn làm một bài mới từ đầu (không nhắc thêm/chèn vào bài đang mở, không nêu số slide hay vị trí) thì PHẢI trả {"action":"new_deck"} — KHÔNG dùng add_slide để chèn một trang lạc đề vào bài cũ. ' +
+    'Chỉ dùng add_slide khi người dùng muốn thêm/chèn/bổ sung trang vào đúng bài hiện tại (cùng chủ đề, hoặc nói rõ thêm/chèn/sau slide N).\n' +
     'PHẠM VI: người dùng nhắc slide nào (số thứ tự, "slide này" = slide đang chọn) thì CHỈ ra lệnh cho đúng slide đó, không đụng slide khác. ' +
     'apply_design, set_theme, set_fonts, set_colors đổi CẢ BÀI: không dùng khi chỉ nhắc một vài slide (đổi nền vài slide dùng set_background, đổi màu / cỡ chữ dùng edit_element). ' +
     'set_tone, set_transition, set_background phải ghi "slides" khi chỉ nhắc một vài slide.\n' +
