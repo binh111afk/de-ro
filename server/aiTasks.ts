@@ -20,6 +20,7 @@ import {
   buildSlideChatSystem,
   buildSlideEditSystem,
   buildSlidePageSystem,
+  buildSlidePreserveSystem,
   type DeckPlan,
 } from './generated/prompts.js'
 
@@ -186,6 +187,10 @@ const TASKS: Record<string, (input: unknown) => string | null> = {
   'slide-lo': slideLo,
   'slide-trang': slideTrang,
   'slide-sua': slideSua,
+  'slide-giu-chu': (raw) => {
+    const o = slideInput(raw)
+    return buildSlidePreserveSystem(o.pro === true, o.think === true)
+  },
   'tim-web': () => WEB_SEARCH_SYSTEM,
   'soan-de': soanDe,
   'hoi-truoc': hoiTruoc,

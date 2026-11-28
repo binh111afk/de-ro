@@ -8,6 +8,8 @@ import { ASK_RULE, CHAT_MARKDOWN, THINK_VI } from '@/lib/prompts/common'
 import { sourceSection, webSection, type SourceInput } from '@/lib/prompts/sources'
 import { batchSystemPrompt, pageSystemPrompt } from '@/lib/slideAi'
 import { editSystemPrompt } from '@/lib/slideEdit'
+import { PRESERVE_PRO_LAYOUTS, PRESERVE_STD_LAYOUTS } from '@/lib/slidePreserve'
+import { DECK_THEMES } from '@/lib/slideTheme'
 import type { DeckPlan } from '@/lib/aiDeck'
 
 export const BOARD_SYSTEM =
@@ -158,3 +160,29 @@ export const buildSlidePageSystem = (plan: DeckPlan, index: number, pro?: boolea
 
 export const buildSlideEditSystem = (context: string, source: SourceInput = {}, webFound?: string): string =>
   editSystemPrompt(context) + sourceSection(source) + webSection(webFound)
+
+/** Chế độ Giữ nguyên chữ: AI chỉ chia trang, chọn bố cục và ánh xạ ID đoạn gốc, không viết lại chữ. */
+export function buildSlidePreserveSystem(pro?: boolean, think?: boolean): string {
+  const layouts = (pro ? PRESERVE_PRO_LAYOUTS : PRESERVE_STD_LAYOUTS).join(', ')
+  const themes = DECK_THEMES.map((t) => `${t.id} (${t.name})`).join(', ')
+  const proNote = pro
+    ? '\n- Bố cục "photo-full", "photo-compare" hoặc "editorial-text" có thể kèm "imagePrompt" (tiếng Anh, ngắn gọn, mô tả ảnh minh hoạ/ảnh chụp, tuyệt đối không có chữ trong ảnh).'
+    : ''
+  return (
+    'Bạn thiết kế bài trình bày ở chế độ GIỮ NGUYÊN VĂN. Người dùng đưa danh sách các đoạn đánh số [1], [2], [3]…\n' +
+    'NHIỆM VỤ: nếu người dùng chỉ hỏi đáp, trò chuyện hoặc chưa đưa nội dung bài để làm slide thì trả lời ngắn bằng chữ thường (KHÔNG trả JSON, KHÔNG nhắc tới số đoạn [1], [2] hay cấu trúc nội bộ; nếu họ chỉ nêu chủ đề mà chưa dán nội dung thì nhắc họ dán nguyên văn hoặc tắt chế độ Giữ nguyên chữ). Ngược lại, chỉ trả về DUY NHẤT một JSON (không chữ ngoài JSON, không bọc markdown):\n' +
+    '{"title":"tiêu đề ngắn của bài","theme":"<id>","ignoreIds":[1],"slides":[{"layout":"<layout>","tone":"theme|soft|accent","titleId":2,"subtitleId":3,"kickerId":4,"bodyId":5,"itemIds":[6,7],"leftTitleId":8,"rightTitleId":9,"leftIds":[10],"rightIds":[11],"quoteId":12,"authorId":13,"imagePrompt":"..."}]}\n' +
+    'QUY TẮC BẮT BUỘC:\n' +
+    '- TUYỆT ĐỐI KHÔNG chép lại, diễn giải hay sửa văn bản gốc — chỉ tham chiếu bằng số nguyên ID đoạn.\n' +
+    '- Mỗi ID đoạn nội dung từ [1] đến hết PHẢI xuất hiện ĐÚNG 1 LẦN trong "slides", giữ đúng thứ tự mạch văn.\n' +
+    '- "ignoreIds" (tuỳ chọn): CHỈ liệt kê ID các dòng thuần là lời dặn/lệnh cho AI (vd "tạo slide giúp tôi", "slide 2 chia 2 cột", "dòng này là tiêu đề") — TUYỆT ĐỐI KHÔNG đưa nội dung bài học vào ignoreIds. Làm theo đúng yêu cầu chia cột/bố cục trong các dòng lời dặn đó.\n' +
+    '- Gặp dòng ngắt "---" giữa hai đoạn thì PHẢI bắt đầu slide mới tại đoạn ngay sau "---".\n' +
+    `- "layout" chỉ chọn trong: ${layouts}.\n` +
+    '- "title" / "section" / "closing" / "photo-full": chỉ dùng titleId, subtitleId, kickerId (nếu có nhiều ý liệt kê thì chọn bullets / editorial-text / cards / rules).\n' +
+    '- "bullets" / "editorial-text" / "image-left" / "image-right": dùng titleId + itemIds (≤ 6 mục mỗi slide; nhiều hơn thì tách sang slide mới).\n' +
+    '- "rules": dùng titleId + itemIds (3–5 mục có dạng "Nhãn: nội dung"). "two-column": leftTitleId, rightTitleId, leftIds, rightIds. "cards": titleId + itemIds (2–6 mục). "quote": quoteId, authorId. "manifesto": bodyId, authorId.\n' +
+    `- "theme" chọn 1 id hợp với chủ đề trong: ${themes}.` +
+    proNote +
+    (think ? THINK_VI : '')
+  )
+}

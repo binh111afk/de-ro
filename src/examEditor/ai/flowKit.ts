@@ -2,7 +2,7 @@
 import type { Dispatch, SetStateAction } from 'react'
 import { callLlm, type LlmMessage, type LlmProgress } from '@/lib/llm'
 import type { AiApplyResult } from '@/lib/aiDocContext'
-import type { DeckPlan, ProStyle } from '@/lib/aiDeck'
+import type { AiSlidePayload, DeckPlan, ProStyle } from '@/lib/aiDeck'
 import type { SlideEditOp } from '@/lib/slideEdit'
 import { closeLog, tailLine, type ActStep, type AiMode, type ChatTurn } from './turns'
 
@@ -32,8 +32,11 @@ export interface TurnCtx {
   slidePro: boolean
   /** kiểu slide Chuyên nghiệp người dùng đã nói trong yêu cầu */
   proStyle?: ProStyle
+  /** nội dung chữ ghép từ tệp/nguồn đã đính kèm (dùng cho chế độ giữ nguyên chữ) */
+  sourceText?: string
   onApplyBlocks?: (text: string, allowReplace: boolean, request?: string) => AiApplyResult | undefined
   onApplySlides?: (text: string, plan?: DeckPlan) => number | Promise<number>
+  onAppendSlide?: (page: AiSlidePayload, plan: DeckPlan) => void | Promise<void>
   onApplyEdits?: (ops: SlideEditOp[], signal: AbortSignal) => string[] | Promise<string[]>
   /** lỗi nội dung nếu áp thử các lệnh (không đổi bài) */
   onCheckEdits?: (ops: SlideEditOp[]) => string[]
