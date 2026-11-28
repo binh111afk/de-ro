@@ -323,7 +323,7 @@ check('kiểm tra riêng dịch vụ lạ → 400', (await hit({ action: 'health
 const { maintenanceBlock, _resetOpsCache } = await import('../server/ops.ts')
 const blockFor = async (token?: string) => {
   _resetOpsCache()
-  const req = { headers: token ? { authorization: `Bearer h.${token}.s` } : {} } as unknown as IncomingMessage
+  const req = { headers: token ? { authorization: `Bearer h.${token}.s` } : {}, socket: { remoteAddress: '127.0.0.1' } } as unknown as IncomingMessage
   let code = 0
   const res = { writeHead: (c: number) => ((code = c), res), end: () => {} } as unknown as ServerResponse
   const blocked = await maintenanceBlock(req, res)

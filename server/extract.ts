@@ -3,6 +3,7 @@
  * cho AI soạn đề. Chạy server-side: không phình bundle client, parser chỉ được
  * import khi thật sự có tệp.
  */
+import { imageSize } from 'image-size'
 import { inflateRawSync } from 'node:zlib'
 import type { IncomingMessage, ServerResponse } from 'node:http'
 import { extname } from 'node:path'
@@ -278,7 +279,7 @@ function readNumPr(pPr: string): NumRef | null | undefined {
   if (!id) return undefined
   if (id === '0') return null
   const lv = Number(attr(openTag(np, 'w:ilvl'), 'w:val') ?? '0')
-  return { id, level: Number.isFinite(lv) ? lv : 0 }
+  return { id, level: Number.isInteger(lv) && lv >= 0 && lv <= 8 ? lv : 0 }
 }
 
 interface DocxStyles {
@@ -367,6 +368,7 @@ function parseDocxNumbering(xml: string | null): Map<string, NumLevel> {
 }
 
 const romanNum = (n: number) => {
+  if (!Number.isInteger(n) || n < 1 || n > 3999) return String(n)
   const t: Array<[number, string]> = [[1000, 'm'], [900, 'cm'], [500, 'd'], [400, 'cd'], [100, 'c'], [90, 'xc'], [50, 'l'], [40, 'xl'], [10, 'x'], [9, 'ix'], [5, 'v'], [4, 'iv'], [1, 'i']]
   let o = ''
   for (const [v, c] of t) while (n >= v) { o += c; n -= v }
@@ -482,7 +484,7 @@ function processDocxParagraphs(
     // Chỉ đánh số khi đoạn có chữ hoặc hình (ngoài text box)
     let prefixRun = ''
     if (numRef && numFmt.size) {
-      const outsideTxbx = bodyOut.replace(/<w:txbxContent[\s\S]*?<\/w:txbxContent>/g, '')
+      const outsideTxbx = mapOuterXmlBlocks(bodyOut, 'w:txbxContent', () => '')
       const hasText = [...xmlBlocks(outsideTxbx, 'w:t')].some((t) => /\S/.test(t.inner))
       const hasMedia = /<w:(?:drawing|pict|object)\b/.test(outsideTxbx)
       if (hasText || hasMedia) {
@@ -535,7 +537,7 @@ function encodeCompactTables(xmlIn: string): string {
         if (ps.length > 3) return tblEl
         const parts: string[] = []
         for (const p of ps) {
-          const cleanP = p.inner.replace(/<w:pPr[\s\S]*?<\/w:pPr>/g, '')
+          const cleanP = mapXmlBlocks(p.inner, 'w:pPr', () => '')
           const txt = [...xmlBlocks(cleanP, 'w:t')].map((t) => t.inner).join('')
           if (/\S/.test(txt) || txt.includes(IMG_ON)) hasAnyContent = true
           if (cleanP.trim()) parts.push(cleanP)
@@ -554,12 +556,28 @@ const IMG_OFF = ''
 const MAX_RAW_IMAGES = 1500 // ảnh nhúng đọc vào (trước khi ghép các mảnh)
 const MAX_IMAGES = 600 // ảnh trả về (sau khi ghép)
 const MAX_IMAGE_BYTES = 600 * 1024
+const MAX_RASTER_SIDE = 8192
+const MAX_RASTER_PIXELS = 12_000_000
+const DOCX_RASTER_PIXEL_BUDGET = 32_000_000
+const MAX_STITCH_PARTS = 128
 const MAX_RAW_BYTES = 40 * 1024 * 1024
 const MAX_TOTAL_IMAGE_BYTES = 12 * 1024 * 1024
 const MIN_IMAGE_EMU = 24 * 9525 // ảnh có cạnh lớn nhất dưới ~24px là icon trang trí
 const MIN_LINE_EMU = 4 * 9525 // cạnh nhỏ dưới ~4px là đường kẻ
 const MIME: Record<string, string> = {
   png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg', gif: 'image/gif', webp: 'image/webp', bmp: 'image/bmp', svg: 'image/svg+xml',
+}
+
+/** Chỉ cho canvas giải mã raster có kích thước đã được kiểm tra từ header. */
+function rasterPixels(buf: Buffer): number {
+  try {
+    const { type, width, height } = imageSize(buf)
+    const pixels = width * height
+    if (type && ['png', 'jpg', 'gif', 'webp', 'bmp'].includes(type) &&
+        width > 0 && height > 0 && width <= MAX_RASTER_SIDE && height <= MAX_RASTER_SIDE &&
+        pixels <= MAX_RASTER_PIXELS) return pixels
+  } catch { /* header hỏng hoặc định dạng không hỗ trợ */ }
+  return 0
 }
 
 /** Thu nhỏ / nén ảnh quá lớn bằng @napi-rs/canvas nếu có; null nếu không làm được. */
@@ -602,15 +620,19 @@ async function tokenizeImages(zip: import('jszip'), xmlIn: string): Promise<{ xm
   // mc:AlternateContent: giữ phần Choice (tránh đếm ảnh hai lần cùng phần Fallback VML)
   const xml = mapXmlBlocks(xmlIn, 'mc:AlternateContent', (block) => xmlBlocks(block, 'mc:Choice').next().value?.inner ?? block)
   const images: string[] = []
-  const byTarget = new Map<string, number>()
+  const byTarget = new Map<string, number | null>()
   let total = 0
   let unsupported = 0
   let tooBig = 0
   let overLimit = 0
+  let shrinkPixels = 0
   const resolve = async (rid: string): Promise<number | null> => {
     const target = rels.get(rid)
     if (!target) return null
-    if (byTarget.has(target)) return byTarget.get(target)!
+    const previous = byTarget.get(target)
+    if (previous !== undefined) return previous
+    byTarget.set(target, null)
+    if (images.length >= MAX_RAW_IMAGES || total >= MAX_RAW_BYTES) { overLimit++; return null }
     const ext = target.split('.').pop()?.toLowerCase() ?? ''
     const path = target.startsWith('/') ? target.slice(1) : `word/${target}`
     const file = zip.file(path)
@@ -618,12 +640,15 @@ async function tokenizeImages(zip: import('jszip'), xmlIn: string): Promise<{ xm
     let data = await file.async('nodebuffer')
     let mime = MIME[ext]
     if (data.length > MAX_IMAGE_BYTES) {
-      const small = ext === 'svg' ? null : await shrinkImage(data)
+      const pixels = ext === 'svg' ? 0 : rasterPixels(data)
+      if (!pixels || shrinkPixels + pixels > DOCX_RASTER_PIXEL_BUDGET) { tooBig++; return null }
+      shrinkPixels += pixels
+      const small = await shrinkImage(data)
       if (!small) { tooBig++; return null }
       data = small
       mime = 'image/jpeg'
     }
-    if (images.length >= MAX_RAW_IMAGES || total + data.length > MAX_RAW_BYTES) { overLimit++; return null }
+    if (total + data.length > MAX_RAW_BYTES) { overLimit++; return null }
     total += data.length
     images.push(`data:${mime};base64,${data.toString('base64')}`)
     byTarget.set(target, images.length - 1)
@@ -730,11 +755,24 @@ async function stitchRuns(text: string, images: string[]): Promise<{ text: strin
   const { createCanvas, loadImage } = canvasMod
   const tok = `${IMG_ON}\\d+${IMG_OFF}`
   const run = new RegExp(`${tok}(?:[ \\t\\u00a0\\n]*${tok})+`, 'g')
+  const token = new RegExp(`${IMG_ON}(\\d+)${IMG_OFF}`, 'g')
   const out = [...images]
   const loaded = new Map<number, Awaited<ReturnType<typeof loadImage>>>()
+  let decodePixels = 0
+  let stitchedPixels = 0
+  let stitchedBytes = 0
   const load = async (i: number) => {
-    if (!loaded.has(i)) loaded.set(i, await loadImage(Buffer.from(images[i].slice(images[i].indexOf(',') + 1), 'base64')))
-    return loaded.get(i)!
+    const cached = loaded.get(i)
+    if (cached) return cached
+    const src = images[i]
+    if (!src) throw new Error('Thiếu ảnh gốc.')
+    const buf = Buffer.from(src.slice(src.indexOf(',') + 1), 'base64')
+    const pixels = rasterPixels(buf)
+    if (!pixels || decodePixels + pixels > DOCX_RASTER_PIXEL_BUDGET) throw new Error('Ảnh ghép quá lớn.')
+    decodePixels += pixels
+    const img = await loadImage(buf)
+    loaded.set(i, img)
+    return img
   }
   const cache = new Map<string, string>()
   const pieces: Array<{ before: string; idx: number }> = []
@@ -744,11 +782,13 @@ async function stitchRuns(text: string, images: string[]): Promise<{ text: strin
     result += text.slice(last, m.index)
     last = m.index! + m[0].length
     pieces.length = 0
-    let gap = ''
-    for (const part of m[0].split(new RegExp(`(${tok})`)).filter((x) => x !== '')) {
-      const t = part.match(new RegExp(`^${IMG_ON}(\\d+)${IMG_OFF}$`))
-      if (t) { pieces.push({ before: gap, idx: Number(t[1]) }); gap = '' } else gap += part
+    let offset = 0
+    for (const part of m[0].matchAll(token)) {
+      pieces.push({ before: m[0].slice(offset, part.index), idx: Number(part[1]) })
+      if (pieces.length > MAX_STITCH_PARTS) break
+      offset = part.index + part[0].length
     }
+    if (pieces.length > MAX_STITCH_PARTS) { result += m[0]; continue }
     const key = pieces.map((p) => `${p.before.includes('\n') ? '|' : ','}${p.idx}`).join('')
     if (!cache.has(key)) {
       try {
@@ -762,6 +802,9 @@ async function stitchRuns(text: string, images: string[]): Promise<{ text: strin
         const rowH = rows.map((r) => Math.max(...r.map((i) => i.height)))
         const W = Math.max(...rowW)
         const H = rowH.reduce((n, h) => n + h, 0)
+        if (W > MAX_RASTER_SIDE || H > MAX_RASTER_SIDE || W * H > MAX_RASTER_PIXELS ||
+            stitchedPixels + W * H > DOCX_RASTER_PIXEL_BUDGET) throw new Error('Ảnh ghép quá lớn.')
+        stitchedPixels += W * H
         const canvas = createCanvas(W, H)
         const ctx = canvas.getContext('2d')
         ctx.fillStyle = '#ffffff'
@@ -775,6 +818,8 @@ async function stitchRuns(text: string, images: string[]): Promise<{ text: strin
         let buf = canvas.toBuffer('image/png')
         let mime = 'image/png'
         if (buf.length > MAX_IMAGE_BYTES) { buf = canvas.toBuffer('image/jpeg', 82); mime = 'image/jpeg' }
+        if (buf.length > MAX_IMAGE_BYTES || stitchedBytes + buf.length > MAX_TOTAL_IMAGE_BYTES) throw new Error('Ảnh ghép quá lớn.')
+        stitchedBytes += buf.length
         out.push(`data:${mime};base64,${buf.toString('base64')}`)
         cache.set(key, `${IMG_ON}${out.length - 1}${IMG_OFF}`)
       } catch { cache.set(key, m[0]) }
@@ -1234,7 +1279,8 @@ export async function extractFile(name: string, data: Buffer, marks = false): Pr
   const fail = (message: string): ExtractedFile => ({ name, kind: 'unsupported', text: '', warning: `Không đọc được tệp: ${message}` })
   const url = import.meta.url
   const code = "const { workerData, parentPort } = require('node:worker_threads');" +
-    "import(workerData.url).then(async (m) => { parentPort.postMessage({ ok: await m.extractFileDirect(workerData.name, Buffer.from(workerData.data), workerData.marks) }) }," +
+    "const load = workerData.url.endsWith('.ts') ? require('tsx/esm/api').tsImport(workerData.url, workerData.url) : import(workerData.url);" +
+    "load.then(async (m) => { parentPort.postMessage({ ok: await m.extractFileDirect(workerData.name, Buffer.from(workerData.data), workerData.marks) }) }," +
     " (e) => parentPort.postMessage({ boot: String(e && e.message || e) }))"
   const { Worker } = await import('node:worker_threads')
   type Out = { ok?: ExtractedFile; boot?: string; error?: string }
@@ -1245,8 +1291,7 @@ export async function extractFile(name: string, data: Buffer, marks = false): Pr
         eval: true,
         workerData: { url, name, data: new Uint8Array(data), marks },
         resourceLimits: { maxOldGenerationSizeMb: extractLimits.heapMb, maxYoungGenerationSizeMb: 48 },
-        // chạy từ mã .ts (dev, test): worker nạp tsx để hiểu .ts
-        ...(url.endsWith('.ts') ? { execArgv: ['--import', 'tsx'] } : {}),
+        execArgv: [],
       })
     } catch (err) {
       return resolve({ boot: String(err) })

@@ -12,7 +12,6 @@ import type { IncomingMessage, ServerResponse } from 'node:http'
 
 const SB = 'http://sb.test'
 const USER = 'aaaaaaaa-1111-4111-8111-aaaaaaaaaaaa'
-const month = () => new Date().toISOString().slice(0, 7)
 
 process.env.VITE_SUPABASE_URL = SB
 process.env.VITE_SUPABASE_PUBLISHABLE_KEY = 'pk'
@@ -29,6 +28,10 @@ for (const k of ['VERCEL', 'DEEPSEEK_API_KEY', 'GLM_API_KEY', 'GLM_BASE_URL', 'G
 
 // DB giả: số dư điểm + token đã dùng tháng này + biên nhận đã hoàn
 const db = { credits: 120_000, used: 0, refunds: new Set<string>() }
+const holds = new Map<string, { amount: number; receipt: string | null; refund: number }>()
+const settled = new Map<string, { used: number; balance: number }>()
+let loseSettlementResponse = false
+let pauseUpstream: (() => Promise<void>) | undefined
 let nextUsage = 30_000
 let emptyReply = false
 // số lượt rỗng đã ghi trong ai_calls 24 giờ qua (server chỉ đếm tối đa 3)
@@ -42,6 +45,9 @@ globalThis.fetch = (async (input: string | URL, init: RequestInit = {}) => {
   const body = init.body ? JSON.parse(String(init.body)) : {}
   if (url.includes('/chat/completions')) {
     upstream.push({ model: body.model, max_tokens: body.max_tokens, messages: body.messages })
+    const pause = pauseUpstream
+    pauseUpstream = undefined
+    await pause?.()
     if (upstreamDown) return new Response('{}', { status: 400 })
     if (emptyReply) return ok({ model: body.model, choices: [{ finish_reason: 'length', message: { content: '' } }], usage: { total_tokens: nextUsage } })
     return ok({ model: body.model, choices: [{ finish_reason: 'stop', message: { content: 'nội dung' } }], usage: { total_tokens: nextUsage } })
@@ -51,23 +57,35 @@ globalThis.fetch = (async (input: string | URL, init: RequestInit = {}) => {
   if (url.includes('/rest/v1/ai_quota_overrides')) return ok([])
   if (url.includes('/rest/v1/ai_usage')) return ok([{ tokens: db.used }])
   if (url.includes('/rest/v1/ai_credits')) return ok([{ balance: db.credits }])
-  if (url.includes('/rpc/reserve_ai_quota')) return ok(true)
-  if (url.includes('/rpc/release_ai_quota')) return ok(null)
-  if (url.includes('/rpc/add_ai_usage')) {
-    db.used += body.p_tokens
-    return ok(db.used)
+  if (url.includes('/rpc/reserve_ai_request')) {
+    const active = [...holds.values()]
+    if (body.p_receipt && (db.refunds.has(body.p_receipt) || active.some((hold) => hold.receipt === body.p_receipt))) return ok('receipt_unavailable')
+    const amount = Math.max(0, body.p_amount - body.p_receipt_tokens)
+    if (db.used + amount + active.reduce((sum, hold) => sum + hold.amount, 0) > body.p_base + db.credits) return ok('quota_exceeded')
+    holds.set(body.p_id, { amount, receipt: body.p_receipt, refund: body.p_receipt_tokens })
+    return ok('reserved')
   }
-  if (url.includes('/rpc/consume_ai_credits')) {
-    const pay = Math.min(Math.max(db.used - body.p_base, 0), db.credits)
+  if (url.includes('/rpc/finish_ai_request')) {
+    const previous = settled.get(body.p_id)
+    if (previous) return ok(previous)
+    const hold = holds.get(body.p_id)
+    holds.delete(body.p_id)
+    if (!hold || !body.p_tokens) return ok(null)
+    if (hold.receipt && body.p_refund_cap > 0) {
+      db.refunds.add(hold.receipt)
+      db.credits += Math.min(hold.refund, body.p_refund_cap, body.p_tokens)
+    }
+    db.used += body.p_tokens
+    const pay = Math.min(db.used, db.credits)
     db.used -= pay
     db.credits -= pay
-    return ok([{ used: db.used, balance: db.credits }])
-  }
-  if (url.includes('/rpc/refund_ai_usage')) {
-    if (db.refunds.has(body.p_receipt)) return ok(null)
-    db.refunds.add(body.p_receipt)
-    db.credits += body.p_tokens
-    return ok(db.credits)
+    const result = { used: db.used, balance: db.credits }
+    settled.set(body.p_id, result)
+    if (loseSettlementResponse) {
+      loseSettlementResponse = false
+      throw new Error('Mất phản hồi sau khi DB ghi sổ')
+    }
+    return ok(result)
   }
   return ok([])
 }) as typeof fetch
@@ -79,7 +97,7 @@ async function hit(payload: unknown, headers: Record<string, string> = {}) {
   Object.assign(req, {
     method: 'POST',
     url: '/api/llm',
-    headers: { host: 'localhost', origin: 'http://localhost', authorization: `Bearer h.${Buffer.from(JSON.stringify({ sub: USER })).toString('base64url')}.s`, 'content-type': 'application/json', ...headers },
+    headers: { host: 'localhost', origin: 'http://localhost', authorization: `Bearer h.${Buffer.from(JSON.stringify({ sub: USER, exp: Math.floor(Date.now() / 1000) + 3600 })).toString('base64url')}.s`, 'content-type': 'application/json', ...headers },
     socket: { remoteAddress: '203.0.113.9' },
   })
   const out = { status: 0, body: '' }
@@ -113,6 +131,13 @@ check('lượt thường vẫn chạy', r1.status === 200, r1)
 check('maxTokens 250.000 bị cắt về ≤ 32.000', upstream[0]?.max_tokens <= 32_000, upstream[0])
 check('model lạ không được chuyển lên gateway', upstream[0]?.model === 'app-model', upstream[0])
 
+// Thử lại RPC khi DB đã ghi sổ nhưng kết nối mất phản hồi.
+const beforeLost = db.credits
+nextUsage = 300
+loseSettlementResponse = true
+const recovered = await hit({ messages: msgs('kiểm tra ghi sổ'), maxTokens: 400 })
+check('mất phản hồi DB: ghi usage đúng một lần và vẫn trả kết quả', recovered.status === 200 && db.credits === beforeLost - 300)
+
 // 2. "gọi lại" bằng câu rẻ, khác yêu cầu cũ → KHÔNG hoàn
 const beforeCheap = db.credits
 nextUsage = 2
@@ -126,6 +151,12 @@ const afterBad = db.credits
 await hit({ messages: msgs('soạn đề 2'), maxTokens: 32_000 }, { 'x-ai-retry-of': r3.data.receipt ?? '' })
 check('gọi lại đúng yêu cầu cũ → hoàn lượt hỏng, chỉ trả lượt mới', db.credits === afterBad, { afterBad, now: db.credits })
 
+// Biên nhận đã hoàn không bù số dư nữa.
+db.credits = 0
+upstream.length = 0
+const duplicate = await hit({ messages: msgs('soạn đề 2'), maxTokens: 32_000 }, { 'x-ai-retry-of': r3.data.receipt ?? '' })
+check('biên nhận đã dùng không nới hạn mức khi số dư bằng 0', duplicate.status === 429 && upstream.length === 0)
+
 // 4. không vượt số token còn lại
 db.credits = 3_000
 db.used = 0
@@ -135,6 +166,40 @@ process.env.DEEPSEEK_API_KEY = 'ds'
 await hit({ messages: msgs('ít điểm'), maxTokens: 32_000 })
 delete process.env.DEEPSEEK_API_KEY
 check('còn 3.000 token → trần lượt này ≤ 3.000', upstream[0]?.max_tokens <= 3_000, upstream[0])
+
+// Lượt model mạnh giữ nguyên tổng mức trả theo hệ số hoặc rơi về model thường nếu thiếu.
+db.credits = 3_000
+db.used = 0
+upstream.length = 0
+process.env.DEEPSEEK_API_KEY = 'ds'
+process.env.DEEPSEEK_STRONG_MODEL = 'strong-model'
+process.env.STRONG_POINT_FACTOR = '3'
+await hit({ messages: msgs('ít điểm'), maxTokens: 32_000, strong: true })
+check('model mạnh tính hệ số trước khi đặt trần', upstream[0]?.model === 'strong-model' && upstream[0].max_tokens < 1000, upstream[0])
+delete process.env.DEEPSEEK_API_KEY
+delete process.env.DEEPSEEK_STRONG_MODEL
+delete process.env.STRONG_POINT_FACTOR
+
+// Hai lượt thực sự chồng nhau: lượt đầu giữ chỗ trong lúc đợi provider.
+db.credits = 3_000
+db.used = 0
+nextUsage = 600
+upstream.length = 0
+const started = Promise.withResolvers<void>()
+const resume = Promise.withResolvers<void>()
+pauseUpstream = () => {
+  started.resolve()
+  return resume.promise
+}
+const inFlight = hit({ messages: msgs('lượt đang giữ chỗ'), maxTokens: 2_500 })
+await Promise.race([started.promise, inFlight])
+try {
+  const concurrent = await hit({ messages: msgs('lượt kế bên'), maxTokens: 2_500 })
+  check('lượt song song thiếu chỗ → 429 trước khi gọi provider', concurrent.status === 429 && upstream.length === 1)
+} finally {
+  resume.resolve()
+}
+check('lượt đang giữ chỗ hoàn thành và trừ đúng usage', (await inFlight).status === 200 && db.credits === 2_400)
 
 // 5. prompt rất dài với số dư ít → chặn trước khi gọi model (trước đây 1 token số dư gọi được ~87.000 token)
 db.credits = 1_000

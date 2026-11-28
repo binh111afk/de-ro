@@ -75,7 +75,8 @@ const host = { host: 'de-ro-lac.vercel.app' }
 }
 
 /** JWT giả có `sub` (chữ ký không kiểm ở đây — Supabase giả quyết định hợp lệ hay không) */
-const jwt = (sub: string) => `h.${Buffer.from(JSON.stringify({ sub })).toString('base64url')}.s`
+const jwtExpiry = Math.floor(Date.now() / 1000) + 3600
+const jwt = (sub: string) => `h.${Buffer.from(JSON.stringify({ sub, exp: jwtExpiry })).toString('base64url')}.s`
 
 // Strix vuln-0002 + bản vá lại: token rác không làm máy chủ hỏi Supabase; đếm lượt hỏi theo tài khoản
 // (sub) và một mức chung rộng cho IP; hết lượt / Supabase lỗi → "bận" (503), không biến thành khách
@@ -493,6 +494,17 @@ const jwt = (sub: string) => `h.${Buffer.from(JSON.stringify({ sub })).toString(
   check('token ký bằng khoá khác (giả) → khách, không hỏi Supabase', forged.userId === null && !forged.busy && userCalls === 0)
   const expired = await checkToken(reqWith(`Bearer ${es256({ sub: 'u-x', exp: Math.floor(Date.now() / 1000) - 10 })}`, '198.51.100.162'))
   check('token hết hạn → khách', expired.userId === null && !expired.busy)
+  const realNow = Date.now
+  const exp = Math.floor(realNow() / 1000) + 60
+  const shortAuth = es256({ sub: 'u-short', exp })
+  const short = () => reqWith(`Bearer ${shortAuth}`, '198.51.100.162')
+  check('token còn hạn được chấp nhận và đưa vào cache', (await checkToken(short())).userId === 'u-short')
+  try {
+    Date.now = () => exp * 1000
+    check('token đã cache bị chặn ngay lúc hết hạn', (await checkToken(short())).userId === null)
+  } finally {
+    Date.now = realNow
+  }
   const wrongIss = await checkToken(reqWith(`Bearer ${es256({ sub: 'u-x', iss: 'http://khac/auth/v1' })}`, '198.51.100.162'))
   check('token của project khác (sai issuer) → khách', wrongIss.userId === null)
   // 1000 token giả mang sub nạn nhân, cùng IP với nạn nhân → nạn nhân vẫn vào được, Supabase không bị hỏi lần nào
@@ -511,29 +523,6 @@ const jwt = (sub: string) => `h.${Buffer.from(JSON.stringify({ sub })).toString(
   const p2 = await g(m2.req, m2.res, 'upload')
   check('không hỏi được trạng thái khoá → 503 (fail-closed, không coi là chưa khoá)', !p2 && m2.out.status === 503)
   banDown = false
-  globalThis.fetch = realFetch
-}
-
-// Strix lần 4 (4/7): hoàn lượt AI theo biên nhận không vượt số token chính lượt gọi lại tốn
-{
-  process.env.VITE_SUPABASE_URL = 'http://sb.test'
-  process.env.SUPABASE_SERVICE_ROLE_KEY = 'svc'
-  const sent: number[] = []
-  const realFetch = globalThis.fetch
-  globalThis.fetch = (async (input: string | URL, init: RequestInit = {}) => {
-    if (String(input).includes('/rpc/refund_ai_usage')) {
-      sent.push((JSON.parse(String(init.body)) as { p_tokens: number }).p_tokens)
-      return new Response('100', { status: 200 })
-    }
-    return new Response('[]', { status: 200 })
-  }) as typeof fetch
-  const { refundReceipt } = await import('../server/aiQuota.ts')
-  const prev = { used: 0, limit: 1000, scope: 'month' as const }
-  const r = { u: 'u1', m: '2026-11', t: 20000, e: Date.now() + 60_000, n: 'rcpt-1', h: 'x' }
-  await refundReceipt('u1', r, prev, 2000)
-  check(`biên nhận 20000 token, lượt gọi lại tốn 2000 → chỉ hoàn 2000 (hoàn ${sent[0]})`, sent[0] === 2000)
-  await refundReceipt('u1', { ...r, n: 'rcpt-2' }, prev, 50000)
-  check(`lượt gọi lại tốn hơn biên nhận → hoàn tối đa bằng biên nhận (hoàn ${sent[1]})`, sent[1] === 20000)
   globalThis.fetch = realFetch
 }
 

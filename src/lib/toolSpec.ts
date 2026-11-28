@@ -3,6 +3,8 @@
  * <desc> của SVG (slide) hoặc attr `plot` của ảnh (soạn đề) — nhấp đúp là mở
  * lại đúng công cụ với cấu hình cũ. Ảnh đồ thị đời đầu chỉ có PlotSpec trần.
  */
+import { decodeSvgAttribute } from './svgAttribute.js'
+import { TOOL_SVG_HALO } from './toolSvgDom.js'
 import { readPlotSpec, renderPlotSvg, type PlotSpec } from './plot'
 import { renderVarTableSvg, type VarTableSpec } from './varTable'
 import { renderGeo2dSvg, renderGeo3dSvg, type Geo2dSpec, type Geo3dSpec } from './geometry'
@@ -82,8 +84,7 @@ const toolDesc = (doc: ToolDoc) => `<desc>${esc(JSON.stringify({ deTool: doc }))
  * Viền trắng quanh mọi chữ trong hình (nét vẽ đi qua chữ thì chữ vẫn đọc được, như nhãn "M" nằm trên đoạn AB).
  * Bỏ qua chữ đã tự đặt `stroke` hoặc chữ trắng (chữ trên nền màu).
  */
-const HALO_CSS =
-  '<style>text:not([stroke]):not([fill="#fff"]):not([fill="#ffffff"]):not([fill="white"]){paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round}</style>'
+const HALO_CSS = `<style>${TOOL_SVG_HALO}</style>`
 export function withTextHalo<T extends { svg: string }>(img: T): T {
   if (img.svg.includes(HALO_CSS)) return img
   return { ...img, svg: img.svg.replace(/<svg[^>]*>/, (m) => m + HALO_CSS) }
@@ -102,7 +103,7 @@ export function applyLabelPos<T extends { svg: string }>(img: T, labelPos: Label
     ...img,
     svg: img.svg.replace(/<text\b[^>]*>/g, (m) => {
       const id = /\bdata-lbl="([^"]*)"/.exec(m)?.[1]
-      const off = id ? labelPos[id] : undefined
+      const off = id ? labelPos[decodeSvgAttribute(id)] ?? labelPos[id] : undefined
       if (!off || (off[0] === 0 && off[1] === 0)) return m
       const tr = `translate(${n1(off[0])} ${n1(off[1])})`
       return /transform="/.test(m)

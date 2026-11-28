@@ -75,6 +75,7 @@ export interface Geo3dSpec {
 
 import { construct as construct0, extractCoords, type Construction } from './geoConstruct'
 import { richTextToSvg } from './table'
+import { escapeSvgAttribute } from './svgAttribute.js'
 
 /** lỗi dựng thêm của lần vẽ gần nhất (modal hiện cho giáo viên) */
 let lastErrors: Array<{ line: number; msg: string }> = []
@@ -218,7 +219,7 @@ function label(p: P2, name: string, center: P2, dist = 15): string {
   let dir = unit(sub(p, center))
   if (len(sub(p, center)) < 1e-6) dir = [0.7, 0.7]
   const q = add(p, mul(dir, dist))
-  return `<text x="${f1(q[0])}" y="${f1(q[1] + 6)}" ${FONT} text-anchor="middle" data-lbl="pt:${esc(name)}">${esc(name)}</text>`
+  return `<text x="${f1(q[0])}" y="${f1(q[1] + 6)}" ${FONT} text-anchor="middle" data-lbl="pt:${escapeSvgAttribute(name)}">${esc(name)}</text>`
 }
 
 const dot = (p: P2) => `<circle cx="${f1(p[0])}" cy="${f1(p[1])}" r="2.2" fill="${STROKE}"/>`
@@ -600,7 +601,7 @@ function renderExtras2d(
       if (e.name) {
         const [x, y] = add(pEnd, mul(dir, 13))
         all.push([x - e.name.length * 5, y - 8], [x + e.name.length * 5, y + 8])
-        parts.push(`<text x="${f1(x)}" y="${f1(y + 5)}" ${LABEL_FONT} text-anchor="middle" font-style="italic" data-lbl="ray:${esc(e.a + e.b)}">${esc(e.name)}</text>`)
+        parts.push(`<text x="${f1(x)}" y="${f1(y + 5)}" ${LABEL_FONT} text-anchor="middle" font-style="italic" data-lbl="ray:${escapeSvgAttribute(e.a + e.b)}">${esc(e.name)}</text>`)
       }
     }
     all.push(pStart, pEnd)
@@ -632,7 +633,7 @@ function renderExtras2d(
       const y = m[1] + 5
       const ay = y - 15
       parts.push(
-        `<text x="${f1(m[0])}" y="${f1(y)}" ${LABEL_FONT} text-anchor="middle" font-style="italic" data-lbl="vec:${esc(v.a + v.b)}">${esc(v.name)}</text>`,
+        `<text x="${f1(m[0])}" y="${f1(y)}" ${LABEL_FONT} text-anchor="middle" font-style="italic" data-lbl="vec:${escapeSvgAttribute(v.a + v.b)}">${esc(v.name)}</text>`,
         `<path d="M${f1(m[0] - w / 2)} ${f1(ay)}L${f1(m[0] + w / 2)} ${f1(ay)}M${f1(m[0] + w / 2 - 3.5)} ${f1(ay - 2.5)}L${f1(m[0] + w / 2)} ${f1(ay)}L${f1(m[0] + w / 2 - 3.5)} ${f1(ay + 2.5)}" stroke="${STROKE}" stroke-width="1" fill="none"/>`,
       )
       all.push([m[0] - w, ay - 6], [m[0] + w, y + 4])
@@ -675,7 +676,7 @@ function renderExtras2d(
       // chữ đặt ngoài đường kích thước (phía xa hình), không đè lên nét đứt — như hình SGK
       const m = add(mid(p2, p3), mul(n, Math.abs(n[1]) > 0.7 ? 13 : Math.max(18, dm.text.length * 4.5)))
       const estW = Math.max(18, dm.text.length * 8)
-      parts.push(`<text x="${f1(m[0])}" y="${f1(m[1] + 5)}" ${LABEL_FONT} text-anchor="middle" data-lbl="dim:${esc(dm.a + dm.b)}">${richTextToSvg(dm.text)}</text>`)
+      parts.push(`<text x="${f1(m[0])}" y="${f1(m[1] + 5)}" ${LABEL_FONT} text-anchor="middle" data-lbl="dim:${escapeSvgAttribute(dm.a + dm.b)}">${richTextToSvg(dm.text)}</text>`)
       all.push([m[0] - estW / 2, m[1] - 10], [m[0] + estW / 2, m[1] + 10])
       placedLabels.push(m)
     }
@@ -691,7 +692,7 @@ function renderExtras2d(
     const dist = Math.abs(n[0]) > 0.7 ? 10 : n[1] < -0.5 ? 10 : 16
     const lx = m[0] + n[0] * dist
     const ly = m[1] + n[1] * dist + (Math.abs(n[0]) > 0.7 ? 5 : n[1] < -0.5 ? 0 : 4)
-    parts.push(`<text x="${f1(lx)}" y="${f1(ly)}" ${LABEL_FONT} text-anchor="${anchor}" data-lbl="seg:${esc(lb.a + lb.b)}">${richTextToSvg(lb.text)}</text>`)
+    parts.push(`<text x="${f1(lx)}" y="${f1(ly)}" ${LABEL_FONT} text-anchor="${anchor}" data-lbl="seg:${escapeSvgAttribute(lb.a + lb.b)}">${richTextToSvg(lb.text)}</text>`)
     const estW = Math.max(18, lb.text.length * 8)
     const x0 = anchor === 'end' ? lx - estW : anchor === 'middle' ? lx - estW / 2 : lx - 4
     const x1 = anchor === 'start' ? lx + estW : anchor === 'middle' ? lx + estW / 2 : lx + 4
@@ -724,7 +725,7 @@ function renderExtras2d(
         }
       }
       placedLabels.push(best)
-      parts.push(`<text x="${f1(best[0])}" y="${f1(best[1] + 6)}" ${FONT} text-anchor="middle" data-lbl="pt:${esc(q.name)}">${esc(q.name)}</text>`)
+      parts.push(`<text x="${f1(best[0])}" y="${f1(best[1] + 6)}" ${FONT} text-anchor="middle" data-lbl="pt:${escapeSvgAttribute(q.name)}">${esc(q.name)}</text>`)
       all.push([best[0] - 8, best[1] - 8], [best[0] + 8, best[1] + 8])
     }
   }
@@ -1125,7 +1126,7 @@ function renderSolid(spec: Geo3dSpec, desc: string) {
     }
     placed.push(best)
     const name = names[i] ?? ''
-    if (name) parts.push(`<text x="${f1(best[0])}" y="${f1(best[1] + 6)}" ${FONT} text-anchor="middle" data-lbl="pt:${esc(name)}">${esc(name)}</text>`)
+    if (name) parts.push(`<text x="${f1(best[0])}" y="${f1(best[1] + 6)}" ${FONT} text-anchor="middle" data-lbl="pt:${escapeSvgAttribute(name)}">${esc(name)}</text>`)
   })
   return frame(parts, P, desc)
 }

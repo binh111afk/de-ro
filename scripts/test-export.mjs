@@ -3,7 +3,7 @@
  * Chạy: npx tsx --tsconfig tsconfig.app.json scripts/test-export.mjs
  */
 import assert from 'node:assert/strict'
-import { buildWordHtml } from '../src/examEditor/exportBlocks.ts'
+import { buildWordHtml, printDoc } from '../src/examEditor/exportBlocks.ts'
 
 let pass = 0
 let fail = 0
@@ -25,6 +25,24 @@ check('Word HTML và in dựng chữ đậm, giữ nguyên công thức và mã'
   assert.match(html, /<b>đúng<\/b>/)
   assert.match(html, /<math/)
   assert.match(html, /<code>x \*\* 2<\/code>/)
+})
+
+check('in giữ tiêu đề hợp lệ và thoát dấu trong đầu trang', () => {
+  let html = ''
+  const oldWindow = globalThis.window
+  globalThis.window = { open: () => ({ document: { open() {}, write(s) { html = s }, close() {} }, focus() {} }) }
+  try {
+    printDoc(doc([{ type: 'heading', level: 2, text: 'Phần II' }, { type: 'heading', level: 'lạ', text: 'Phần khác' }]), {
+      header: { align: 'center', text: '<Trường> "A"' }, paper: { w: 21, h: 29.7 },
+    })
+    assert.match(html, /<h2 class="h2">Phần II/)
+    assert.match(html, /<h2 class="h1">Phần khác/)
+    assert.ok(html.includes(String.raw`\3c Trường\3e `))
+    assert.match(html, /script-src 'none'/)
+    assert.match(html, /size: 21cm 29.7cm/)
+  } finally {
+    globalThis.window = oldWindow
+  }
 })
 
 check('đánh số câu theo thứ tự khối, bỏ qua block.no cũ', () => {

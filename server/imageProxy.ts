@@ -10,7 +10,7 @@
 import type { IncomingMessage, ServerResponse } from 'node:http'
 import { json, readBody } from './http.js'
 import { LOGIN_REQUIRED, clientIp, guard, isLocal, userFromToken } from './guard.js'
-import { TOKENS_PER_POINT, addUsage, quotaMessage, readQuota, reserveQuota } from './aiQuota.js'
+import { TOKENS_PER_POINT, quotaMessage, readQuota, reserveQuota } from './aiQuota.js'
 import { assertPublicHttpsUrl } from './urlGuard.js'
 import { logAiCall } from './ops.js'
 
@@ -163,22 +163,28 @@ export async function chargeAndGenerate(
     json(res, 429, { error: quota.limit - quota.used >= 1000 ? `Vẽ một ảnh cần ${cost / TOKENS_PER_POINT} điểm AI, bạn chỉ còn ${Math.floor((quota.limit - quota.used) / TOKENS_PER_POINT)} điểm.` : quotaMessage(quota), quota, code: 'quota' })
     return null
   }
-  const release = quota ? await reserveQuota(userId, ip, quota, cost) : async () => {}
-  if (!release) {
+  let reservation: Awaited<ReturnType<typeof reserveQuota>>
+  try {
+    reservation = await reserveQuota(userId, quota, cost)
+  } catch (err) {
+    console.error('[imageProxy] Không giữ được chỗ AI:', err)
+    json(res, 503, { error: 'Chưa kiểm tra được hạn mức AI, vui lòng thử lại.' })
+    return null
+  }
+  if (typeof reservation === 'string') {
     json(res, 429, { error: 'Đang có nhiều yêu cầu AI cùng lúc so với số điểm còn lại, thử lại sau ít giây.', quota })
     return null
   }
 
+  const { finish } = reservation
   try {
     const prompt = (await getPrompt()).trim().slice(0, MAX_PROMPT)
     if (!prompt) {
-      await release()
       json(res, 400, { error: 'prompt là bắt buộc' })
       return null
     }
     const configs = resolveConfigs()
     if (!configs.length) {
-      await release()
       json(res, 503, { error: 'Chưa cấu hình SENSENOVA_API_KEY, AGNES_API_KEY hoặc GLM_API_KEY.' })
       return null
     }
@@ -186,26 +192,25 @@ export async function chargeAndGenerate(
     let lastStatus = 502
     for (const config of configs) {
       const t0 = Date.now()
+      let dataUrl: string
       try {
-        const dataUrl = await generate(config, prompt)
-        const [after] = await Promise.all([
-          addUsage(userId, ip, cost, quota),
-          release(),
-          logAiCall({ userId, model: config.model, provider: 'image', ok: true, ms: Date.now() - t0, kind: tag.kind ?? 'image', billed: cost }),
-        ])
-        return { dataUrl, quota: after }
+        dataUrl = await generate(config, prompt)
       } catch (err) {
         lastStatus = err instanceof ImageError ? err.status : 502
         errors.push(`${config.model}: ${err instanceof Error ? err.message : String(err)}`)
+        continue
       }
+      const [after] = await Promise.all([
+        finish(cost),
+        logAiCall({ userId, model: config.model, provider: 'image', ok: true, ms: Date.now() - t0, kind: tag.kind ?? 'image', billed: cost }),
+      ])
+      return { dataUrl, quota: after }
     }
-    await release()
     const detail = errors.join(' | ')
     console.error('[imageProxy]', detail)
     json(res, lastStatus, { error: isLocal(ip) ? detail : 'Không tạo được ảnh, thử lại sau.' })
     return null
   } catch (err) {
-    await release()
     console.error('[imageProxy]', err)
     json(res, 500, {
       error: isLocal(ip)
@@ -213,6 +218,8 @@ export async function chargeAndGenerate(
         : 'Không tạo được ảnh, thử lại sau.',
     })
     return null
+  } finally {
+    await finish()
   }
 }
 

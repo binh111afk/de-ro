@@ -4,7 +4,7 @@
  * Prompt cố định ở bankVision.ts nên đây không phải cổng gọi AI đọc ảnh tuỳ ý.
  */
 import type { IncomingMessage, ServerResponse } from 'node:http'
-import { TOKENS_PER_POINT, addUsage, quotaMessage, readQuota, reserveQuota } from './aiQuota.js'
+import { TOKENS_PER_POINT, quotaMessage, readQuota, reserveQuota } from './aiQuota.js'
 import { readExamPages, VisionInputError } from './bankVision.js'
 import { LOGIN_REQUIRED, clientIp, isLocal, userFromToken } from './guard.js'
 import { json, readBody, safeError } from './http.js'
@@ -38,18 +38,24 @@ export async function handleSourceVision(req: IncomingMessage, res: ServerRespon
     const left = Math.max(0, Math.floor((quota.limit - quota.used) / TOKENS_PER_POINT)).toLocaleString('vi-VN')
     return json(res, 429, { error: quota.limit - quota.used >= 1000 ? `Đọc ảnh cần khoảng ${need} điểm AI mỗi lượt nhưng bạn chỉ còn ${left} điểm.` : quotaMessage(quota), quota, code: 'quota' })
   }
-  const release = quota ? await reserveQuota(userId, ip, quota, RESERVE_TOKENS) : async () => {}
-  if (!release) return json(res, 429, { error: 'Đang có nhiều yêu cầu AI chạy cùng lúc, vui lòng thử lại sau ít giây.', quota })
+  let reservation: Awaited<ReturnType<typeof reserveQuota>>
+  try {
+    reservation = await reserveQuota(userId, quota, RESERVE_TOKENS)
+  } catch (err) {
+    console.error('[sourceVision] Không giữ được chỗ AI:', err)
+    return json(res, 503, { error: 'Chưa kiểm tra được hạn mức AI, vui lòng thử lại.' })
+  }
+  if (typeof reservation === 'string') return json(res, 429, { error: 'Đang có nhiều yêu cầu AI chạy cùng lúc, vui lòng thử lại sau ít giây.', quota })
 
+  const { finish } = reservation
   try {
     const r = await readExamPages(body.images, userId ?? 'local', { text: true, maxImages: VISION_PAGES_PER_CALL, order: ORDER })
-    const after = await addUsage(userId, ip, r.tokens, quota)
+    const after = await finish(r.tokens)
     return json(res, 200, { text: r.content.trim(), quota: after, ...(local ? { model: r.model } : {}) })
   } catch (err) {
-    // lỗi thì không trừ điểm (addUsage chỉ chạy khi đọc thành công)
     const bad = err instanceof VisionInputError
     return json(res, bad ? 400 : 502, { error: bad ? err.message : safeError(err, local, 'Không đọc được ảnh. Vui lòng thử lại sau.') })
   } finally {
-    await release()
+    await finish()
   }
 }

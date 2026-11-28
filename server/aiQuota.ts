@@ -7,8 +7,8 @@ import { createHash, createHmac, randomUUID, timingSafeEqual } from 'node:crypto
  * - Hạn mức tháng (`AI_MONTHLY_TOKENS`, mặc định 0 = không có) vẫn giữ để bật lại nếu cần;
  *   ngoại lệ từng tài khoản ở `ai_quota_overrides` (monthly_tokens null = không giới hạn).
  * - Hạn mức hiệu lực = hạn mức tháng + số dư; token dùng vượt hạn mức tháng trừ vào số dư.
- * Kiểm trước khi gọi AI, giữ chỗ nguyên tử (`reserveQuota`) để request song song không cùng lọt,
- * cộng sau khi có `usage` thật; request cuối có thể vượt một chút — chấp nhận để khỏi đoán trước số token.
+ * Giữ chỗ trước khi gọi AI, ghi usage và hoàn điểm cùng giao dịch trả chỗ.
+ * Chi phí thực có thể khác ước tính, phần vượt vẫn được ghi vào usage.
  * Không có SUPABASE_SERVICE_ROLE_KEY (máy dev) → không giới hạn.
  */
 
@@ -107,37 +107,6 @@ async function claimWelcome(userId: string): Promise<number> {
   return r.ok ? Number(await r.json()) : 0
 }
 
-/** Cộng token vừa dùng, trả hạn mức mới (null nếu không theo dõi). */
-export async function addUsage(userId: string | null, _ip: string, tokens: number, prev: Quota | null): Promise<Quota | null> {
-  if (!prev || !userId || tokens <= 0) return prev
-  const s = supa()
-  if (!s) return prev
-  try {
-    const r = await fetch(`${s.base}/rest/v1/rpc/add_ai_usage`, {
-      method: 'POST',
-      headers: s.headers,
-      body: JSON.stringify({ p_user: userId, p_month: month(), p_tokens: Math.round(tokens) }),
-    })
-    if (r.ok) {
-      const used = Number(await r.json())
-      // vượt hạn mức tháng mà còn điểm: trả phần vượt bằng điểm (trừ cả hai phía, nguyên tử)
-      if (prev.credits && prev.base != null && used > prev.base) {
-        const c = await fetch(`${s.base}/rest/v1/rpc/consume_ai_credits`, {
-          method: 'POST',
-          headers: s.headers,
-          body: JSON.stringify({ p_user: userId, p_month: month(), p_base: prev.base }),
-        })
-        const row = c.ok ? ((await c.json()) as Array<{ used: number; balance: number }>)[0] : undefined
-        if (row) return { ...prev, used: Number(row.used), credits: Number(row.balance), limit: prev.base + Number(row.balance) }
-      }
-      return { ...prev, used }
-    }
-  } catch {
-    /* bỏ qua: không làm hỏng câu trả lời AI vì lỗi đếm */
-  }
-  return { ...prev, used: prev.used + tokens }
-}
-
 /**
  * Ước số token của phần gửi lên (không cần tokenizer): ~3 ký tự/token cho tiếng Việt lẫn JSON,
  * cộng phụ phí mỗi tin nhắn. Thà ước cao một chút — dùng để chặn trước khi gọi, số tính tiền vẫn là `usage` thật.
@@ -149,38 +118,58 @@ export function estimatePromptTokens(messages: unknown[]): number {
   return Math.ceil(chars / 3) + messages.length * 8
 }
 
-/**
- * Giữ chỗ trước khi gọi model. null = hết chỗ (đang có quá nhiều request song song so với hạn mức còn lại);
- * ngược lại trả hàm trả chỗ, gọi nhiều lần không sao. Lỗi hạ tầng thì không chặn người dùng.
- */
-export async function reserveQuota(userId: string | null, _ip: string, q: Quota, amount: number): Promise<(() => Promise<void>) | null> {
-  let done = false
-  const once = (fn: () => Promise<unknown> | void) => async () => {
-    if (done) return
-    done = true
-    await Promise.resolve(fn()).catch(() => {})
-  }
+type FinishQuota = (tokens?: number, refundCap?: number) => Promise<Quota | null>
+
+/** Giữ hạn mức và biên nhận (nếu có) trước khi gọi model. */
+export async function reserveQuota(userId: string | null, quota: Quota | null, amount: number, receipt?: Receipt | null): Promise<
+  { finish: FinishQuota } | 'receipt_unavailable' | 'quota_exceeded'
+> {
+  if (!quota || !userId) return { finish: async () => quota }
   const s = supa()
-  if (!s || !userId) return async () => {}
-  const m = month()
-  try {
-    const r = await fetch(`${s.base}/rest/v1/rpc/reserve_ai_quota`, {
-      method: 'POST',
-      headers: s.headers,
-      body: JSON.stringify({ p_user: userId, p_month: m, p_limit: q.limit, p_amount: amount }),
-    })
-    if (r.ok && (await r.json()) === false) return null
-    if (!r.ok) return async () => {}
-  } catch {
-    return async () => {}
+  if (!s) throw new Error('Missing AI quota store')
+  const id = randomUUID()
+  const post = (rpc: string, args: Record<string, unknown>) => fetch(`${s.base}/rest/v1/rpc/${rpc}`, {
+    method: 'POST',
+    headers: s.headers,
+    body: JSON.stringify(args),
+    signal: AbortSignal.timeout(5000),
+  })
+  const res = await post('reserve_ai_request', {
+    p_id: id, p_user: userId, p_month: month(), p_base: Math.floor(quota.base ?? quota.limit),
+    p_amount: Math.ceil(amount), p_receipt: receipt?.n ?? null, p_receipt_month: receipt?.m ?? null,
+    p_receipt_tokens: receipt?.t ?? 0,
+  })
+  if (!res.ok) throw new Error(`AI quota reservation failed (${res.status})`)
+  const status: unknown = await res.json()
+  if (status === 'receipt_unavailable' || status === 'quota_exceeded') return status
+  if (status !== 'reserved') throw new Error('Unexpected AI quota reservation result')
+
+  let finished = false
+  return {
+    async finish(tokens = 0, refundCap = 0) {
+      if (finished) return quota
+      finished = true
+      const args = { p_id: id, p_user: userId, p_tokens: Math.round(tokens), p_refund_cap: Math.floor(refundCap) }
+      for (let attempt = 0; attempt < 2; attempt++) {
+        try {
+          const result = await post('finish_ai_request', args)
+          if (!result.ok) throw new Error(`AI quota settlement failed (${result.status})`)
+          const row = await result.json() as { used: number; balance: number } | null
+          if (!row) {
+            if (tokens > 0) throw new Error('Missing AI quota hold at settlement')
+            return quota
+          }
+          const base = quota.base ?? quota.limit
+          return { ...quota, used: Number(row.used), credits: Number(row.balance), limit: base + Number(row.balance) }
+        } catch (err) {
+          if (attempt === 0) continue
+          if (tokens > 0) throw err
+          console.error('[aiQuota] Không trả được chỗ giữ AI:', err)
+        }
+      }
+      return quota
+    },
   }
-  return once(() =>
-    fetch(`${s.base}/rest/v1/rpc/release_ai_quota`, {
-      method: 'POST',
-      headers: s.headers,
-      body: JSON.stringify({ p_user: userId, p_month: m, p_amount: amount }),
-    }),
-  )
 }
 
 export function quotaMessage(q: Quota, requiredTokens?: number): string {
@@ -245,28 +234,4 @@ export function checkReceipt(receipt: string, userId: string | null, hash: strin
   const r = readReceipt(receipt, userId)
   // lượt gọi lại phải là đúng yêu cầu cũ; biên nhận không có mã băm (bản cũ) thì không hoàn
   return r && r.h && r.h === hash ? r : null
-}
-
-/**
- * Hoàn token theo biên nhận đã kiểm (vào số đã dùng tháng trước, phần còn lại trả về số dư điểm); trả hạn mức mới.
- * `cap` = số token chính lượt gọi lại vừa tốn: hoàn KHÔNG vượt mức đó. Lượt gọi lại là đúng yêu cầu cũ nên trúng
- * cache prompt, chỉ tốn ~1/10; hoàn đủ biên nhận thì cặp "gọi + gọi lại" chỉ tốn 1/10 → nuôi được ~20 lần hạn mức.
- * Có trần thì cặp đó luôn tốn ít nhất bằng lượt đắt hơn trong hai lượt.
- */
-export async function refundReceipt(userId: string | null, r: Receipt | null, prev: Quota | null, cap: number): Promise<Quota | null> {
-  if (!prev || !userId || !r) return prev
-  const s = supa()
-  if (!s) return prev
-  const tokens = Math.min(r.t, Math.max(0, Math.floor(cap)))
-  if (!(tokens > 0)) return prev
-  try {
-    const res = await fetch(`${s.base}/rest/v1/rpc/refund_ai_usage`, {
-      method: 'POST',
-      headers: s.headers,
-      body: JSON.stringify({ p_user: userId, p_month: r.m, p_receipt: r.n, p_tokens: tokens }),
-    })
-    return res.ok && (await res.json()) != null ? await readQuota(userId) : prev
-  } catch {
-    return prev
-  }
 }

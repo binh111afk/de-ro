@@ -63,7 +63,7 @@ globalThis.fetch = (async (input: string | URL, init: RequestInit = {}) => {
   const body = init.body ? JSON.parse(String(init.body)) : null
   if (url.endsWith('/auth/v1/.well-known/jwks.json')) return res200({ keys: [jwk] })
   if (url.includes('/auth/v1/admin/users/')) return res200({ id: url.split('/').pop(), email: `${url.split('/').pop()}@example.com`, banned_until: null })
-  if (url.includes('/rest/v1/user_roles')) return res200(url.includes('admin-1') || url.includes('user-a') ? [{ role: 'admin' }] : [])
+  if (url.includes('/rest/v1/user_roles')) return res200(url.includes('admin-1') || url.includes('admin-2') ? [{ role: 'admin' }] : [])
   if (url.includes('/rest/v1/admin_audit')) return (audits.push(body), new Response(null, { status: 201 }))
   if (url.includes('/rest/v1/security_flags') || url.includes('/rest/v1/rpc/security_strike')) return res200([])
   if (url.includes('/rest/v1/app_settings')) return res200([])
@@ -325,6 +325,13 @@ check('cộng tay thiếu ghi chú → 400', (await admin('payments.credit', { o
 const cr = await admin('payments.credit', { orderCode: o6.order_code, note: 'FT999 sao kê' })
 check('cộng tay có ghi chú → cộng đúng điểm đơn + ghi nhật ký', cr.status === 200 && balance.get(U) === bal6! + 50_000 && audits.length === 1)
 check('cộng tay lần hai cùng đơn → 400, không cộng thêm', (await admin('payments.credit', { orderCode: o6.order_code, note: 'x' })).status === 400 && balance.get(U) === bal6! + 50_000)
+for (const owner of ['admin-1', 'admin-2']) {
+  const made = await call('POST', '/api/pay', { body: { vnd: 2000 }, auth: token(owner) })
+  const order = orders.at(-1)!
+  const rejected = await admin('payments.credit', { orderCode: order.order_code, note: 'đối soát thử' })
+  check(`cộng tay vào đơn của ${owner} → 400 và không cộng điểm`, made.status === 200 && order.user_id === owner &&
+    rejected.status === 400 && order.status === 'pending' && !balance.get(owner))
+}
 const o7 = (await call('POST', '/api/pay', { body: { vnd: 4000 }, auth: tk }), orders[orders.length - 1])
 payosStatus = 'PAID'
 const sy = await admin('payments.sync', { orderCode: o7.order_code })

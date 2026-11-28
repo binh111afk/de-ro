@@ -6,6 +6,8 @@
  * Cấu hình được nhúng vào thẻ <desc> của SVG để sau này đọc lại mà sửa tiếp.
  */
 
+import { escapeSvgAttribute } from './svgAttribute.js'
+
 export type Fn = (x: number) => number
 
 /* ------------------------------------------------------------------ *
@@ -750,7 +752,7 @@ export function renderPlotSvg(spec: PlotSpec): { svg: string; width: number; hei
         if (!Number.isFinite(y0) || !Number.isFinite(y1)) continue
         d = `M${sx(xMin)} ${sy(y0)}L${sx(xMax)} ${sy(y1)}`
       }
-      const guide = `<path data-asymptote="${esc(line.trim())}" d="${d}" stroke="#555" stroke-width="1.4" stroke-dasharray="6 4" clip-path="url(#plotclip)" fill="none"/>`
+      const guide = `<path data-asymptote="${escapeSvgAttribute(line.trim())}" d="${d}" stroke="#555" stroke-width="1.4" stroke-dasharray="6 4" clip-path="url(#plotclip)" fill="none"/>`
       out.unshift(guide)
     } catch { /* bỏ qua lệnh tiệm cận sai cú pháp */ }
   }
@@ -856,7 +858,7 @@ export function renderPlotSvg(spec: PlotSpec): { svg: string; width: number; hei
       }
       prev = ok ? y : NaN
     }
-    out.push(`<path d="${d}" stroke="${c.color}" stroke-width="2.8" fill="none" stroke-linecap="round" stroke-linejoin="round" clip-path="url(#plotclip)"/>`)
+    out.push(`<path d="${d}" stroke="${escapeSvgAttribute(c.color ?? PLOT_COLORS[0])}" stroke-width="2.8" fill="none" stroke-linecap="round" stroke-linejoin="round" clip-path="url(#plotclip)"/>`)
 
     // Tìm các vị trí mỏ neo hợp lệ: trong miền 8% mép trong và không sát chỗ nhảy tiệm cận
     const validIndices: number[] = []
@@ -1096,7 +1098,7 @@ export function renderPlotSvg(spec: PlotSpec): { svg: string; width: number; hei
           corners: best.corners,
         })
         out.push(
-          `<text x="${best.cx.toFixed(1)}" y="${best.cy.toFixed(1)}" dominant-baseline="central" transform="rotate(${best.deg.toFixed(1)} ${best.cx.toFixed(1)} ${best.cy.toFixed(1)})" text-anchor="middle" ${font} fill="${cr.c.color}" font-style="italic" data-lbl="cv:${cr.ci}">y = ${pretty}</text>`,
+          `<text x="${best.cx.toFixed(1)}" y="${best.cy.toFixed(1)}" dominant-baseline="central" transform="rotate(${best.deg.toFixed(1)} ${best.cx.toFixed(1)} ${best.cy.toFixed(1)})" text-anchor="middle" ${font} fill="${escapeSvgAttribute(cr.c.color ?? PLOT_COLORS[0])}" font-style="italic" data-lbl="cv:${cr.ci}">y = ${pretty}</text>`,
         )
       }
     })
@@ -1116,7 +1118,7 @@ export function renderPlotSvg(spec: PlotSpec): { svg: string; width: number; hei
       /* không có đường cong */
     }
     const right = px < W - 40
-    out.push(`<text x="${(px + (right ? 8 : -8)).toFixed(1)}" y="${(py + (below ? 20 : -8)).toFixed(1)}" ${font} font-style="italic" font-weight="bold" text-anchor="${right ? 'start' : 'end'}" data-lbl="pt:${esc(p.name)}">${esc(p.name)}</text>`)
+    out.push(`<text x="${(px + (right ? 8 : -8)).toFixed(1)}" y="${(py + (below ? 20 : -8)).toFixed(1)}" ${font} font-style="italic" font-weight="bold" text-anchor="${right ? 'start' : 'end'}" data-lbl="pt:${escapeSvgAttribute(p.name)}">${esc(p.name)}</text>`)
   }
 
   const svg =

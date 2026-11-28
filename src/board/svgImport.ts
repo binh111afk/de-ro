@@ -8,6 +8,7 @@
  */
 import { DEFAULT_STYLE, measureText, newId, newSeed, type El, type Pt, type StrokeStyle } from './scene'
 import { regionsOf } from './regionFill'
+import { parseToolSvg } from '@/lib/toolSvgDom'
 
 const SKIP = new Set(['defs', 'marker', 'pattern', 'clipPath', 'mask', 'desc', 'style', 'title', 'metadata'])
 /** bước lấy mẫu đường cong (đơn vị SVG) */
@@ -24,9 +25,8 @@ export interface ImportOpts {
 }
 
 export function svgToElements(svgText: string, o: ImportOpts): El[] {
-  const doc = new DOMParser().parseFromString(svgText, 'image/svg+xml')
-  const src = doc.documentElement as unknown as SVGSVGElement
-  if (src.tagName !== 'svg') return []
+  const src = parseToolSvg(svgText)
+  if (!src) return []
   // gắn tạm vào trang (ẩn) để trình duyệt tính ma trận, độ dài path, kiểu kế thừa
   const host = document.createElement('div')
   host.style.cssText = 'position:fixed;left:-99999px;top:0;opacity:0;pointer-events:none'
@@ -34,13 +34,13 @@ export function svgToElements(svgText: string, o: ImportOpts): El[] {
   host.appendChild(svg)
   document.body.appendChild(host)
   try {
-    return convert(svg, svgText, o)
+    return convert(svg, o)
   } finally {
     host.remove()
   }
 }
 
-function convert(svg: SVGSVGElement, svgText: string, o: ImportOpts): El[] {
+function convert(svg: SVGSVGElement, o: ImportOpts): El[] {
   const vb = svg.viewBox.baseVal
   const vw = vb && vb.width ? vb.width : svg.width.baseVal.value
   const vh = vb && vb.height ? vb.height : svg.height.baseVal.value
@@ -78,7 +78,7 @@ function convert(svg: SVGSVGElement, svgText: string, o: ImportOpts): El[] {
         // thử dựng thành mảng tô (vùng có lỗ) bằng cách dò miền; không được mới cắt ảnh
         const reg = maskedRegions(g, cs)
         if (reg) { out.push(...reg); continue }
-        const im = imagePiece(g, svgText, vx, vy, vw, vh); if (im) out.push(finishImage(im)); continue
+        const im = imagePiece(g, svg, vx, vy, vw, vh); if (im) out.push(finishImage(im)); continue
       }
       const m = ctm(g)
       const sw = parseFloat(cs.strokeWidth) || 1
@@ -581,7 +581,7 @@ function textMarkup(t: SVGTextElement, fs0: number, mixed: boolean): string {
 }
 
 /** cắt một phần tử thành ảnh SVG nhỏ, giữ nguyên defs (pattern, clip, mask) */
-function imagePiece(g: SVGGraphicsElement, svgText: string, vx: number, vy: number, vw: number, vh: number) {
+function imagePiece(g: SVGGraphicsElement, svg: SVGSVGElement, vx: number, vy: number, vw: number, vh: number) {
   let b: DOMRect
   try { b = g.getBBox() } catch { return null }
   if (!b.width && !b.height) return null
@@ -589,12 +589,11 @@ function imagePiece(g: SVGGraphicsElement, svgText: string, vx: number, vy: numb
   const x = Math.max(vx, b.x - 2), y = Math.max(vy, b.y - 2)
   const w = Math.min(vx + vw, b.x + b.width + 2) - x, h = Math.min(vy + vh, b.y + b.height + 2) - y
   if (w <= 0 || h <= 0) return null
-  const doc = new DOMParser().parseFromString(svgText, 'image/svg+xml')
-  const root = doc.documentElement
+  const root = svg.cloneNode(true) as SVGSVGElement
   // giữ phần tử này (cùng các nhóm cha) + defs/mask/clip; bỏ các hình khác
   const keepPath = new Set<Element>()
   const path: number[] = []
-  for (let e: Element = g; e.tagName !== 'svg' && e.parentElement; e = e.parentElement) {
+  for (let e: Element = g; e !== svg && e.parentElement; e = e.parentElement) {
     path.unshift(Array.from(e.parentElement.children).indexOf(e))
   }
   let cur: Element = root
