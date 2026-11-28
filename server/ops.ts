@@ -54,6 +54,7 @@ export function aiKind(task?: unknown, input?: unknown): string {
       return o.variant === 'chat' ? 'question' : o.pro === true ? 'task-slide-pro' : 'task-slide'
     case 'slide-lo':
     case 'slide-trang':
+    case 'slide-giu-chu':
       return o.pro === true ? 'task-slide-pro' : 'task-slide'
     case 'slide-sua':
     case 'sua-slide':

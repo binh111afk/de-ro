@@ -20,5 +20,6 @@ export interface BoardInput extends SourceInput {
 export function buildSlideChatSystem(i: SlideChatInput): string
 export function buildBoardSystem(i: BoardInput): string
 export function buildSlideBatchSystem(plan: DeckPlan, indices: number[], think?: boolean): string
-export function buildSlidePageSystem(plan: DeckPlan, index: number): string
+export function buildSlidePageSystem(plan: DeckPlan, index: number, pro?: boolean): string
 export function buildSlideEditSystem(context: string): string
+export function buildSlidePreserveSystem(pro?: boolean, think?: boolean): string

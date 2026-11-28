@@ -6,7 +6,8 @@ import { parseDeckPlan, proPlan, type AiSlidePayload, type DeckPlan } from '@/li
 import { dropRepeatedGraphic } from '@/lib/slideAi'
 import { isLayoutId } from '@/lib/slideLayouts'
 import { parseAddedSlide, parseEditCommands } from '@/lib/slideEdit'
-import { askAgain, type TurnCtx } from './flowKit'
+import { assemblePreservedDeck, fallbackPreservePages, formatPreserveMessage, parsePreserveChat, splitPreserveBlocks } from '@/lib/slidePreserve'
+import { askAgain, createLiveLog, type TurnCtx } from './flowKit'
 import { AI_EFFORT, generateSlideBatch, SLIDE_BATCH } from './slideGen'
 import { closeLog, leftTokens, spentSince, tailLine, type ChatTurn } from './turns'
 
@@ -67,6 +68,98 @@ export async function runSlideEdit(ctx: TurnCtx): Promise<boolean> {
     return true
   }
   return false
+}
+
+/** Chế độ Giữ nguyên chữ: tách đoạn -> 1 lượt AI ánh xạ ID -> code lắp nguyên văn 100% và dựng slide thẳng. Trả true nếu đã tạo slide. */
+export async function runSlidePreserve(ctx: TurnCtx): Promise<boolean> {
+  const { text, originalRequest, sourceText, slidePro, proStyle, controller, patchTurn, logStart, logSet, logPatch, onAppendSlide, onApplySlides } = ctx
+  const hasSource = !!sourceText?.trim()
+  const rawText = hasSource ? sourceText! : text
+  const note = hasSource ? text : undefined
+  const blocks = splitPreserveBlocks(rawText)
+  if (!blocks.length) {
+    patchTurn(() => ({
+      text: 'Bạn dán nguyên văn nội dung hoặc đính kèm tệp rồi gửi lại nhé.',
+      pending: false,
+      intent: 'chat',
+      log: undefined,
+    }))
+    return false
+  }
+
+  const preserveTask = { name: 'slide-giu-chu', input: { pro: slidePro || undefined, think: true } }
+  const live = createLiveLog(ctx)
+  live.onProgress({ phase: 'think', thought: 0, thinking: '', text: '' })
+  const ticker = setInterval(() => live.phase() === 'think' && logPatch({ note: live.secs() }), 1000)
+
+  const userMsg = formatPreserveMessage(blocks, note)
+  let res: LlmResult
+  try {
+    res = await callLlm(
+      [{ role: 'user', content: userMsg }],
+      { signal: controller.signal, reasoningEffort: AI_EFFORT.slide, onProgress: live.onProgress, task: preserveTask },
+    )
+  } finally {
+    clearInterval(ticker)
+  }
+  logSet((l) => closeLog(l, 'done'))
+
+  // Người dùng chỉ hỏi đáp bình thường (không có nội dung bài): trả lời chữ, không ép dựng slide rác
+  if (!hasSource) {
+    const chatReply = parsePreserveChat(res.content)
+    if (chatReply) {
+      patchTurn(() => ({ text: chatReply, pending: false, intent: 'chat', log: undefined }))
+      return false
+    }
+  }
+
+  let result = assemblePreservedDeck(res.content, blocks, { pro: slidePro, proStyle })
+  if (!result) {
+    const again = await askAgain(
+      [{ role: 'user', content: userMsg }, { role: 'assistant', content: res.content }],
+      'JSON vừa trả chưa đúng cấu trúc ánh xạ ID. Chỉ trả DUY NHẤT một JSON {"title","theme","slides":[...]} dùng đúng các ID số nguyên đã đánh số, KHÔNG viết lại chữ.',
+      res,
+      { signal: controller.signal, reasoningEffort: AI_EFFORT.slide, task: preserveTask },
+    ).catch((err: unknown) => {
+      controller.signal.throwIfAborted()
+      if (err instanceof AiQuotaError) throw err
+      return null
+    })
+    if (again) result = assemblePreservedDeck(again.content, blocks, { pro: slidePro, proStyle })
+  }
+
+  controller.signal.throwIfAborted()
+
+  const pages = result?.pages ?? fallbackPreservePages(blocks, slidePro)
+  const plan: DeckPlan = result?.plan ?? {
+    title: blocks[0].text.slice(0, 80),
+    theme: 'sang',
+    mainIdeas: [],
+    slides: pages.map((p, i) => ({ title: p.title || `Slide ${i + 1}`, layout: p.layout ?? 'bullets', brief: '' })),
+  }
+
+  logStart('Dựng slide giữ nguyên văn', `${pages.length} slide`)
+  let added = 0
+  if (onAppendSlide) {
+    for (const page of pages) {
+      controller.signal.throwIfAborted()
+      await onAppendSlide(page, plan)
+      added++
+    }
+  } else if (onApplySlides) {
+    added = await onApplySlides(JSON.stringify({ title: plan.title, slides: pages }), plan)
+  }
+  logSet((l) => closeLog(l, added ? 'done' : 'failed'))
+
+  const noteRecovered = result?.recovered ? ` (đã tự ghép lại ${result.recovered} đoạn bị sót)` : ''
+  patchTurn(() => ({
+    text: added ? `Đã tạo ${added} slide giữ nguyên văn${noteRecovered}.` : 'Mình chưa tạo được slide. Bạn thử lại nhé.',
+    pending: false,
+    intent: 'doc',
+    log: undefined,
+    ...(!added ? { retry: originalRequest } : {}),
+  }))
+  return added > 0
 }
 
 export async function finishSlide(ctx: TurnCtx, res: LlmResult) {

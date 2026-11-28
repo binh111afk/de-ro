@@ -18,7 +18,7 @@ import { khungPromptFor } from '@/lib/khungPrompt'
 import { proStyleOf, withProStyle, type AiSlidePayload, type DeckPlan } from '@/lib/aiDeck'
 import type { SlideEditOp } from '@/lib/slideEdit'
 import { buildSourcePack, isDocx, pickedKey, type PickedSource, type SourcePack } from '@/lib/sources'
-import { BookOpen, Globe, RotateCcw, ThumbsDown, ThumbsUp } from 'lucide-react'
+import { BookOpen, FileText, Globe, RotateCcw, ThumbsDown, ThumbsUp } from 'lucide-react'
 import { SiteSelect } from '@/components/SiteSelect'
 import { CONTINUE_EXAM_EDIT, chatOnly, rewritesWholeExam, startsWithJson, type AiApplyResult } from '@/lib/aiDocContext'
 import { looksLikeComplaint, nearlySame, reportAi } from '@/lib/aiFeedback'
@@ -40,7 +40,7 @@ import {
 } from './ai/chatParts'
 import { finishExam, runExamSplit } from './ai/examFlow'
 import { createLiveLog, type TurnCtx } from './ai/flowKit'
-import { finishSlide, generateDeck, runSlideEdit } from './ai/slideFlow'
+import { finishSlide, generateDeck, runSlideEdit, runSlidePreserve } from './ai/slideFlow'
 import { AI_EFFORT } from './ai/slideGen'
 import { closeLog, detectIntent, historyOf, leftTokens, spentSince, type ActStep, type AiMode, type ChatTurn } from './ai/turns'
 
@@ -173,6 +173,7 @@ function AiConversation({
     setWebSearch(true)
   }
   const [slidePro, setSlidePro] = useState(false)
+  const [preserveText, setPreserveText] = useState(false)
   useEffect(() => {
     if (!panelOpen) setSlidePro(false)
   }, [panelOpen])
@@ -446,7 +447,7 @@ function AiConversation({
 
       // lượt đầu, tài liệu trống, chưa nêu môn: hỏi bằng prompt ngắn (~1.000 token thay vì ~10.000).
       // Model thấy đoán được môn thì trả "proceed" và chạy luồng đầy đủ như cũ.
-      if (askRule && intent === 'doc' && !history.length && !documentDigest && !sentFiles.length && !sentRefs.length && !sentPicked.length && !(mode === 'slide' && existingSlideCount > 0) && needsAskFirst(text)) {
+      if (askRule && intent === 'doc' && !history.length && !documentDigest && !sentFiles.length && !sentRefs.length && !sentPicked.length && !(mode === 'slide' && (existingSlideCount > 0 || preserveText)) && needsAskFirst(text)) {
         logStart('Phân tích yêu cầu')
         const quick = await callLlm([{ role: 'user', content: text }], { signal: controller.signal, reasoningEffort: 'low', task: { name: 'hoi-truoc' } })
         const quickAsk = parseAsk(quick.content)
@@ -482,7 +483,12 @@ function AiConversation({
         mode, text, intent, originalRequest, revisingExam, userTurn, botId, messages, mainTask, srcInput, controller,
         setTurns, patchTurn, logSet, logStart, logPatch, contextSummary, documentDigest, editContext, slidePro,
         proStyle: [text, ...turns.filter((t) => t.role === 'user').slice(-3).reverse().map((t) => t.text)].map(proStyleOf).find(Boolean),
-        onApplyBlocks, onApplySlides, onApplyEdits, onCheckEdits, onBoardOps,
+        sourceText: pack.items.map((s) => s.text).filter(Boolean).join('\n\n'),
+        onApplyBlocks, onApplySlides, onAppendSlide, onApplyEdits, onCheckEdits, onBoardOps,
+      }
+      if (mode === 'slide' && preserveText) {
+        if (await runSlidePreserve(ctx)) setPreserveText(false)
+        return
       }
       if (editingSlides && await runSlideEdit(ctx)) return
       // phần suy nghĩ hiện thẳng cho giáo viên xem → bắt suy nghĩ bằng tiếng Việt (model mặc định nghĩ tiếng Anh)
@@ -549,7 +555,7 @@ function AiConversation({
       setBusy(false)
       abortRef.current = null
     }
-  }, [input, files, refs, picked, busy, turns, contextSummary, documentDigest, mode, onApplyBlocks, onExamMaintenance, onApplySlides, slidePro, existingSlideCount, editContext, onApplyEdits, onCheckEdits, onBoardOps])
+  }, [input, files, refs, picked, busy, turns, contextSummary, documentDigest, mode, onApplyBlocks, onExamMaintenance, onApplySlides, onAppendSlide, slidePro, preserveText, existingSlideCount, editContext, onApplyEdits, onCheckEdits, onBoardOps])
 
   const stop = useCallback(() => {
     abortRef.current?.abort()
@@ -882,7 +888,9 @@ function AiConversation({
               mode === 'board'
                 ? 'Hỏi về bài đang giảng trên bảng…'
                 : mode === 'slide'
-                ? 'Mô tả bài giảng cần soạn…'
+                ? preserveText
+                  ? 'Dán nguyên văn nội dung (dùng --- để ngắt slide)…'
+                  : 'Mô tả bài giảng cần soạn…'
                 : 'Mô tả đề cần soạn…'
             }
             value={input}
@@ -921,6 +929,18 @@ function AiConversation({
                 onClick={() => void toggleWebSearch()}
               >
                 <Globe size={16} strokeWidth={1.75} />
+              </button>
+            ) : null}
+            {mode === 'slide' ? (
+              <button
+                type="button"
+                className={cn('ai-attach-btn', preserveText && 'is-on')}
+                data-tip={preserveText ? 'Giữ nguyên chữ: đang bật' : 'Giữ nguyên chữ'}
+                aria-label="Giữ nguyên chữ"
+                aria-pressed={preserveText}
+                onClick={() => setPreserveText((v) => !v)}
+              >
+                <FileText size={16} strokeWidth={1.75} />
               </button>
             ) : null}
             {mode === 'slide' ? (
