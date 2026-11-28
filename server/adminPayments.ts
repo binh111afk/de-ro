@@ -3,7 +3,7 @@
  * Gộp vào ACTIONS trong server/admin.ts. Helper từ './admin.js' chỉ dùng trong `run` (admin.ts import vòng file này).
  */
 import type { ActionMap } from './admin.js'
-import { audit, call, HttpError, str } from './admin.js'
+import { audit, call, HttpError, protectTarget, str } from './admin.js'
 import { creditOrderManually, payosConfigured, reconcileOrder } from './payment.js'
 
 type OrderRow = {
@@ -189,6 +189,7 @@ export const PAYMENT_ACTIONS: ActionMap = {
       const o = data[0]
       if (!o) throw new HttpError(404, 'Không tìm thấy đơn.')
       if (o.status === 'paid') throw new HttpError(400, 'Đơn này đã được cộng điểm.')
+      await protectTarget(ctx, o.user_id, 'payments.credit')
       const result = await creditOrderManually(orderCode, o.vnd, note)
       if (result !== 'ok') throw new HttpError(502, `Không cộng được (${result}).`)
       await audit(ctx, 'payments.credit', o.user_id, { orderCode, vnd: o.vnd, points: o.points, note })

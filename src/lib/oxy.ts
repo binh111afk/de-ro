@@ -6,6 +6,7 @@
  * Mỗi dòng một lệnh (xem OXY_HELP). Hai trục cùng đơn vị.
  */
 import { fitAutoBounds, parseExpr } from './plot'
+import { escapeSvgAttribute } from './svgAttribute.js'
 
 export interface OxySpec {
   xMin: number
@@ -459,7 +460,7 @@ export function renderOxySvg(spec: OxySpec, desc: string): { svg: string; width:
       }, 0)
     }
     const [dx, dy] = candidates.sort((a, b) => score(a) - score(b))[0]
-    labels.push(`<text x="${f1(X(x) + dx * 7)}" y="${f1(Y(y) + (dy < 0 ? -7 : 16))}" ${FONT} font-style="italic" text-anchor="${dx > 0 ? 'start' : 'end'}" data-lbl="pt:${esc(it.name)}">${esc(it.name)}</text>`)
+    labels.push(`<text x="${f1(X(x) + dx * 7)}" y="${f1(Y(y) + (dy < 0 ? -7 : 16))}" ${FONT} font-style="italic" text-anchor="${dx > 0 ? 'start' : 'end'}" data-lbl="pt:${escapeSvgAttribute(it.name)}">${esc(it.name)}</text>`)
   }
 
   const svg =

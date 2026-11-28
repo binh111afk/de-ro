@@ -1,14 +1,15 @@
 /**
  * Khung xem trước cho phép kéo nhãn (khi nút "Di chuyển nhãn" đang bật):
- * SVG hiện inline (dangerouslySetInnerHTML, không phải <img>) để bắt được
+ * Gắn SVG đã lọc vào DOM để bắt được
  * event.target.closest('text[data-lbl]'). Kéo thì cập nhật transform trực tiếp
  * trên DOM cho mượt; thả chuột mới gọi onChange ghi labelPos vào spec (công cụ
  * vẽ lại). Toạ độ chuột đổi ra đơn vị viewBox giống toVb của PickPreview.
  */
-import { useMemo, useRef, type ReactNode } from 'react'
+import { useLayoutEffect, useRef, type ReactNode } from 'react'
 import { Move, RotateCcw } from 'lucide-react'
 import { cn } from '@/lib/cn'
 import type { ToolImage } from '@/lib/toolSpec'
+import { parseToolSvg } from '@/lib/toolSvgDom'
 
 const n1 = (v: number) => Math.round(v * 10) / 10
 
@@ -76,7 +77,13 @@ function LabelDragPreview({
   const drag = useRef<{ id: string; el: SVGTextElement; baseTransform: string; sx: number; sy: number; ox: number; oy: number } | null>(null)
   const vb = [...img.svg.matchAll(/viewBox="([-\d.]+) ([-\d.]+) ([-\d.]+) ([-\d.]+)"/g)][0]
   const [minX, minY, w, h] = vb ? vb.slice(1).map(Number) : [0, 0, img.width, img.height]
-  const html = useMemo(() => img.svg.replace(/<svg[^>]*>/, (m) => m + '<style>text[data-lbl]{cursor:move}</style>'), [img.svg])
+  useLayoutEffect(() => {
+    const host = box.current
+    if (!host) return
+    host.replaceChildren()
+    const svg = parseToolSvg(img.svg)
+    if (svg) host.appendChild(document.importNode(svg, true))
+  }, [img.svg])
 
   const toVb = (e: { clientX: number; clientY: number }) => {
     const r = box.current!.getBoundingClientRect()
@@ -97,9 +104,8 @@ function LabelDragPreview({
     <div className="flex min-h-0 w-full flex-1 items-center justify-center" style={{ containerType: 'size' }}>
       <div
         ref={box}
-        className="relative select-none touch-none [&_svg]:block [&_svg]:h-full [&_svg]:w-full [&_svg]:rounded-[4px] [&_svg]:border [&_svg]:border-line [&_svg]:bg-white"
+        className="relative select-none touch-none [&_svg]:block [&_svg]:h-full [&_svg]:w-full [&_svg]:rounded-[4px] [&_svg]:border [&_svg]:border-line [&_svg]:bg-white [&_text[data-lbl]]:cursor-move"
         style={{ aspectRatio: `${w} / ${h}`, width: `min(100cqw, 100cqh * ${w / h})` }}
-        dangerouslySetInnerHTML={{ __html: html }}
         onPointerDown={(e) => {
           const t = (e.target as Element).closest('text[data-lbl]')
           if (!t) return

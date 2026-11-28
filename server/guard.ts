@@ -191,7 +191,7 @@ async function verifyLocal(token: string): Promise<string | false | null> {
   const c = b64json(p)
   const aud = c?.aud
   const audOk = aud === 'authenticated' || (Array.isArray(aud) && aud.includes('authenticated'))
-  if (!c || typeof c.exp !== 'number' || c.exp * 1000 <= Date.now() || c.iss !== `${supaBase()}/auth/v1` || !audOk || c.role !== 'authenticated') return false
+  if (!c || typeof c.exp !== 'number' || !Number.isFinite(c.exp) || c.exp * 1000 <= Date.now() || c.iss !== `${supaBase()}/auth/v1` || !audOk || c.role !== 'authenticated') return false
   return typeof c.sub === 'string' && c.sub ? c.sub : false
 }
 
@@ -259,6 +259,9 @@ export async function checkToken(req: IncomingMessage): Promise<TokenCheck> {
 async function verify(req: IncomingMessage): Promise<TokenCheck> {
   const token = header(req, 'authorization').replace(/^Bearer\s+/i, '').trim()
   if (!token || token.length > 4096 || !JWT_SHAPE.test(token)) return { userId: null }
+  const claims = b64json(token.split('.')[1])
+  const expiry = typeof claims?.exp === 'number' ? claims.exp * 1000 : undefined
+  if (expiry !== undefined && (!Number.isFinite(expiry) || expiry <= Date.now())) return { userId: null }
   const digest = createHash('sha256').update(token).digest('base64url')
   const cached = tokenCache.get(digest)
   if (cached && cached.until > Date.now()) return { userId: cached.userId }
@@ -268,13 +271,13 @@ async function verify(req: IncomingMessage): Promise<TokenCheck> {
   // đường chính: kiểm chữ ký tại chỗ (không mạng, token giả bị loại ngay, không đụng hạn mức nào)
   const local = await verifyLocal(token)
   if (local !== null) {
-    if (local) remember(digest, local)
+    if (local) remember(digest, local, expiry)
     return { userId: local || null }
   }
   // dự phòng (token ký kiểu cũ / chưa tải được khoá): hỏi Supabase, giới hạn theo mã băm token + IP
   const ip = clientIp(req)
   if (!isLocal(ip)) {
-    if (!b64json(token.split('.')[1])?.sub) return { userId: null }
+    if (!claims?.sub) return { userId: null }
     if (!take(verifyHits, `t:${digest}`, VERIFY_PER_TOKEN) || !take(verifyHits, `ip:${ip}`, VERIFY_PER_IP)) return { userId: null, busy: true }
   }
   let userId: string | null = null
@@ -286,14 +289,15 @@ async function verify(req: IncomingMessage): Promise<TokenCheck> {
   } catch {
     return { userId: null, busy: true }
   }
-  remember(digest, userId)
+  remember(digest, userId, expiry)
   return { userId }
 }
 
-function remember(digest: string, userId: string | null) {
+function remember(digest: string, userId: string | null, expiry?: number) {
+  if (userId && !Number.isFinite(expiry)) return
   // đầy thì bỏ mục cũ nhất (Map giữ thứ tự thêm vào), không xoá sạch
   if (tokenCache.size >= TOKEN_CACHE_MAX) tokenCache.delete(tokenCache.keys().next().value as string)
-  tokenCache.set(digest, { userId, until: Date.now() + 5 * 60 * 1000 })
+  tokenCache.set(digest, { userId, until: Math.min(Date.now() + 5 * 60 * 1000, expiry ?? Infinity) })
 }
 
 /** id người dùng (null = khách / token sai / chưa kiểm được) */

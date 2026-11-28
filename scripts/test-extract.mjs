@@ -5,6 +5,9 @@
 import assert from 'node:assert/strict'
 import { deflateSync } from 'node:zlib'
 import JSZip from 'jszip'
+import { Document, ImageRun, Packer, Paragraph } from 'docx'
+import { createCanvas } from '@napi-rs/canvas'
+import { imageSize } from 'image-size'
 import { extractFile, extractLimits } from '../server/extract.ts'
 
 const csv = await extractFile('mau.csv', Buffer.from('Mẫu đề\nCâu 1,2+3', 'utf8'))
@@ -33,6 +36,23 @@ assert.equal(pptx.kind, 'pptx')
 assert.deepEqual(pptx.slides, ['Slide hai\nDòng & phụ', 'Slide mười'])
 assert.match(pptx.text, /Slide hai/)
 console.log('✅ pptx đọc text từng slide, sắp đúng số thứ tự, giải mã XML')
+
+// DOCX hợp lệ: ghép hai ảnh raster nhỏ trên cùng một dòng.
+const tile = createCanvas(32, 24)
+tile.getContext('2d').fillRect(0, 0, 32, 24)
+const pixels = tile.toBuffer('image/png')
+const picture = () => new ImageRun({ type: 'png', data: pixels, transformation: { width: 32, height: 24 } })
+const sourceDoc = new Document({ sections: [{ children: [
+  new Paragraph('Nguồn đọc được'),
+  new Paragraph({ children: [picture(), picture()] }),
+] }] })
+const docx = await extractFile('mau.docx', await Packer.toBuffer(sourceDoc), true)
+assert.equal(docx.kind, 'docx')
+assert.match(docx.text, /Nguồn đọc được/)
+assert.equal(docx.images.length, 1)
+const merged = imageSize(Buffer.from(docx.images[0].split(',')[1], 'base64'))
+assert.deepEqual([merged.width, merged.height], [64, 24])
+console.log('✅ DOCX hợp lệ ghép ảnh thành đúng kích thước')
 
 // Dựng PDF thật nhỏ với xref stream Flate. Dữ liệu nén luôn chỉ chứa các mục của PDF mẫu.
 function makePdf({ pages = 1, classic = false, size = pages + (classic ? 5 : 6), index = '[0 ' + (pages + 6) + ']' } = {}) {

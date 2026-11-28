@@ -196,7 +196,7 @@ function blockToHtml(b: ExamBlock, seq: BlockSeq): string {
       return `<p class="stu"${formatCss(b.format)}>${richToHtml(b.text)}</p>`
 
     case 'heading':
-      return `<h2 class="h${b.level ?? 1}"${formatCss(b.format)}>${richToHtml(b.text)}</h2>`
+      return `<h2 class="h${b.level === 2 || b.level === 3 ? b.level : 1}"${formatCss(b.format)}>${richToHtml(b.text)}</h2>`
 
     case 'paragraph':
       return `<p class="p"${formatCss(b.format)}>${richToHtml(b.text)}</p>`
@@ -449,7 +449,8 @@ function pageCss(page?: PrintPage): string {
   if (!page) return ''
   const m = page.margins
   const n = (v: number) => `${Math.max(0, Math.min(6, Number(v) || 0))}cm`
-  return `@page { size: ${page.paper ? `${page.paper.w}cm ${page.paper.h}cm` : `A4 ${page.landscape ? 'landscape' : 'portrait'}`};${m ? ` margin: ${n(m.top)} ${n(m.right)} ${n(m.bottom)} ${n(m.left)};` : ''} }${bandCss(page)}`
+  const dimension = (v: number) => `${Math.max(1, Math.min(200, Number(v) || 1))}cm`
+  return `@page { size: ${page.paper ? `${dimension(page.paper.w)} ${dimension(page.paper.h)}` : `A4 ${page.landscape ? 'landscape' : 'portrait'}`};${m ? ` margin: ${n(m.top)} ${n(m.right)} ${n(m.bottom)} ${n(m.left)};` : ''} }${bandCss(page)}`
 }
 
 /**
@@ -459,7 +460,7 @@ function pageCss(page?: PrintPage): string {
  */
 function bandCss(page: PrintPage): string {
   const pn = page.pageNumber
-  const css = (v: string) => `"${v.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\s+/g, ' ')}"`
+  const css = (v: string) => `"${v.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/[<>]/g, (c) => c === '<' ? '\\3c ' : '\\3e ').replace(/\s+/g, ' ')}"`
   const boxes: string[] = []
   const firsts: string[] = []
   for (const side of ['top', 'bottom'] as const) {
@@ -578,6 +579,7 @@ export function printShuffledExams(
 export const docFileName = (title: string) => sanitize(title)
 
 function printHtml(html: string): void {
+  html = html.replace('<head>', '<head><meta http-equiv="Content-Security-Policy" content="script-src \'none\'; object-src \'none\'; base-uri \'none\'; form-action \'none\'">')
   const w = window.open('', '_blank', 'width=900,height=1000')
   if (w) {
     w.document.open()

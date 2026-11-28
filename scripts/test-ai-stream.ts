@@ -91,23 +91,18 @@ globalThis.fetch = (async (input: string | URL, init: RequestInit = {}) => {
   if (url.includes('/rest/v1/ai_quota_overrides')) return ok([])
   if (url.includes('/rest/v1/ai_usage')) return ok([{ tokens: db.used }])
   if (url.includes('/rest/v1/ai_credits')) return ok([{ balance: db.credits }])
-  if (url.includes('/rpc/reserve_ai_quota')) {
+  if (url.includes('/rpc/reserve_ai_request')) {
     reservations++
-    return ok(true)
+    return ok('reserved')
   }
-  if (url.includes('/rpc/release_ai_quota')) {
+  if (url.includes('/rpc/finish_ai_request')) {
     releases++
-    return ok(null)
-  }
-  if (url.includes('/rpc/add_ai_usage')) {
+    if (!body.p_tokens) return ok(null)
     db.used += body.p_tokens
-    return ok(db.used)
-  }
-  if (url.includes('/rpc/consume_ai_credits')) {
-    const pay = Math.min(Math.max(db.used - body.p_base, 0), db.credits)
+    const pay = Math.min(db.used, db.credits)
     db.used -= pay
     db.credits -= pay
-    return ok([{ used: db.used, balance: db.credits }])
+    return ok({ used: db.used, balance: db.credits })
   }
   return ok([])
 }) as typeof fetch
@@ -127,7 +122,7 @@ async function hit(payload: Record<string, unknown>, closeAfter = Infinity): Pro
   Object.assign(req, {
     method: 'POST',
     url: '/api/llm',
-    headers: { host: 'localhost', origin: 'http://localhost', authorization: `Bearer h.${Buffer.from(JSON.stringify({ sub: USER })).toString('base64url')}.s`, 'content-type': 'application/json' },
+    headers: { host: 'localhost', origin: 'http://localhost', authorization: `Bearer h.${Buffer.from(JSON.stringify({ sub: USER, exp: Math.floor(Date.now() / 1000) + 3600 })).toString('base64url')}.s`, 'content-type': 'application/json' },
     socket: { remoteAddress: '203.0.113.9' },
   })
   const out: Out = { status: 0, type: '', events: [], json: null }
